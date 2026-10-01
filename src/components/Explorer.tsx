@@ -116,7 +116,7 @@ function DiscountTag({ off }: { off: string | null }) {
 		return <span className="text-ink-secondary">-</span>;
 	}
 	return (
-		<span className="inline-flex items-center rounded-md bg-savings-soft px-2 py-0.5 text-[12px] text-savings whitespace-nowrap">
+		<span className="site-discount-text text-[14px] text-savings whitespace-nowrap">
 			{off} off
 		</span>
 	);
@@ -158,7 +158,7 @@ function MobileFlowSummary({
 }) {
 	return (
 		<div
-			className={`lg:hidden px-4 md:px-5 py-4 md:py-3.5 ${expandable ? "cursor-pointer" : ""}`}
+			className={`site-mobile-flow lg:hidden px-4 py-4 ${expandable ? "cursor-pointer" : ""}`}
 			onClick={(event) => {
 				if (expandable && !(event.target as Element).closest("button, a")) onToggle();
 			}}
@@ -341,12 +341,12 @@ function FeedRowContent({
 						className="overflow-hidden"
 					>
 						{row.pending ? (
-							<div className="px-4 md:px-5 py-4 border-t border-[rgba(28,58,41,0.06)] bg-white">
+							<div className="site-pending-breakdown px-4 py-4 border-t border-[rgba(28,58,41,0.06)]">
 								<p className="text-[13px] text-ink-action">{flowPresentation(row.status, row.originChainId).detail}</p>
 								{transactions.length > 0 && (
 									<div className="mt-4">
 										<div className="text-[10px] uppercase tracking-wider text-ink-label">Transactions</div>
-										<ol className="mt-2 grid gap-2 sm:grid-cols-2">
+										<ol className="mt-2 grid gap-x-6 sm:grid-cols-2">
 											{transactions.map((transaction, index) => (
 												<TransactionRow key={transaction.tx} index={index} label={transaction.label} chain={transaction.chain} tx={transaction.tx} />
 											))}
@@ -570,9 +570,9 @@ function LiveFeed({ onSelect, feed, setFeed, pageIndex, setPageIndex }: {
 	return (
 		<>
 			{loadError && <p role="alert" className="mb-3 text-[12.5px] text-red-700">{loadError}</p>}
-			<div ref={tableRef} className="site-table scroll-mt-6 border border-[rgba(28,58,41,0.1)] rounded-2xl overflow-hidden">
+			<div ref={tableRef} className="site-explorer-table site-table scroll-mt-6 border border-[rgba(28,58,41,0.1)] rounded-2xl overflow-hidden">
 			<div className="site-feed-toolbar"><span><Clock size={15} aria-hidden="true" />ENS renewal activity</span><small>Testnet</small></div>
-			{/* Desktop column headers, hidden on mobile where rows become cards */}
+			{/* Desktop column headers, hidden on mobile where rows become summary lists */}
 			<div className={`site-column-headings hidden lg:grid ${LIVE_FEED_COLUMNS} gap-4 px-5 py-3 bg-surface-table border-b border-[rgba(28,58,41,0.1)] text-[11px] uppercase tracking-wider text-ink-label`}>
 				<span>ENS name</span>
 				<span>Chain</span>
@@ -626,9 +626,9 @@ function TransactionRow({ index, label, chain, tx }: { index: number; label: str
 				target="_blank"
 				rel="noopener noreferrer"
 				aria-label={`View ${label.toLowerCase()} transaction on ${chain}`}
-				className="inset-panel inset-action flex min-w-0 items-center gap-2.5"
+				className="site-transaction-link flex min-w-0 items-center gap-3"
 			>
-				<span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-hover text-[10px] text-ink-secondary tabular-nums">{index + 1}</span>
+				<span className="inline-flex w-4 shrink-0 items-center justify-center text-[12px] text-ink-secondary tabular-nums">{index + 1}</span>
 				<span className="min-w-0 flex-1">
 					<span className="flex items-center justify-between gap-2 text-[12.5px] text-ink-primary">
 						<span>{label}</span>
@@ -683,7 +683,7 @@ function RenewalBreakdown({ event }: { event: ActivityEvent }) {
 		? (event.amountApplied * YEAR_SECONDS + event.seconds / 2n) / event.seconds
 		: 0n;
 	return (
-		<div className="mx-4 md:mx-5 my-3 rounded-xl bg-white p-4 md:p-5 grid gap-5 md:grid-cols-2">
+		<div className="site-renewal-breakdown grid gap-6 md:grid-cols-2">
 			<div className="min-w-0">
 				<div className="text-[10px] uppercase tracking-wider text-ink-label">
 					Amount
@@ -746,7 +746,7 @@ function RenewalBreakdown({ event }: { event: ActivityEvent }) {
 				<div className="text-[10px] uppercase tracking-wider text-ink-label">
 					Transactions
 				</div>
-				<ol className="mt-3 space-y-2">
+				<ol className="mt-3">
 					{event.steps.map((s, i) => (
 						<TransactionRow key={s.tx} index={i} label={stepLabel(s, bridged)} chain={s.chain} tx={s.tx} />
 					))}
@@ -774,7 +774,7 @@ function UnclaimedFlowCard({ label, flow, renewable, onRetry }: { label: string;
 		}
 	};
 	return (
-		<div className="inset-panel mt-5">
+		<div className="site-flow-notice mt-5">
 			<h4 className="text-[15px] text-ink-primary">Waiting to renew</h4>
 			<p className="mt-1.5 text-[13px] leading-relaxed text-ink-secondary">The USDC left {chain?.name ?? "the origin chain"} and is secured in a Circle message. This name cannot be renewed now. Namepass will retry when renewal is possible.</p>
 			<dl className="mt-3 space-y-1 text-[12px] text-ink-secondary">
@@ -795,7 +795,7 @@ function FailedCctpFlowCard({ flow }: { flow: PublicFlow }) {
 	const chain = chainById(safeInteger(flow.originChainId) ?? -1);
 	const originTxHash = flow.evidence?.originTxHash;
 	return (
-		<div className="mt-5 rounded-2xl bg-red-950/[0.025] p-4">
+		<div className="site-flow-notice site-flow-notice-error mt-5">
 			<h4 className="text-[15px] text-ink-primary">Renewal needs attention</h4>
 			<p className="mt-1.5 text-[13px] leading-relaxed text-ink-secondary">
 				The USDC left {chain?.name ?? "the origin chain"} through Circle, but the Ethereum renewal did not complete. This flow needs repair by Namepass. The funds are not waiting at the deposit address.
@@ -945,10 +945,11 @@ function NameDetail({
 				</h3>
 			</div>
 
-			{/* The two-panel model: what expires vs. what is permanent */}
-			<div className="mt-8 grid md:grid-cols-2 gap-4">
-				<div className="site-panel rounded-[1.4rem] bg-white shadow-[0_3px_10px_rgba(28,58,41,0.08)] p-5 flex flex-col">
-					<div className="flex items-center gap-2 text-[11px] uppercase tracking-section text-ink-label">
+			{/* Separate the expiring ENS name from its permanent deposit details. */}
+			<div className="site-name-overview">
+				<section className="site-name-summary" aria-label="Name overview">
+					<h4 className="site-detail-section-title">Overview</h4>
+					<div className="flex items-center gap-2 text-[12px] text-ink-label">
 						<Clock className="w-3.5 h-3.5" />
 						The ENS name · expires
 					</div>
@@ -964,7 +965,7 @@ function NameDetail({
 						</>
 					) : onchain.expiry === null ? (
 						<>
-							<div className="mt-3 text-[26px] md:text-[30px] text-ink-secondary tracking-tight leading-none">
+							<div className="mt-2 text-[20px] text-ink-secondary leading-7">
 								Not registered
 							</div>
 							<div className="mt-2 text-[13px] text-ink-secondary">
@@ -973,7 +974,7 @@ function NameDetail({
 						</>
 					) : (
 						<>
-							<div className="mt-3 text-[26px] md:text-[30px] text-ink-primary tracking-tight leading-none">
+							<div className="mt-2 text-[20px] text-ink-primary leading-7">
 								{fmtDate(expiry)}
 							</div>
 							<div className="mt-2 text-[13px] text-ink-secondary">
@@ -988,7 +989,7 @@ function NameDetail({
 					    All three matter to someone deciding whether to send, and the
 					    amount is the actionable part — see `graceMinimum`. */}
 					{onchain?.graceRemaining != null && (
-						<div className="mt-3 flex items-start gap-2 inset-panel">
+						<div className="site-flow-notice mt-3 flex items-start gap-2">
 							<Clock className="w-3.5 h-3.5 mt-[2px] shrink-0 text-ink-secondary" />
 							<p className="text-[12.5px] text-ink-secondary leading-relaxed">
 								<span className="text-ink-primary">
@@ -1018,7 +1019,7 @@ function NameDetail({
 					    sent here, so it's worth saying before someone sends any
 					    rather than explaining it afterwards next to a stuck balance. */}
 					{onchain && !onchain.renewable && (
-						<div className="mt-3 flex items-start gap-2 inset-panel">
+						<div className="site-flow-notice mt-3 flex items-start gap-2">
 							<Clock className="w-3.5 h-3.5 mt-[2px] shrink-0 text-ink-secondary" />
 							<p className="text-[12.5px] text-ink-secondary leading-relaxed">
 								ENS won't renew this name right now. The address still works —
@@ -1144,7 +1145,7 @@ function NameDetail({
 							</div>
 						)}
 					</div>
-				</div>
+				</section>
 
 				<PassCard
 					name={record.name}
@@ -1153,8 +1154,8 @@ function NameDetail({
 				/>
 			</div>
 
-			{/* Aggregates */}
-			<div className="mt-4 grid grid-cols-3 gap-px bg-[rgba(28,58,41,0.1)] rounded-2xl overflow-hidden">
+			{/* Summary values share a flat strip rather than separate cards. */}
+			<div className="site-name-metrics">
 				{[
 					/* "y" not " years" — at three-up on a phone the long form wraps and
 					   drops this value below the other two. Matches fmtDuration anyway. */
@@ -1167,11 +1168,11 @@ function NameDetail({
 				].map((s) => (
 					/* Labels wrap to two lines at narrow widths ("Renewals" doesn't), so
 					   the label absorbs the slack and the values stay on one line. */
-					<div key={s.k} className="bg-white px-3 md:px-4 py-4 flex flex-col">
+					<div key={s.k} className="site-name-metric">
 						<div className="flex-1 text-[10px] uppercase tracking-wider text-ink-label">
 							{s.k}
 						</div>
-							<span className="mt-1.5 block text-[19px] text-ink-primary tracking-tight tabular-nums whitespace-nowrap">
+							<span className="mt-1.5 block text-[20px] text-ink-primary tabular-nums break-words">
 								{s.value}
 							</span>
 					</div>
@@ -1191,7 +1192,7 @@ function NameDetail({
 					)}
 				</div>
 
-				<div className="site-table border border-[rgba(28,58,41,0.1)] rounded-2xl overflow-hidden">
+				<div className="site-explorer-table site-table border border-[rgba(28,58,41,0.1)] rounded-2xl overflow-hidden">
 					<div className={`site-column-headings hidden lg:grid ${NAME_ACTIVITY_COLUMNS} gap-4 px-5 py-3 bg-surface-table border-b border-[rgba(28,58,41,0.1)] text-[11px] uppercase tracking-wider text-ink-label`}>
 						<span>Date</span>
 						<span>Event</span>
@@ -1578,7 +1579,7 @@ export default function Explorer({ selected, onSelect, onActivated, onSupportedT
 				</div>
 				{requestError && <p role="alert" className="mt-3 text-[12.5px] text-red-700">{requestError}</p>}
 
-				<div className="site-panel mt-8 bg-white p-4 md:p-6">
+				<div className="site-explorer-content mt-8">
 					{record ? (
 						<NameDetail
 							record={record}

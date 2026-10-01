@@ -77,7 +77,12 @@ contain text with a slow, neutral background fade. The fade stops outside the vi
 a hidden tab and for reduced-motion preferences. No additional protocol graphics are present.
 Explorer, pricing, secondary pages and the integration CTA share the surface treatment. The
 Explorer section has a white canvas. Protocol cards are white with fine neutral borders. The activity table
-has a quiet toolbar and 14px column labels. The name-view heading and back icon share a
+has one frame, a quiet toolbar, 12px column labels and 14px row text. Explorer does not add a
+second enclosing panel. Name details use flat Overview and Deposit details columns with one
+divider, stacked below 900px. Full deposit addresses and subnames have separate copy controls;
+QR opens in an accessible shadcn Dialog. Metrics use a flat strip. Expanded renewal amounts
+and transactions use rows and rules without nested cards. Pending balances retain their
+existing states and actions; exceptional flows use a narrow notice rule. The name-view heading and back icon share a
 centered row. The pricing calculator groups name length, amount and discount controls in its
 left panel. Renewal time and the cost breakdown occupy the white right panel. The result uses
 a 32px time value and consistent 14px label/value rows with light dividers. The panels stack
@@ -118,7 +123,8 @@ visible. The public shell and portaled navigation controls override shadcn prima
 focus colors to green; monitoring retains its separate semantic palette.
 
 Use `surface-selected` for pricing selections and `surface-table` for Explorer headers.
-Use `inset-panel` for shaded information, address fields, renewal hints and transaction rows.
+Use `inset-panel` for shaded information and renewal hints. Explorer address fields and
+transaction evidence use flat rows.
 It owns the opaque `surface-inset` fill, 8px corners and 12px/16px padding. Add `inset-action`
 only when the whole panel is a button or link. Keep its fill steady on hover and press.
 Use `primary-action` for filled public actions. These controls share a fine border and inset
@@ -133,8 +139,8 @@ Keep error, warning, chart-series and network-brand colors distinct where they c
 Monitoring is a separately loaded, GitHub-authenticated page built with the existing shadcn
 components. Its snapshot and manual gas-read behavior are defined in [MONITORING.md](MONITORING.md).
 
-The deposit card shows separate copy targets for `<label>.namepass.eth` and the full deposit
-address. Its QR encodes the address. Static QR codes use one SVG path. Full address values wrap
+Deposit details show separate copy targets for `<label>.namepass.eth` and the full deposit
+address. The QR dialog encodes the address. Static QR codes use one SVG path. Full address values wrap
 at a readable font size on narrow screens; do not shrink them to fit one line. Public copy actions
 use `useCopyFeedback`: show success only after the clipboard write succeeds, report failures,
 keep icon geometry stable, and clear obsolete feedback timers.
@@ -146,7 +152,7 @@ The range has a 44px interaction area and exposes the actual USDC amount through
 Update renewal results in place during dragging. Public tooltip triggers support focus, touch
 toggle, outside dismissal and Escape, and link to their description with `aria-describedby`.
 
-The Explorer keeps its card in place and renders only the active view. The detail view fades and
+The Explorer keeps its content region in place and renders only the active view. The detail view fades and
 slides in over 400 ms; its ENS profile fields show inline loading skeletons. The parent retains the
 last feed response and page so Back restores them immediately and resumes polling.
 Pricing refreshes keep validated views mounted. Only the initial load and a retry after failed
