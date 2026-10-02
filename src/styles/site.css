@@ -972,22 +972,21 @@
   min-width: 0;
   padding: 12px;
   text-align: left;
-  border: 1px solid var(--site-line);
+}
+.site-calculator-option {
+  border: 1px solid rgba(28, 58, 41, 0.07);
   border-radius: 8px;
-  transition:
-    border-color 150ms,
-    background-color 150ms,
-    box-shadow 150ms;
+  transition: border-color 150ms, background-color 150ms;
 }
-button.site-length-option:not([aria-pressed="true"]):hover {
-  border-color: #c4c4c4;
+button.site-calculator-option:not([aria-pressed="true"]):hover {
+  border-color: rgba(28, 58, 41, 0.14);
 }
-.site-length-option[aria-pressed="true"] {
-  border-color: var(--site-accent);
+.site-calculator-option[aria-pressed="true"] {
+  border-color: transparent;
   background: var(--site-selected);
-  box-shadow: 0 0 0 1px var(--site-accent);
+  box-shadow: none;
 }
-.site-length-option:focus-visible {
+.site-calculator-option:focus-visible {
   outline: 2px solid var(--site-accent);
   outline-offset: 3px;
 }

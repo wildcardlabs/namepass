@@ -94,11 +94,15 @@ left panel. Renewal time and the cost breakdown occupy the white right panel. Th
 a 32px time value and consistent 14px label/value rows with light dividers. The panels stack
 below 1024px. The loading state uses the same layout.
 Existing controls and exact math are retained.
-Calculator option cards change only their border on hover; selected options keep their fill.
+Name-length and discount-year options share the same faint border and pale selected fill.
+Selected options have a transparent border without an extra outline or shadow. Hover changes
+only the faint border; keyboard focus retains its visible ring.
 The next-tier suggestion sits to the right of the payment amount, with a tooltip and shortcut.
 All docs tabs use the same 1280px outer frame, header and tab bar. Guide pages retain
 their sidebar, sticky table of contents and readable article width. Horizontal overflow is
 clipped without creating an ancestor scroll container, so navigation sticks to the viewport.
+The table of contents sticky offset matches its initial position, including the wider-screen
+article inset, so it does not shift upward when scrolling starts.
 All routes, including docs and monitoring, render the shared footer with working product and
 legal navigation. The live testnet renewal strip is mounted once in the shared app shell,
 so route changes preserve its data, polling subscription and marquee position.
@@ -123,7 +127,14 @@ addresses retain monospace.
 Mobile calculator results use 28px/36px type below 640px to keep long renewal durations readable.
 Docs titles use 32px/40px below 761px. API tables keep a 480px minimum width and scroll inside
 their container. Endpoint paths stay on one line, with the copy action wrapping below on narrow screens. The documentation flow labels `alice.eth` and `alice.namepass.eth`
-share one font family, size and weight. No premium template source or assets are included.
+share one font family, size and weight. Docs header labels share the public navigation’s
+14px Geist type and 20px line height; mobile tabs use 13px. The Docs label centers beside the
+wordmark. The header supplies a full-width white background behind both the navigation
+and tab rows; tab content keeps the shared page inset. Previous/next cards use 15px page titles and 12px direction labels. The docs flow
+illustration renders the Base logo at 16px, centered in its unchanged network node. API
+example endpoint titles use regular-weight 15px/22px (14px on mobile), method badges use
+regular-weight 11px, and the
+endpoint selector stacks into one column below 640px. No premium template source or assets are included.
 Reuse existing visual primitives, tooltips and chain labels. Keep keyboard focus indicators
 visible. The public shell and portaled navigation controls override shadcn primary, accent and
 focus colors to green; monitoring retains its separate semantic palette.

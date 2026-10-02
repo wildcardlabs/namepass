@@ -117,7 +117,7 @@ function SimulatorSkeleton() {
         <div className="site-calculator-label">Name length</div>
         <div className="site-length-options mt-3">
           {LENGTHS.map((l) => (
-            <div key={l.len} className="site-length-option">
+            <div key={l.len} className="site-calculator-option site-length-option">
               <span className="site-length-label">{l.label}</span>
               <span className="site-length-example">{l.example}</span>
               <Bar className="h-3 w-16" />
@@ -211,7 +211,7 @@ function SimulatorBody() {
               key={l.len}
               onClick={() => setLen(l.len)}
               aria-pressed={l.len === len}
-              className="site-length-option"
+              className="site-calculator-option site-length-option"
             >
               <span className="site-length-label">{l.label}</span>
               <span className="site-length-example">{l.example}</span>
@@ -327,11 +327,7 @@ function SimulatorBody() {
                 key={m.years}
                 onClick={() => setBudget(m.send)}
                 aria-pressed={on}
-                className={`relative rounded-[8px] border px-1.5 py-4 text-center transition-colors ${
-                  on
-                    ? "border-transparent bg-surface-selected"
-                    : "border-[rgba(28,58,41,0.12)] hover:border-[rgba(28,58,41,0.3)]"
-                }`}
+                className="site-calculator-option relative px-1.5 py-4 text-center"
               >
                 {/* Exact, not rounded to a whole percent. "−13%" for a
 											    12.5% tier flatters the discount, and this sits two
@@ -353,7 +349,7 @@ function SimulatorBody() {
                     className={`absolute -top-[9px] right-1 inline-flex h-[18px] items-center justify-center rounded-[4px] border px-1.5 pb-px text-[10px] leading-none tabular-nums transition-colors ${
                       on
                         ? "border-transparent bg-savings text-ink-inverse"
-                        : "border-[rgba(28,58,41,0.12)] bg-white text-ink-secondary"
+                        : "border-[rgba(28,58,41,0.07)] bg-white text-ink-secondary"
                     }`}
                   >
                     −{m.off}

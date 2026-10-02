@@ -50,10 +50,13 @@
   border-radius: 4px;
 }
 .docs-header {
+  font-family: var(--site-font);
+  font-size: var(--docs-control-size);
+  line-height: 20px;
   position: sticky;
   top: var(--site-strip-height);
   z-index: 30;
-  background: #fbfcfaed;
+  background: white;
   backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--docs-line);
 }
@@ -84,8 +87,10 @@
   background: #d5dbe3;
 }
 .brand-docs {
-  font-size: var(--docs-small-size);
-  line-height: 14px;
+  display: flex;
+  align-items: center;
+  font-size: var(--docs-control-size);
+  line-height: 20px;
   font-weight: 500;
   color: #4e7263;
 }
@@ -134,7 +139,9 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: var(--docs-small-size);
+  height: 36px;
+  font-size: var(--docs-control-size);
+  line-height: 20px;
   border: 1px solid #dce2e7;
   border-radius: 6px;
   padding: 8px 10px;
@@ -317,11 +324,12 @@
   border-radius: 50%;
 }
 .docs-reading-layout {
+  --docs-reading-top: var(--docs-space-10);
   display: grid;
   grid-template-columns: minmax(0, 780px) 174px;
   gap: 46px;
   justify-content: center;
-  padding: var(--docs-space-10) var(--docs-space-12) 64px;
+  padding: var(--docs-reading-top) var(--docs-space-12) 64px;
   min-width: 0;
 }
 .docs-article {
@@ -781,8 +789,9 @@
   margin-bottom: 5px;
 }
 .docs-example-section > p {
-  font-size: var(--docs-control-size);
-  color: #89949f;
+  font-size: 15px;
+  line-height: 24px;
+  color: var(--site-muted);
   margin-bottom: 21px;
 }
 .docs-example {
@@ -802,8 +811,10 @@
   align-items: center;
   gap: 9px;
   padding: 11px;
-  color: #6c7b8b;
-  font-size: var(--docs-small-size);
+  color: var(--site-muted);
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 400;
   text-align: left;
   border-radius: 6px;
   border: 1px solid transparent;
@@ -948,7 +959,7 @@
 }
 .docs-toc > div {
   position: sticky;
-  top: calc(var(--site-strip-height) + 156px);
+  top: calc(var(--site-strip-height) + 144px + var(--docs-reading-top));
 }
 .docs-toc h3 {
   display: flex;
@@ -1129,13 +1140,15 @@
 }
 .docs-page-neighbor span {
   display: block;
-  font-size: var(--docs-label-size);
-  color: #728975;
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--site-muted);
   margin-bottom: 4px;
 }
 .docs-page-neighbor strong {
-  font-size: var(--docs-small-size);
-  color: #47775b;
+  font-size: 15px;
+  line-height: 22px;
+  color: var(--site-ink);
   font-weight: 500;
 }
 .docs-page-neighbor.next {
@@ -1332,6 +1345,7 @@
 }
 @media (min-width: 1550px) {
   .docs-reading-layout {
+    --docs-reading-top: 50px;
     padding-top: 50px;
     gap: 60px;
   }
@@ -1403,7 +1417,7 @@
     width: 96px;
   }
   .brand-docs {
-    font-size: var(--docs-small-size);
+    font-size: var(--docs-control-size);
   }
   .docs-header-inner > .docs-search-trigger {
     flex: 0 0 30px;
@@ -1426,11 +1440,11 @@
   }
   .docs-tab-bar {
     height: 43px;
-    gap: 24px;
+    gap: 16px;
     padding: 0 20px;
   }
   .docs-tab {
-    font-size: var(--docs-small-size);
+    font-size: 13px;
   }
   .docs-contract-version {
     display: none;
@@ -1516,7 +1530,7 @@
     gap: 6px;
   }
   .docs-example-tabs [role="tab"] {
-    font-size: var(--docs-label-size);
+    font-size: 14px;
     padding: 9px 7px;
     gap: 6px;
   }
@@ -1598,7 +1612,7 @@
   transition: color 150ms;
 }
 .docs-tab-bar {
-  background: var(--site-canvas);
+  background: transparent;
 }
 .docs-example-panel {
   box-shadow: 0 4px 14px #20352910;
@@ -1787,5 +1801,31 @@
     flex: 1 1 calc(100% - 55px);
     white-space: nowrap;
     overflow: auto;
+  }
+}
+
+/* Header labels share the public navigation type and vertical center. */
+.docs-header :where(a, button, kbd) {
+  font-family: var(--site-font);
+}
+.docs-header :where(.docs-search-trigger, .docs-app-link, .docs-tab) {
+  line-height: 20px;
+}
+
+.docs-example-tabs .docs-method {
+  font-size: 11px;
+  line-height: 16px;
+  font-weight: 400;
+}
+.docs-example-tabs [role="tab"] > span:not(.docs-method) {
+  flex: 1;
+  min-width: 0;
+}
+.docs-example-tabs [role="tab"] > svg {
+  flex-shrink: 0;
+}
+@media (max-width: 639px) {
+  .docs-example-tabs {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
