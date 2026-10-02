@@ -94,13 +94,16 @@ The home cover uses Flow's saved 27-by-8 decorative cell grid: 56.815px cells, a
 border, 40% opacity and a radial mask from the top. It has no pointer interaction.
 Landing-page section rules and the template's T ornaments are omitted. Spacing and the
 full-width off-white footer band separate major areas. The shared `--site-subtle`
-token is `#F5F5F7`; table headers, inset information, docs resource and code surfaces,
-and the integration CTA use it. Card borders, row separators and navigation boundaries
-remain. Decoration is hidden from assistive technology and cannot intercept clicks.
+token is `#F5F5F7`; neutral table headers, inset information, docs resource and code surfaces
+use it. The integration CTA retains its pale-green `#F7FAF8` background, including the
+Vanta canvas and solid fallback. The public header's bottom rule spans the viewport;
+navigation widths and logo positions stay unchanged. Card borders, row separators and
+navigation boundaries remain. Decoration is hidden from assistive technology and cannot intercept clicks.
 Content and payment behavior are unchanged.
 The Explorer section has a white canvas. Protocol cards are white with fine neutral borders. The activity table
 has one frame, a quiet toolbar, 12px column labels and 14px row text. The column-title
-row uses the static off-white surface. The toolbar stays white and shares the
+row uses a shifting white and pale-green gradient on a 14-second alternating cycle.
+Reduced motion keeps it stationary. The toolbar stays white and shares the
 column row’s 16px left inset. Explorer does not add a
 second enclosing panel. Individual name details retain two bordered shadcn Card panels for
 expiry and profile, and the renewal funding destination, stacked below 900px. The selected name
