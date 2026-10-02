@@ -103,21 +103,6 @@
   color: var(--site-card-ink);
   font-weight: 500;
 }
-/* Flow reference: original 45deg gutter stripes, 1px strokes and 12px repeat. */
-.public-ui:has(> .site-page-frame),
-.site-app > .public-ui:not(.site-renewal-strip),
-.docs-shell,
-.docs-shell > .docs-header {
-  background-image: repeating-linear-gradient(
-    45deg,
-    color-mix(in oklab, var(--site-line) 40%, transparent) 0,
-    color-mix(in oklab, var(--site-line) 40%, transparent) 1px,
-    transparent 0,
-    transparent 50%
-  );
-  background-size: 12px 12px;
-  background-attachment: fixed;
-}
 .site-section-divider {
   position: absolute;
   inset: 0 0 auto;
@@ -443,7 +428,7 @@
   width: calc(100% - var(--site-frame-inset));
   max-width: 1280px;
   margin-inline: auto;
-  border-inline: 1px solid var(--site-line);
+  border-inline: 1px solid transparent;
   background: var(--site-canvas);
 }
 .public-ui .site-section {
@@ -594,7 +579,7 @@
   margin-inline: auto;
   background: white;
   border: 0;
-  border-inline: 1px solid var(--site-line);
+  border-inline: 1px solid transparent;
   padding: 40px 40px 28px;
 }
 .public-ui .site-footer > div:not(.site-section-divider) {

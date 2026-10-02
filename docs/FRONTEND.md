@@ -84,11 +84,12 @@ The rings do not move card content. They use the same visibility pause and show 
 stationary faint ring with reduced motion.
 The four bento cards have unnumbered category labels.
 Explorer, pricing, secondary pages and the integration CTA share the surface treatment. The
-outer gutters use the supplied Shadcn Studio Flow template's 45-degree stripe CSS, with
-1px strokes at 40% border opacity and a fixed 12px repeat. White content frames and the
-shared footer keep the existing 1280px maximum width. Flow's `px-4 sm:px-6 lg:px-8`
-wrapper is mirrored through 16px phone, 24px tablet and 32px desktop outer gutters.
-The striped side strips remain visible on mobile; inner mobile section padding is 16px.
+outer gutters have a plain white background, without diagonal stripes or visible frame
+side borders. Transparent 1px borders preserve existing widths and logo alignment.
+Content and the shared footer keep the existing 1280px maximum width. The responsive
+outer gutters remain 16px on phones, 24px on tablets and 32px on desktop. Inner mobile
+section padding is 16px. The same plain background applies to documentation and
+secondary pages.
 The home cover uses Flow's saved 27-by-8 decorative cell grid: 56.815px cells, a 0.5px
 border, 40% opacity and a radial mask from the top. It has no pointer interaction.
 `SectionDivider` renders a plain 1px rule at section boundaries and the shared footer,
