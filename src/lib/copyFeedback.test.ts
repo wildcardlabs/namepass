@@ -23,7 +23,9 @@ test.each(["deposit", "contracts"])("%s copy feedback only confirms a successful
 			? createElement(PassCard, { name: "vitalik.eth", address, onSupportedTokens: () => {} })
 			: createElement(SupportedTokens, { onBack: () => {} })));
 		const buttons = [...container.querySelectorAll<HTMLButtonElement>('button[aria-label^="Copy"]')];
-		const target = buttons[0];
+		const target = surface === "deposit"
+			? container.querySelector<HTMLButtonElement>('[aria-label="Copy vitalik.namepass.eth"]')!
+			: buttons[0];
 		const originalLabel = target.getAttribute("aria-label");
 		const originalText = target.textContent;
 		await act(async () => target.click());
@@ -36,7 +38,7 @@ test.each(["deposit", "contracts"])("%s copy feedback only confirms a successful
 		expect(target.textContent).toBe(originalText);
 		expect(writeText).toHaveBeenLastCalledWith(surface === "deposit" ? "vitalik.namepass.eth" : expect.stringMatching(/^0x[a-fA-F0-9]{40}$/));
 		await act(async () => vi.advanceTimersByTime(1000));
-		await act(async () => buttons[1].click());
+		await act(async () => buttons.find(button => button !== target)!.click());
 		await act(async () => vi.advanceTimersByTime(600));
 		expect(container.querySelector('[role="status"]')?.textContent).toBe("Copied to clipboard");
 		await act(async () => vi.advanceTimersByTime(1000));

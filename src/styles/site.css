@@ -1118,10 +1118,19 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin: -6px 0 14px;
+  margin: 0 0 8px;
 }
 .site-pass-header .site-detail-section-title {
   margin: 0;
+}
+.site-deposit-instruction {
+  margin: 0 0 20px;
+  color: var(--site-muted);
+  font-size: 13px;
+  line-height: 21px;
+}
+.site-deposit-instruction span {
+  color: var(--site-ink);
 }
 .site-deposit-fields {
   display: grid;
@@ -1148,11 +1157,17 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   overflow-wrap: anywhere;
   padding-top: 7px;
 }
+.site-deposit-identity dd {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+}
 .site-deposit-identity dd > span {
-  font-size: 22px;
-  line-height: 30px;
+  flex: 0 1 auto;
+  font-size: 16px;
+  line-height: 24px;
   font-weight: 500;
-  padding-top: 3px;
+  padding-top: 0;
 }
 .site-deposit-destination {
   padding: 16px;
@@ -1207,15 +1222,6 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
 .site-data-copy svg {
   width: 15px;
   height: 15px;
-}
-.site-deposit-note {
-  margin-top: 14px;
-  color: var(--site-muted);
-  font-size: 12px;
-  line-height: 20px;
-}
-.site-deposit-note span {
-  color: var(--site-accent);
 }
 .site-deposit-networks {
   margin-top: 20px;
@@ -1417,11 +1423,6 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   .site-name-summary,
   .site-deposit-details {
     padding: 20px;
-  }
-  .site-deposit-identity dd > span {
-    font-size: 18px;
-    line-height: 26px;
-    padding-top: 5px;
   }
   .site-deposit-destination {
     padding: 12px;

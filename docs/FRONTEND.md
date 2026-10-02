@@ -83,10 +83,11 @@ row uses a balanced light green-to-white gradient that moves sideways over 14 se
 Reduced-motion preferences keep it still. The toolbar stays white and shares the
 column row’s 16px left inset. Explorer does not add a
 second enclosing panel. Individual name details retain two bordered shadcn Card panels for
-the ENS registration and Namepass funding destination, stacked below 900px. The selected name
-is the main heading; the feed introduction is shown only in the feed. The Namepass subname is
-prominent above the full deposit address, with visible Copy address and Show QR actions.
-Subnames have a separate copy control; QR opens in an accessible shadcn Dialog. Metrics use a flat strip. Expanded renewal amounts
+registration and expiry, and the renewal funding destination, stacked below 900px. The selected name
+is the main heading; the feed introduction is shown only in the feed. The funding panel is titled
+Send USDC to renew, identifies the name being renewed and leads with the full Universal deposit
+address and visible Copy address and Show QR actions. The readable deposit name follows as a
+secondary destination, with its copy icon immediately beside the value. QR opens in an accessible shadcn Dialog. Metrics use a flat strip. Expanded renewal amounts
 and transactions use rows and rules without nested cards. Pending balances retain their
 existing states and actions; exceptional flows use a narrow notice rule. The name-view heading and back icon share a
 centered row. The pricing calculator groups name length, amount and discount controls in its

@@ -948,11 +948,11 @@ function NameDetail({
 
 			{/* Separate the expiring ENS name from its permanent deposit details. */}
 			<div className="site-name-overview">
-				<Card className="site-name-summary" role="region" aria-label="Name overview">
-					<h4 className="site-detail-section-title">ENS name</h4>
+				<Card className="site-name-summary" role="region" aria-label="Registration and expiry">
+					<h4 className="site-detail-section-title">Registration &amp; expiry</h4>
 					<div className="flex items-center gap-2 text-[12px] text-ink-label">
 						<Clock className="w-3.5 h-3.5" />
-						The ENS name · expires
+						Expiry date
 					</div>
 
 					{/* Three states, and the middle two must not look alike: not read
