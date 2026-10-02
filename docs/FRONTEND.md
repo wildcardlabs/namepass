@@ -78,7 +78,11 @@ contain text with a slow, neutral background fade. The fade stops outside the vi
 a hidden tab and for reduced-motion preferences. The renewal card also uses the supplied
 Pulse Core heartbeat illustration: its original heart SVG, circular core, four staggered
 rings and ECG trace. It sits at the top right as a clipped 280px forest-green background
-at 14% opacity (240px and 10% on mobile). It does not move the card's content.
+(240px on mobile). The radiating rings are emphasized at 45% group opacity
+(35% on mobile), while their original animation peaks at 55% opacity.
+The heart is quieter at 10% opacity (8% on mobile), with a faint border on its circle.
+The ECG remains a subtle accent at 12% opacity (10% on mobile). The heart and ECG remain fully visible;
+only the surrounding circles can crop at the edges. It does not move the card's content.
 Its animations use the same visibility pause and become static with reduced motion.
 The four bento cards have unnumbered category labels.
 Explorer, pricing, secondary pages and the integration CTA share the surface treatment. The
