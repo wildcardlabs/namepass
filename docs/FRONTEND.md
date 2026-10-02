@@ -116,8 +116,8 @@ The pill reads “Used by 685+ users” (user-supplied copy, not an API-derived 
 It has the Built for ENS v2 badge's faint green border and white-to-pale-green
 background, without an outer shadow. Text is 13px, with medium-weight green emphasis.
 The marquee uses existing local ENS and USDC marks and the supported networks from
-`TOKEN_CHAINS`. The label reads “ENS · USDC · Supported testnets” while testnet is
-active, so ENS and USDC are distinct from the network category. It retains the supplied
+`TOKEN_CHAINS`. The statement “Built on trusted infrastructure” encompasses ENS,
+USDC and the networks. It retains the supplied
 four repeated tracks, 64px gap and 60px white edge fades, with slower 40-second
 reverse motion and a narrower 768px maximum width.
 Marks are monochrome with consistent labels. Hover pauses it and reduced motion

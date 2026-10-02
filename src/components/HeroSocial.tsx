@@ -92,11 +92,7 @@ export function HeroCompanyCarousel() {
           : "ENS, USDC and supported networks"
       }
     >
-      <p className="hero-ecosystem-label">
-        {IS_TESTNET
-          ? "ENS · USDC · Supported testnets"
-          : "ENS · USDC · Supported networks"}
-      </p>
+      <p className="hero-ecosystem-label">Built on trusted infrastructure</p>
       <div className="hero-company-fade hero-company-fade-left pointer-events-none absolute inset-y-0 left-0 z-1 w-15" />
       <div className="hero-company-fade hero-company-fade-right pointer-events-none absolute inset-y-0 right-0 z-1 w-15" />
       <div className="hero-company-marquee group flex gap-(--marquee-gap) overflow-hidden p-3 flex-row *:items-center">
