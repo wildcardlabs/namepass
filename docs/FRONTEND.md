@@ -63,7 +63,7 @@ on mobile; the action remains inside the popup. The footer also lists
 these destinations and the legal pages. Public activity labels identify the testnet deployment.
 
 The public pages share `Navbar` and the `public-ui` theme in `src/styles/site.css`.
-The theme uses a near-white canvas, neutral text, green actions, fine framing lines,
+The theme uses a white (`#FFFFFF`) canvas and cards, neutral text, green actions,
 6px control corners and 12px panel corners. Protocol and docs resource cards use 16px corners.
 Public action buttons match the existing docs buttons: 38px tall with 13px horizontal padding,
 14px/20px text and 14px icons. Header actions are 36px tall with 12px padding and 13px icons.
@@ -92,13 +92,15 @@ section padding is 16px. The same plain background applies to documentation and
 secondary pages.
 The home cover uses Flow's saved 27-by-8 decorative cell grid: 56.815px cells, a 0.5px
 border, 40% opacity and a radial mask from the top. It has no pointer interaction.
-`SectionDivider` renders a plain 1px rule at section boundaries and the shared footer,
-including docs. The template's T ornaments are omitted. Decoration is hidden from assistive
-technology and cannot intercept clicks. Content and payment behavior are unchanged.
+Landing-page section rules and the template's T ornaments are omitted. Spacing and the
+full-width off-white footer band separate major areas. The shared `--site-subtle`
+token is `#F5F5F7`; table headers, inset information, docs resource and code surfaces,
+and the integration CTA use it. Card borders, row separators and navigation boundaries
+remain. Decoration is hidden from assistive technology and cannot intercept clicks.
+Content and payment behavior are unchanged.
 The Explorer section has a white canvas. Protocol cards are white with fine neutral borders. The activity table
-has one frame, a quiet toolbar, 12px column labels and 14px row text. Only the column-title
-row uses a balanced light green-to-white gradient that moves sideways over 14 seconds.
-Reduced-motion preferences keep it still. The toolbar stays white and shares the
+has one frame, a quiet toolbar, 12px column labels and 14px row text. The column-title
+row uses the static off-white surface. The toolbar stays white and shares the
 column row’s 16px left inset. Explorer does not add a
 second enclosing panel. Individual name details retain two bordered shadcn Card panels for
 expiry and profile, and the renewal funding destination, stacked below 900px. The selected name
