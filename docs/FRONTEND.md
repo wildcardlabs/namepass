@@ -130,6 +130,8 @@ article inset, so it does not shift upward when scrolling starts.
 All routes, including docs and monitoring, render the shared footer with working product and
 legal navigation. The live testnet renewal strip is mounted once in the shared app shell,
 so route changes preserve its data, polling subscription and marquee position.
+Its solid muted forest background is `#2B4034`. ENS names use `#EDF3EF` at weight
+500, renewal details use `#C3D1C8` at weight 400, and separators use `#809889`.
 The renewal strip sticks above the public and docs headers. Headers, docs navigation and
 anchor offsets account for its 32px mobile and 36px desktop height. Docs and public logos
 share exact positioning and dimensions, including the 64px header height on mobile.

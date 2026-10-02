@@ -38,8 +38,10 @@ const NOTICES = [
 	"Public activity needs the testnet backend",
 ];
 
+type StripItem = { name?: string; description: string };
+
 export default function TestnetBanner() {
-	const [renewals, setRenewals] = useState<string[] | null>(null);
+	const [renewals, setRenewals] = useState<StripItem[] | null>(null);
 	const trackRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -56,7 +58,10 @@ export default function TestnetBanner() {
 					.filter((it) => it.renewal?.durationSeconds)
 					.map((it) => {
 						const seconds = BigInt(it.renewal.durationSeconds.split(".")[0] || "0");
-						return `${it.name.displayName} extended by ${fmtDurationPrecise(seconds)}`;
+						return {
+							name: it.name.displayName,
+							description: `extended by ${fmtDurationPrecise(seconds)}`,
+						};
 					});
 				setRenewals(lines.length ? lines : null);
 			} catch {
@@ -94,7 +99,9 @@ export default function TestnetBanner() {
 	if (!IS_TESTNET) return null;
 
 	const live = Boolean(renewals?.length);
-	const items = live ? (renewals as string[]) : NOTICES;
+	const items: StripItem[] = renewals?.length
+		? renewals
+		: NOTICES.map((description) => ({ description }));
 
 	/* Rendered twice; the track translates by exactly -50% so the second copy
 	   lands where the first began. */
@@ -102,7 +109,7 @@ export default function TestnetBanner() {
 
 	return (
 		<div
-			className="w-full bg-[#1c3a29f2] text-ink-inverse overflow-hidden select-none"
+			className="site-strip-content w-full overflow-hidden select-none"
 			role="status"
 			aria-label={
 				live
@@ -112,11 +119,11 @@ export default function TestnetBanner() {
 		>
 			<div className="flex items-center gap-2 h-8 md:h-9">
 				{/* Label: a live pulse when showing renewals, the flask otherwise. */}
-				<div className="flex items-center gap-1.5 shrink-0 pl-4 md:pl-6 text-[11px] uppercase tracking-wider text-ink-inverse">
+				<div className="site-strip-label flex items-center gap-1.5 shrink-0 pl-4 md:pl-6 text-[11px] uppercase tracking-wider">
 					{live ? (
 						<span className="relative flex h-1.5 w-1.5">
-							<span className="absolute inline-flex h-full w-full rounded-full bg-white/70 motion-safe:animate-ping" />
-							<span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-white" />
+							<span className="site-strip-pulse absolute inline-flex h-full w-full rounded-full motion-safe:animate-ping" />
+							<span className="site-strip-dot relative inline-flex h-1.5 w-1.5 rounded-full" />
 						</span>
 					) : (
 						<FlaskConical className="w-3.5 h-3.5" />
@@ -137,13 +144,14 @@ export default function TestnetBanner() {
 					aria-hidden="true"
 				>
 					<div ref={trackRef} className="marquee-track flex items-center whitespace-nowrap">
-						{track.map((text, i) => (
+						{track.map((item, i) => (
 							<span
 								key={i}
-								className="flex items-center text-[11.5px] md:text-[12px] text-ink-inverse-secondary"
+								className="flex items-center text-[11.5px] md:text-[12px]"
 							>
-								{text}
-								<span className="mx-4 md:mx-6 text-white/30">·</span>
+								{item.name && <span className="site-strip-name">{item.name}</span>}
+								<span>{item.description}</span>
+								<span className="site-strip-separator mx-4 md:mx-6">·</span>
 							</span>
 						))}
 					</div>
