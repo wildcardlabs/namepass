@@ -1,7 +1,9 @@
 /* Shared public design tokens; all application surfaces use Geist. */
 :root {
   --site-font: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
-  --site-ink: #171717;
+  --site-ink: #303030;
+  --site-card-ink: #3f3f3f;
+  --site-body-ink: #666666;
   --site-muted: #737373;
   --site-line: #e5e5e5;
   --site-accent: #297358;
@@ -50,7 +52,7 @@
   --color-control: var(--site-action);
   --color-control-hover: var(--site-action-hover);
   --color-ink-primary: var(--site-ink);
-  --color-ink-secondary: var(--site-muted);
+  --color-ink-secondary: var(--site-body-ink);
   --color-ink-label: var(--site-muted);
   --color-ink-action: var(--site-accent);
   --color-ink-link: var(--site-accent);
@@ -59,9 +61,17 @@
   font-family: var(--site-font);
   font-size: var(--site-body-size);
   font-weight: 400;
+  color: var(--site-body-ink);
   line-height: 1.5;
   letter-spacing: normal;
   background: var(--site-canvas);
+}
+.public-ui :where(h1, h2) {
+  color: var(--site-ink);
+}
+.public-ui :where(h3, h4) {
+  color: var(--site-card-ink);
+  font-weight: 500;
 }
 .site-header {
   width: 100%;
@@ -399,7 +409,8 @@
 }
 .public-ui .site-section h3 {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 500;
+  color: var(--site-card-ink);
   line-height: 32px;
   letter-spacing: normal;
 }
@@ -488,7 +499,7 @@
   letter-spacing: -0.8px;
 }
 .public-ui .site-cta p {
-  color: var(--site-muted);
+  color: var(--site-body-ink);
   font-size: 14px;
   line-height: 22px;
 }
@@ -859,6 +870,7 @@
 }
 
 .public-ui .site-name-heading .site-name-title {
+  color: var(--site-ink);
   margin: 0;
   font-size: 36px;
   line-height: 44px;
@@ -1110,8 +1122,8 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   margin: 0 0 20px;
   font-size: 16px;
   line-height: 24px;
-  font-weight: 600;
-  color: var(--site-ink);
+  font-weight: 500;
+  color: var(--site-card-ink);
 }
 .site-pass-header {
   display: flex;
@@ -1125,7 +1137,7 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
 }
 .site-deposit-instruction {
   margin: 0 0 20px;
-  color: var(--site-muted);
+  color: var(--site-body-ink);
   font-size: 13px;
   line-height: 21px;
 }

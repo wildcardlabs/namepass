@@ -118,6 +118,10 @@ Legal sections use fine dividers, 32px/40px titles (28px/36px on mobile),
 18px/26px section headings and 15px/24px paragraphs.
 
 All application surfaces use self-hosted Geist Variable from `@fontsource-variable/geist`.
+The public site and docs share softer neutral text roles: `#303030` for major headings and
+key values, `#3f3f3f` at weight 500 for card titles, `#666666` at weight 400 for body copy,
+and `#737373` for supporting labels. Major headings retain weight 600. White surfaces and
+green actions remain unchanged.
 Public section descriptions use 18px/28px at weight 400. Docs prose uses 16px/26px. The
 integration CTA paragraph uses 14px/22px. Footer link rows use a compact 4px gap. Controls use 14px/500,
 and card headings use 24px/32px at weight 600 with normal tracking. Docs resource cards use
@@ -125,7 +129,7 @@ and card headings use 24px/32px at weight 600 with normal tracking. Docs resourc
 use 14–14.5px/24px on desktop, 15px/24px on tablet and 14px/22px on mobile. Mobile card
 headings use 20px/28px, below the section title and subtitle scale; the desktop alias paragraph
 fits three lines. Body and table text remain 16px
-and 14px where density matters. Text uses neutral #171717 and #737373, with green action roles. Code and contract
+and 14px where density matters. Text uses the shared neutral roles above, with green action roles. Code and contract
 addresses retain monospace.
 Mobile calculator results use 28px/36px type below 640px to keep long renewal durations readable.
 Docs titles use 32px/40px below 761px. API tables keep a 480px minimum width and scroll inside
