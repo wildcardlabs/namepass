@@ -1,5 +1,5 @@
 import { type CSSProperties, useEffect, useId, useMemo, useState } from "react";
-import { BadgePercent, TrendingUp } from "lucide-react";
+import { ArrowRight, BadgePercent } from "lucide-react";
 import {
   ceilToCent,
   nextTierHint,
@@ -250,28 +250,29 @@ function SimulatorBody() {
                 {fmtUsdc(budget)}
               </button>
             )}
+            <div className="mt-1.5 text-[12px] text-ink-secondary">
+              Tap or click the amount to type your own
+            </div>
           </div>
           {hint && (
-            <div className="site-amount-suggestion">
-              <button
-                type="button"
-                className="site-amount-hint"
-                onClick={() => setBudget(ceilToCent(hint.payable + ALLOWANCE))}
-                aria-describedby={hintDescriptionId}
-              >
-                <TrendingUp aria-hidden="true" size={16} />
+            <button
+              type="button"
+              className="site-amount-suggestion"
+              onClick={() => setBudget(ceilToCent(hint.payable + ALLOWANCE))}
+              aria-describedby={hintDescriptionId}
+            >
+              <span className="site-amount-hint">
                 <span>Add {fmtUsdc(hint.delta)}</span>
-              </button>
-              <p id={hintDescriptionId} className="site-amount-benefit">
-                Get {Math.round(Number(hint.gain) / 2629800)} more months
-                <span>{hint.years}-year rate · {hint.off} off</span>
-              </p>
-            </div>
+                <ArrowRight aria-hidden="true" size={14} />
+                <span className="site-amount-gain">
+                  {Math.round(Number(hint.gain) / 2629800)} more months
+                </span>
+              </span>
+              <span id={hintDescriptionId} className="site-amount-benefit">
+                {hint.years}-year rate · {hint.off} off
+              </span>
+            </button>
           )}
-        </div>
-
-        <div className="mt-1.5 text-[12px] text-ink-secondary">
-          Tap or click the amount to type your own
         </div>
 
         <input

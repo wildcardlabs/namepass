@@ -136,10 +136,11 @@ Name-length options show only character count and annual price; example ENS name
 from both loaded options and loading placeholders.
 Selected options have a transparent border without an extra outline or shadow. Hover changes
 only the faint border; keyboard focus retains its visible ring.
-The next-tier suggestion sits to the right of the payment amount when space permits and wraps
-below it on small screens. Its extra renewal time and discount rate are always visible, without
-hover or a tooltip. The Add amount button has a 44px touch target and applies the suggestion
-in one tap; its visible explanation is also associated through `aria-describedby`.
+The next-tier suggestion is one two-line button: Add amount → extra renewal months,
+with the next rate and discount below. A fine vertical rule separates it from the payment
+amount on wider screens. Below 480px it sits on its own row without the rule. The full
+suggestion has a 44px touch target and applies the suggested amount in one tap. The rate
+is always visible and associated through `aria-describedby`; no hover or tooltip is needed.
 All docs tabs use the same 1280px outer frame, header and tab bar. Guide pages retain
 their sidebar, sticky table of contents and readable article width. Horizontal overflow is
 clipped without creating an ancestor scroll container, so navigation sticks to the viewport.
