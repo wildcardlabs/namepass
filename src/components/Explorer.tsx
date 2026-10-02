@@ -64,6 +64,7 @@ import {
 } from "../lib/format";
 import { completedFlowTransactions } from "../lib/flowTransactions";
 import PassCard from "./PassCard";
+import { Card } from "./ui/card";
 import PendingBalance from "./PendingBalance";
 import ChainTag from "./ChainTag";
 import { ceilToCent, costOf, PricingNotLoadedError, rates, YEAR_SECONDS } from "../lib/pricing";
@@ -947,8 +948,8 @@ function NameDetail({
 
 			{/* Separate the expiring ENS name from its permanent deposit details. */}
 			<div className="site-name-overview">
-				<section className="site-name-summary" aria-label="Name overview">
-					<h4 className="site-detail-section-title">Overview</h4>
+				<Card className="site-name-summary" role="region" aria-label="Name overview">
+					<h4 className="site-detail-section-title">ENS name</h4>
 					<div className="flex items-center gap-2 text-[12px] text-ink-label">
 						<Clock className="w-3.5 h-3.5" />
 						The ENS name · expires
@@ -965,7 +966,7 @@ function NameDetail({
 						</>
 					) : onchain.expiry === null ? (
 						<>
-							<div className="mt-2 text-[20px] text-ink-secondary leading-7">
+							<div className="site-name-expiry mt-2 text-ink-secondary">
 								Not registered
 							</div>
 							<div className="mt-2 text-[13px] text-ink-secondary">
@@ -974,7 +975,7 @@ function NameDetail({
 						</>
 					) : (
 						<>
-							<div className="mt-2 text-[20px] text-ink-primary leading-7">
+							<div className="site-name-expiry mt-2 text-ink-primary">
 								{fmtDate(expiry)}
 							</div>
 							<div className="mt-2 text-[13px] text-ink-secondary">
@@ -1145,7 +1146,7 @@ function NameDetail({
 							</div>
 						)}
 					</div>
-				</section>
+				</Card>
 
 				<PassCard
 					name={record.name}
@@ -1448,7 +1449,7 @@ export default function Explorer({ selected, onSelect, onActivated, onSupportedT
 	return (
 		<section id="explorer" className="site-section bg-surface-canvas px-5 md:px-10 py-14 md:py-20">
 			<div className="max-w-[1100px] mx-auto">
-				<div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+				<div className={`flex flex-col md:flex-row md:justify-between gap-6 ${record ? "md:items-center" : "md:items-end"}`}>
 					<div>
 						<div className="flex items-center gap-2.5">
 							<span className="relative flex w-2 h-2">
@@ -1459,6 +1460,7 @@ export default function Explorer({ selected, onSelect, onActivated, onSupportedT
 								Explorer · Testnet activity
 							</span>
 						</div>
+						{!record && <>
 						<h2 className="mt-3 text-[36px] md:text-[52px] font-normal text-ink-primary tracking-tight leading-[1.05]">
 							ENS renewal activity.
 						</h2>
@@ -1466,6 +1468,7 @@ export default function Explorer({ selected, onSelect, onActivated, onSupportedT
 							Search a name to inspect its universal deposit wallet, balances, and renewal history.
 							Recent public deposits and flows appear below.
 						</p>
+						</>}
 					</div>
 
 					<div className="w-full md:w-[340px] shrink-0">

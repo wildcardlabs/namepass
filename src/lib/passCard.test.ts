@@ -47,7 +47,7 @@ test("the normalized deposit details disclose every QR module and restore focus 
 	expect(document.activeElement).toBe(trigger);
 });
 
-test("flat deposit details retain distinct copy targets and the supported-contract action", async () => {
+test("deposit details retain distinct copy targets and the supported-contract action", async () => {
 	const writeText = vi.fn().mockResolvedValue(undefined);
 	Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
 	const supported = vi.fn();

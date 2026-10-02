@@ -70,17 +70,21 @@ Public action buttons match the existing docs buttons: 38px tall with 13px horiz
 Explorer's search bar is 46px tall around a 38px input and square search button.
 Content is capped at 1180px; the surrounding frame
 and header are capped at 1280px. Reading columns stay narrower. The text-only hero uses the
-existing heading and description with Get Started and Read the docs. The video, illustrative
+existing heading and description with Get Started and Read the docs. The cover centers its
+content in a 560–720px desktop section (70svh), with a 500px minimum on phones. The video, illustrative
 renewal overlay and hero Explorer shortcut are removed. Leaderboard remains available through
 Resources and the footer. The protocol keeps its four-card bento arrangement and existing beam. The other three cards
 contain text with a slow, neutral background fade. The fade stops outside the viewport, in
 a hidden tab and for reduced-motion preferences. No additional protocol graphics are present.
 Explorer, pricing, secondary pages and the integration CTA share the surface treatment. The
 Explorer section has a white canvas. Protocol cards are white with fine neutral borders. The activity table
-has one frame, a quiet toolbar, 12px column labels and 14px row text. Explorer does not add a
-second enclosing panel. Name details use flat Overview and Deposit details columns with one
-divider, stacked below 900px. Full deposit addresses and subnames have separate copy controls;
-QR opens in an accessible shadcn Dialog. Metrics use a flat strip. Expanded renewal amounts
+has one frame, a quiet toolbar, 12px column labels and 14px row text. Explorer table headers
+and the toolbar use the cover’s light green-to-white gradient. Explorer does not add a
+second enclosing panel. Individual name details retain two bordered shadcn Card panels for
+the ENS registration and Namepass funding destination, stacked below 900px. The selected name
+is the main heading; the feed introduction is shown only in the feed. The Namepass subname is
+prominent above the full deposit address, with visible Copy address and Show QR actions.
+Subnames have a separate copy control; QR opens in an accessible shadcn Dialog. Metrics use a flat strip. Expanded renewal amounts
 and transactions use rows and rules without nested cards. Pending balances retain their
 existing states and actions; exceptional flows use a narrow notice rule. The name-view heading and back icon share a
 centered row. The pricing calculator groups name length, amount and discount controls in its
