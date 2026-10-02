@@ -1,4 +1,4 @@
-import { type CSSProperties, useEffect, useMemo, useState } from "react";
+import { type CSSProperties, useEffect, useId, useMemo, useState } from "react";
 import { BadgePercent, TrendingUp } from "lucide-react";
 import {
   ceilToCent,
@@ -13,12 +13,6 @@ import { GAS_ALLOWANCE } from "../lib/fees";
 import { fmtDurationPrecise, fmtUsdc } from "../lib/format";
 import Tooltip from "./Tooltip";
 import PricingError from "./PricingError";
-import {
-  Tooltip as HintTooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "./ui/tooltip";
 
 const LENGTHS = [
   { len: 3, label: "3 characters" },
@@ -151,6 +145,7 @@ function SimulatorSkeleton() {
 
 function SimulatorBody() {
   const pricing = rates();
+  const hintDescriptionId = useId();
   const [len, setLen] = useState(5);
   const [budget, setBudget] = useState<bigint>(() =>
     ceilToCent(payableThresholds(5)[2].exact + ALLOWANCE),
@@ -257,32 +252,21 @@ function SimulatorBody() {
             )}
           </div>
           {hint && (
-            <TooltipProvider delayDuration={150}>
-              <HintTooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    className="site-amount-hint"
-                    onClick={() =>
-                      setBudget(ceilToCent(hint.payable + ALLOWANCE))
-                    }
-                    aria-label={`Add ${fmtUsdc(hint.delta)} to get ${Math.round(Number(hint.gain) / 2629800)} more months`}
-                  >
-                    <TrendingUp aria-hidden="true" size={16} />
-                    <span>Add {fmtUsdc(hint.delta)}</span>
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent
-                  className="site-amount-hint-tooltip"
-                  side="top"
-                  sideOffset={8}
-                >
-                  Add {fmtUsdc(hint.delta)} to get{" "}
-                  {Math.round(Number(hint.gain) / 2629800)} more months. Unlocks
-                  the {hint.years}-year rate · {hint.off} off.
-                </TooltipContent>
-              </HintTooltip>
-            </TooltipProvider>
+            <div className="site-amount-suggestion">
+              <button
+                type="button"
+                className="site-amount-hint"
+                onClick={() => setBudget(ceilToCent(hint.payable + ALLOWANCE))}
+                aria-describedby={hintDescriptionId}
+              >
+                <TrendingUp aria-hidden="true" size={16} />
+                <span>Add {fmtUsdc(hint.delta)}</span>
+              </button>
+              <p id={hintDescriptionId} className="site-amount-benefit">
+                Get {Math.round(Number(hint.gain) / 2629800)} more months
+                <span>{hint.years}-year rate · {hint.off} off</span>
+              </p>
+            </div>
           )}
         </div>
 

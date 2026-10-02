@@ -56,7 +56,7 @@ test("deposit details retain distinct copy targets and the supported-contract ac
 	expect(writeText).toHaveBeenLastCalledWith("steve.namepass.eth");
 	await act(async () => container.querySelector<HTMLButtonElement>(`[aria-label="Copy deposit address ${address}"]`)!.click());
 	expect(writeText).toHaveBeenLastCalledWith(address);
-	const contracts = [...container.querySelectorAll<HTMLButtonElement>("button")].find(button => button.textContent?.includes("Check contract addresses"))!;
+	const contracts = [...container.querySelectorAll<HTMLButtonElement>("button")].find(button => button.textContent?.includes("Token contracts"))!;
 	await act(async () => contracts.click());
 	expect(supported).toHaveBeenCalledOnce();
 });

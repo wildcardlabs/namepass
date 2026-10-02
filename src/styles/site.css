@@ -930,11 +930,16 @@
 }
 .site-payment-line {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
+  gap: 4px 20px;
   margin-top: 4px;
 }
 .site-payment-amount {
+  min-width: 0;
+}
+.site-amount-suggestion {
+  flex: 1 0 150px;
   min-width: 0;
 }
 .site-amount-hint {
@@ -942,7 +947,8 @@
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
-  min-height: 32px;
+  min-height: 44px;
+  padding: 0 4px;
   font-size: 13px;
   line-height: 20px;
   font-weight: 500;
@@ -954,22 +960,24 @@
   outline-offset: 4px;
   border-radius: 4px;
 }
-.site-amount-hint-tooltip {
-  max-width: 260px;
-  padding: 12px;
-  border-radius: 8px;
-  background: var(--site-ink);
-  color: white;
-  font-size: 13px;
-  line-height: 20px;
+.site-amount-benefit {
+  font-size: 12px;
+  line-height: 18px;
+  color: var(--site-body-ink);
+}
+.site-amount-benefit span {
+  display: block;
+  color: var(--site-muted);
 }
 @media (max-width: 479px) {
-  .site-amount-hint span {
-    display: none;
+  .site-amount-suggestion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
   }
-  .site-amount-hint {
-    width: 28px;
-    justify-content: center;
+  .site-amount-benefit {
+    flex: 1;
+    min-width: 0;
   }
 }
 .site-length-options {
@@ -1236,31 +1244,40 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   border-top: 1px solid var(--site-line);
 }
 .site-deposit-token,
-.site-deposit-chain-list,
-.site-deposit-chain-list > span {
+.site-deposit-chain-list > li {
   display: flex;
   align-items: center;
 }
+.site-deposit-network-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 12px;
+}
 .site-deposit-token {
   gap: 8px;
-  margin-bottom: 8px;
   font-size: 14px;
   line-height: 22px;
-  color: var(--site-ink);
+  font-weight: 500;
+  color: var(--site-card-ink);
 }
 .site-deposit-token img {
   width: 18px;
   height: 18px;
 }
 .site-deposit-chain-list {
-  flex-wrap: wrap;
-  gap: 10px 18px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
   margin-top: 8px;
-  color: var(--site-muted);
+  padding: 0;
+  list-style: none;
+  color: var(--site-body-ink);
   font-size: 13px;
   line-height: 20px;
 }
-.site-deposit-chain-list > span {
+.site-deposit-chain-list > li {
   gap: 6px;
 }
 .site-deposit-chain-list img {
@@ -1271,14 +1288,18 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  min-height: 36px;
-  margin-top: 8px;
+  min-height: 44px;
   font-size: 12px;
   line-height: 20px;
   color: var(--site-accent);
 }
 .site-contract-link:hover {
-  text-decoration: underline;
+  color: var(--site-ink);
+}
+@media (max-width: 479px) {
+  .site-deposit-chain-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 .site-qr-dialog {
   width: calc(100% - 32px);
@@ -1556,8 +1577,7 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   line-height: 20px;
 }
 .site-transaction-link:hover .site-transaction-hash {
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  color: var(--site-ink);
 }
 @media (max-width: 899px) {
   .site-renewal-breakdown {

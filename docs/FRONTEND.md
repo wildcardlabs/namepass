@@ -83,17 +83,19 @@ row uses a balanced light green-to-white gradient that moves sideways over 14 se
 Reduced-motion preferences keep it still. The toolbar stays white and shares the
 column row’s 16px left inset. Explorer does not add a
 second enclosing panel. Individual name details retain two bordered shadcn Card panels for
-registration and expiry, and the renewal funding destination, stacked below 900px. The selected name
+expiry and profile, and the renewal funding destination, stacked below 900px. The selected name
 is the main heading; the feed introduction is shown only in the feed. The funding panel is titled
 Send USDC to renew, identifies the name being renewed and leads with the full Universal deposit
 address and visible Copy address and Show QR actions. The readable deposit name follows as a
 secondary destination, with its copy icon immediately beside the value. Expiry and profile labels
 both use 12px regular text and 14px outline icons; Profile uses title case. Profile record links
-change only color on hover, so their width and neighbours remain stable. QR opens in an accessible shadcn Dialog. Metrics use a flat strip. Expanded renewal amounts
+change only color on hover, so their width and neighbours remain stable. The funding panel ends
+with a compact USDC heading, Token contracts action and aligned network list, in two columns
+on small phones. QR opens in an accessible shadcn Dialog. Metrics use a flat strip. Expanded renewal amounts
 and transactions use rows and rules without nested cards. Payment amounts use a compact
 USDC breakdown with the exact applied amount emphasized. Neutral full participant addresses
 have adjacent copy controls. Recorded transactions form a numbered trail with chain labels
-and green explorer links. The two detail columns stack below 900px. Pending balances retain their
+and green explorer links without hover underlines. The two detail columns stack below 900px. Pending balances retain their
 existing states and actions; exceptional flows use a narrow notice rule. The name-view heading and back icon share a
 centered row. The pricing calculator groups name length, amount and discount controls in its
 left panel. Renewal time and the cost breakdown occupy the white right panel. The result uses
@@ -105,7 +107,10 @@ Name-length options show only character count and annual price; example ENS name
 from both loaded options and loading placeholders.
 Selected options have a transparent border without an extra outline or shadow. Hover changes
 only the faint border; keyboard focus retains its visible ring.
-The next-tier suggestion sits to the right of the payment amount, with a tooltip and shortcut.
+The next-tier suggestion sits to the right of the payment amount when space permits and wraps
+below it on small screens. Its extra renewal time and discount rate are always visible, without
+hover or a tooltip. The Add amount button has a 44px touch target and applies the suggestion
+in one tap; its visible explanation is also associated through `aria-describedby`.
 All docs tabs use the same 1280px outer frame, header and tab bar. Guide pages retain
 their sidebar, sticky table of contents and readable article width. Horizontal overflow is
 clipped without creating an ancestor scroll container, so navigation sticks to the viewport.

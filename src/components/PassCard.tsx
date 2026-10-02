@@ -74,12 +74,13 @@ export default function PassCard({ name, address, onSupportedTokens }: Props) {
 			<p role="status" className="sr-only">{copied ? "Copied to clipboard" : ""}</p>
 			{error && <p role="alert" className="mt-2 text-[12px] text-red-700">{error.message}</p>}
 			<div className="site-deposit-networks">
-				<div className="site-deposit-token"><img src={`${import.meta.env.BASE_URL}logos/usdc.svg`} alt="" />USDC accepted</div>
-				<p>On any of these chains</p>
-				<div className="site-deposit-chain-list">
-					{FUNDING_CHAINS.map((c) => <span key={c.name}><img src={`${import.meta.env.BASE_URL}logos/${c.logo}`} alt="" />{c.name}</span>)}
+				<div className="site-deposit-network-heading">
+					<div className="site-deposit-token"><img src={`${import.meta.env.BASE_URL}logos/usdc.svg`} alt="" />USDC accepted</div>
+					<button type="button" onClick={onSupportedTokens} className="site-contract-link">Token contracts <ArrowUpRight size={14} aria-hidden="true" /></button>
 				</div>
-				<button type="button" onClick={onSupportedTokens} className="site-contract-link">Check contract addresses <ArrowUpRight size={14} aria-hidden="true" /></button>
+				<ul className="site-deposit-chain-list" aria-label="Supported USDC networks">
+					{FUNDING_CHAINS.map((c) => <li key={c.name}><img src={`${import.meta.env.BASE_URL}logos/${c.logo}`} alt="" />{c.name}</li>)}
+				</ul>
 			</div>
 		</Card>
 	);
