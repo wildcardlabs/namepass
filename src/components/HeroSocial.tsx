@@ -124,7 +124,7 @@ export function HeroCommunity() {
         ))}
       </div>
       <p className="px-2">
-        Loved by <span>23</span> more people
+        Loved by <span>+685 users</span>
       </p>
     </div>
   );

@@ -100,7 +100,7 @@ border, 40% opacity and a radial mask from the top. It has no pointer interactio
 `HeroSocial` adapts the supplied Feature Page 03 HTML. It retains the four overlapping
 40px portraits, rounded social-proof pill and eight floating desktop portraits, hidden
 below 1024px. Their original position classes use a viewport-wide 1280px wrapper,
-separate from the narrower text column. The pill reads “Loved by 23 more people” as requested. Original embedded
+separate from the narrower text column. The pill reads “Loved by +685 users” as requested. Original embedded
 portraits and logos live in `public/assets/feature-page-03`; no remote asset calls are needed.
 The company marquee retains the reference's four repeated tracks, 64px gap, 20-second
 reverse motion, logo-specific heights, 60% opacity, inversion and 60px edge fades.
