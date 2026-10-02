@@ -71,7 +71,10 @@ Explorer's search bar is 46px tall around a 38px input and square search button.
 Content is capped at 1180px; the surrounding frame
 and header are capped at 1280px. Reading columns stay narrower. The hero uses the
 existing heading and description with Get Started and Read the docs. The cover centers its
-content in a 560–720px desktop section (70svh), with a 500px minimum on phones. The video, illustrative
+content in the viewport space below the renewal strip and 65px navigation header.
+Like main, phones use `100svh` and screens from 768px use `100vh`; longer content can
+expand the section on short screens. The cover's pale-green wash fades to white across
+its bottom 30% and side 12%, so it has no visible background edge. The video, illustrative
 renewal overlay and hero Explorer shortcut are removed. Leaderboard remains available through
 Resources and the footer. The protocol keeps its four-card bento arrangement and existing beam. The other three cards
 contain text with a slow, neutral background fade. The fade stops outside the viewport, in

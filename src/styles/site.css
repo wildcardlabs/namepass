@@ -325,12 +325,17 @@
   width: calc(100% - 80px);
   max-width: var(--site-content-width);
   margin: 0 auto;
-  min-height: clamp(560px, 70svh, 720px);
+  min-height: calc(100svh - var(--site-strip-height) - 65px);
   display: grid;
   align-items: center;
   padding: 120px 0;
   position: relative;
   isolation: isolate;
+}
+@media (min-width: 768px) {
+  .home-hero {
+    min-height: calc(100vh - var(--site-strip-height) - 65px);
+  }
 }
 .home-hero::before {
   content: "";
@@ -338,6 +343,10 @@
   z-index: -1;
   inset: 0 -40px;
   background: radial-gradient(ellipse at 50% 95%, #eaf2e380, transparent 65%);
+  mask-image:
+    linear-gradient(to bottom, black 70%, transparent 100%),
+    linear-gradient(to right, transparent, black 12%, black 88%, transparent);
+  mask-composite: intersect;
   pointer-events: none;
 }
 /* Flow's saved 27 × 8 cells: retain its fill, border, opacity and radial mask. */
@@ -700,7 +709,6 @@
   }
   .home-hero {
     width: calc(100% - 32px);
-    min-height: 500px;
     padding: 72px 0;
   }
   .home-hero::before {
