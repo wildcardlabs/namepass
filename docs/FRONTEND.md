@@ -101,7 +101,8 @@ secondary destination, with its copy icon immediately beside the value. Expiry a
 both use 12px regular text and 14px outline icons; Profile uses title case. Profile record links
 change only color on hover, so their width and neighbours remain stable. The funding panel ends
 with a compact USDC heading, Token contracts action and aligned network list, in two columns
-on small phones. QR opens in an accessible shadcn Dialog. Metrics use a flat strip. Expanded renewal amounts
+on small phones. Ethereum is listed first in the name view; the Base logo is visually 14px
+within the same 16px icon slot. QR opens in an accessible shadcn Dialog. Metrics use a flat strip. Expanded renewal amounts
 and transactions use rows and rules without nested cards. Payment amounts use a compact
 USDC breakdown with the exact applied amount emphasized. Neutral full participant addresses
 have adjacent copy controls. Recorded transactions form a numbered trail with chain labels

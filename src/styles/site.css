@@ -1344,6 +1344,9 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   width: 16px;
   height: 16px;
 }
+.site-deposit-chain-list .site-deposit-chain-logo-base {
+  transform: scale(0.875);
+}
 .site-contract-link {
   display: inline-flex;
   align-items: center;

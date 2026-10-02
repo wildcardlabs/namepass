@@ -8,6 +8,10 @@ import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "./ui/dialog";
 
+const DISPLAY_NETWORKS = [...FUNDING_CHAINS].sort(
+	(a, b) => Number(b.key === "ethereum") - Number(a.key === "ethereum"),
+);
+
 interface Props {
 	name: string;
 	address: string;
@@ -79,7 +83,7 @@ export default function PassCard({ name, address, onSupportedTokens }: Props) {
 					<button type="button" onClick={onSupportedTokens} className="site-contract-link">Token contracts <ArrowUpRight size={14} aria-hidden="true" /></button>
 				</div>
 				<ul className="site-deposit-chain-list" aria-label="Supported USDC networks">
-					{FUNDING_CHAINS.map((c) => <li key={c.name}><img src={`${import.meta.env.BASE_URL}logos/${c.logo}`} alt="" />{c.name}</li>)}
+					{DISPLAY_NETWORKS.map((c) => <li key={c.name}><img className={c.key === "base" ? "site-deposit-chain-logo-base" : undefined} src={`${import.meta.env.BASE_URL}logos/${c.logo}`} alt="" />{c.name}</li>)}
 				</ul>
 			</div>
 		</Card>
