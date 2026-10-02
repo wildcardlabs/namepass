@@ -115,16 +115,17 @@ user-selected bottom-right identity and cover actions.
 The pill reads “Used by 685+ users” (user-supplied copy, not an API-derived count).
 It has the Built for ENS v2 badge's faint green border and white-to-pale-green
 background, without an outer shadow. Text is 13px, with medium-weight green emphasis.
-The marquee uses eight exact user-supplied SVG wordmarks in their supplied
-order: Arc, Goldsky, Arbitrum, Circle, ENS, Ethereum, Base and USDC. They are stored
+The marquee uses nine exact user-supplied SVG wordmarks in their supplied
+order: Arc, Goldsky, Arbitrum, Circle, ENS, Ethereum, Base, USDC and Resolvio. They are stored
 locally in `public/logos/infrastructure`; its README records the source URLs.
-The statement “Built on trusted infrastructure” encompasses all eight. Wordmarks
+The statement “Built on trusted infrastructure” encompasses all nine. Wordmarks
 replace the previous icon-plus-text treatments. Sizing uses measured lettering
 bounds: a 16px target for capitals and short lowercase marks, with optical adjustments
-to 18px for Arc and 20px for Ethereum and Base to account for their thin lettering
+to 18px for Arc and 20px for Ethereum, Base and Resolvio to account for their thin lettering
 or taller ascenders. Goldsky uses 15.2px (a 5% reduction) and Arbitrum uses 11.2px
-(a 30% reduction). All wordmarks align their lettering's vertical midpoint at 32px
-in a 64px track row. Each wrapper clips only the original SVG's transparent artboard; source paths
+(a 30% reduction). All wordmarks align their main letter bodies' vertical midpoint at 32px
+in a 64px track row. Mixed-case marks use the lowercase body bounds rather than
+tall ascenders or dots; these otherwise make Ethereum and Base appear lower. Each wrapper clips only the original SVG's transparent artboard; source paths
 and symbol-to-letter proportions remain unchanged. Monochrome filtering and 70%
 opacity match the site. The supplied four
 repeated tracks retain a 64px gap, 60px white edge fades, slower 40-second reverse

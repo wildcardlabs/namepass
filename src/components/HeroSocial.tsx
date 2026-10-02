@@ -2,8 +2,8 @@ import NameAvatar from "./NameAvatar";
 
 /** Retain Feature Page 03's composition and marquee with Namepass identities. */
 const ecosystem = [
-  // Source artboard, visible artwork bounds and lettering baseline, measured
-  // from the supplied SVGs. Size the lettering, not the surrounding symbol.
+  // Source artboards and lettering bounds measured from the supplied SVGs.
+  // Align the main letter bodies; ascenders and symbols must not shift the row.
   {
     name: "Arc",
     key: "arc",
@@ -11,7 +11,7 @@ const ecosystem = [
     left: 0,
     width: 500,
     textHeight: 149.767,
-    baseline: 164.77,
+    wordCenterY: 110.8615,
     target: 18,
   },
   {
@@ -21,7 +21,7 @@ const ecosystem = [
     left: 0,
     width: 94,
     textHeight: 11.055,
-    baseline: 17.71,
+    wordCenterY: 12.1825,
     target: 15.2,
   },
   {
@@ -31,7 +31,7 @@ const ecosystem = [
     left: 121.27,
     width: 1074.68,
     textHeight: 70.36,
-    baseline: 293.29,
+    wordCenterY: 258.11,
     target: 11.2,
   },
   {
@@ -41,7 +41,7 @@ const ecosystem = [
     left: 0,
     width: 324.2,
     textHeight: 45.903,
-    baseline: 64.603,
+    wordCenterY: 41.6515,
     target: 16,
   },
   {
@@ -51,7 +51,7 @@ const ecosystem = [
     left: 0,
     width: 300,
     textHeight: 70.334,
-    baseline: 82.4,
+    wordCenterY: 47.2327,
     target: 16,
   },
   {
@@ -61,7 +61,7 @@ const ecosystem = [
     left: 420,
     width: 1080,
     textHeight: 147.7,
-    baseline: 602.4,
+    wordCenterY: 560.85,
     target: 20,
   },
   {
@@ -71,7 +71,7 @@ const ecosystem = [
     left: 0,
     width: 1280,
     textHeight: 323.83,
-    baseline: 323.83,
+    wordCenterY: 202.04,
     target: 20,
   },
   {
@@ -81,8 +81,18 @@ const ecosystem = [
     left: 0,
     width: 486,
     textHeight: 86.754,
-    baseline: 113.563,
+    wordCenterY: 70.1861,
     target: 16,
+  },
+  {
+    name: "Resolvio",
+    key: "resolvio",
+    canvas: [1112, 193],
+    left: 0,
+    width: 1112,
+    textHeight: 167.67,
+    wordCenterY: 117.8226,
+    target: 20,
   },
 ];
 const portraitPositions = [
@@ -188,7 +198,7 @@ export function HeroCompanyCarousel() {
                       width: item.canvas[0] * scale,
                       height: item.canvas[1] * scale,
                       left: -item.left * scale,
-                      top: 32 - (item.baseline - item.textHeight / 2) * scale,
+                      top: 32 - item.wordCenterY * scale,
                     }}
                   />
                 </div>
