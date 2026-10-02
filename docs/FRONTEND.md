@@ -87,7 +87,9 @@ registration and expiry, and the renewal funding destination, stacked below 900p
 is the main heading; the feed introduction is shown only in the feed. The funding panel is titled
 Send USDC to renew, identifies the name being renewed and leads with the full Universal deposit
 address and visible Copy address and Show QR actions. The readable deposit name follows as a
-secondary destination, with its copy icon immediately beside the value. QR opens in an accessible shadcn Dialog. Metrics use a flat strip. Expanded renewal amounts
+secondary destination, with its copy icon immediately beside the value. Expiry and profile labels
+both use 12px regular text and 14px outline icons; Profile uses title case. Profile record links
+change only color on hover, so their width and neighbours remain stable. QR opens in an accessible shadcn Dialog. Metrics use a flat strip. Expanded renewal amounts
 and transactions use rows and rules without nested cards. Pending balances retain their
 existing states and actions; exceptional flows use a narrow notice rule. The name-view heading and back icon share a
 centered row. The pricing calculator groups name length, amount and discount controls in its

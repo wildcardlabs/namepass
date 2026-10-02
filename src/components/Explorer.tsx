@@ -14,6 +14,7 @@ import {
 	ArrowRight,
 	ArrowUpRight,
 	Clock,
+	UserRound,
 	Globe,
 	Link as LinkIcon,
 	Github,
@@ -1058,7 +1059,8 @@ function NameDetail({
 					{/* ENS records — identity, not payment history */}
 					<div className="mt-5 pt-5 border-t border-[rgba(28,58,41,0.08)] flex-1">
 						<div className="flex items-center justify-between">
-							<span className="text-[10px] uppercase tracking-wider text-ink-label">
+							<span className="inline-flex items-center gap-2 text-[12px] text-ink-label">
+								<UserRound aria-hidden="true" className="w-3.5 h-3.5" />
 								Profile
 							</span>
 							{profile?.contenthash && (
@@ -1133,7 +1135,7 @@ function NameDetail({
 													href={href}
 													target="_blank"
 														rel="noopener noreferrer"
-													className="truncate hover:text-ink-primary hover:font-semibold transition-colors"
+													className="truncate hover:text-ink-primary transition-colors"
 												>
 													{label}
 													</a>
