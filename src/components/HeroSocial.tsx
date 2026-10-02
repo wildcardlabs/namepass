@@ -22,7 +22,7 @@ const ecosystem = [
     width: 94,
     textHeight: 11.055,
     baseline: 17.71,
-    target: 16,
+    target: 15.2,
   },
   {
     name: "Arbitrum",
@@ -32,7 +32,7 @@ const ecosystem = [
     width: 1074.68,
     textHeight: 70.36,
     baseline: 293.29,
-    target: 16,
+    target: 11.2,
   },
   {
     name: "Circle",
@@ -188,7 +188,7 @@ export function HeroCompanyCarousel() {
                       width: item.canvas[0] * scale,
                       height: item.canvas[1] * scale,
                       left: -item.left * scale,
-                      top: 40 - item.baseline * scale,
+                      top: 32 - (item.baseline - item.textHeight / 2) * scale,
                     }}
                   />
                 </div>

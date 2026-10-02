@@ -17,5 +17,5 @@ The cover applies monochrome styling and optical sizing in CSS.
 The four Brandfetch assets were exported from the browser's observed image assets
 because their CDN rejects automated downloads. All eight are served locally.
 Lettering bounds were measured from the rendered SVGs. The cover scales each asset
-using its wordmark rather than symbol height, aligns the lettering baselines, and
+using its wordmark rather than symbol height, aligns the lettering's vertical midpoints, and
 clips transparent artboard padding using CSS without editing the SVG.

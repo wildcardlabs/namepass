@@ -122,8 +122,9 @@ The statement “Built on trusted infrastructure” encompasses all eight. Wordm
 replace the previous icon-plus-text treatments. Sizing uses measured lettering
 bounds: a 16px target for capitals and short lowercase marks, with optical adjustments
 to 18px for Arc and 20px for Ethereum and Base to account for their thin lettering
-or taller ascenders. All wordmarks share a 40px lettering baseline in a 64px track
-row. Each wrapper clips only the original SVG's transparent artboard; source paths
+or taller ascenders. Goldsky uses 15.2px (a 5% reduction) and Arbitrum uses 11.2px
+(a 30% reduction). All wordmarks align their lettering's vertical midpoint at 32px
+in a 64px track row. Each wrapper clips only the original SVG's transparent artboard; source paths
 and symbol-to-letter proportions remain unchanged. Monochrome filtering and 70%
 opacity match the site. The supplied four
 repeated tracks retain a 64px gap, 60px white edge fades, slower 40-second reverse
