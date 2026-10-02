@@ -69,7 +69,7 @@ Public action buttons match the existing docs buttons: 38px tall with 13px horiz
 14px/20px text and 14px icons. Header actions are 36px tall with 12px padding and 13px icons.
 Explorer's search bar is 46px tall around a 38px input and square search button.
 Content is capped at 1180px; the surrounding frame
-and header are capped at 1280px. Reading columns stay narrower. The text-only hero uses the
+and header are capped at 1280px. Reading columns stay narrower. The hero uses the
 existing heading and description with Get Started and Read the docs. The cover centers its
 content in a 560–720px desktop section (70svh), with a 500px minimum on phones. The video, illustrative
 renewal overlay and hero Explorer shortcut are removed. Leaderboard remains available through
@@ -84,6 +84,11 @@ wrapper is mirrored through 16px phone, 24px tablet and 32px desktop outer gutte
 The striped side strips remain visible on mobile; inner mobile section padding is 16px.
 The home cover uses Flow's saved 27-by-8 decorative cell grid: 56.815px cells, a 0.5px
 border, 40% opacity and a radial mask from the top. It has no pointer interaction.
+Above the ENS badge, `CoverPulse` reuses the supplied Pulse Core ECG polyline, dash
+animation and four staggered expanding rings. Its sage color is `#8FA995`, with 35%
+trace opacity and at most 15% ring opacity. The cycle is 3.6 seconds; the 120px desktop
+decoration shrinks to 56px on mobile. It does not change cover content placement.
+Reduced-motion preferences show one stationary ring and the complete ECG line.
 `SectionDivider` renders a plain 1px rule at section boundaries and the shared footer,
 including docs. The template's T ornaments are omitted. Decoration is hidden from assistive
 technology and cannot intercept clicks. Content and payment behavior are unchanged.

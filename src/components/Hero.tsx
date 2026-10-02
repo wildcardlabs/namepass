@@ -2,6 +2,7 @@ import HeroBadge from "./HeroBadge";
 import { ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
 import CoverGrid from "./CoverGrid";
+import CoverPulse from "./CoverPulse";
 
 /** Shared type, framing and actions introduce the public application. */
 export default function Hero({
@@ -15,6 +16,7 @@ export default function Hero({
     <section className="home-hero">
       <CoverGrid />
       <div className="home-hero-copy">
+        <CoverPulse />
         <HeroBadge />
 
         <h1 className="text-ink-primary">

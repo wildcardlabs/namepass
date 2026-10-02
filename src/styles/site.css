@@ -378,9 +378,86 @@
   opacity: 0.4;
 }
 .home-hero-copy {
+  position: relative;
   text-align: center;
   max-width: 780px;
   margin: 0 auto;
+}
+/* Pulse Core's ECG path, four staggered rings and keyframes; slower and quieter. */
+.cover-pulse {
+  position: absolute;
+  bottom: calc(100% + 14px);
+  left: 50%;
+  translate: -50% 0;
+  width: 120px;
+  height: 120px;
+  color: #8fa995;
+  pointer-events: none;
+}
+.cover-pulse-rings {
+  position: absolute;
+  inset: 0;
+  opacity: 0.27;
+  mask-image: radial-gradient(circle, #000 55%, transparent 100%);
+}
+.cover-pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 100%;
+  height: 100%;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  animation: cover-ripple-expand 3.6s cubic-bezier(0, 0, 0.2, 1) infinite backwards;
+}
+.cover-pulse-ring:nth-child(2) { animation-delay: -0.9s; }
+.cover-pulse-ring:nth-child(3) { animation-delay: -1.8s; }
+.cover-pulse-ring:nth-child(4) { animation-delay: -2.7s; }
+.cover-pulse-ecg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 96px;
+  height: 24px;
+  overflow: visible;
+  opacity: 0.35;
+}
+.cover-pulse-trace {
+  animation: cover-ecg-trace 3.6s linear infinite;
+}
+@keyframes cover-ripple-expand {
+  0% { opacity: 0.55; transform: scale(0.35); }
+  to { opacity: 0; transform: scale(1); }
+}
+@keyframes cover-ecg-trace {
+  0% { stroke-dashoffset: 120px; }
+  to { stroke-dashoffset: -20px; }
+}
+@media (max-width: 767px) {
+  .cover-pulse {
+    bottom: calc(100% + 8px);
+    width: 56px;
+    height: 56px;
+  }
+  .cover-pulse-ecg {
+    width: 52px;
+    height: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cover-pulse-ring {
+    animation: none;
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  .cover-pulse-ring:not(:last-child) { display: none; }
+  .cover-pulse-trace {
+    animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
 }
 .home-hero-copy h1 {
   font-size: 56px;
