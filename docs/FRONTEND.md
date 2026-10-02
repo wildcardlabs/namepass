@@ -115,14 +115,22 @@ user-selected bottom-right identity and cover actions.
 The pill reads “Used by 685+ users” (user-supplied copy, not an API-derived count).
 It has the Built for ENS v2 badge's faint green border and white-to-pale-green
 background, without an outer shadow. Text is 13px, with medium-weight green emphasis.
-The marquee uses existing local ENS and USDC marks and the supported networks from
-`TOKEN_CHAINS`. The statement “Built on trusted infrastructure” encompasses ENS,
-USDC and the networks. It retains the supplied
-four repeated tracks, 64px gap and 60px white edge fades, with slower 40-second
-reverse motion and a narrower 768px maximum width.
-Marks are monochrome with consistent labels. Hover pauses it and reduced motion
-keeps it still. The saved portraits and unrelated company assets remain available
-in `public/assets/feature-page-03` but are no longer rendered by the cover.
+The marquee uses eight exact user-supplied SVG wordmarks in their supplied
+order: Arc, Goldsky, Arbitrum, Circle, ENS, Ethereum, Base and USDC. They are stored
+locally in `public/logos/infrastructure`; its README records the source URLs.
+The statement “Built on trusted infrastructure” encompasses all eight. Wordmarks
+replace the previous icon-plus-text treatments. Sizing uses measured lettering
+bounds: a 16px target for capitals and short lowercase marks, with optical adjustments
+to 18px for Arc and 20px for Ethereum and Base to account for their thin lettering
+or taller ascenders. All wordmarks share a 40px lettering baseline in a 64px track
+row. Each wrapper clips only the original SVG's transparent artboard; source paths
+and symbol-to-letter proportions remain unchanged. Monochrome filtering and 70%
+opacity match the site. The supplied four
+repeated tracks retain a 64px gap, 60px white edge fades, slower 40-second reverse
+motion and a 768px maximum width. Hover pauses the marquee and reduced motion
+keeps it still. First-track logos have accessible names; duplicate tracks are hidden.
+The saved template portraits and unrelated company assets remain available in
+`public/assets/feature-page-03` but are no longer rendered by the cover.
 The entire stack from Built for ENS v2 through the carousel is centered below the
 strip and header: the space above the badge within the cover equals the space below
 the carousel. The pill has the reference's effective 64px gap after the actions.

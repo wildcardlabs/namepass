@@ -1,14 +1,89 @@
 import NameAvatar from "./NameAvatar";
-import { IS_TESTNET, TOKEN_CHAINS } from "../lib/chains";
 
 /** Retain Feature Page 03's composition and marquee with Namepass identities. */
 const ecosystem = [
-  { name: "ENS", src: "/logos/ens-mark-dark-blue.svg" },
-  { name: "USDC", src: "/logos/usdc.svg" },
-  ...TOKEN_CHAINS.map((chain) => ({
-    name: chain.name,
-    src: `/logos/${chain.logo}`,
-  })),
+  // Source artboard, visible artwork bounds and lettering baseline, measured
+  // from the supplied SVGs. Size the lettering, not the surrounding symbol.
+  {
+    name: "Arc",
+    key: "arc",
+    canvas: [500, 171],
+    left: 0,
+    width: 500,
+    textHeight: 149.767,
+    baseline: 164.77,
+    target: 18,
+  },
+  {
+    name: "Goldsky",
+    key: "goldsky",
+    canvas: [94, 24],
+    left: 0,
+    width: 94,
+    textHeight: 11.055,
+    baseline: 17.71,
+    target: 16,
+  },
+  {
+    name: "Arbitrum",
+    key: "arbitrum",
+    canvas: [1317.08, 516.24],
+    left: 121.27,
+    width: 1074.68,
+    textHeight: 70.36,
+    baseline: 293.29,
+    target: 16,
+  },
+  {
+    name: "Circle",
+    key: "circle",
+    canvas: [324.2, 83],
+    left: 0,
+    width: 324.2,
+    textHeight: 45.903,
+    baseline: 64.603,
+    target: 16,
+  },
+  {
+    name: "ENS",
+    key: "ens",
+    canvas: [300, 94],
+    left: 0,
+    width: 300,
+    textHeight: 70.334,
+    baseline: 82.4,
+    target: 16,
+  },
+  {
+    name: "Ethereum",
+    key: "ethereum",
+    canvas: [1920, 1080],
+    left: 420,
+    width: 1080,
+    textHeight: 147.7,
+    baseline: 602.4,
+    target: 20,
+  },
+  {
+    name: "Base",
+    key: "base",
+    canvas: [1280, 323.84],
+    left: 0,
+    width: 1280,
+    textHeight: 323.83,
+    baseline: 323.83,
+    target: 20,
+  },
+  {
+    name: "USDC",
+    key: "usdc",
+    canvas: [486, 141],
+    left: 0,
+    width: 486,
+    textHeight: 86.754,
+    baseline: 113.563,
+    target: 16,
+  },
 ];
 const portraitPositions = [
   { position: "absolute -top-14 left-50", size: "size-16" },
@@ -86,11 +161,7 @@ export function HeroCompanyCarousel() {
     <div
       className="hero-company-carousel relative w-full max-w-3xl"
       role="group"
-      aria-label={
-        IS_TESTNET
-          ? "ENS, USDC and supported testnets"
-          : "ENS, USDC and supported networks"
-      }
+      aria-label="Technology and infrastructure"
     >
       <p className="hero-ecosystem-label">Built on trusted infrastructure</p>
       <div className="hero-company-fade hero-company-fade-left pointer-events-none absolute inset-y-0 left-0 z-1 w-15" />
@@ -102,12 +173,27 @@ export function HeroCompanyCarousel() {
             aria-hidden={copy > 0 ? true : undefined}
             className="hero-company-track flex shrink-0 justify-around gap-(--marquee-gap) flex-row"
           >
-            {ecosystem.map((item) => (
-              <div key={item.name} className="hero-ecosystem-mark">
-                <img src={item.src} alt="" />
-                <span>{item.name}</span>
-              </div>
-            ))}
+            {ecosystem.map((item) => {
+              const scale = item.target / item.textHeight;
+              return (
+                <div
+                  key={item.key}
+                  className="hero-ecosystem-mark"
+                  style={{ width: item.width * scale }}
+                >
+                  <img
+                    src={`/logos/infrastructure/${item.key}.svg`}
+                    alt={copy === 0 ? item.name : ""}
+                    style={{
+                      width: item.canvas[0] * scale,
+                      height: item.canvas[1] * scale,
+                      left: -item.left * scale,
+                      top: 40 - item.baseline * scale,
+                    }}
+                  />
+                </div>
+              );
+            })}
           </div>
         ))}
       </div>

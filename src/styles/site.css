@@ -441,25 +441,18 @@
   text-align: center;
 }
 .hero-ecosystem-mark {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  position: relative;
   flex-shrink: 0;
-  color: var(--site-body-ink);
-  font-size: 20px;
-  line-height: 28px;
-  font-weight: 500;
+  height: 64px;
+  overflow: hidden;
 }
 .hero-ecosystem-mark img {
-  width: 28px;
-  height: 28px;
+  position: absolute;
+  display: block;
+  max-width: none;
   object-fit: contain;
   filter: grayscale(1);
   opacity: .7;
-}
-.hero-ecosystem-mark img[src="/logos/base.svg"] {
-  width: 22px;
-  height: 22px;
 }
 .hero-portraits {
   inset-inline: auto;
