@@ -92,10 +92,10 @@ section padding is 16px. The same plain background applies to documentation and
 secondary pages.
 The home cover uses Flow's saved 27-by-8 decorative cell grid: 56.815px cells, a 0.5px
 border, 40% opacity and a radial mask from the top. It has no pointer interaction.
-Landing-page section rules and the template's T ornaments are omitted. Spacing and the
-full-width off-white footer band separate major areas. The shared `--site-subtle`
-token is `#F5F5F7`; neutral table headers, inset information, docs resource and code surfaces
-use it. The integration CTA retains its pale-green `#F7FAF8` background, including the
+Landing-page section rules and the template's T ornaments are omitted. Spacing separates
+major areas. The footer keeps its original white background. Existing surface colors
+remain: the shared `--site-subtle` token is `#F5F5F5`, table details use `#FAFAFA`, and
+docs retain their original code and resource surfaces. The integration CTA retains its pale-green `#F7FAF8` background, including the
 Vanta canvas and solid fallback. The public header's bottom rule spans the viewport;
 navigation widths and logo positions stay unchanged. Card borders, row separators and
 navigation boundaries remain. Decoration is hidden from assistive technology and cannot intercept clicks.
