@@ -1183,7 +1183,7 @@ function NameDetail({
 			{/* Activity table */}
 			<div ref={activityRef} className="mt-10 scroll-mt-6">
 				<div className="flex items-baseline justify-between mb-4">
-					<span className="text-[11px] uppercase tracking-section text-ink-label">
+					<span className="site-eyebrow text-[11px] uppercase tracking-section text-ink-label">
 						Activity
 					</span>
 					{emptyActivity && (

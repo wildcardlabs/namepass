@@ -138,6 +138,8 @@ endpoint selector stacks into one column below 640px. No premium template source
 Reuse existing visual primitives, tooltips and chain labels. Keep keyboard focus indicators
 visible. The public shell and portaled navigation controls override shadcn primary, accent and
 focus colors to green; monitoring retains its separate semantic palette.
+Small public section labels share the Explorer's 8px round green dot. These shared markers
+stay static; the Explorer's live activity marker retains its existing pulse.
 
 Use `surface-selected` for pricing selections and `surface-table` for Explorer headers.
 Use `inset-panel` for shaded information and renewal hints. Explorer address fields and
