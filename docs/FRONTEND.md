@@ -97,19 +97,36 @@ section padding is 16px. The same plain background applies to documentation and
 secondary pages.
 The home cover uses Flow's saved 27-by-8 decorative cell grid: 56.815px cells, a 0.5px
 border, 40% opacity and a radial mask from the top. It has no pointer interaction.
-`HeroSocial` adapts the supplied Feature Page 03 HTML. It retains the four overlapping
-40px portraits, rounded social-proof pill and eight floating desktop portraits, hidden
-below 1024px. Their original position classes use a viewport-wide 1280px wrapper,
-separate from the narrower text column. The pill reads “Loved by +685 users” as requested. Original embedded
-portraits and logos live in `public/assets/feature-page-03`; no remote asset calls are needed.
-The company marquee retains the reference's four repeated tracks, 64px gap, 20-second
-reverse motion, logo-specific heights, 60% opacity, inversion and 60px edge fades.
-It shows University of Mississippi, Star Health, DHL, Sense Arena, Shemaroo and Mercedes
-Benz in the original order. Hover pauses it and reduced motion keeps it still. The entire
-stack from Built for ENS v2 through the carousel is centered below the strip and header:
-the space above the badge within the cover equals the space below the carousel. The pill
-has the reference's effective 64px gap after the actions. The carousel uses its 32px mobile,
-64px tablet and 96px desktop gaps. Mobile retains `100svh` sizing.
+`HeroSocial` retains Feature Page 03's floating portrait positions, overlapping
+avatar group and four-track marquee. The cover reads distinct names with completed
+renewals from the public activity API
+once per mount. Up to seven names supply the floating desktop identities and the
+first four supply the 32px pill avatars; pending flows are excluded. The eighth,
+bottom-right portrait is `stevegachau.eth`, explicitly chosen by the user. Floating
+portraits have no name labels and remain hidden below 1024px. The template's position
+classes use a viewport-wide 1280px wrapper, separate from
+the narrower text column. The lower outer portraits have a 32px inset, so their
+whole circles stay visible. On desktop screens at most 800px tall, the upper pair
+stays inside the cover instead of extending behind the navigation. `NameAvatar`
+uses the existing cached ENS profile resolver and the leaderboard's name-seeded
+DiceBear voxel-bot fallback. Image errors cannot retry the fallback indefinitely.
+Unavailable activity omits the activity-derived portraits while retaining the
+user-selected bottom-right identity and cover actions.
+The pill reads “Used by 685+ users” (user-supplied copy, not an API-derived count).
+It has the Built for ENS v2 badge's faint green border and white-to-pale-green
+background, without an outer shadow. Text is 13px, with medium-weight green emphasis.
+The marquee uses existing local ENS and USDC marks and the supported networks from
+`TOKEN_CHAINS`, labelled as testnets while testnet is active. It retains the supplied
+four repeated tracks, 64px gap and 60px white edge fades, with slower 40-second
+reverse motion and a narrower 768px maximum width.
+Marks are monochrome with consistent labels. Hover pauses it and reduced motion
+keeps it still. The saved portraits and unrelated company assets remain available
+in `public/assets/feature-page-03` but are no longer rendered by the cover.
+The entire stack from Built for ENS v2 through the carousel is centered below the
+strip and header: the space above the badge within the cover equals the space below
+the carousel. The pill has the reference's effective 64px gap after the actions.
+The carousel uses 32px mobile, 64px tablet and 96px desktop gaps. Mobile retains
+`100svh` sizing.
 Landing-page section rules and the template's T ornaments are omitted. Spacing separates
 major areas. The footer keeps its original white background. Existing surface colors
 remain: the shared `--site-subtle` token is `#F5F5F5`, table details use `#FAFAFA`, and

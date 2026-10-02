@@ -2,6 +2,8 @@ import HeroBadge from "./HeroBadge";
 import { ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
 import CoverGrid from "./CoverGrid";
+import { useEffect, useState } from "react";
+import { getActivity } from "../lib/publicApi";
 import {
   HeroCommunity,
   HeroCompanyCarousel,
@@ -16,6 +18,29 @@ export default function Hero({
   onExplore: () => void;
   onDocs: () => void;
 }) {
+  const [names, setNames] = useState<string[]>([]);
+
+  useEffect(() => {
+    let alive = true;
+    getActivity(1, 40)
+      .then((activity) => {
+        if (!alive) return;
+        const renewed = activity.items
+          .filter(
+            (item) =>
+              BigInt(item.renewal.durationSeconds.split(".")[0] || "0") > 0n,
+          )
+          .map((item) => item.name.displayName);
+        setNames([...new Set(renewed)].slice(0, 7));
+      })
+      .catch(() => {
+        // Leave decorative identities empty when public activity is unavailable.
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   return (
     <section className="home-hero">
       <CoverGrid />
@@ -41,10 +66,10 @@ export default function Hero({
               <ArrowRight size={16} aria-hidden="true" />
             </Button>
           </div>
-          <HeroCommunity />
+          <HeroCommunity names={names} />
         </div>
         <HeroCompanyCarousel />
-        <HeroPortraits />
+        <HeroPortraits names={names} />
       </div>
     </section>
   );
