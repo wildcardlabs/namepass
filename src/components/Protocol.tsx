@@ -3,10 +3,10 @@ import { motion, useInView, useReducedMotion } from "motion/react";
 import { Github, Timer, Unplug, WalletMinimal } from "lucide-react";
 import { AnimatedBeamDemo } from "./AnimatedBeamDemo";
 import SectionDivider from "./SectionDivider";
+import ProtocolPulse from "./ProtocolPulse";
 
 /* Four protocol properties share the public panel and typography rules. */
 
-const NUM = "font-normal text-[13px] text-ink-decorative tabular-nums";
 const TAG =
 	"text-[11px] uppercase tracking-section text-ink-label";
 const META_ICON = "h-3.5 w-3.5 shrink-0 text-ink-secondary";
@@ -67,7 +67,6 @@ export default function Protocol() {
 								<WalletMinimal aria-hidden="true" className={META_ICON} strokeWidth={1.6} />
 								Deposit Address
 							</span>
-							<span className={NUM}>01</span>
 						</div>
 
 						<AnimatedBeamDemo />
@@ -90,14 +89,14 @@ export default function Protocol() {
 						whileInView={{ opacity: 1, y: 0 }}
 						viewport={{ once: true, margin: "-80px" }}
 						transition={{ duration: 0.7, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
-						className={CARD}
+						className={`${CARD} protocol-renewal-card`}
 					>
+						<ProtocolPulse />
 						<div className="flex items-center justify-between gap-2">
 							<span className={`${TAG} inline-flex items-center gap-2`}>
 								<Timer aria-hidden="true" className={META_ICON} strokeWidth={1.6} />
 								Automated execution
 							</span>
-							<span className={NUM}>02</span>
 						</div>
 						<h3 className="mt-6 text-[22px] md:text-[26px] font-normal text-ink-primary tracking-tight leading-tight">
 							From deposit to renewal
@@ -124,7 +123,6 @@ export default function Protocol() {
 									<Unplug aria-hidden="true" className={META_ICON} strokeWidth={1.6} />
 									Open infra
 								</span>
-								<span className={NUM}>03</span>
 							</div>
 							<h3 className="mt-6 text-[22px] md:text-[26px] font-normal text-ink-primary tracking-tight leading-tight">
 								Permissionless by design
@@ -154,7 +152,6 @@ export default function Protocol() {
 									/>
 									Subnames
 								</span>
-								<span className={NUM}>04</span>
 							</div>
 							<h3 className="mt-6 text-[22px] md:text-[26px] font-normal text-ink-primary tracking-tight leading-tight">
 								A readable deposit address.

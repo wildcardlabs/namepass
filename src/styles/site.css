@@ -918,7 +918,7 @@
   }
 }
 
-/* Only a quiet background fade in the three text cards. */
+/* Quiet background fades, with Pulse Core's heartbeat in the renewal card. */
 .public-ui .protocol-card {
   position: relative;
   isolation: isolate;
@@ -949,6 +949,94 @@
   .protocol-card::before {
     animation: none !important;
   }
+}
+
+.protocol-renewal-card {
+  overflow: hidden;
+}
+.protocol-pulse {
+  position: absolute;
+  z-index: -1;
+  top: -130px;
+  right: -130px;
+  width: 280px;
+  height: 280px;
+  color: #297358;
+  opacity: 0.14;
+  pointer-events: none;
+}
+.protocol-pulse-rings {
+  position: absolute;
+  inset: 0;
+  mask-image: radial-gradient(circle, #000 55%, transparent 100%);
+}
+.protocol-pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 100%;
+  height: 100%;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  animation: protocol-ripple-expand 1.8s cubic-bezier(0, 0, 0.2, 1) infinite backwards;
+  animation-play-state: paused;
+}
+.protocol-pulse-ring:nth-child(2) { animation-delay: -0.45s; }
+.protocol-pulse-ring:nth-child(3) { animation-delay: -0.9s; }
+.protocol-pulse-ring:nth-child(4) { animation-delay: -1.35s; }
+.protocol-pulse-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+  width: 34.04%;
+  height: 34.04%;
+}
+.protocol-pulse-heart {
+  display: grid;
+  place-content: center;
+  width: 100%;
+  height: 100%;
+  background: white;
+  border: 1px solid color-mix(in oklab, currentColor 40%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 1px 3px #0000000d;
+}
+.protocol-pulse-heart svg { width: 42px; height: 42px; }
+.protocol-pulse-ecg {
+  position: absolute;
+  top: calc(100% + 9px);
+  left: 0;
+  width: 150%;
+  height: 37.5%;
+  overflow: visible;
+}
+.protocol-pulse-trace {
+  animation: protocol-ecg-trace 1.8s linear infinite;
+  animation-play-state: paused;
+}
+#protocol[data-background-active="true"] .protocol-pulse-ring,
+#protocol[data-background-active="true"] .protocol-pulse-trace {
+  animation-play-state: running;
+}
+@keyframes protocol-ripple-expand {
+  0% { opacity: 0.55; transform: scale(0.35); }
+  to { opacity: 0; transform: scale(1); }
+}
+@keyframes protocol-ecg-trace {
+  0% { stroke-dashoffset: 120px; }
+  to { stroke-dashoffset: -20px; }
+}
+@media (max-width: 767px) {
+  .protocol-pulse { width: 240px; height: 240px; top: -110px; right: -110px; opacity: 0.1; }
+  .protocol-pulse-heart svg { width: 36px; height: 36px; }
+  .protocol-pulse-ecg { top: calc(100% + 8px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .protocol-pulse-ring { animation: none; opacity: 0.35; transform: scale(1); }
+  .protocol-pulse-ring:not(:last-child) { display: none; }
+  .protocol-pulse-trace { animation: none; stroke-dasharray: none; stroke-dashoffset: 0; }
 }
 
 .public-ui .site-name-heading .site-name-title {

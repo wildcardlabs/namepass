@@ -75,7 +75,12 @@ content in a 560–720px desktop section (70svh), with a 500px minimum on phones
 renewal overlay and hero Explorer shortcut are removed. Leaderboard remains available through
 Resources and the footer. The protocol keeps its four-card bento arrangement and existing beam. The other three cards
 contain text with a slow, neutral background fade. The fade stops outside the viewport, in
-a hidden tab and for reduced-motion preferences. No additional protocol graphics are present.
+a hidden tab and for reduced-motion preferences. The renewal card also uses the supplied
+Pulse Core heartbeat illustration: its original heart SVG, circular core, four staggered
+rings and ECG trace. It sits at the top right as a clipped 280px forest-green background
+at 14% opacity (240px and 10% on mobile). It does not move the card's content.
+Its animations use the same visibility pause and become static with reduced motion.
+The four bento cards have unnumbered category labels.
 Explorer, pricing, secondary pages and the integration CTA share the surface treatment. The
 outer gutters use the supplied Shadcn Studio Flow template's 45-degree stripe CSS, with
 1px strokes at 40% border opacity and a fixed 12px repeat. White content frames and the
