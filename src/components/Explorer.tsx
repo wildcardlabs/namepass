@@ -572,7 +572,7 @@ function LiveFeed({ onSelect, feed, setFeed, pageIndex, setPageIndex }: {
 		<>
 			{loadError && <p role="alert" className="mb-3 text-[12.5px] text-red-700">{loadError}</p>}
 			<div ref={tableRef} className="site-explorer-table site-table scroll-mt-6 border border-[rgba(28,58,41,0.1)] rounded-2xl overflow-hidden">
-			<div className="site-feed-toolbar"><span><Clock size={15} aria-hidden="true" />ENS renewal activity</span><small>Testnet</small></div>
+			<div className="site-feed-toolbar"><span>ENS renewal activity</span><small>Testnet</small></div>
 			{/* Desktop column headers, hidden on mobile where rows become summary lists */}
 			<div className={`site-column-headings hidden lg:grid ${LIVE_FEED_COLUMNS} gap-4 px-5 py-3 bg-surface-table border-b border-[rgba(28,58,41,0.1)] text-[11px] uppercase tracking-wider text-ink-label`}>
 				<span>ENS name</span>

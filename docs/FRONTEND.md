@@ -78,8 +78,10 @@ contain text with a slow, neutral background fade. The fade stops outside the vi
 a hidden tab and for reduced-motion preferences. No additional protocol graphics are present.
 Explorer, pricing, secondary pages and the integration CTA share the surface treatment. The
 Explorer section has a white canvas. Protocol cards are white with fine neutral borders. The activity table
-has one frame, a quiet toolbar, 12px column labels and 14px row text. Explorer table headers
-and the toolbar use the cover’s light green-to-white gradient. Explorer does not add a
+has one frame, a quiet toolbar, 12px column labels and 14px row text. Only the column-title
+row uses a balanced light green-to-white gradient that moves sideways over 14 seconds.
+Reduced-motion preferences keep it still. The toolbar stays white and shares the
+column row’s 16px left inset. Explorer does not add a
 second enclosing panel. Individual name details retain two bordered shadcn Card panels for
 the ENS registration and Namepass funding destination, stacked below 900px. The selected name
 is the main heading; the feed introduction is shown only in the feed. The Namepass subname is

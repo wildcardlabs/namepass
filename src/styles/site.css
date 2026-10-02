@@ -1337,14 +1337,17 @@ button.site-length-option:not([aria-pressed="true"]):hover {
   border-radius: 8px;
 }
 .public-ui .site-explorer-table .site-feed-toolbar {
-  background: radial-gradient(ellipse at 50% 95%, #eaf2e380, transparent 65%), white;
+  padding-inline: 16px;
+  background: white;
 }
 .public-ui .site-explorer-table .site-column-headings {
   font-size: 12px;
   line-height: 18px;
   font-weight: 500;
   padding: 12px 16px;
-  background: radial-gradient(ellipse at 50% 95%, #eaf2e380, transparent 65%), white;
+  background: linear-gradient(100deg, white, #eaf2e3 25%, white 50%, #eaf2e3 75%, white);
+  background-size: 200% 100%;
+  animation: explorer-header-gradient 14s ease-in-out infinite alternate;
 }
 .site-explorer-table button.lg\:grid,
 .site-explorer-table div.lg\:grid {
@@ -1432,5 +1435,16 @@ button.site-length-option:not([aria-pressed="true"]):hover {
   }
   .site-name-metric > div {
     flex: 1;
+  }
+}
+
+@keyframes explorer-header-gradient {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .public-ui .site-explorer-table .site-column-headings {
+    animation: none;
+    background-position: 50% 50%;
   }
 }
