@@ -322,14 +322,14 @@
   outline-offset: 3px;
 }
 .home-hero {
-  --cover-center-offset: calc((var(--site-strip-height) + 65px) / 2);
   width: calc(100% - 80px);
   max-width: var(--site-content-width);
   margin: 0 auto;
   min-height: calc(100svh - var(--site-strip-height) - 65px);
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   align-items: center;
-  padding: calc(120px - var(--cover-center-offset)) 0 calc(120px + var(--cover-center-offset));
+  padding: 24px 0;
   position: relative;
   isolation: isolate;
 }
@@ -379,10 +379,85 @@
   border: 0.5px solid color-mix(in oklab, #f5f5f5, black 10%);
   opacity: 0.4;
 }
+.home-hero-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  width: 100%;
+  min-width: 0;
+}
 .home-hero-copy {
   text-align: center;
+  width: 100%;
+  min-width: 0;
   max-width: 780px;
   margin: 0 auto;
+}
+.hero-community {
+  width: fit-content;
+  max-width: 100%;
+  margin: 64px auto 0;
+  border-color: var(--site-line);
+}
+.hero-community p {
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 400;
+  color: var(--site-muted);
+}
+.hero-community p span {
+  color: var(--site-accent);
+  font-weight: 500;
+}
+.hero-template-avatar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--site-line);
+  border-radius: inherit;
+  mix-blend-mode: darken;
+}
+.hero-portraits {
+  inset-inline: auto;
+  left: 50%;
+  width: min(100vw, 1280px);
+  translate: -50% 0;
+  overflow-x: clip;
+}
+@media (min-width: 640px) {
+  .home-hero-content { gap: 64px; }
+}
+@media (min-width: 1024px) {
+  .home-hero-content { gap: 96px; }
+}
+.hero-company-marquee {
+  --marquee-duration: 20s;
+  --marquee-delay: 0s;
+  --marquee-gap: 4rem;
+}
+/* Feature Page 03's original reverse marquee and seamless four-track structure. */
+.hero-company-track {
+  animation: hero-marquee-horizontal var(--marquee-duration) infinite linear;
+  animation-delay: var(--marquee-delay);
+  animation-direction: reverse;
+}
+.hero-company-marquee:hover .hero-company-track {
+  animation-play-state: paused;
+}
+.hero-company-fade-left {
+  background: linear-gradient(to right, white, transparent 85%);
+}
+.hero-company-fade-right {
+  background: linear-gradient(to left, white, transparent 85%);
+}
+@keyframes hero-marquee-horizontal {
+  0% { transform: translate(0); }
+  to { transform: translateX(calc(-100% - var(--marquee-gap))); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-company-track { animation: none; }
 }
 .home-hero-copy h1 {
   font-size: 56px;
@@ -714,7 +789,7 @@
   }
   .home-hero {
     width: calc(100% - 32px);
-    padding: calc(72px - var(--cover-center-offset)) 0 calc(72px + var(--cover-center-offset));
+    padding-block: 16px;
   }
   .home-hero::before {
     inset-inline: -16px;

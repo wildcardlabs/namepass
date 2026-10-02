@@ -2,6 +2,11 @@ import HeroBadge from "./HeroBadge";
 import { ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
 import CoverGrid from "./CoverGrid";
+import {
+  HeroCommunity,
+  HeroCompanyCarousel,
+  HeroPortraits,
+} from "./HeroSocial";
 
 /** Shared type, framing and actions introduce the public application. */
 export default function Hero({
@@ -14,27 +19,32 @@ export default function Hero({
   return (
     <section className="home-hero">
       <CoverGrid />
-      <div className="home-hero-copy">
-        <HeroBadge />
+      <div className="home-hero-content">
+        <div className="home-hero-copy">
+          <HeroBadge />
 
-        <h1 className="text-ink-primary">
-          Give a name <span className="text-ink-action">more time</span>
-        </h1>
+          <h1 className="text-ink-primary">
+            Give a name <span className="text-ink-action">more time</span>
+          </h1>
 
-        <p className="text-ink-secondary">
-          Send USDC to an ENS name’s deposit address. Watch it turn into renewal
-          time.
-        </p>
-        <div className="home-hero-actions">
-          <Button className="primary-action" onClick={onExplore}>
-            Get Started
-            <ArrowRight size={16} aria-hidden="true" />
-          </Button>
-          <Button variant="outline" onClick={onDocs}>
-            Read the docs
-            <ArrowRight size={16} aria-hidden="true" />
-          </Button>
+          <p className="text-ink-secondary">
+            Send USDC to an ENS name’s deposit address. Watch it turn into
+            renewal time.
+          </p>
+          <div className="home-hero-actions">
+            <Button className="primary-action" onClick={onExplore}>
+              Get Started
+              <ArrowRight size={16} aria-hidden="true" />
+            </Button>
+            <Button variant="outline" onClick={onDocs}>
+              Read the docs
+              <ArrowRight size={16} aria-hidden="true" />
+            </Button>
+          </div>
+          <HeroCommunity />
         </div>
+        <HeroCompanyCarousel />
+        <HeroPortraits />
       </div>
     </section>
   );
