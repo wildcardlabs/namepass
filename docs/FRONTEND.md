@@ -77,7 +77,17 @@ Resources and the footer. The protocol keeps its four-card bento arrangement and
 contain text with a slow, neutral background fade. The fade stops outside the viewport, in
 a hidden tab and for reduced-motion preferences. No additional protocol graphics are present.
 Explorer, pricing, secondary pages and the integration CTA share the surface treatment. The
-Explorer section has a white canvas. Protocol cards are white with fine neutral borders. The activity table
+outer gutters use the supplied Shadcn Studio Flow template's 45-degree stripe CSS, with
+1px strokes at 40% border opacity and a fixed 12px repeat. White content frames and the
+shared footer keep the existing 1280px maximum width. Flow's `px-4 sm:px-6 lg:px-8`
+wrapper is mirrored through 16px phone, 24px tablet and 32px desktop outer gutters.
+The striped side strips remain visible on mobile; inner mobile section padding is 16px.
+The home cover uses Flow's saved 27-by-8 decorative cell grid: 56.815px cells, a 0.5px
+border, 40% opacity and a radial mask from the top. It has no pointer interaction.
+`SectionDivider` renders a plain 1px rule at section boundaries and the shared footer,
+including docs. The template's T ornaments are omitted. Decoration is hidden from assistive
+technology and cannot intercept clicks. Content and payment behavior are unchanged.
+The Explorer section has a white canvas. Protocol cards are white with fine neutral borders. The activity table
 has one frame, a quiet toolbar, 12px column labels and 14px row text. Only the column-title
 row uses a balanced light green-to-white gradient that moves sideways over 14 seconds.
 Reduced-motion preferences keep it still. The toolbar stays white and shares the

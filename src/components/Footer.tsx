@@ -1,5 +1,6 @@
 import { Github } from "lucide-react";
 import { XIcon } from "./icons";
+import SectionDivider from "./SectionDivider";
 
 interface Props {
 	onExplore: () => void;
@@ -34,6 +35,7 @@ export default function Footer({
 
 	return (
 		<footer className="site-footer bg-surface-canvas border-t border-[rgba(28,58,41,0.08)] px-5 md:px-10 py-14 md:py-16">
+			<SectionDivider />
 			<div className="max-w-[1100px] mx-auto">
 				<div className="flex flex-col md:flex-row md:justify-between gap-10 md:gap-6">
 					<div className="max-w-xs">

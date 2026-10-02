@@ -17,7 +17,15 @@
   --site-control-radius: 6px;
   --site-panel-radius: 12px;
   --site-content-width: 1180px;
+  --site-frame-inset: 64px;
   --site-strip-height: 0px;
+}
+/* Flow wrapper: px-4, sm:px-6, lg:px-8. */
+@media (max-width: 1023px) {
+  :root { --site-frame-inset: 48px; }
+}
+@media (max-width: 639px) {
+  :root { --site-frame-inset: 32px; }
 }
 .site-app[data-testnet="true"] {
   --site-strip-height: 32px;
@@ -72,6 +80,29 @@
 .public-ui :where(h3, h4) {
   color: var(--site-card-ink);
   font-weight: 500;
+}
+/* Flow reference: original 45deg gutter stripes, 1px strokes and 12px repeat. */
+.public-ui:has(> .site-page-frame),
+.site-app > .public-ui:not(.site-renewal-strip),
+.docs-shell,
+.docs-shell > .docs-header {
+  background-image: repeating-linear-gradient(
+    45deg,
+    color-mix(in oklab, var(--site-line) 40%, transparent) 0,
+    color-mix(in oklab, var(--site-line) 40%, transparent) 1px,
+    transparent 0,
+    transparent 50%
+  );
+  background-size: 12px 12px;
+  background-attachment: fixed;
+}
+.site-section-divider {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: var(--site-line);
+  pointer-events: none;
+  z-index: 2;
 }
 .site-header {
   width: 100%;
@@ -299,6 +330,31 @@
   background: radial-gradient(ellipse at 50% 95%, #eaf2e380, transparent 65%);
   pointer-events: none;
 }
+/* Flow's saved 27 × 8 cells: retain its fill, border, opacity and radial mask. */
+.site-cover-grid {
+  position: absolute;
+  inset: 0 -40px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: -1;
+}
+.site-cover-grid-cells {
+  display: grid;
+  flex-shrink: 0;
+  grid-template-columns: repeat(27, 56.815px);
+  grid-template-rows: repeat(8, 56.815px);
+  width: 1534.005px;
+  height: 454.52px;
+  mask-image: radial-gradient(ellipse farthest-corner at top, black 20%, transparent 100%);
+}
+.site-cover-grid-cell {
+  background-color: #f5f5f5;
+  border: 0.5px solid color-mix(in oklab, #f5f5f5, black 10%);
+  opacity: 0.4;
+}
 .home-hero-copy {
   text-align: center;
   max-width: 780px;
@@ -362,17 +418,18 @@
   color: var(--site-accent);
 }
 .site-page-frame {
-  width: calc(100% - 64px);
+  width: calc(100% - var(--site-frame-inset));
   max-width: 1280px;
   margin-inline: auto;
   border-inline: 1px solid var(--site-line);
+  background: var(--site-canvas);
 }
 .public-ui .site-section {
+  position: relative;
   padding: 56px 40px 64px;
-  border-top: 1px solid var(--site-line);
   scroll-margin-top: calc(var(--site-strip-height) + 80px);
 }
-.public-ui .site-section > div {
+.public-ui .site-section > div:not(.site-section-divider) {
   max-width: var(--site-content-width);
 }
 .public-ui .site-section h2 {
@@ -509,12 +566,17 @@
   border-radius: var(--site-control-radius);
 }
 .public-ui .site-footer {
+  position: relative;
+  width: calc(100% - var(--site-frame-inset));
+  max-width: 1280px;
+  margin-inline: auto;
   background: white;
-  border-color: var(--site-line);
+  border: 0;
+  border-inline: 1px solid var(--site-line);
   padding: 40px 40px 28px;
 }
-.public-ui .site-footer > div {
-  width: calc(100% - 64px);
+.public-ui .site-footer > div:not(.site-section-divider) {
+  width: 100%;
   max-width: var(--site-content-width);
 }
 .public-ui .site-footer img {
@@ -583,13 +645,8 @@
   }
 }
 @media (max-width: 767px) {
-  .site-page-frame {
-    width: 100%;
-    border-inline: 0;
-  }
-
   .site-nav {
-    width: calc(100% - 40px);
+    width: calc(100% - 32px);
     min-height: 64px;
     gap: 12px;
   }
@@ -632,12 +689,15 @@
     gap: 8px;
   }
   .home-hero {
-    width: calc(100% - 48px);
+    width: calc(100% - 32px);
     min-height: 500px;
     padding: 72px 0;
   }
   .home-hero::before {
-    inset-inline: -24px;
+    inset-inline: -16px;
+  }
+  .site-cover-grid {
+    inset-inline: -16px;
   }
   .home-hero-copy h1 {
     font-size: 40px;
@@ -651,7 +711,7 @@
     gap: 8px;
   }
   .public-ui .site-section {
-    padding: 36px 24px 40px;
+    padding: 36px 16px 40px;
   }
   .public-ui .site-section h2 {
     font-size: 26px;
@@ -661,7 +721,7 @@
     font-size: 16px;
   }
   .public-ui .site-cta-section {
-    padding: 0 24px 40px;
+    padding: 0 16px 40px;
   }
   .public-ui .site-cta-content {
     padding: 24px;
@@ -670,7 +730,7 @@
     font-size: 26px;
   }
   .public-ui .site-footer {
-    padding: 32px 24px 24px;
+    padding: 32px 16px 24px;
   }
   .site-secondary-content > div {
     padding: 32px 24px 48px;

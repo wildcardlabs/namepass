@@ -13,6 +13,7 @@ import { GAS_ALLOWANCE } from "../lib/fees";
 import { fmtDurationPrecise, fmtUsdc } from "../lib/format";
 import Tooltip from "./Tooltip";
 import PricingError from "./PricingError";
+import SectionDivider from "./SectionDivider";
 
 const LENGTHS = [
   { len: 3, label: "3 characters" },
@@ -65,6 +66,7 @@ export default function Simulator({
       id="simulator"
       className="site-section bg-surface-canvas px-5 md:px-10 py-14 md:py-20"
     >
+      <SectionDivider />
       <div className="max-w-[1100px] mx-auto">
         <div className="max-w-2xl">
           <span className="site-eyebrow text-[11px] uppercase tracking-section text-ink-label">

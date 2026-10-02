@@ -1,6 +1,7 @@
 import HeroBadge from "./HeroBadge";
 import { ArrowRight } from "lucide-react";
 import { Button } from "./ui/button";
+import CoverGrid from "./CoverGrid";
 
 /** Shared type, framing and actions introduce the public application. */
 export default function Hero({
@@ -12,6 +13,7 @@ export default function Hero({
 }) {
   return (
     <section className="home-hero">
+      <CoverGrid />
       <div className="home-hero-copy">
         <HeroBadge />
 

@@ -30,7 +30,7 @@
   --docs-accent: var(--site-accent);
   --docs-font: var(--site-font);
   font-family: var(--docs-font);
-  background: var(--site-canvas);
+  background-color: var(--site-canvas);
   color: var(--site-body-ink);
   min-height: 100dvh;
   font-size: var(--docs-body-size);
@@ -56,7 +56,7 @@
   position: sticky;
   top: var(--site-strip-height);
   z-index: 30;
-  background: white;
+  background-color: white;
   backdrop-filter: blur(18px);
   border-bottom: 1px solid var(--docs-line);
 }
@@ -1633,10 +1633,12 @@
 }
 
 .docs-layout {
-  width: calc(100% - 64px);
+  width: calc(100% - var(--site-frame-inset));
   max-width: 1280px;
   margin-inline: auto;
   border-inline: 1px solid var(--site-line);
+  position: relative;
+  background: var(--site-canvas);
 }
 .docs-app-link {
   min-height: 36px;
@@ -1655,10 +1657,6 @@
   background: var(--site-action-hover);
 }
 @media (max-width: 760px) {
-  .docs-layout {
-    width: 100%;
-    border-inline: 0;
-  }
   .docs-wordmark {
     width: 96px;
   }
@@ -1666,17 +1664,16 @@
 
 .docs-header-inner,
 .docs-tab-bar {
-  width: calc(100% - 64px);
+  width: calc(100% - var(--site-frame-inset));
   max-width: 1280px;
   padding-inline: 40px;
   border-inline: 1px solid transparent;
+  background: var(--site-canvas);
 }
 @media (max-width: 767px) {
   .docs-header-inner,
   .docs-tab-bar {
-    width: 100%;
-    padding-inline: 20px;
-    border-inline: 0;
+    padding-inline: 16px;
   }
   .docs-wordmark {
     width: 96px;

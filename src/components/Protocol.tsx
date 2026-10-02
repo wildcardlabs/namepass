@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useInView, useReducedMotion } from "motion/react";
 import { Github, Timer, Unplug, WalletMinimal } from "lucide-react";
 import { AnimatedBeamDemo } from "./AnimatedBeamDemo";
+import SectionDivider from "./SectionDivider";
 
 /* Four protocol properties share the public panel and typography rules. */
 
@@ -25,6 +26,7 @@ export default function Protocol() {
   }, []);
 	return (
 		<section ref={ref} data-background-active={visible && activeTab && !reduced} id="protocol" className="site-section bg-surface-canvas px-5 md:px-10 py-14 md:py-20">
+			<SectionDivider />
 			<div className="max-w-[1100px] mx-auto">
 				<div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
 					<div className="max-w-2xl">

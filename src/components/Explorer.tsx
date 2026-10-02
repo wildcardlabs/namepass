@@ -30,6 +30,7 @@ import {
 	CheckCircle2,
 } from "lucide-react";
 import { BackButton, ICON_BUTTON_BASE_CLASS } from "./BackButton";
+import SectionDivider from "./SectionDivider";
 import {
 	activeFlows,
 	activityEmptyState,
@@ -1449,6 +1450,7 @@ export default function Explorer({ selected, onSelect, onActivated, onSupportedT
 
 	return (
 		<section id="explorer" className="site-section bg-surface-canvas px-5 md:px-10 py-14 md:py-20">
+			<SectionDivider />
 			<div className="max-w-[1100px] mx-auto">
 				<div className={`flex flex-col md:flex-row md:justify-between gap-6 ${record ? "md:items-center" : "md:items-end"}`}>
 					<div>
