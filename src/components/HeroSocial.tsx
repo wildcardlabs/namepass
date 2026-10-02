@@ -86,12 +86,16 @@ export function HeroCompanyCarousel() {
     <div
       className="hero-company-carousel relative w-full max-w-3xl"
       role="group"
-      aria-label="ENS, USDC and supported test networks"
+      aria-label={
+        IS_TESTNET
+          ? "ENS, USDC and supported testnets"
+          : "ENS, USDC and supported networks"
+      }
     >
       <p className="hero-ecosystem-label">
         {IS_TESTNET
-          ? "ENS renewals across supported testnets"
-          : "ENS renewals across supported networks"}
+          ? "ENS · USDC · Supported testnets"
+          : "ENS · USDC · Supported networks"}
       </p>
       <div className="hero-company-fade hero-company-fade-left pointer-events-none absolute inset-y-0 left-0 z-1 w-15" />
       <div className="hero-company-fade hero-company-fade-right pointer-events-none absolute inset-y-0 right-0 z-1 w-15" />
