@@ -347,8 +347,8 @@ function FeedRowContent({
 								<p className="text-[13px] text-ink-action">{flowPresentation(row.status, row.originChainId).detail}</p>
 								{transactions.length > 0 && (
 									<div className="mt-4">
-										<div className="text-[10px] uppercase tracking-wider text-ink-label">Transactions</div>
-										<ol className="mt-2 grid gap-x-6 sm:grid-cols-2">
+										<div className="site-evidence-heading"><h4>Transaction trail</h4></div>
+										<ol className="site-transaction-trail">
 											{transactions.map((transaction, index) => (
 												<TransactionRow key={transaction.tx} index={index} label={transaction.label} chain={transaction.chain} tx={transaction.tx} />
 											))}
@@ -628,16 +628,17 @@ function TransactionRow({ index, label, chain, tx }: { index: number; label: str
 				target="_blank"
 				rel="noopener noreferrer"
 				aria-label={`View ${label.toLowerCase()} transaction on ${chain}`}
-				className="site-transaction-link flex min-w-0 items-center gap-3"
+				title={tx}
+				className="site-transaction-link"
 			>
-				<span className="inline-flex w-4 shrink-0 items-center justify-center text-[12px] text-ink-secondary tabular-nums">{index + 1}</span>
-				<span className="min-w-0 flex-1">
-					<span className="flex items-center justify-between gap-2 text-[12.5px] text-ink-primary">
+				<span className="site-transaction-step" aria-hidden="true">{index + 1}</span>
+				<span className="site-transaction-content">
+					<span className="site-transaction-heading">
 						<span>{label}</span>
-						<span className="shrink-0 text-[11px] text-ink-secondary">{chain}</span>
+						<span className="site-transaction-chain">{chain}</span>
 					</span>
-					<span className="mt-1 inline-flex items-center gap-1.5 font-mono text-[12px] text-ink-action">
-						{truncTx(tx)} <ExternalLink className="w-3 h-3 shrink-0" />
+					<span className="site-transaction-hash">
+						{truncTx(tx)} <ExternalLink aria-hidden="true" className="w-3 h-3 shrink-0" />
 					</span>
 				</span>
 			</a>
@@ -651,8 +652,8 @@ function CopyableAddress({ address, label }: { address: string; label: string })
 	const copyable = /^0x[a-f\d]{40}$/i.test(address);
 
 	return (
-		<>
-			<span className="min-w-0 flex-1 break-all font-mono">
+		<span className="site-evidence-address">
+			<span className="site-evidence-address-value">
 				{address}
 				<span role="status" className="sr-only">{copied ? "Copied to clipboard" : ""}</span>
 				{error && <span role="alert" className="mt-1 block font-sans text-red-700">{error.message}</span>}
@@ -663,12 +664,12 @@ function CopyableAddress({ address, label }: { address: string; label: string })
 					onClick={() => void copy(address)}
 					aria-label={copied ? `${label} address copied` : `Copy ${label} address`}
 					title={copied ? "Copied" : `Copy ${label} address`}
-					className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-ink-secondary transition-colors hover:bg-surface-hover hover:text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(28,58,41,0.6)]"
+					className="site-data-copy inline-flex items-center justify-center transition-colors hover:text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(28,58,41,0.6)]"
 				>
 					{copied ? <Check aria-hidden="true" className="h-3.5 w-3.5" /> : <Copy aria-hidden="true" className="h-3.5 w-3.5" />}
 				</button>
 			)}
-		</>
+		</span>
 	);
 }
 
@@ -685,33 +686,34 @@ function RenewalBreakdown({ event }: { event: ActivityEvent }) {
 		? (event.amountApplied * YEAR_SECONDS + event.seconds / 2n) / event.seconds
 		: 0n;
 	return (
-		<div className="site-renewal-breakdown grid gap-6 md:grid-cols-2">
-			<div className="min-w-0">
-				<div className="text-[10px] uppercase tracking-wider text-ink-label">
-					Amount
+		<div className="site-renewal-breakdown">
+			<section className="site-renewal-payment" aria-label="Payment breakdown">
+				<div className="site-evidence-heading">
+					<h4>Payment breakdown</h4>
+					<span>USDC</span>
 				</div>
 				{/* Exact amounts here, not rounded ones. This is the panel someone opens
 			    to check the arithmetic, and a tier threshold can turn on a
 			    micro-unit — "$27" would be true of both $27.000071 (six years at
 			    43.75% off) and $27.00 (four years eleven months at 31.25%). */}
-				<dl className="mt-2.5 space-y-1.5 text-[13px]">
-					<div className="flex justify-between gap-4">
-						<dt className="text-ink-secondary">Received</dt>
-						<dd className="text-ink-action tabular-nums">
+				<dl className="site-payment-amounts">
+					<div>
+						<dt>Received</dt>
+						<dd>
 							{fmtUsdcExact(event.amountDeposited)}
 						</dd>
 					</div>
 					{event.gasAllowance > 0n && (
-						<div className="flex justify-between gap-4">
-							<dt className="text-ink-secondary">Gas allowance</dt>
-							<dd className="text-ink-secondary tabular-nums">
+						<div>
+							<dt>Gas allowance</dt>
+							<dd>
 								−{fmtUsdcExact(event.gasAllowance)}
 							</dd>
 						</div>
 					)}
-					<div className="flex justify-between gap-4 pt-1.5 border-t border-[rgba(28,58,41,0.08)]">
-						<dt className="text-ink-secondary">Applied to renewal</dt>
-						<dd className="text-ink-primary tabular-nums">
+					<div className="site-payment-applied">
+						<dt>Applied to renewal</dt>
+						<dd>
 							{fmtUsdcExact(event.amountApplied)}
 						</dd>
 					</div>
@@ -719,41 +721,38 @@ function RenewalBreakdown({ event }: { event: ActivityEvent }) {
 					    bought it at, so "$27 · 6 years" looks like bad arithmetic until
 					    you notice the bulk rate is $4.50, not the headline $8. */}
 					{hasMeaningfulDuration && (
-						<div className="flex justify-between gap-4">
-							<dt className="text-ink-secondary">Effective rate</dt>
-							<dd className="text-ink-secondary tabular-nums">
+						<div className="site-payment-rate">
+							<dt>Effective rate</dt>
+							<dd>
 								{fmtUsdc(effectiveRate)}/year
 							</dd>
 						</div>
 					)}
 				</dl>
-				<dl className="mt-4 space-y-1.5 border-t border-[rgba(28,58,41,0.08)] pt-3 text-[12px]">
+				<dl className="site-payment-participants">
 					<div>
-						<dt className="text-ink-secondary">Funded by</dt>
-						<dd className="mt-0.5 flex min-w-0 items-start gap-1.5 text-ink-action">
+						<dt>Funded by</dt>
+						<dd>
 							<CopyableAddress address={event.funder} label="funded by" />
 						</dd>
 					</div>
 					<div>
-						<dt className="text-ink-secondary">Processed by</dt>
-						<dd className="mt-0.5 flex min-w-0 items-start gap-1.5 text-ink-action">
-							{event.executorIsRelayer && <span className="shrink-0">Namepass ·</span>}
+						<dt>Processed by {event.executorIsRelayer && <span className="site-payment-relayer">Namepass</span>}</dt>
+						<dd>
 							<CopyableAddress address={event.executor} label="processed by" />
 						</dd>
 					</div>
 				</dl>
-				</div>
+			</section>
 
-			<div className="min-w-0 md:border-l md:border-[rgba(28,58,41,0.08)] md:pl-5">
-				<div className="text-[10px] uppercase tracking-wider text-ink-label">
-					Transactions
-				</div>
-				<ol className="mt-3">
+			<section className="site-renewal-transactions" aria-label="Transaction trail">
+				<div className="site-evidence-heading"><h4>Transaction trail</h4></div>
+				<ol className="site-transaction-trail">
 					{event.steps.map((s, i) => (
 						<TransactionRow key={s.tx} index={i} label={stepLabel(s, bridged)} chain={s.chain} tx={s.tx} />
 					))}
 				</ol>
-			</div>
+			</section>
 		</div>
 	);
 }

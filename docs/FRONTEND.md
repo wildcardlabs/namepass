@@ -90,7 +90,10 @@ address and visible Copy address and Show QR actions. The readable deposit name 
 secondary destination, with its copy icon immediately beside the value. Expiry and profile labels
 both use 12px regular text and 14px outline icons; Profile uses title case. Profile record links
 change only color on hover, so their width and neighbours remain stable. QR opens in an accessible shadcn Dialog. Metrics use a flat strip. Expanded renewal amounts
-and transactions use rows and rules without nested cards. Pending balances retain their
+and transactions use rows and rules without nested cards. Payment amounts use a compact
+USDC breakdown with the exact applied amount emphasized. Neutral full participant addresses
+have adjacent copy controls. Recorded transactions form a numbered trail with chain labels
+and green explorer links. The two detail columns stack below 900px. Pending balances retain their
 existing states and actions; exceptional flows use a narrow notice rule. The name-view heading and back icon share a
 centered row. The pricing calculator groups name length, amount and discount controls in its
 left panel. Renewal time and the cost breakdown occupy the white right panel. The result uses
@@ -98,6 +101,8 @@ a 32px time value and consistent 14px label/value rows with light dividers. The 
 below 1024px. The loading state uses the same layout.
 Existing controls and exact math are retained.
 Name-length and discount-year options share the same faint border and pale selected fill.
+Name-length options show only character count and annual price; example ENS names are omitted
+from both loaded options and loading placeholders.
 Selected options have a transparent border without an extra outline or shadow. Hover changes
 only the faint border; keyboard focus retains its visible ring.
 The next-tier suggestion sits to the right of the payment amount, with a tooltip and shortcut.

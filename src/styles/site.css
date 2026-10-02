@@ -1009,7 +1009,6 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   line-height: 20px;
   color: var(--site-ink);
 }
-.site-length-example,
 .site-length-rate {
   font-size: 12px;
   line-height: 18px;
@@ -1077,14 +1076,10 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
     grid-column: 1;
     grid-row: 1;
   }
-  .site-length-example {
-    grid-column: 1;
-    grid-row: 2;
-  }
   .site-length-rate,
   .site-length-option > .rounded-full {
     grid-column: 2;
-    grid-row: 1 / 3;
+    grid-row: 1;
     align-self: center;
   }
 }
@@ -1378,39 +1373,203 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   background: #fafafa;
 }
 .site-renewal-breakdown {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 40px;
   border-top: 1px solid var(--site-line);
-  padding: 20px 16px;
+  padding: 24px;
   background: #fafafa;
 }
 .site-pending-breakdown {
   background: #fafafa;
 }
-.site-renewal-breakdown > div > div:first-child {
+.site-renewal-breakdown > section {
+  min-width: 0;
+}
+.site-evidence-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.public-ui .site-evidence-heading h4 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 22px;
+  font-weight: 500;
+  color: var(--site-card-ink);
+}
+.site-evidence-heading > span {
   font-size: 12px;
   line-height: 18px;
-  font-weight: 500;
-  text-transform: none;
-  letter-spacing: normal;
+  color: var(--site-muted);
 }
-.site-renewal-breakdown dl {
+.site-payment-amounts {
   font-size: 14px;
   line-height: 22px;
 }
-.site-transaction-link {
-  min-height: 60px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--site-line);
-  color: var(--site-accent);
+.site-payment-amounts > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-block: 6px;
 }
-.site-transaction-link:hover {
+.site-payment-amounts dt {
+  color: var(--site-body-ink);
+}
+.site-payment-amounts dd {
+  margin: 0;
+  color: var(--site-ink);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.site-payment-amounts .site-payment-applied {
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--site-line);
+  font-weight: 500;
+}
+.site-payment-applied dt {
+  color: var(--site-card-ink);
+}
+.site-payment-amounts .site-payment-rate {
+  font-size: 12px;
+  line-height: 20px;
+}
+.site-payment-rate dd {
+  color: var(--site-body-ink);
+}
+.site-payment-participants {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--site-line);
+}
+.site-payment-participants dt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--site-muted);
+  font-size: 12px;
+  line-height: 20px;
+}
+.site-payment-participants dd {
+  margin: 2px 0 0;
+}
+.site-payment-relayer {
+  color: var(--site-body-ink);
+}
+.site-evidence-address {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 6px;
+  max-width: 100%;
   color: var(--site-ink);
 }
-.site-transaction-link > span > span:first-child {
+.site-evidence-address-value {
+  min-width: 0;
+  padding-top: 8px;
+  overflow-wrap: anywhere;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12px;
+  line-height: 20px;
+}
+.site-renewal-transactions {
+  padding-left: 32px;
+  border-left: 1px solid var(--site-line);
+}
+.site-transaction-trail {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.site-transaction-trail > li {
+  position: relative;
+}
+.site-transaction-trail > li:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 36px;
+  bottom: -12px;
+  width: 1px;
+  background: var(--site-line);
+}
+.site-transaction-link {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+  min-height: 76px;
+  padding: 12px 0;
+  color: var(--site-accent);
+  border-radius: 4px;
+}
+.site-transaction-step {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 25px;
+  height: 25px;
+  flex-shrink: 0;
+  border: 1px solid var(--site-line);
+  border-radius: 50%;
+  background: white;
+  color: var(--site-muted);
+  font-size: 11px;
+  line-height: 16px;
+  font-variant-numeric: tabular-nums;
+}
+.site-transaction-content {
+  flex: 1;
+  min-width: 0;
+}
+.site-transaction-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 12px;
   font-size: 14px;
   line-height: 22px;
+  font-weight: 500;
+  color: var(--site-card-ink);
 }
-.site-transaction-link > span > span:first-child > span:last-child {
+.site-transaction-chain {
   font-size: 12px;
+  line-height: 20px;
+  font-weight: 400;
+  color: var(--site-muted);
+}
+.site-transaction-hash {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12px;
+  line-height: 20px;
+}
+.site-transaction-link:hover .site-transaction-hash {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 899px) {
+  .site-renewal-breakdown {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+    padding: 20px 16px;
+  }
+  .site-renewal-transactions {
+    padding: 20px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--site-line);
+  }
 }
 .site-mobile-flow dt {
   font-size: 12px;

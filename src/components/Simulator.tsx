@@ -21,9 +21,9 @@ import {
 } from "./ui/tooltip";
 
 const LENGTHS = [
-  { len: 3, label: "3 characters", example: "ens.eth" },
-  { len: 4, label: "4 characters", example: "base.eth" },
-  { len: 5, label: "5+ characters", example: "vitalik.eth" },
+  { len: 3, label: "3 characters" },
+  { len: 4, label: "4 characters" },
+  { len: 5, label: "5+ characters" },
 ];
 
 /**
@@ -119,7 +119,6 @@ function SimulatorSkeleton() {
           {LENGTHS.map((l) => (
             <div key={l.len} className="site-calculator-option site-length-option">
               <span className="site-length-label">{l.label}</span>
-              <span className="site-length-example">{l.example}</span>
               <Bar className="h-3 w-16" />
             </div>
           ))}
@@ -214,7 +213,6 @@ function SimulatorBody() {
               className="site-calculator-option site-length-option"
             >
               <span className="site-length-label">{l.label}</span>
-              <span className="site-length-example">{l.example}</span>
               <span className="site-length-rate">
                 {fmtUsdc(oneYearCost(l.len))}/year
               </span>
