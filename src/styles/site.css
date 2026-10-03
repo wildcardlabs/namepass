@@ -357,6 +357,19 @@
   position: relative;
   isolation: isolate;
 }
+/* Join the white header to the wash without a visible colour or grid edge. */
+.home-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: 100vw;
+  height: 160px;
+  background: linear-gradient(180deg, white 0%, #ffffffed 20%, #ffffff00 100%);
+  pointer-events: none;
+  z-index: -2;
+}
 @media (min-width: 768px) {
   .home-hero {
     min-height: calc(100vh - var(--site-strip-height) - 65px);
@@ -372,6 +385,7 @@
   overflow: hidden;
   pointer-events: none;
   z-index: -1;
+  mask-image: linear-gradient(180deg, transparent, black 112px);
 }
 .site-cover-grid-cells {
   display: grid;
@@ -832,9 +846,6 @@
   .home-hero {
     width: calc(100% - 32px);
     padding-block: 16px;
-  }
-  .home-hero::before {
-    inset-inline: -16px;
   }
   .site-cover-grid {
     inset-inline: -16px;

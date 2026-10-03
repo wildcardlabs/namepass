@@ -114,7 +114,9 @@ from the saved Circle CCTP page, including its original blue/lilac stops and whi
 radial highlight. The shared app uses the reference's top-centred, non-repeating cover sizing under the white overlay.
 Page frames and section surfaces are transparent; white cards, controls and tables
 remain distinct. The cover grid retains its saved cell geometry, 40% cell opacity and
-radial fade. The shared footer spans the viewport with Circle's deep
+radial fade. Its first 112px also fade in from transparent below the header. A separate
+160px white-to-transparent overlay quiets the colour at that edge without changing the
+rest of the page wash. The shared footer spans the viewport with Circle's deep
 `#1f1a30` background, `#a7a3b5` links and supporting text, and `#e1dfe8` category
 labels. Navigation links use 14px Geist at weight 400 and brighten on hover.
 Font smoothing is inherited from the document root across all pages and portals
