@@ -91,12 +91,16 @@ ring animation peaks at 55% opacity. The heart, central circle and ECG are omitt
 The rings do not move card content. They use the same visibility pause and show one
 stationary faint ring with reduced motion.
 The four bento cards have unnumbered category labels.
-The homepage alternates full-width section backgrounds: protocol and pricing are white;
-explorer and the integration CTA show the shared page wash. The CTA presents a centred
-heading, compact supporting copy and the docs action directly on the wash. It has no
-card, shadow, Vanta canvas or entrance animation. Padding is 64px above and 72px below
-on desktop, and 48px above and 56px below on mobile. Secondary pages also retain the wash.
-Coloured sections' outer gutters show the same wash, without diagonal stripes or visible frame
+All homepage sections share one continuous page wash, including their outer gutters.
+A white overlay quiets the top and bottom and reduces the peak colour in the middle:
+white opacity is 20% at the top, 30% at 16% of the page, 40% at 38% and 50%,
+50% at 62%, 65% at 84%, and 75% at the bottom. The original Circle SVG retains its colours and geometry below
+this overlay. Protocol and pricing have no separate white section bands.
+The integration CTA uses its previous white card and faint green Vanta topology texture,
+with the copy on the left and docs action on the right. Its canvas and fallback are white.
+Outer padding gives the CTA 64px above and 88px below on desktop, and 48px above and
+64px below on mobile.
+Secondary pages retain the softened wash. Outer gutters have no diagonal stripes or visible frame
 side borders. Transparent 1px borders preserve existing widths and logo alignment.
 Content and the shared footer's inner wrapper keep the existing 1280px maximum width. The responsive
 outer gutters remain 16px on phones, 24px on tablets and 32px on desktop. Inner mobile
@@ -107,9 +111,9 @@ the viewport edges; the public header extends its background beyond its centred 
 Neither header has a grey bottom separator; docs retain their active-tab underline.
 `public/assets/circle/page-wash.svg` retains the four gradient layers and geometry
 from the saved Circle CCTP page, including its original blue/lilac stops and white
-radial highlight. The shared app uses the reference's top-centred, non-repeating cover sizing.
-Page frames and coloured section surfaces are transparent; white cards, controls and tables
-remain distinct. White sections use a full-width background layer without changing content widths. The cover grid retains its saved cell geometry, 40% cell opacity and
+radial highlight. The shared app uses the reference's top-centred, non-repeating cover sizing under the white overlay.
+Page frames and section surfaces are transparent; white cards, controls and tables
+remain distinct. The cover grid retains its saved cell geometry, 40% cell opacity and
 radial fade. The shared footer spans the viewport with Circle's deep
 `#1f1a30` background, `#a7a3b5` links and supporting text, and `#e1dfe8` category
 labels. Navigation links use 14px Geist at weight 400 and brighten on hover.
@@ -155,8 +159,7 @@ strip and header: the space above the badge within the cover equals the space be
 the carousel. The pill has a 56px gap after the actions.
 The carousel uses 32px mobile, 64px tablet and 96px desktop gaps. Mobile retains
 `100svh` sizing.
-Landing-page section rules and the template's T ornaments are omitted. Spacing and
-alternating backgrounds separate major areas. The footer uses Circle's deep purple
+Landing-page section rules and the template's T ornaments are omitted. Spacing separates major areas over the continuous wash. The footer uses Circle's deep purple
 background. Existing inner surface colors remain: `--site-subtle` is `#F5F5F5`, table
 details use `#FAFAFA`, and docs retain their code and resource surfaces on a white shell.
 Navigation widths and logo positions stay unchanged. Row separators and keyboard focus
@@ -177,10 +180,7 @@ both use 12px regular text and 14px outline icons; Profile uses title case. Prof
 change only color on hover, so their width and neighbours remain stable. The funding panel ends
 with a compact USDC heading, Token contracts action and aligned network list, in two columns
 on small phones. Ethereum is listed first in the name view; the Base logo is visually 14px
-within the same 16px icon slot. QR opens in an accessible shadcn Dialog. Lifetime totals (time delivered, total received and renewal count) sit inside the
-Activity panel, above its column headings. A three-column definition list keeps the totals
-attached to the events they summarise, with 12px labels and 20px weight-450 values
-(18px on mobile). The overview contains only expiry, profile and funding details. Expanded renewal amounts
+within the same 16px icon slot. QR opens in an accessible shadcn Dialog. The name view omits lifetime totals. Activity shows only its event rows and their details. Expanded renewal amounts
 and transactions use rows and rules without nested cards. Payment amounts use a compact
 USDC breakdown with the exact applied amount emphasized. Neutral full participant addresses
 have adjacent copy controls. Recorded transactions form a numbered trail with chain labels
@@ -286,8 +286,8 @@ last feed response and page so Back restores them immediately and resumes pollin
 Pricing refreshes keep validated views mounted. Only the initial load and a retry after failed
 validation use the loading state. A validation failure still disables pricing. Price calculations
 must update when the validated configuration changes, without resetting user input.
-The explicit ENS refresh still precedes the activity refresh. The CTA has no canvas effect
-or external animation dependencies.
+The explicit ENS refresh still precedes the activity refresh. The CTA effect runs only
+while visible in an active tab. Reduced-motion users do not start the effect.
 
 Build and verification commands are in [CONTRIBUTING.md](../CONTRIBUTING.md). Deployment facts
 belong in [DEPLOYMENTS.md](DEPLOYMENTS.md).

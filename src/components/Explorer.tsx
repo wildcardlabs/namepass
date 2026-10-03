@@ -40,9 +40,6 @@ import {
 	minTrigger,
 	nameExpiry,
 	renewalEvent,
-	renewalCount,
-	timeDelivered,
-	totalReceived,
 	type ActivityEvent,
 	type FlowStatus,
 	type FlowStep,
@@ -59,7 +56,6 @@ import {
 	fmtDuration,
 	fmtUsdc,
 	fmtUsdcExact,
-	fmtYears,
 	truncAddress,
 	truncTx,
 } from "../lib/format";
@@ -1171,19 +1167,6 @@ function NameDetail({
 				</div>
 
 				<div className="site-explorer-table site-table border border-[rgba(28,58,41,0.1)] rounded-2xl overflow-hidden">
-					{/* Lifetime totals belong with the activity they summarise. */}
-					<dl className="site-name-metrics" aria-label="Lifetime renewal activity">
-						{[
-							{ label: "Time delivered", value: `${fmtYears(timeDelivered(record))}y` },
-							{ label: "Total received", value: fmtUsdc(totalReceived(record)) },
-							{ label: "Renewals", value: renewalCount(record).toString() },
-						].map((metric) => (
-							<div key={metric.label} className="site-name-metric">
-								<dt>{metric.label}</dt>
-								<dd>{metric.value}</dd>
-							</div>
-						))}
-					</dl>
 					<div className={`site-column-headings hidden lg:grid ${NAME_ACTIVITY_COLUMNS} gap-4 px-5 py-3 bg-surface-table border-b border-[rgba(28,58,41,0.1)] text-[11px] uppercase tracking-wider text-ink-label`}>
 						<span>Date</span>
 						<span>Event</span>
