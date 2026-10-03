@@ -91,19 +91,23 @@ ring animation peaks at 55% opacity. The heart, central circle and ECG are omitt
 The rings do not move card content. They use the same visibility pause and show one
 stationary faint ring with reduced motion.
 The four bento cards have unnumbered category labels.
-Explorer and secondary pages share the page wash. The calculator and integration CTA
-finish the homepage on one full-width white background. The CTA retains its existing green
-topology texture with a white canvas and white fallback. Earlier sections' outer gutters
-show the same page wash, without diagonal stripes or visible frame
+The homepage alternates full-width section backgrounds: protocol and pricing are white;
+explorer and the integration CTA show the shared page wash. The CTA retains its existing
+green topology texture with a white canvas and white fallback. Its surrounding section
+shows the wash, with 32px above the panel (24px on mobile). Secondary pages also retain the wash.
+Coloured sections' outer gutters show the same wash, without diagonal stripes or visible frame
 side borders. Transparent 1px borders preserve existing widths and logo alignment.
 Content and the shared footer's inner wrapper keep the existing 1280px maximum width. The responsive
 outer gutters remain 16px on phones, 24px on tablets and 32px on desktop. Inner mobile
-section padding is 16px. The same page wash applies to documentation and secondary pages.
+section padding is 16px. Documentation uses a full-width white shell, including its outer
+gutters, with no decorative header dot grid. The documentation navigation and reading
+columns retain their existing positions. Both headers have a white background through
+the viewport edges; the public header extends its background beyond its centred frame.
 `public/assets/circle/page-wash.svg` retains the four gradient layers and geometry
 from the saved Circle CCTP page, including its original blue/lilac stops and white
 radial highlight. The shared app uses the reference's top-centred, non-repeating cover sizing.
-Page frames and earlier section surfaces are transparent; white cards, controls and tables
-remain distinct. The cover grid retains its saved cell geometry, 40% cell opacity and
+Page frames and coloured section surfaces are transparent; white cards, controls and tables
+remain distinct. White sections use a full-width background layer without changing content widths. The cover grid retains its saved cell geometry, 40% cell opacity and
 radial fade. The shared footer spans the viewport with Circle's deep
 `#1f1a30` background, `#a7a3b5` links and supporting text, and `#e1dfe8` category
 labels. Navigation links use 14px Geist at weight 400 and brighten on hover.

@@ -24,7 +24,7 @@ export default function Protocol() {
     return () => document.removeEventListener("visibilitychange", update);
   }, []);
 	return (
-		<section ref={ref} data-background-active={visible && activeTab && !reduced} id="protocol" className="site-section bg-surface-canvas px-5 md:px-10 py-14 md:py-20">
+		<section ref={ref} data-background-active={visible && activeTab && !reduced} id="protocol" className="site-section site-white-section bg-surface-canvas px-5 md:px-10 py-14 md:py-20">
 			<div className="max-w-[1100px] mx-auto">
 				<div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
 					<div className="max-w-2xl">

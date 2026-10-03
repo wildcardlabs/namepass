@@ -269,15 +269,13 @@ function ActiveApp() {
 						    skeletons standing in for the two panels that quote a price.
 						    So `#simulator` stays a valid scroll target and the section
 						    doesn't change height when the numbers arrive. */}
-						<div className="site-last-section">
-							<Simulator
-								priced={boot.status === "ready"}
-								problem={boot.status === "error" ? boot.message : null}
-								onRetry={loadPricing}
-							/>
+						<Simulator
+							priced={boot.status === "ready"}
+							problem={boot.status === "error" ? boot.message : null}
+							onRetry={loadPricing}
+						/>
 
-							<CtaBand onDocs={() => navigate("docs")} />
-						</div>
+						<CtaBand onDocs={() => navigate("docs")} />
 					</>
 				)}
 

@@ -30,7 +30,7 @@
   --docs-accent: var(--site-accent);
   --docs-font: var(--site-font);
   font-family: var(--docs-font);
-  background-color: transparent;
+  background-color: white;
   color: var(--site-body-ink);
   min-height: 100dvh;
   font-size: var(--docs-body-size);
@@ -609,14 +609,7 @@
   border-bottom: none;
 }
 .docs-home .docs-page-header::before {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  inset: 12px -70px 22px;
-  background-image: radial-gradient(#dce7de 1px, transparent 1px);
-  background-size: 12px 12px;
-  mask-image: linear-gradient(175deg, #00000025, transparent 72%);
-  pointer-events: none;
+  content: none;
 }
 .docs-home .docs-page-header > div:not(.docs-page-tools) {
   position: relative;

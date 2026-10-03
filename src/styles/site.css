@@ -121,9 +121,21 @@
   position: sticky;
   top: var(--site-strip-height);
   z-index: 40;
-  background: #ffffffed;
+  isolation: isolate;
+  background: white;
   backdrop-filter: blur(16px);
   border-bottom: 1px solid transparent;
+}
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 50%;
+  translate: -50% 0;
+  width: 100vw;
+  background: white;
+  pointer-events: none;
+  z-index: -1;
 }
 .site-header::after {
   content: "";
@@ -643,12 +655,12 @@
   border-color: var(--site-line);
   border-radius: var(--site-control-radius);
 }
-/* One full-width white finish for the calculator and integration CTA. */
-.site-last-section {
+/* Alternate full-width white sections with the shared page wash. */
+.site-white-section {
   position: relative;
   isolation: isolate;
 }
-.site-last-section::before {
+.site-white-section::before {
   content: "";
   position: absolute;
   inset-block: 0;
@@ -660,7 +672,7 @@
   z-index: -1;
 }
 .public-ui .site-cta-section {
-  padding: 0 40px 56px;
+  padding: 32px 40px 56px;
 }
 .public-ui .site-cta {
   max-width: var(--site-content-width);
@@ -866,7 +878,7 @@
     font-size: 16px;
   }
   .public-ui .site-cta-section {
-    padding: 0 16px 40px;
+    padding: 24px 16px 40px;
   }
   .public-ui .site-cta-content {
     padding: 24px;

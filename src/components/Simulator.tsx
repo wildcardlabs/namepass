@@ -63,7 +63,7 @@ export default function Simulator({
   return (
     <section
       id="simulator"
-      className="site-section bg-surface-canvas px-5 md:px-10 py-14 md:py-20"
+      className="site-section site-white-section bg-surface-canvas px-5 md:px-10 py-14 md:py-20"
     >
       <div className="max-w-[1100px] mx-auto">
         <div className="max-w-2xl">
