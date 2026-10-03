@@ -20,9 +20,9 @@
   --site-frame-inset: 64px;
   --site-strip-height: 0px;
 }
-/* Circle CCTP's layered page frosting, with Namepass green/neutral stops. */
+/* Circle CCTP's original layered page frosting, including its pastel stops. */
 .site-app {
-  background-color: #fbfcf9;
+  background-color: #ffffff;
   background-image: url("/assets/circle/page-wash.svg");
   background-position: 50% 0;
   background-repeat: no-repeat;
@@ -672,17 +672,20 @@
   border-radius: var(--site-control-radius);
 }
 .public-ui .site-footer {
-  --color-ink-primary: #f0f5f1;
-  --color-ink-secondary: #b7c4bb;
-  --color-ink-label: #a6b5ab;
-  --color-ink-action: #d5e5da;
+  --color-ink-primary: #ffffff;
+  --color-ink-secondary: #a7a3b5;
+  --color-ink-label: #e1dfe8;
+  --color-ink-action: #a7a3b5;
   --site-line: #ffffff24;
   position: relative;
   width: 100%;
   max-width: none;
   margin-inline: auto;
-  background: #1d2b24;
-  color: #b7c4bb;
+  background: #1f1a30;
+  color: #a7a3b5;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   border: 0;
   padding: 40px 0 28px;
 }
@@ -697,6 +700,8 @@
   filter: brightness(0) invert(1);
 }
 .public-ui .site-footer button {
+  font-size: 14px;
+  font-weight: 400;
   min-height: 24px;
   line-height: 20px;
 }
@@ -710,7 +715,7 @@
   background: #ffffff14;
 }
 .public-ui .site-footer :where(a, button):focus-visible {
-  outline-color: #b8dcc4;
+  outline-color: #e1dfe8;
 }
 .public-ui .site-footer [class*="border-t"] {
   border-color: #ffffff24;

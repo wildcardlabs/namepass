@@ -63,7 +63,7 @@ on mobile; the action remains inside the popup. The footer also lists
 these destinations and the legal pages. Public activity labels identify the testnet deployment.
 
 The public pages share `Navbar` and the `public-ui` theme in `src/styles/site.css`.
-The theme uses a layered pale-green and warm-white page wash, white cards, neutral text, green actions,
+The theme uses a layered pastel blue/lilac page wash, white cards, neutral text, green actions,
 6px control corners and 12px panel corners. Protocol and docs resource cards use 16px corners.
 Public action buttons match the existing docs buttons: 38px tall with 13px horizontal padding,
 14px/20px text and 14px icons. Header actions are 36px tall with 12px padding and 13px icons.
@@ -94,13 +94,15 @@ Content and the shared footer's inner wrapper keep the existing 1280px maximum w
 outer gutters remain 16px on phones, 24px on tablets and 32px on desktop. Inner mobile
 section padding is 16px. The same page wash applies to documentation and secondary pages.
 `public/assets/circle/page-wash.svg` retains the four gradient layers and geometry
-from the saved Circle CCTP page. Its blue/lilac stops become pale green and warm
-white. The shared app uses the reference's top-centred, non-repeating cover sizing.
+from the saved Circle CCTP page, including its original blue/lilac stops and white
+radial highlight. The shared app uses the reference's top-centred, non-repeating cover sizing.
 Page frames and section surfaces are transparent; white cards, controls and tables
 remain distinct. The cover's grid and separate green glow are hidden while this
-background is in use. The shared footer spans the viewport with a dark forest
-`#1d2b24` background, a white logo, light links and muted supporting text. Its
-content keeps the site's width and gutters, including on mobile.
+background is in use. The shared footer spans the viewport with Circle's deep
+`#1f1a30` background, `#a7a3b5` links and supporting text, and `#e1dfe8` category
+labels. Navigation links use 14px Geist at weight 400 and brighten on hover.
+Footer text uses font smoothing. Its content keeps the site's width and gutters,
+including on mobile. The brand actions elsewhere remain green.
 `HeroSocial` retains Feature Page 03's overlapping avatar group and four-track
 marquee. The cover reads distinct names with completed renewals from the public
 activity API once per mount. Up to four names supply the 32px pill avatars;

@@ -5,12 +5,12 @@
 <rect width="1440" height="6684" fill="url(#paint3_radial_4429_9014)" fill-opacity="0.94"/>
 <defs>
 <linearGradient id="paint0_linear_4429_9014" x1="1558.12" y1="-1185.17" x2="2.97498" y2="-1173.86" gradientUnits="userSpaceOnUse">
-<stop stop-color="#D6EADD"/>
-<stop offset="1" stop-color="#F1F3E9"/>
+<stop stop-color="#B5E1FF"/>
+<stop offset="1" stop-color="#F1EBFF"/>
 </linearGradient>
 <linearGradient id="paint1_linear_4429_9014" x1="1326.38" y1="5096.55" x2="3380.22" y2="5784.19" gradientUnits="userSpaceOnUse">
-<stop stop-color="#D9EEE2" stop-opacity="0"/>
-<stop offset="1" stop-color="#EDF5EE"/>
+<stop stop-color="#BAE3FF" stop-opacity="0"/>
+<stop offset="1" stop-color="#DFEEFF"/>
 </linearGradient>
 <linearGradient id="paint2_linear_4429_9014" x1="738.375" y1="7169.83" x2="-1489.22" y2="6723.94" gradientUnits="userSpaceOnUse">
 <stop stop-color="white" stop-opacity="0"/>
