@@ -131,8 +131,7 @@
   top: var(--site-strip-height);
   z-index: 40;
   isolation: isolate;
-  background: white;
-  backdrop-filter: blur(16px);
+  background: transparent;
   border-bottom: 1px solid transparent;
 }
 .site-header::before {
@@ -143,6 +142,8 @@
   translate: -50% 0;
   width: 100vw;
   background: white;
+  opacity: var(--site-header-opacity, 0);
+  backdrop-filter: blur(16px);
   pointer-events: none;
   z-index: -1;
 }
@@ -356,19 +357,6 @@
   padding: 24px 0;
   position: relative;
   isolation: isolate;
-}
-/* Join the white header to the wash without a visible colour or grid edge. */
-.home-hero::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  translate: -50% 0;
-  width: 100vw;
-  height: 160px;
-  background: linear-gradient(180deg, white 0%, #ffffffed 20%, #ffffff00 100%);
-  pointer-events: none;
-  z-index: -2;
 }
 @media (min-width: 768px) {
   .home-hero {

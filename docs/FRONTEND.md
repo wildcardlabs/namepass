@@ -106,17 +106,18 @@ Content and the shared footer's inner wrapper keep the existing 1280px maximum w
 outer gutters remain 16px on phones, 24px on tablets and 32px on desktop. Inner mobile
 section padding is 16px. Documentation uses a full-width white shell, including its outer
 gutters, with no decorative header dot grid. The documentation navigation and reading
-columns retain their existing positions. Both headers have a white background through
-the viewport edges; the public header extends its background beyond its centred frame.
+columns retain their existing positions. The public header is transparent at the top,
+sharing the hero's page wash. Its full-viewport background gradually becomes white over
+the first 180px of scroll. Scroll updates use animation frames without rerendering navigation.
+The documentation header stays white through the viewport edges.
 Neither header has a grey bottom separator; docs retain their active-tab underline.
 `public/assets/circle/page-wash.svg` retains the four gradient layers and geometry
 from the saved Circle CCTP page, including its original blue/lilac stops and white
 radial highlight. The shared app uses the reference's top-centred, non-repeating cover sizing under the white overlay.
 Page frames and section surfaces are transparent; white cards, controls and tables
 remain distinct. The cover grid retains its saved cell geometry, 40% cell opacity and
-radial fade. Its first 112px also fade in from transparent below the header. A separate
-160px white-to-transparent overlay quiets the colour at that edge without changing the
-rest of the page wash. The shared footer spans the viewport with Circle's deep
+radial fade. Its first 112px also fade in from transparent below the header. There is no
+separate white colour overlay at that edge. The shared footer spans the viewport with Circle's deep
 `#1f1a30` background, `#a7a3b5` links and supporting text, and `#e1dfe8` category
 labels. Navigation links use 14px Geist at weight 400 and brighten on hover.
 Font smoothing is inherited from the document root across all pages and portals

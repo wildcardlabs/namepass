@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
   Menu,
@@ -49,6 +49,27 @@ export default function Navbar({
   showMenu = true,
 }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    let frame = 0;
+    const updateBackground = () => {
+      frame = 0;
+      headerRef.current?.style.setProperty(
+        "--site-header-opacity",
+        String(Math.min(1, Math.max(0, window.scrollY) / 180)),
+      );
+    };
+    const onScroll = () => {
+      if (!frame) frame = window.requestAnimationFrame(updateBackground);
+    };
+    updateBackground();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.cancelAnimationFrame(frame);
+    };
+  }, []);
   const product = [
     {
       label: "Protocol",
@@ -110,7 +131,7 @@ export default function Navbar({
     ...(resources.length ? [{ label: "Resources", items: resources }] : []),
   ];
   return (
-    <header className="site-header">
+    <header ref={headerRef} className="site-header">
       <nav className="site-nav" aria-label="Main navigation">
         <a
           href={import.meta.env.BASE_URL}
