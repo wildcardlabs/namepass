@@ -128,7 +128,7 @@ The saved template portraits and unrelated company assets remain available in
 `public/assets/feature-page-03` but are no longer rendered by the cover.
 The entire stack from Built for ENS v2 through the carousel is centered below the
 strip and header: the space above the badge within the cover equals the space below
-the carousel. The pill has the reference's effective 64px gap after the actions.
+the carousel. The pill has a 56px gap after the actions.
 The carousel uses 32px mobile, 64px tablet and 96px desktop gaps. Mobile retains
 `100svh` sizing.
 Landing-page section rules and the template's T ornaments are omitted. Spacing separates
