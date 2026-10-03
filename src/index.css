@@ -29,6 +29,8 @@
 :root {
 	font-family: var(--site-font);
 	font-weight: 400;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 .public-ui :is(h1, h2, h3) {

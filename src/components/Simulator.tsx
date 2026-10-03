@@ -357,7 +357,7 @@ function SimulatorBody() {
               href="https://docs.ens.domains/ensv2/eth-registrar/#multi-year-discounts"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold text-ink-action hover:text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(28,58,41,0.6)]"
+              className="font-medium text-ink-action hover:text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(28,58,41,0.6)]"
             >
               ENS's renewal tiers
             </a>

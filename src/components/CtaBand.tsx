@@ -45,7 +45,7 @@ function loadScript(src: string): Promise<void> {
 /**
  * Near-footer CTA band. The background is Vanta.js TOPOLOGY — an animated point
  * mesh in the brand green — with the integration copy left and docs action right. If the CDN
- * scripts do not load, the solid pale-green panel behind them stands in.
+ * scripts do not load, the solid white panel behind them stands in.
  */
 export default function CtaBand({onDocs}: {onDocs: () => void}) {
 	const bandRef = useRef<HTMLDivElement>(null);
@@ -80,10 +80,10 @@ export default function CtaBand({onDocs}: {onDocs: () => void}) {
 					scale: 1.0,
 					scaleMobile: 1.0,
 					color: 0xc2d8ca,
-					backgroundColor: 0xf7faf8,
+					backgroundColor: 0xffffff,
 				});
 			} catch {
-				/* CDN blocked or offline — the solid pale panel remains. */
+				/* CDN blocked or offline — the solid white panel remains. */
 			} finally {
 				loading = false;
 			}
@@ -106,7 +106,7 @@ export default function CtaBand({onDocs}: {onDocs: () => void}) {
 		<section id="docs" className="site-cta-section scroll-mt-6 px-5 md:px-10 pb-14 md:pb-20">
 			<div
 				ref={bandRef}
-				className="site-cta relative max-w-[1100px] mx-auto overflow-hidden rounded-[1.25rem] md:rounded-[1.75rem] min-h-[220px] md:min-h-[260px] bg-[#f7faf8]"
+				className="site-cta relative max-w-[1100px] mx-auto overflow-hidden rounded-[1.25rem] md:rounded-[1.75rem] min-h-[220px] md:min-h-[260px] bg-white"
 			>
 				{/* Vanta renders its canvas into the element above; content sits over it. */}
 				<div className="site-cta-content relative z-10 h-full min-h-[220px] md:min-h-[260px] flex flex-col md:flex-row md:items-center md:justify-between gap-6 px-7 py-10 md:px-14 md:py-12">

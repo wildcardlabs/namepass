@@ -275,7 +275,7 @@ function FeedRowContent({
 	const transactions = row.pending && row.flow ? completedFlowTransactions(row.flow) : [];
 	const toggleExpanded = () => setExpanded((open) => !open);
 	const nameTitle = (
-		<button type="button" onClick={() => onSelect(row.name)} aria-label={`Open ${row.name}`} className="inline-flex min-w-0 max-w-full justify-self-start items-center gap-1 text-left text-[15px] lg:text-[14.5px] font-medium text-ink-link focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(28,58,41,0.6)]">
+		<button type="button" onClick={() => onSelect(row.name)} aria-label={`Open ${row.name}`} className="site-explorer-name inline-flex min-w-0 max-w-full justify-self-start items-center gap-1 text-left text-[15px] lg:text-[14.5px] font-medium text-ink-link focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(28,58,41,0.6)]">
 			<img src={`${import.meta.env.BASE_URL}logos/ens-mark-dark-blue.svg`} alt="" aria-hidden="true" className="relative top-px h-3 w-3 shrink-0 object-contain grayscale opacity-40" />
 			<span className="truncate">{row.name}</span>
 			<ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />

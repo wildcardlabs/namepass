@@ -65,6 +65,10 @@ these destinations and the legal pages. Public activity labels identify the test
 The public pages share `Navbar` and the `public-ui` theme in `src/styles/site.css`.
 The theme uses a layered pastel blue/lilac page wash, white cards, neutral text, green actions,
 6px control corners and 12px panel corners. Protocol and docs resource cards use 16px corners.
+Public section cards, activity tables and name panels use the saved Circle pricing card's
+four-layer shadow instead of visible outer borders. The GitHub source action and explorer
+search use Circle's lighter floating-search shadow. Internal data separators and keyboard
+focus indicators remain visible. Transparent borders preserve control sizes and card geometry.
 Public action buttons match the existing docs buttons: 38px tall with 13px horizontal padding,
 14px/20px text and 14px icons. Header actions are 36px tall with 12px padding and 13px icons.
 Explorer's search bar is 46px tall around a 38px input and square search button.
@@ -75,7 +79,7 @@ content in the viewport space below the renewal strip and 65px navigation header
 Like main, phones use `100svh` and screens from 768px use `100vh`; longer content can
 expand the section on short screens. Symmetric vertical padding centers the content
 in the cover below the strip and navigation. The continuous page wash replaces
-the separate cover glow and grid. The video, illustrative
+the separate green cover glow; the original faint Flow grid remains over the wash. The video, illustrative
 renewal overlay and hero Explorer shortcut are removed. Leaderboard remains available through
 Resources and the footer. The protocol keeps its four-card bento arrangement and existing beam. The other three cards
 contain text with a slow, neutral background fade. The fade stops outside the viewport, in
@@ -87,8 +91,10 @@ ring animation peaks at 55% opacity. The heart, central circle and ECG are omitt
 The rings do not move card content. They use the same visibility pause and show one
 stationary faint ring with reduced motion.
 The four bento cards have unnumbered category labels.
-Explorer, pricing, secondary pages and the integration CTA share the surface treatment. The
-outer gutters show the same page wash, without diagonal stripes or visible frame
+Explorer and secondary pages share the page wash. The calculator and integration CTA
+finish the homepage on one full-width white background. The CTA retains its existing green
+topology texture with a white canvas and white fallback. Earlier sections' outer gutters
+show the same page wash, without diagonal stripes or visible frame
 side borders. Transparent 1px borders preserve existing widths and logo alignment.
 Content and the shared footer's inner wrapper keep the existing 1280px maximum width. The responsive
 outer gutters remain 16px on phones, 24px on tablets and 32px on desktop. Inner mobile
@@ -96,12 +102,18 @@ section padding is 16px. The same page wash applies to documentation and seconda
 `public/assets/circle/page-wash.svg` retains the four gradient layers and geometry
 from the saved Circle CCTP page, including its original blue/lilac stops and white
 radial highlight. The shared app uses the reference's top-centred, non-repeating cover sizing.
-Page frames and section surfaces are transparent; white cards, controls and tables
-remain distinct. The cover's grid and separate green glow are hidden while this
-background is in use. The shared footer spans the viewport with Circle's deep
+Page frames and earlier section surfaces are transparent; white cards, controls and tables
+remain distinct. The cover grid retains its saved cell geometry, 40% cell opacity and
+radial fade. The shared footer spans the viewport with Circle's deep
 `#1f1a30` background, `#a7a3b5` links and supporting text, and `#e1dfe8` category
 labels. Navigation links use 14px Geist at weight 400 and brighten on hover.
-Footer text uses font smoothing. Its content keeps the site's width and gutters,
+Font smoothing is inherited from the document root across all pages and portals
+(`antialiased` on WebKit and `grayscale` on macOS Firefox). Rendering remains browser-dependent.
+Explorer name links use Geist weight 450; name-view headings use 500. Calculator payment
+amounts and breakdown values use 400, the main duration uses 450, and tab labels remain 500.
+Length-tab rates and the amount suggestion's supporting line use 400 rather than inheriting
+button weight. These weight changes, rather than smoothing alone, reduce the bulky text feel.
+The footer content keeps the site's width and gutters,
 including on mobile. The brand actions elsewhere remain green.
 `HeroSocial` retains Feature Page 03's overlapping avatar group and four-track
 marquee. The cover reads distinct names with completed renewals from the public

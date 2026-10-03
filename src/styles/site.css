@@ -16,6 +16,11 @@
   --site-control-size: 14px;
   --site-control-radius: 6px;
   --site-panel-radius: 12px;
+  /* Layered shadows from the saved Circle pricing card and floating search. */
+  --site-panel-shadow: 0 9px 19px #0000000d, 0 35px 35px #0000000a,
+    0 80px 48px #00000008, 0 141px 56px #00000003;
+  --site-control-shadow: 0 4px 24px -4px #1f1a3014,
+    0 12px 32px -8px #1f1a301a;
   --site-content-width: 1180px;
   --site-frame-inset: 64px;
   --site-strip-height: 0px;
@@ -346,11 +351,11 @@
     min-height: calc(100vh - var(--site-strip-height) - 65px);
   }
 }
-/* Retain the saved grid geometry, hidden while the page wash is in use. */
+/* Saved Flow grid, faded over the page wash in the cover only. */
 .site-cover-grid {
   position: absolute;
   inset: 0 -40px;
-  display: none;
+  display: flex;
   justify-content: center;
   align-items: flex-start;
   overflow: hidden;
@@ -583,9 +588,9 @@
   padding: 0 13px;
   line-height: 20px;
   gap: 10px;
-  border: 1px solid var(--site-line);
+  border: 1px solid transparent;
   border-radius: var(--site-control-radius);
-  box-shadow: none;
+  box-shadow: var(--site-control-shadow);
   font-size: var(--site-control-size);
   font-weight: 500;
 }
@@ -601,26 +606,24 @@
   background: #f6f9f7;
 }
 .public-ui .site-panel {
-  border: 1px solid var(--site-line);
+  border: 1px solid transparent;
   border-radius: var(--site-panel-radius);
-  box-shadow:
-    0 1px 2px #23352806,
-    inset 0 1px 0 #ffffff;
+  box-shadow: var(--site-panel-shadow);
 }
 .public-ui .site-table {
-  border-color: var(--site-line);
+  border-color: transparent;
   border-radius: var(--site-panel-radius);
+  box-shadow: var(--site-panel-shadow);
 }
 .public-ui .site-search {
   height: 46px;
   padding: 3px 3px 3px 12px;
-  border: 1px solid #dbe0e7;
+  border: 1px solid transparent;
   border-radius: var(--site-control-radius);
-  box-shadow: 0 2px 3px #1e294103;
+  box-shadow: var(--site-control-shadow);
 }
 .public-ui .site-search:focus-within {
-  border-color: #387e67;
-  box-shadow: 0 0 0 2px #387e6720;
+  box-shadow: 0 0 0 2px #387e6740, var(--site-control-shadow);
 }
 .public-ui .site-search input {
   height: 38px;
@@ -630,24 +633,41 @@
 }
 .public-ui .site-amount {
   font-size: 44px;
-  font-weight: 500;
+  font-weight: 400;
 }
 .public-ui .site-result {
   font-size: 32px;
-  font-weight: 500;
+  font-weight: 450;
 }
 .public-ui .site-pagination {
   border-color: var(--site-line);
   border-radius: var(--site-control-radius);
+}
+/* One full-width white finish for the calculator and integration CTA. */
+.site-last-section {
+  position: relative;
+  isolation: isolate;
+}
+.site-last-section::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 50%;
+  width: 100vw;
+  translate: -50% 0;
+  background: white;
+  pointer-events: none;
+  z-index: -1;
 }
 .public-ui .site-cta-section {
   padding: 0 40px 56px;
 }
 .public-ui .site-cta {
   max-width: var(--site-content-width);
-  border: 1px solid #dfe7e1;
+  border: 1px solid transparent;
   border-radius: var(--site-panel-radius);
-  background: #f7faf8;
+  background: white;
+  box-shadow: var(--site-panel-shadow);
   min-height: 220px;
 }
 .public-ui .site-cta-content {
@@ -684,8 +704,6 @@
   background: #1f1a30;
   color: #a7a3b5;
   font-weight: 400;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   border: 0;
   padding: 40px 0 28px;
 }
@@ -706,7 +724,7 @@
   line-height: 20px;
 }
 .public-ui .site-footer a {
-  border: 1px solid var(--site-line);
+  border: 1px solid transparent;
   border-radius: var(--site-control-radius);
   background: #ffffff08;
   box-shadow: none;
@@ -924,10 +942,10 @@
 
 /* Bento headings match Studio; compact protocol copy keeps the alias on three desktop lines. */
 .public-ui .protocol-card {
-  border-color: var(--site-line);
+  border-color: transparent;
   border-radius: 16px;
   background: white;
-  box-shadow: none;
+  box-shadow: var(--site-panel-shadow);
   overflow: hidden;
 }
 .public-ui .protocol-card h3 {
@@ -985,6 +1003,9 @@
 .public-ui .site-activity-row {
   background-color: white;
 }
+.public-ui .site-explorer-name {
+  font-weight: 450;
+}
 .public-ui .site-activity-row :where(span, button)[class*="text-[13.5px]"],
 .public-ui .site-activity-row :where(span, button)[class*="text-[12.5px]"] {
   font-size: 14px;
@@ -998,8 +1019,7 @@
     box-shadow 180ms;
 }
 .public-ui .site-secondary-content .site-panel:hover {
-  border-color: #d2d2d2;
-  box-shadow: 0 3px 12px #17171706;
+  box-shadow: var(--site-panel-shadow);
 }
 .public-ui .site-secondary-content .inset-panel p {
   font-size: 14px;
@@ -1112,7 +1132,7 @@
   margin: 0;
   font-size: 36px;
   line-height: 44px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: normal;
 }
 .public-ui .site-name-heading > button {
@@ -1270,6 +1290,10 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   line-height: 18px;
   color: var(--site-muted);
 }
+.public-ui button > .site-length-rate,
+.public-ui button > .site-amount-benefit {
+  font-weight: 400;
+}
 .site-length-rate {
   font-variant-numeric: tabular-nums;
 }
@@ -1277,7 +1301,7 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   margin-top: 12px;
   font-size: 32px;
   line-height: 40px;
-  font-weight: 500;
+  font-weight: 450;
   letter-spacing: normal;
   color: var(--site-ink);
 }
@@ -1296,7 +1320,7 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   line-height: 22px;
 }
 .public-ui .site-result-breakdown dd {
-  font-weight: 500;
+  font-weight: 400;
   color: var(--site-ink);
 }
 .public-ui .site-result-breakdown .site-result-discount {
@@ -1354,10 +1378,10 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
 .site-deposit-details {
   min-width: 0;
   padding: 24px;
-  border: 1px solid var(--site-line);
+  border: 1px solid transparent;
   border-radius: 12px;
   background: white;
-  box-shadow: 0 1px 3px #17171705;
+  box-shadow: var(--site-panel-shadow);
 }
 .site-name-summary {
   display: flex;
