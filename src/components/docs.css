@@ -30,7 +30,7 @@
   --docs-accent: var(--site-accent);
   --docs-font: var(--site-font);
   font-family: var(--docs-font);
-  background-color: var(--site-canvas);
+  background-color: transparent;
   color: var(--site-body-ink);
   min-height: 100dvh;
   font-size: var(--docs-body-size);

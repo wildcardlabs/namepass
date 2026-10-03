@@ -20,6 +20,14 @@
   --site-frame-inset: 64px;
   --site-strip-height: 0px;
 }
+/* Circle CCTP's layered page frosting, with Namepass green/neutral stops. */
+.site-app {
+  background-color: #fbfcf9;
+  background-image: url("/assets/circle/page-wash.svg");
+  background-position: 50% 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 /* Flow wrapper: px-4, sm:px-6, lg:px-8. */
 @media (max-width: 1023px) {
   :root { --site-frame-inset: 48px; }
@@ -94,7 +102,7 @@
   color: var(--site-body-ink);
   line-height: 1.5;
   letter-spacing: normal;
-  background: var(--site-canvas);
+  background: transparent;
 }
 .public-ui :where(h1, h2) {
   color: var(--site-ink);
@@ -338,27 +346,11 @@
     min-height: calc(100vh - var(--site-strip-height) - 65px);
   }
 }
-.home-hero::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0 -40px;
-  background:
-    radial-gradient(ellipse at 50% 22%, #eaf2e35c, transparent 60%),
-    radial-gradient(ellipse at 12% 46%, #eaf2e34d, transparent 48%),
-    radial-gradient(ellipse at 88% 46%, #eaf2e34d, transparent 48%),
-    radial-gradient(ellipse at 50% 75%, #eaf2e359, transparent 65%);
-  mask-image:
-    linear-gradient(to bottom, transparent, black 15%, black 70%, transparent 100%),
-    linear-gradient(to right, transparent, black 12%, black 88%, transparent);
-  mask-composite: intersect;
-  pointer-events: none;
-}
-/* Flow's saved 27 × 8 cells: retain its fill, border, opacity and radial mask. */
+/* Retain the saved grid geometry, hidden while the page wash is in use. */
 .site-cover-grid {
   position: absolute;
   inset: 0 -40px;
-  display: flex;
+  display: none;
   justify-content: center;
   align-items: flex-start;
   overflow: hidden;
@@ -455,6 +447,7 @@
   --marquee-duration: 40s;
   --marquee-delay: 0s;
   --marquee-gap: 4rem;
+  mask-image: linear-gradient(to right, transparent, black 60px, black calc(100% - 60px), transparent);
 }
 /* Feature Page 03's original reverse marquee and seamless four-track structure. */
 .hero-company-track {
@@ -464,12 +457,6 @@
 }
 .hero-company-marquee:hover .hero-company-track {
   animation-play-state: paused;
-}
-.hero-company-fade-left {
-  background: linear-gradient(to right, white, transparent 85%);
-}
-.hero-company-fade-right {
-  background: linear-gradient(to left, white, transparent 85%);
 }
 @keyframes hero-marquee-horizontal {
   0% { transform: translate(0); }
@@ -540,7 +527,7 @@
   max-width: 1280px;
   margin-inline: auto;
   border-inline: 1px solid transparent;
-  background: var(--site-canvas);
+  background: transparent;
 }
 .public-ui .site-section {
   position: relative;
@@ -574,8 +561,9 @@
   background: rgba(28, 58, 41, 0.8);
   border-radius: 50%;
 }
-.public-ui #explorer {
-  background: white;
+.public-ui #explorer,
+.public-ui .site-section {
+  background: transparent;
 }
 .public-ui .site-section h2 + p {
   font-size: 18px;
@@ -684,22 +672,29 @@
   border-radius: var(--site-control-radius);
 }
 .public-ui .site-footer {
+  --color-ink-primary: #f0f5f1;
+  --color-ink-secondary: #b7c4bb;
+  --color-ink-label: #a6b5ab;
+  --color-ink-action: #d5e5da;
+  --site-line: #ffffff24;
   position: relative;
-  width: calc(100% - var(--site-frame-inset));
-  max-width: 1280px;
+  width: 100%;
+  max-width: none;
   margin-inline: auto;
-  background: white;
+  background: #1d2b24;
+  color: #b7c4bb;
   border: 0;
-  border-inline: 1px solid transparent;
-  padding: 40px 40px 28px;
+  padding: 40px 0 28px;
 }
 .public-ui .site-footer > div {
-  width: 100%;
-  max-width: var(--site-content-width);
+  width: calc(100% - var(--site-frame-inset));
+  max-width: 1280px;
+  padding-inline: 40px;
 }
 .public-ui .site-footer img {
   width: 96px;
   height: auto;
+  filter: brightness(0) invert(1);
 }
 .public-ui .site-footer button {
   min-height: 24px;
@@ -708,10 +703,20 @@
 .public-ui .site-footer a {
   border: 1px solid var(--site-line);
   border-radius: var(--site-control-radius);
+  background: #ffffff08;
   box-shadow: none;
 }
+.public-ui .site-footer a:hover {
+  background: #ffffff14;
+}
+.public-ui .site-footer :where(a, button):focus-visible {
+  outline-color: #b8dcc4;
+}
+.public-ui .site-footer [class*="border-t"] {
+  border-color: #ffffff24;
+}
 .site-secondary-content {
-  background: radial-gradient(ellipse at 50% 0, #edf3e870, transparent 500px);
+  background: transparent;
   min-height: 65vh;
 }
 .site-secondary-content > div {
@@ -847,7 +852,7 @@
     font-size: 26px;
   }
   .public-ui .site-footer {
-    padding: 32px 16px 24px;
+    padding: 32px 0 24px;
   }
   .site-secondary-content > div {
     padding: 32px 24px 48px;
@@ -895,7 +900,8 @@
 
 @media (max-width: 767px) {
   .public-ui .site-footer > div {
-    width: 100%;
+    width: calc(100% - var(--site-frame-inset));
+    padding-inline: 16px;
   }
 }
 

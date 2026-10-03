@@ -63,7 +63,7 @@ on mobile; the action remains inside the popup. The footer also lists
 these destinations and the legal pages. Public activity labels identify the testnet deployment.
 
 The public pages share `Navbar` and the `public-ui` theme in `src/styles/site.css`.
-The theme uses a white (`#FFFFFF`) canvas and cards, neutral text, green actions,
+The theme uses a layered pale-green and warm-white page wash, white cards, neutral text, green actions,
 6px control corners and 12px panel corners. Protocol and docs resource cards use 16px corners.
 Public action buttons match the existing docs buttons: 38px tall with 13px horizontal padding,
 14px/20px text and 14px icons. Header actions are 36px tall with 12px padding and 13px icons.
@@ -74,9 +74,8 @@ existing heading and description with Get Started and Read the docs. The cover c
 content in the viewport space below the renewal strip and 65px navigation header.
 Like main, phones use `100svh` and screens from 768px use `100vh`; longer content can
 expand the section on short screens. Symmetric vertical padding centers the content
-in the cover below the strip and navigation. Faint green radial washes
-sit above, beside and below the title. They fade to white at the top 15%, bottom 30%
-and side 12%, so there is no visible background edge. The video, illustrative
+in the cover below the strip and navigation. The continuous page wash replaces
+the separate cover glow and grid. The video, illustrative
 renewal overlay and hero Explorer shortcut are removed. Leaderboard remains available through
 Resources and the footer. The protocol keeps its four-card bento arrangement and existing beam. The other three cards
 contain text with a slow, neutral background fade. The fade stops outside the viewport, in
@@ -89,14 +88,19 @@ The rings do not move card content. They use the same visibility pause and show 
 stationary faint ring with reduced motion.
 The four bento cards have unnumbered category labels.
 Explorer, pricing, secondary pages and the integration CTA share the surface treatment. The
-outer gutters have a plain white background, without diagonal stripes or visible frame
+outer gutters show the same page wash, without diagonal stripes or visible frame
 side borders. Transparent 1px borders preserve existing widths and logo alignment.
-Content and the shared footer keep the existing 1280px maximum width. The responsive
+Content and the shared footer's inner wrapper keep the existing 1280px maximum width. The responsive
 outer gutters remain 16px on phones, 24px on tablets and 32px on desktop. Inner mobile
-section padding is 16px. The same plain background applies to documentation and
-secondary pages.
-The home cover uses Flow's saved 27-by-8 decorative cell grid: 56.815px cells, a 0.5px
-border, 40% opacity and a radial mask from the top. It has no pointer interaction.
+section padding is 16px. The same page wash applies to documentation and secondary pages.
+`public/assets/circle/page-wash.svg` retains the four gradient layers and geometry
+from the saved Circle CCTP page. Its blue/lilac stops become pale green and warm
+white. The shared app uses the reference's top-centred, non-repeating cover sizing.
+Page frames and section surfaces are transparent; white cards, controls and tables
+remain distinct. The cover's grid and separate green glow are hidden while this
+background is in use. The shared footer spans the viewport with a dark forest
+`#1d2b24` background, a white logo, light links and muted supporting text. Its
+content keeps the site's width and gutters, including on mobile.
 `HeroSocial` retains Feature Page 03's overlapping avatar group and four-track
 marquee. The cover reads distinct names with completed renewals from the public
 activity API once per mount. Up to four names supply the 32px pill avatars;
@@ -121,7 +125,7 @@ in a 64px track row. Mixed-case marks use the lowercase body bounds rather than
 tall ascenders or dots; these otherwise make Ethereum and Base appear lower. Each wrapper clips only the original SVG's transparent artboard; source paths
 and symbol-to-letter proportions remain unchanged. Monochrome filtering and 70%
 opacity match the site. The supplied four
-repeated tracks retain a 64px gap, 60px white edge fades, slower 40-second reverse
+repeated tracks retain a 64px gap, 60px transparent edge masks, slower 40-second reverse
 motion and a 768px maximum width. Hover pauses the marquee and reduced motion
 keeps it still. First-track logos have accessible names; duplicate tracks are hidden.
 The saved template portraits and unrelated company assets remain available in
