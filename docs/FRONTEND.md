@@ -97,21 +97,14 @@ section padding is 16px. The same plain background applies to documentation and
 secondary pages.
 The home cover uses Flow's saved 27-by-8 decorative cell grid: 56.815px cells, a 0.5px
 border, 40% opacity and a radial mask from the top. It has no pointer interaction.
-`HeroSocial` retains Feature Page 03's floating portrait positions, overlapping
-avatar group and four-track marquee. The cover reads distinct names with completed
-renewals from the public activity API
-once per mount. Up to seven names supply the floating desktop identities and the
-first four supply the 32px pill avatars; pending flows are excluded. The eighth,
-bottom-right portrait is `stevegachau.eth`, explicitly chosen by the user. Floating
-portraits have no name labels and remain hidden below 1024px. The template's position
-classes use a viewport-wide 1280px wrapper, separate from
-the narrower text column. The lower outer portraits have a 32px inset, so their
-whole circles stay visible. On desktop screens at most 800px tall, the upper pair
-stays inside the cover instead of extending behind the navigation. `NameAvatar`
-uses the existing cached ENS profile resolver and the leaderboard's name-seeded
-DiceBear voxel-bot fallback. Image errors cannot retry the fallback indefinitely.
-Unavailable activity omits the activity-derived portraits while retaining the
-user-selected bottom-right identity and cover actions.
+`HeroSocial` retains Feature Page 03's overlapping avatar group and four-track
+marquee. The cover reads distinct names with completed renewals from the public
+activity API once per mount. Up to four names supply the 32px pill avatars;
+pending flows are excluded. The surrounding floating portraits are removed.
+`NameAvatar` uses the existing cached ENS profile resolver and the leaderboard's
+name-seeded DiceBear voxel-bot fallback. Image errors cannot retry the fallback
+indefinitely. Unavailable activity omits pill avatars and keeps the cover actions
+and community text visible.
 The pill reads “Used by 685+ users” (user-supplied copy, not an API-derived count).
 It has the Built for ENS v2 badge's faint green border and white-to-pale-green
 background, without an outer shadow. Text is 13px, with medium-weight green emphasis.

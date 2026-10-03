@@ -4,11 +4,7 @@ import { Button } from "./ui/button";
 import CoverGrid from "./CoverGrid";
 import { useEffect, useState } from "react";
 import { getActivity } from "../lib/publicApi";
-import {
-  HeroCommunity,
-  HeroCompanyCarousel,
-  HeroPortraits,
-} from "./HeroSocial";
+import { HeroCommunity, HeroCompanyCarousel } from "./HeroSocial";
 
 /** Shared type, framing and actions introduce the public application. */
 export default function Hero({
@@ -31,7 +27,7 @@ export default function Hero({
               BigInt(item.renewal.durationSeconds.split(".")[0] || "0") > 0n,
           )
           .map((item) => item.name.displayName);
-        setNames([...new Set(renewed)].slice(0, 7));
+        setNames([...new Set(renewed)].slice(0, 4));
       })
       .catch(() => {
         // Leave decorative identities empty when public activity is unavailable.
@@ -69,7 +65,6 @@ export default function Hero({
           <HeroCommunity names={names} />
         </div>
         <HeroCompanyCarousel />
-        <HeroPortraits names={names} />
       </div>
     </section>
   );

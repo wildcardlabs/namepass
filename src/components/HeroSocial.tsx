@@ -95,17 +95,6 @@ const ecosystem = [
     target: 20,
   },
 ];
-const portraitPositions = [
-  { position: "absolute -top-14 left-50", size: "size-16" },
-  { position: "absolute top-0 left-8", size: "size-20.5" },
-  { position: "absolute top-40 left-42", size: "size-16" },
-  { position: "absolute bottom-36 left-8", size: "size-13" },
-  { position: "absolute -top-14 right-50", size: "size-16" },
-  { position: "absolute top-0 right-8", size: "size-20.5" },
-  { position: "absolute top-40 right-42", size: "size-16" },
-  { position: "absolute right-8 bottom-36", size: "size-13" },
-];
-
 export function HeroCommunity({ names }: { names: string[] }) {
   return (
     <div className="hero-community flex items-center rounded-full border p-1.5">
@@ -132,36 +121,6 @@ export function HeroCommunity({ names }: { names: string[] }) {
       <p className="px-2">
         Used by <span>685+ users</span>
       </p>
-    </div>
-  );
-}
-
-export function HeroPortraits({ names }: { names: string[] }) {
-  return (
-    <div
-      className="hero-portraits pointer-events-none absolute inset-0 max-lg:hidden"
-      aria-hidden="true"
-    >
-      {portraitPositions.map(({ position, size }, index) => {
-        const name = index === 7 ? "stevegachau.eth" : names[index];
-        if (!name) return null;
-        return (
-          <div
-            key={index}
-            className={`${position} hero-identity ${size} ${index === 0 || index === 4 ? "hero-identity-upper" : ""}`}
-          >
-            <span
-              data-slot="avatar"
-              className={`hero-template-avatar relative flex shrink-0 select-none rounded-full ring-2 ring-white ${size}`}
-            >
-              <NameAvatar
-                name={name}
-                className="hero-ens-avatar aspect-square size-full rounded-full object-cover"
-              />
-            </span>
-          </div>
-        );
-      })}
     </div>
   );
 }

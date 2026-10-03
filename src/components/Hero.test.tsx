@@ -27,7 +27,7 @@ afterEach(async () => {
   vi.unstubAllGlobals();
 });
 
-test("activity portraits use distinct completed renewals alongside the requested bottom-right identity", async () => {
+test("community avatars use distinct completed renewals and exclude pending flows", async () => {
   vi.mocked(fetchProfile).mockImplementation(async (name) => ({
     name,
     avatar: `https://example.test/${name}.png`,
@@ -52,13 +52,12 @@ test("activity portraits use distinct completed renewals alongside the requested
     root.render(<Hero onExplore={() => {}} onDocs={() => {}} />),
   );
   expect(
-    [...container.querySelectorAll(".hero-identity img")].map((node) =>
+    [...container.querySelectorAll(".hero-community img")].map((node) =>
       node.getAttribute("src"),
     ),
   ).toEqual([
     "https://example.test/first.eth.png",
     "https://example.test/second.eth.png",
-    "https://example.test/stevegachau.eth.png",
   ]);
   expect(
     container.querySelectorAll('.hero-community [data-slot="avatar"]').length,
@@ -72,10 +71,7 @@ test("unavailable activity leaves the cover usable without invented identities",
   await act(async () =>
     root.render(<Hero onExplore={() => {}} onDocs={() => {}} />),
   );
-  expect(container.querySelectorAll(".hero-identity").length).toBe(1);
-  expect(
-    container.querySelector(".hero-identity img")?.getAttribute("src"),
-  ).toContain("seed=stevegachau.eth");
+  expect(fetchProfile).not.toHaveBeenCalled();
   expect(container.querySelector(".hero-community")?.textContent).toBe(
     "Used by 685+ users",
   );
