@@ -92,9 +92,10 @@ The rings do not move card content. They use the same visibility pause and show 
 stationary faint ring with reduced motion.
 The four bento cards have unnumbered category labels.
 The homepage alternates full-width section backgrounds: protocol and pricing are white;
-explorer and the integration CTA show the shared page wash. The CTA retains its existing
-green topology texture with a white canvas and white fallback. Its surrounding section
-shows the wash, with 32px above the panel (24px on mobile). Secondary pages also retain the wash.
+explorer and the integration CTA show the shared page wash. The CTA presents a centred
+heading, compact supporting copy and the docs action directly on the wash. It has no
+card, shadow, Vanta canvas or entrance animation. Padding is 64px above and 72px below
+on desktop, and 48px above and 56px below on mobile. Secondary pages also retain the wash.
 Coloured sections' outer gutters show the same wash, without diagonal stripes or visible frame
 side borders. Transparent 1px borders preserve existing widths and logo alignment.
 Content and the shared footer's inner wrapper keep the existing 1280px maximum width. The responsive
@@ -103,6 +104,7 @@ section padding is 16px. Documentation uses a full-width white shell, including 
 gutters, with no decorative header dot grid. The documentation navigation and reading
 columns retain their existing positions. Both headers have a white background through
 the viewport edges; the public header extends its background beyond its centred frame.
+Neither header has a grey bottom separator; docs retain their active-tab underline.
 `public/assets/circle/page-wash.svg` retains the four gradient layers and geometry
 from the saved Circle CCTP page, including its original blue/lilac stops and white
 radial highlight. The shared app uses the reference's top-centred, non-repeating cover sizing.
@@ -153,20 +155,19 @@ strip and header: the space above the badge within the cover equals the space be
 the carousel. The pill has a 56px gap after the actions.
 The carousel uses 32px mobile, 64px tablet and 96px desktop gaps. Mobile retains
 `100svh` sizing.
-Landing-page section rules and the template's T ornaments are omitted. Spacing separates
-major areas. The footer keeps its original white background. Existing surface colors
-remain: the shared `--site-subtle` token is `#F5F5F5`, table details use `#FAFAFA`, and
-docs retain their original code and resource surfaces. The integration CTA retains its pale-green `#F7FAF8` background, including the
-Vanta canvas and solid fallback. The public header's bottom rule spans the viewport;
-navigation widths and logo positions stay unchanged. Card borders, row separators and
-navigation boundaries remain. Decoration is hidden from assistive technology and cannot intercept clicks.
+Landing-page section rules and the template's T ornaments are omitted. Spacing and
+alternating backgrounds separate major areas. The footer uses Circle's deep purple
+background. Existing inner surface colors remain: `--site-subtle` is `#F5F5F5`, table
+details use `#FAFAFA`, and docs retain their code and resource surfaces on a white shell.
+Navigation widths and logo positions stay unchanged. Row separators and keyboard focus
+indicators remain. Decoration is hidden from assistive technology and cannot intercept clicks.
 Content and payment behavior are unchanged.
-The Explorer section has a white canvas. Protocol cards are white with fine neutral borders. The activity table
+Explorer uses the page wash. Protocol cards are white with soft shadows. The activity table
 has one frame, a quiet toolbar, 12px column labels and 14px row text. The column-title
 row uses a shifting white and pale-green gradient on a 14-second alternating cycle.
 Reduced motion keeps it stationary. The toolbar stays white and shares the
 column row’s 16px left inset. Explorer does not add a
-second enclosing panel. Individual name details retain two bordered shadcn Card panels for
+second enclosing panel. Individual name details retain two shadcn Card panels with soft shadows for
 expiry and profile, and the renewal funding destination, stacked below 900px. The selected name
 is the main heading; the feed introduction is shown only in the feed. The funding panel is titled
 Send USDC to renew, identifies the name being renewed and leads with the full Universal deposit
@@ -176,7 +177,10 @@ both use 12px regular text and 14px outline icons; Profile uses title case. Prof
 change only color on hover, so their width and neighbours remain stable. The funding panel ends
 with a compact USDC heading, Token contracts action and aligned network list, in two columns
 on small phones. Ethereum is listed first in the name view; the Base logo is visually 14px
-within the same 16px icon slot. QR opens in an accessible shadcn Dialog. Metrics use a flat strip. Expanded renewal amounts
+within the same 16px icon slot. QR opens in an accessible shadcn Dialog. Lifetime totals (time delivered, total received and renewal count) sit inside the
+Activity panel, above its column headings. A three-column definition list keeps the totals
+attached to the events they summarise, with 12px labels and 20px weight-450 values
+(18px on mobile). The overview contains only expiry, profile and funding details. Expanded renewal amounts
 and transactions use rows and rules without nested cards. Payment amounts use a compact
 USDC breakdown with the exact applied amount emphasized. Neutral full participant addresses
 have adjacent copy controls. Recorded transactions form a numbered trail with chain labels
@@ -282,8 +286,8 @@ last feed response and page so Back restores them immediately and resumes pollin
 Pricing refreshes keep validated views mounted. Only the initial load and a retry after failed
 validation use the loading state. A validation failure still disables pricing. Price calculations
 must update when the validated configuration changes, without resetting user input.
-The explicit ENS refresh still precedes the activity refresh. The CTA effect runs only while
-visible in an active tab. Reduced-motion users do not start the CTA effect.
+The explicit ENS refresh still precedes the activity refresh. The CTA has no canvas effect
+or external animation dependencies.
 
 Build and verification commands are in [CONTRIBUTING.md](../CONTRIBUTING.md). Deployment facts
 belong in [DEPLOYMENTS.md](DEPLOYMENTS.md).

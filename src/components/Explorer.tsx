@@ -1156,30 +1156,6 @@ function NameDetail({
 				/>
 			</div>
 
-			{/* Summary values share a flat strip rather than separate cards. */}
-			<div className="site-name-metrics">
-				{[
-					/* "y" not " years" — at three-up on a phone the long form wraps and
-					   drops this value below the other two. Matches fmtDuration anyway. */
-						{ k: "Time delivered", value: `${fmtYears(timeDelivered(record))}y` },
-						{
-							k: "Total received",
-							value: fmtUsdc(totalReceived(record)),
-						},
-						{ k: "Renewals", value: renewalCount(record).toString() },
-				].map((s) => (
-					/* Labels wrap to two lines at narrow widths ("Renewals" doesn't), so
-					   the label absorbs the slack and the values stay on one line. */
-					<div key={s.k} className="site-name-metric">
-						<div className="flex-1 text-[10px] uppercase tracking-wider text-ink-label">
-							{s.k}
-						</div>
-							<span className="mt-1.5 block text-[20px] text-ink-primary tabular-nums break-words">
-								{s.value}
-							</span>
-					</div>
-				))}
-			</div>
 
 			{/* Activity table */}
 			<div ref={activityRef} className="mt-10 scroll-mt-6">
@@ -1195,6 +1171,19 @@ function NameDetail({
 				</div>
 
 				<div className="site-explorer-table site-table border border-[rgba(28,58,41,0.1)] rounded-2xl overflow-hidden">
+					{/* Lifetime totals belong with the activity they summarise. */}
+					<dl className="site-name-metrics" aria-label="Lifetime renewal activity">
+						{[
+							{ label: "Time delivered", value: `${fmtYears(timeDelivered(record))}y` },
+							{ label: "Total received", value: fmtUsdc(totalReceived(record)) },
+							{ label: "Renewals", value: renewalCount(record).toString() },
+						].map((metric) => (
+							<div key={metric.label} className="site-name-metric">
+								<dt>{metric.label}</dt>
+								<dd>{metric.value}</dd>
+							</div>
+						))}
+					</dl>
 					<div className={`site-column-headings hidden lg:grid ${NAME_ACTIVITY_COLUMNS} gap-4 px-5 py-3 bg-surface-table border-b border-[rgba(28,58,41,0.1)] text-[11px] uppercase tracking-wider text-ink-label`}>
 						<span>Date</span>
 						<span>Event</span>
