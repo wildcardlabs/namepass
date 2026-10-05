@@ -1,5 +1,7 @@
 # Quickstart
 
+> **API not yet available.** This is the planned integration flow. Do not send funds using these API examples until the API release is announced.
+
 ## 1. Get a deposit address
 
 ```bash

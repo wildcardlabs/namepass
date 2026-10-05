@@ -69,25 +69,21 @@ No audited mainnet protocol release is recorded. Ethereum, Base, Arbitrum, and A
 the initial mainnet release; none has a recorded Namepass mainnet deployment. Requirements are in
 [RUNBOOK.md](RUNBOOK.md#mainnet-release-requirements).
 
-## Integration release gate — 2026-09-30
+## Public API reset — 2026-10-05
 
-The public API is not recorded as deployed. Migration `0009_public_status.sql`, the four `/api/v1`
-endpoints and evidence Workflow are separate from the September 22 contract canaries. Keep
-`NAMEPASS_INTEGRATIONS_ENABLED` disabled until the release has evidence for:
+The homepage/docs branch merged in `a6f2fee` and deployed to the production domain. The
+post-deployment activity check returned HTTP 500. Runtime logs show the activity SELECT includes
+`chain_events.evidence_kind` and `deposits.transfer_kind`, fields introduced by the retired API
+schema extension. This is a schema compatibility failure requiring a corrective release.
 
-- Migration/backfill rehearsal on representative data, native identity preflight and disabling
-  the feature without losing payment evidence.
-- Anonymous address activation, block-pinned quotes, name history, transaction polling, platform
-  abuse limits and hosted latency.
-- Archive receipt and hub-finality provider support, plus a missed-start recovery drill.
-- Signed direct and CCTP funding canaries that reach `complete` through the public polling route.
-- Resolver/parent evidence and address equality before enabling the alias verification flag.
+The reset removes the previous API implementation, tests, worker, unreleased migration and plan.
+Core schema, ingestion, receipt-expiry and recovery code return to their pre-API versions. The
+public docs and OpenAPI remain proposed interface requirements. The fresh plan is
+[PUBLIC_API_PLAN.md](PUBLIC_API_PLAN.md). No new public API is implemented by the reset.
 
-There are no partner credentials, outgoing webhooks or MCP release steps. Existing Goldsky
-provider webhook configuration remains required for ingestion. Hosted changes, merge and wallet
-signing retain their approval boundaries. Mainnet funding remains disabled. Local checks are
-recorded in [integration validation](api/VALIDATION.md); operations are in
-[the runbook](RUNBOOK.md#integration-api-operations).
+Hosted migration history has not been inspected. No hosted database objects or payment records
+are deleted, and no API flag is enabled. The corrective deployment must verify populated activity,
+name history, existing routes and unchanged public docs before this incident is marked resolved.
 
 ## Historical evidence
 

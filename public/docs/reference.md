@@ -1,5 +1,7 @@
 # API reference
 
+> **API not yet available.** The following contract describes planned endpoints, not a deployed service.
+
 Base URL: `https://beta.namepass.com/api/v1`
 
 | Endpoint | Purpose |

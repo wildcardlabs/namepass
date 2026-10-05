@@ -13,8 +13,6 @@
     "test:server": "node --import tsx --test 'server/**/*.test.ts'",
     "test:transactions": "vitest run --config config/vitest.transactions.ts",
     "test:workflow": "vitest run --config config/vitest.workflow.ts",
-    "generate:api": "node scripts/integrations/openapi.mjs && openapi-typescript docs/api/openapi.json -o src/lib/integration-api.generated.ts",
-    "check:api": "node scripts/integrations/check.mjs",
     "generate:docs": "node scripts/docs/generate.mjs",
     "check:docs": "node scripts/docs/generate.mjs --check"
   },

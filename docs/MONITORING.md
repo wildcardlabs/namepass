@@ -79,10 +79,9 @@ later canonical events. Flow amounts are not another balance aggregate.
 
 ## API and operations
 
-The public integration has no account, key or outgoing-delivery management. Receipt verification
-runs through durable evidence jobs; operators inspect those jobs and Workflow logs as described
-in [RUNBOOK.md](RUNBOOK.md#integration-api-operations). Hosted checks measure polling latency,
-RPC/finality availability and recovery time. No background health RPC polling is added.
+The public API backend is not available. Its previous worker and job tables are not part of the
+application schema. Planned API observability and release checks belong in
+[PUBLIC_API_PLAN.md](PUBLIC_API_PLAN.md). Existing renewal monitoring remains unchanged.
 
 GitHub login requires `MONITORING_GITHUB_CLIENT_ID`, `MONITORING_GITHUB_CLIENT_SECRET`,
 `MONITORING_GITHUB_USERS` (two distinct usernames separated by a comma), and
