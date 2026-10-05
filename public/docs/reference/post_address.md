@@ -23,6 +23,7 @@ Activate deposit monitoring for an ENS name and return its deposit address, subn
 | `200` | Address activated and ready for funding. |
 | `400` | Invalid name, chain ID, transaction hash or request. |
 | `422` | The ENS name cannot currently be renewed. |
+| `429` | Request rate limit reached. Wait for Retry-After. |
 | `500` | Server error. |
 | `503` | Temporarily unavailable. Retry after the indicated delay. |
 

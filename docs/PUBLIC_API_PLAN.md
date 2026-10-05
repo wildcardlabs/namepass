@@ -194,11 +194,15 @@ docs' unavailable notices only after hosted evidence for the documented flow is 
 
 ## Decisions still required
 
-- The actual hosted schema and migration ledger, including any leftovers from prior experiments.
+Stage 1 findings and proposed interface decisions are in
+[PUBLIC_API_BASELINE.md](PUBLIC_API_BASELINE.md). The hosted schema and migration ledger are
+recorded there and in [DEPLOYMENTS.md](DEPLOYMENTS.md). The accompanying contract changes need
+review before endpoint implementation; sample receipt matches do not close the release gates.
+
 - Whether existing records can prove every documented completion case; required missing facts.
 - The proof of transaction deposit-set completeness, including watch coverage and native Arc.
-- The exact `renewalId` encoding and status/history mapping, including shared history rows.
-- Paired expiry read provenance, nullable unknown timestamps and any separately reviewed storage.
+- Review the proposed `renewalId` encoding and prove status/history mapping, including shared rows.
+- Prove paired expiry read provenance; review the null default and any separately proposed storage.
 - Native Arc identity and recovery of deposits during initial watch propagation.
 - Aggregate status precedence, source-chain finality rules and correction behavior.
 - Quote dependency availability, RPC budget and tested pricing boundaries.

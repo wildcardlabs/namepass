@@ -10,9 +10,11 @@ curl 'https://beta.namepass.com/api/v1/names/example.eth/renewals?limit=20'
 
 ## Response
 
-The response contains `name`, `currentExpiry`, `expiryUpdatedAt`, `items` and `nextCursor`. `currentExpiry` is the last recorded ENS expiry; `expiryUpdatedAt` is its read timestamp. An [address request](/docs/addresses) refreshes this state.
+The response contains `name`, `currentExpiry`, `expiryUpdatedAt`, `items` and `nextCursor`. `currentExpiry` is the last recorded ENS expiry. `expiryUpdatedAt` is the timestamp of the ENS read that observed that same value. It is `null` when the pairing is unknown, including when `currentExpiry` is `null`. Event time, projection time and response time are not read timestamps. An [address request](/docs/addresses) refreshes ENS state, but subsequent indexed changes can leave the read timestamp unknown. History requests do not refresh state or start payment work.
 
-Each item includes a flow ID, source chain, renewal transaction, duration added, amount applied, fee, expiry and renewal timestamp. Its status is `complete` after verification and finality, or `processing` while verification is pending. Unavailable fields are `null`.
+Each item includes `renewalId`, a flow ID, source chain, renewal transaction, duration added, amount applied, fee, expiry and renewal timestamp. Its status is `complete` after verification and finality, or `processing` while verification is pending. Unavailable nullable fields are `null`. Every returned item must have a proven renewal event identity.
+
+`renewalId` uses `{chainId}:{lowercaseTransactionHash}:{logIndex}` for the Namepass gateway's `Renewed` event. It agrees with [status responses](/docs/status). Multiple flow rows can refer to the same event; count its duration once per `renewalId`. `flowId` describes processing provenance and is not a renewal deduplication key. Corrections can remove invalidated events from later responses.
 
 ## Pagination
 

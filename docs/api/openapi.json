@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Namepass public API",
-    "version": "2026-09-30",
-    "description": "Deposit addresses, renewal estimates, transaction status and ENS renewal history."
+    "version": "2026-10-05",
+    "description": "Planned public API; endpoints are not yet available. Deposit addresses, renewal estimates, transaction status and ENS renewal history."
   },
   "servers": [
     {
@@ -94,6 +94,24 @@
               }
             }
           },
+          "429": {
+            "description": "Request rate limit reached. Wait for Retry-After.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Server error.",
             "content": {
@@ -137,7 +155,7 @@
       "get": {
         "operationId": "get_status",
         "summary": "Poll a transaction",
-        "description": "Retrieve renewal status for a USDC deposit transaction. The transaction is complete when every indexed deposit has a verified, finalized renewal.",
+        "description": "Track a source transaction. Complete requires independent proof of its full relevant deposit set, watch/address coverage, source validity, processing relationships and finalized renewals for every member. Missing or late-indexed members prevent aggregate completion. Shared renewals use the same renewalId. Corrections can revoke prior completion.",
         "parameters": [
           {
             "name": "chainId",
@@ -210,6 +228,24 @@
             "headers": {
               "Retry-After": {
                 "description": "Seconds to wait before polling again when pending or temporarily unavailable.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request rate limit reached. Wait for Retry-After.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying.",
                 "schema": {
                   "type": "string"
                 }
@@ -351,6 +387,24 @@
               }
             }
           },
+          "429": {
+            "description": "Request rate limit reached. Wait for Retry-After.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
           "500": {
             "description": "Server error.",
             "content": {
@@ -394,7 +448,7 @@
       "get": {
         "operationId": "get_name_renewals",
         "summary": "List a name's renewals",
-        "description": "Retrieve public renewal history and the recorded expiry for an ENS name. Renewals are ordered newest first. Complete indicates a verified, finalized renewal; processing indicates pending verification.",
+        "description": "Read-only renewal history and recorded expiry for an ENS name. Newest first, with a cursor bound to the requested name. Complete requires verification and finality; processing indicates pending verification. Each item has an event-specific renewalId shared with status. Expiry read timestamps are null without paired provenance.",
         "parameters": [
           {
             "name": "name",
@@ -474,6 +528,24 @@
             "headers": {
               "Retry-After": {
                 "description": "Seconds to wait before polling again when pending or temporarily unavailable.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Request rate limit reached. Wait for Retry-After.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            },
+            "headers": {
+              "Retry-After": {
+                "description": "Seconds to wait before retrying.",
                 "schema": {
                   "type": "string"
                 }
@@ -619,6 +691,11 @@
       "Renewal": {
         "type": "object",
         "properties": {
+          "renewalId": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*:0x[0-9a-f]{64}:(0|[1-9][0-9]*)$",
+            "description": "Canonical Namepass gateway Renewed event identity: decimal chain ID, lowercase transaction hash and decimal log index, joined by colons. Identical across status and history. Count a shared renewal's duration once per renewalId."
+          },
           "chainId": {
             "type": "string",
             "pattern": "^(0|[1-9][0-9]*)$",
@@ -642,6 +719,7 @@
           }
         },
         "required": [
+          "renewalId",
           "chainId",
           "transactionHash",
           "secondsAdded",
@@ -663,7 +741,9 @@
             "type": [
               "integer",
               "null"
-            ]
+            ],
+            "minimum": 0,
+            "description": "ERC-20 Transfer log index. Null for native Arc funding; a transaction position stored by the indexer is not a log index."
           },
           "amount": {
             "type": "string",
@@ -722,7 +802,8 @@
               "processing",
               "complete",
               "failed"
-            ]
+            ],
+            "description": "Failed for a proven invalidated source deposit. Otherwise pending while the deposit set is not proven closed or a member is pending; processing while a member awaits renewal confirmation; complete only for a proven closed, nonempty set with every member complete. Provider outages return retryable errors, not failed."
           },
           "deposits": {
             "type": "array",
@@ -812,9 +893,15 @@
       "HistoryItem": {
         "type": "object",
         "properties": {
+          "renewalId": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]*:0x[0-9a-f]{64}:(0|[1-9][0-9]*)$",
+            "description": "Canonical Namepass gateway Renewed event identity: decimal chain ID, lowercase transaction hash and decimal log index, joined by colons. Identical across status and history. Count a shared renewal's duration once per renewalId."
+          },
           "flowId": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "description": "Processing provenance. Multiple flow rows may reference one renewalId; flowId is not a renewal deduplication key. Each flow association must be proven."
           },
           "sourceChainId": {
             "type": "string",
@@ -874,6 +961,7 @@
           }
         },
         "required": [
+          "renewalId",
           "flowId",
           "sourceChainId",
           "chainId",
@@ -898,14 +986,16 @@
               "string",
               "null"
             ],
-            "format": "date-time"
+            "format": "date-time",
+            "description": "Last recorded ENS expiry, or null when unavailable. Does not imply a fresh read."
           },
           "expiryUpdatedAt": {
             "type": [
               "string",
               "null"
             ],
-            "format": "date-time"
+            "format": "date-time",
+            "description": "Timestamp of the ENS read that observed the accompanying currentExpiry value. Null when that pairing is unknown or currentExpiry is null. Event time, projection time and response time are not substitutes."
           },
           "items": {
             "type": "array",

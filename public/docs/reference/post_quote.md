@@ -27,6 +27,7 @@ Estimate renewal duration and fees for an ENS name, funding chain and USDC amoun
 | `200` | Estimated renewal time and fee breakdown. |
 | `400` | Invalid name, chain ID, transaction hash or request. |
 | `422` | Name cannot currently renew, amount is below the minimum, or amount exceeds the single-flow quote limit. |
+| `429` | Request rate limit reached. Wait for Retry-After. |
 | `500` | Server error. |
 | `503` | Temporarily unavailable. Retry after the indicated delay. |
 

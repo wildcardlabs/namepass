@@ -2,7 +2,7 @@
 
 `GET /api/v1/status/{chainId}`
 
-Retrieve renewal status for a USDC deposit transaction. The transaction is complete when every indexed deposit has a verified, finalized renewal.
+Track a source transaction. Complete requires independent proof of its full relevant deposit set, watch/address coverage, source validity, processing relationships and finalized renewals for every member. Missing or late-indexed members prevent aggregate completion. Shared renewals use the same renewalId. Corrections can revoke prior completion.
 
 ## Parameters
 
@@ -18,6 +18,7 @@ Retrieve renewal status for a USDC deposit transaction. The transaction is compl
 | `200` | Current progress. Poll pending or processing; stop at complete. |
 | `400` | Invalid name, chain ID, transaction hash or request. |
 | `404` | No matching deposit has been indexed. Retry the same URL. |
+| `429` | Request rate limit reached. Wait for Retry-After. |
 | `500` | Server error. |
 | `503` | Temporarily unavailable. Retry after the indicated delay. |
 
@@ -27,7 +28,7 @@ Retrieve renewal status for a USDC deposit transaction. The transaction is compl
 | --- | --- | --- | --- |
 | `chainId` | string | Yes | Exact integer encoded as a decimal string. |
 | `transactionHash` | string | Yes |  |
-| `status` | string | Yes | Values: `pending`, `processing`, `complete`, `failed`. |
+| `status` | string | Yes | Failed for a proven invalidated source deposit. Otherwise pending while the deposit set is not proven closed or a member is pending; processing while a member awaits renewal confirmation; complete only for a proven closed, nonempty set with every member complete. Provider outages return retryable errors, not failed. Values: `pending`, `processing`, `complete`, `failed`. |
 | `deposits` | array | Yes |  |
 
 ## Full contract

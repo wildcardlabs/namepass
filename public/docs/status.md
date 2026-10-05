@@ -23,9 +23,19 @@ Deposits below `minimumAmount` remain pending until the address has enough USDC 
 
 ## Response
 
-The response includes `chainId`, `transactionHash`, `status` and `deposits`. Each deposit has a name, amount, log index and status. The transaction status is `complete` when all indexed deposits are complete.
+The response includes `chainId`, `transactionHash`, `status` and `deposits`. Each deposit has a name, amount, log index and status. `logIndex` is the ERC-20 transfer's log index, or `null` for native Arc funding.
 
-Completed entries include `renewals` with transaction hashes, duration added and resulting expiry. A renewal can include multiple deposits; its duration is the total renewal duration, not an allocation to an individual deposit.
+The transaction becomes `complete` only after the full relevant deposit set is proven closed and nonempty, every member is represented, and every member is complete. Source evidence and address-monitoring coverage must establish this set independently of indexed rows. A late or missing deposit prevents completion even when all currently returned deposits are complete.
+
+Completed entries include `renewals` with `renewalId`, transaction hash, duration added and resulting expiry. The identifier is `{chainId}:{lowercaseTransactionHash}:{logIndex}` for the Namepass gateway's `Renewed` event. Different renewal logs in one transaction have different identifiers. The same event has the same identifier in [history](/docs/history) and across repeated polls.
+
+A renewal can include multiple deposits. Its duration is the total renewal duration, not an allocation to one deposit. Deduplicate by `renewalId` before adding durations across deposits.
+
+## Aggregate status and corrections
+
+A proven invalidated source deposit makes the transaction `failed`. Otherwise, an unproven deposit set or any pending member keeps it `pending`; a member awaiting renewal confirmation keeps it `processing`. Only a closed, nonempty set with every member complete becomes `complete`.
+
+A provider outage returns a retryable error, not `failed`. Evidence corrections can revoke prior completion. On a later read, discard invalidated results and use the current response.
 
 ## Polling
 
