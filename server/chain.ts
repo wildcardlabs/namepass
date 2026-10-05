@@ -39,8 +39,10 @@ async function calls(
 	rpcUrl: string,
 	requests: Array<{ to: string; signature: string; args?: string }>,
 	blockTag = "latest",
+	signal?: AbortSignal,
 ): Promise<string[]> {
 	const response = await fetch(rpcUrl, {
+		signal,
 		method: "POST",
 		headers: { "content-type": "application/json" },
 		body: JSON.stringify(
@@ -78,8 +80,9 @@ async function calls(
 
 const verifiedReadRpcs = new Map<string, Promise<void>>();
 
-async function verifyRpcChainId(rpcUrl: string, expected: number): Promise<void> {
+async function verifyRpcChainId(rpcUrl: string, expected: number, signal?: AbortSignal): Promise<void> {
 	const response = await fetch(rpcUrl, {
+		signal,
 		method: "POST",
 		headers: { "content-type": "application/json" },
 		body: JSON.stringify({ jsonrpc: "2.0", id: 0, method: "eth_chainId", params: [] }),
@@ -95,7 +98,9 @@ async function verifyRpcChainId(rpcUrl: string, expected: number): Promise<void>
 }
 
 /** A warm function verifies each read endpoint once. Transaction writers verify every gas-spending step. */
-async function assertRpcChainId(rpcUrl: string, expected: number): Promise<void> {
+async function assertRpcChainId(rpcUrl: string, expected: number, signal?: AbortSignal): Promise<void> {
+	// Request-scoped cancellation must not enter the shared verification cache.
+	if (signal) return verifyRpcChainId(rpcUrl, expected, signal);
 	const key = `${expected}:${rpcUrl}`;
 	let verification = verifiedReadRpcs.get(key);
 	if (!verification) {
@@ -110,8 +115,9 @@ async function assertRpcChainId(rpcUrl: string, expected: number): Promise<void>
 	}
 }
 
-async function readBlockNumber(rpcUrl: string): Promise<string> {
+async function readBlockNumber(rpcUrl: string, signal?: AbortSignal): Promise<string> {
 	const response = await fetch(rpcUrl, {
+		signal,
 		method: "POST",
 		headers: { "content-type": "application/json" },
 		body: JSON.stringify({ jsonrpc: "2.0", id: 0, method: "eth_blockNumber", params: [] }),
@@ -135,12 +141,12 @@ export interface EnsState {
 	renewableBy: "registrar" | "v1" | null;
 }
 
-export async function readEnsState(label: string): Promise<EnsState> {
+export async function readEnsState(label: string, signal?: AbortSignal): Promise<EnsState> {
 	const rpcUrl = hubRpcUrl();
-	await assertRpcChainId(rpcUrl, HUB_CHAIN.chainId);
-	const blockTag = `0x${BigInt(await readBlockNumber(rpcUrl)).toString(16)}`;
+	await assertRpcChainId(rpcUrl, HUB_CHAIN.chainId, signal);
+	const blockTag = `0x${BigInt(await readBlockNumber(rpcUrl, signal)).toString(16)}`;
 	const read = (requests: import("../src/lib/helperDiscovery").HelperCall[]) => calls(
-		rpcUrl, requests.map((request) => ({ ...request, args: request.args?.join("") })), blockTag,
+		rpcUrl, requests.map((request) => ({ ...request, args: request.args?.join("") })), blockTag, signal,
 	);
 	const helper = await discoverHelper(read);
 	const metadata = await readEnsV2Metadata(read, helper);
@@ -202,6 +208,7 @@ export async function readNativeUsdcBalances(
 export async function readNativeUsdcBalanceSnapshots(
 	address: string,
 	chainIds = SERVER_CHAINS.map((chain) => chain.chainId),
+	signal?: AbortSignal,
 ): Promise<BalanceRead[]> {
 	const wanted = new Set(chainIds);
 	return Promise.all(
@@ -209,15 +216,15 @@ export async function readNativeUsdcBalanceSnapshots(
 			const rpcUrl = process.env[chain.rpcEnv];
 			if (!rpcUrl) return { chainId: chain.chainId };
 			try {
-				await assertRpcChainId(rpcUrl, chain.chainId);
-				const blockNumber = await readBlockNumber(rpcUrl);
+				await assertRpcChainId(rpcUrl, chain.chainId, signal);
+				const blockNumber = await readBlockNumber(rpcUrl, signal);
 				const [raw] = await calls(rpcUrl, [
 					{
 						to: chain.usdcAddress,
 						signature: "balanceOf(address)",
 						args: address.replace(/^0x/, "").toLowerCase().padStart(64, "0"),
 					},
-				], `0x${BigInt(blockNumber).toString(16)}`);
+				], `0x${BigInt(blockNumber).toString(16)}`, signal);
 				return { chainId: chain.chainId, amount: word(raw).toString(10), blockNumber };
 			} catch {
 				return { chainId: chain.chainId };

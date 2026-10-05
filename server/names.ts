@@ -93,15 +93,19 @@ export function normalizedLabel(input: string): string {
 	}
 }
 
-export async function activateName(input: string) {
+export async function activateName(input: string, options: { requireRenewable?: boolean; readSignal?: AbortSignal } = {}) {
 	const normalized = normalizedLabel(input);
 	const address = depositAddress(normalized).toLowerCase();
 	let ens;
 	try {
-		ens = await readEnsState(normalized);
+		ens = await readEnsState(normalized, options.readSignal);
 	} catch {
 		logOperation("activation.ens_unavailable", { step: "ens_read", errorCode: "ens_unavailable" });
 		throw new ApiError(503, "ens_unavailable", "ENS state is not available. Try again shortly.");
+	}
+
+	if (options.requireRenewable && !ens.renewableBy) {
+		throw new ApiError(422, "name_not_renewable", "This name cannot currently be renewed.");
 	}
 
 	const db = database();
@@ -147,7 +151,7 @@ export async function activateName(input: string) {
 		return { row, inserted: Boolean(inserted), requests };
 	});
 
-	const balances = await readNativeUsdcBalanceSnapshots(address);
+	const balances = await readNativeUsdcBalanceSnapshots(address, undefined, options.readSignal);
 	const positiveBalances = balances.filter(
 		(balance): balance is Required<typeof balance> =>
 			balance.amount !== undefined &&
