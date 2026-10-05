@@ -201,6 +201,13 @@ payment canary or proof of watch propagation. Actual indexer coverage/recovery, 
 verification and public abuse controls remain release gates. `subnameVerified` stays false;
 use the full address. No production API is opened by merging the adapter.
 
+## History adapter review — 2026-10-05
+
+The history stage is under review in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md).
+Its local adapter passed enforced read-only checks against ten existing renewals across seven
+names, including direct and Arc-funded results. This does not enable a hosted endpoint or
+establish finality; all items remain `processing`. No live data or configuration changed.
+
 ## Historical evidence
 
 The [September 18 manifest](deployments/2026-09-18/manifest.json) and accompanying receipts are

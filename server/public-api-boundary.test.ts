@@ -4,6 +4,7 @@ import { H3 } from "nitro/h3";
 import publicApiBoundary from "./public-api-boundary";
 import address from "../routes/api/v1/address";
 import quote from "../routes/api/v1/quote";
+import history from "../routes/api/v1/names/[name]/renewals";
 
 test("unavailable public API URLs return JSON 404 before the SPA fallback", async () => {
 	const app = new H3().use(publicApiBoundary);
@@ -16,7 +17,7 @@ test("unavailable public API URLs return JSON 404 before the SPA fallback", asyn
 	for (const path of [
 		"/api/v1",
 		"/api/v1/status/11155111?transactionHash=0x123",
-		"/api/v1/names/steve.eth/renewals",
+		"/api/v1/names/steve.eth/renewals/unknown",
 		"/api/v1/unknown",
 		"/api/v1/quote/unknown",
 	]) {
@@ -40,6 +41,7 @@ test("implemented adapters retain their own methods and CORS preflight", async (
 	const app = new H3().use(publicApiBoundary);
 	app.on("", "/api/v1/address", (event) => address.fetch(event.req));
 	app.on("", "/api/v1/quote", (event) => quote.fetch(event.req));
+	app.on("", "/api/v1/names/:name/renewals", (event) => history.fetch(event.req));
 	for (const path of ["/api/v1/address", "/api/v1/quote"]) {
 		const get = await app.request(`https://namepass.test${path}`);
 		assert.equal(get.status, 405);
@@ -48,4 +50,7 @@ test("implemented adapters retain their own methods and CORS preflight", async (
 		assert.equal(preflight.status, 204);
 		assert.equal(preflight.headers.get("access-control-allow-origin"), "*");
 	}
+	const disabled = await app.request("https://namepass.test/api/v1/names/steve.eth/renewals");
+	assert.equal(disabled.status, 503);
+	assert.equal((await disabled.json()).error.code, "api_unavailable");
 });

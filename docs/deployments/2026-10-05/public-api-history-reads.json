@@ -1,0 +1,206 @@
+{
+  "observedAt": "2026-10-05T20:08:23.646Z",
+  "code": "local unmerged history adapter based on 42481ab",
+  "readOnly": true,
+  "readOnlySessions": 7,
+  "source": "Existing live records, queried through transaction-read-only PostgreSQL sessions and read-only Sepolia RPC; no hosted flag or production code change, no transactions.",
+  "rows": [
+    {
+      "name": "chrismg.eth",
+      "status": 200,
+      "items": [
+        {
+          "renewalId": "11155111:0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555:304",
+          "flowId": "7a7e1c35-db06-4d17-8449-4c216f775963",
+          "sourceChainId": "5042002",
+          "chainId": "11155111",
+          "transactionHash": "0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555",
+          "secondsAdded": "12259587",
+          "amountApplied": "3110000",
+          "renewalFee": "100000",
+          "expiry": null,
+          "status": "processing",
+          "renewedAt": "2026-10-01T01:44:12.000Z"
+        }
+      ],
+      "expiryUpdatedAt": null,
+      "currentExpiry": "2033-02-19T22:45:39.000Z",
+      "nextCursor": null
+    },
+    {
+      "name": "steve.eth",
+      "status": 200,
+      "items": [
+        {
+          "renewalId": "11155111:0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409:322",
+          "flowId": "ee8dc126-d340-4afb-a2ae-447c306f44ea",
+          "sourceChainId": "11155111",
+          "chainId": "11155111",
+          "transactionHash": "0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409",
+          "secondsAdded": "3547790",
+          "amountApplied": "900000",
+          "renewalFee": "100000",
+          "expiry": null,
+          "status": "processing",
+          "renewedAt": "2026-09-30T16:22:12.000Z"
+        },
+        {
+          "renewalId": "11155111:0x51a897a78e9d8825022a6784c1d424c2fbdd97e5c26ef1372ea5c8d635199ddf:164",
+          "flowId": "48d9cf71-7966-4e4d-a055-99ad1f2a5956",
+          "sourceChainId": "5042002",
+          "chainId": "11155111",
+          "transactionHash": "0x51a897a78e9d8825022a6784c1d424c2fbdd97e5c26ef1372ea5c8d635199ddf",
+          "secondsAdded": "3547790",
+          "amountApplied": "900000",
+          "renewalFee": "100000",
+          "expiry": null,
+          "status": "processing",
+          "renewedAt": "2026-09-21T23:32:24.000Z"
+        },
+        {
+          "renewalId": "11155111:0x47fb93e99172e174c5b3da44cf5daf1d3f2a26a2260d15cc1be110b142ad843a:190",
+          "flowId": "14cb7228-00ea-4e9d-a98c-823a27f125f8",
+          "sourceChainId": "5042002",
+          "chainId": "11155111",
+          "transactionHash": "0x47fb93e99172e174c5b3da44cf5daf1d3f2a26a2260d15cc1be110b142ad843a",
+          "secondsAdded": "3547790",
+          "amountApplied": "900000",
+          "renewalFee": "100000",
+          "expiry": null,
+          "status": "processing",
+          "renewedAt": "2026-09-21T23:31:00.000Z"
+        },
+        {
+          "renewalId": "11155111:0x6c7b413b55db956bd52b65242ffcba7ec15cbb770ae1f29c67930ea143a65268:176",
+          "flowId": "6849f6d1-00f3-428b-9147-8bbd43099e1e",
+          "sourceChainId": "11155111",
+          "chainId": "11155111",
+          "transactionHash": "0x6c7b413b55db956bd52b65242ffcba7ec15cbb770ae1f29c67930ea143a65268",
+          "secondsAdded": "3547790",
+          "amountApplied": "900000",
+          "renewalFee": "100000",
+          "expiry": null,
+          "status": "processing",
+          "renewedAt": "2026-09-21T23:28:00.000Z"
+        }
+      ],
+      "expiryUpdatedAt": null,
+      "currentExpiry": "2029-09-22T10:16:06.000Z",
+      "nextCursor": null
+    },
+    {
+      "name": "slobo.eth",
+      "status": 200,
+      "items": [
+        {
+          "renewalId": "11155111:0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8:225",
+          "flowId": "eec07fbc-2c4b-4396-8c47-a309b1b15cbf",
+          "sourceChainId": "5042002",
+          "chainId": "11155111",
+          "transactionHash": "0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8",
+          "secondsAdded": "50851666",
+          "amountApplied": "12900000",
+          "renewalFee": "100000",
+          "expiry": null,
+          "status": "processing",
+          "renewedAt": "2026-09-23T17:00:12.000Z"
+        }
+      ],
+      "expiryUpdatedAt": null,
+      "currentExpiry": "2028-08-24T06:53:34.000Z",
+      "nextCursor": null
+    },
+    {
+      "name": "gregskril.eth",
+      "status": 200,
+      "items": [
+        {
+          "renewalId": "11155111:0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7:234",
+          "flowId": "76f746d1-7d5a-4461-ae6c-f9c2dedd8c9d",
+          "sourceChainId": "5042002",
+          "chainId": "11155111",
+          "transactionHash": "0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7",
+          "secondsAdded": "46909677",
+          "amountApplied": "11900000",
+          "renewalFee": "100000",
+          "expiry": null,
+          "status": "processing",
+          "renewedAt": "2026-09-23T16:56:24.000Z"
+        }
+      ],
+      "expiryUpdatedAt": null,
+      "currentExpiry": "2028-05-23T01:02:21.000Z",
+      "nextCursor": null
+    },
+    {
+      "name": "nick.eth",
+      "status": 200,
+      "items": [
+        {
+          "renewalId": "11155111:0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36:181",
+          "flowId": "a192c01d-37ce-40b4-8639-0182a87886fe",
+          "sourceChainId": "5042002",
+          "chainId": "11155111",
+          "transactionHash": "0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36",
+          "secondsAdded": "2148389",
+          "amountApplied": "10899996",
+          "renewalFee": "100000",
+          "expiry": null,
+          "status": "processing",
+          "renewedAt": "2026-09-23T16:50:24.000Z"
+        }
+      ],
+      "expiryUpdatedAt": null,
+      "currentExpiry": "2027-03-02T05:30:33.000Z",
+      "nextCursor": null
+    },
+    {
+      "name": "vitalik.eth",
+      "status": 200,
+      "items": [
+        {
+          "renewalId": "11155111:0x9055fe091741e3edf419b1f83ab7acd0781d63e510e180713aff9c7565033551:164",
+          "flowId": "778da1d0-b59d-4c88-818a-2d5e9784fdeb",
+          "sourceChainId": "5042002",
+          "chainId": "11155111",
+          "transactionHash": "0x9055fe091741e3edf419b1f83ab7acd0781d63e510e180713aff9c7565033551",
+          "secondsAdded": "39025697",
+          "amountApplied": "9900000",
+          "renewalFee": "100000",
+          "expiry": null,
+          "status": "processing",
+          "renewedAt": "2026-09-23T16:48:48.000Z"
+        }
+      ],
+      "expiryUpdatedAt": null,
+      "currentExpiry": "2069-11-13T15:13:35.000Z",
+      "nextCursor": null
+    },
+    {
+      "name": "paramore.eth",
+      "status": 200,
+      "items": [
+        {
+          "renewalId": "11155111:0x92b2284a2ccec2058921f34c3b7a68785c10e1de38398d9444ee9fdc6175f89f:225",
+          "flowId": "08880f31-ea2e-409f-bde3-232e017baef9",
+          "sourceChainId": "5042002",
+          "chainId": "11155111",
+          "transactionHash": "0x92b2284a2ccec2058921f34c3b7a68785c10e1de38398d9444ee9fdc6175f89f",
+          "secondsAdded": "11431770",
+          "amountApplied": "2900000",
+          "renewalFee": "100000",
+          "expiry": null,
+          "status": "processing",
+          "renewedAt": "2026-09-22T13:36:36.000Z"
+        }
+      ],
+      "expiryUpdatedAt": null,
+      "currentExpiry": "2028-02-02T03:05:30.000Z",
+      "nextCursor": null
+    }
+  ],
+  "sourceChecksums": {
+    "server/public-history.ts": "63af903d941a4662b18f84984ca0437208823102a6a21b34ce2e1f6d34264e83",
+    "routes/api/v1/names/[name]/renewals.ts": "1681e4fffc8f1e7a2b35e35b590840af97eafad948c8194f5e7dbce1840cac06"
+  }
+}
