@@ -689,17 +689,17 @@
   border-radius: var(--site-control-radius);
 }
 .public-ui .site-footer {
-  --color-ink-primary: #ffffff;
-  --color-ink-secondary: #a7a3b5;
-  --color-ink-label: #e1dfe8;
-  --color-ink-action: #a7a3b5;
+  --color-ink-primary: #eef4f0;
+  --color-ink-secondary: #b8c8be;
+  --color-ink-label: #dee8e2;
+  --color-ink-action: #b8c8be;
   --site-line: #ffffff24;
   position: relative;
   width: 100%;
   max-width: none;
   margin-inline: auto;
-  background: var(--site-ink);
-  color: #a7a3b5;
+  background: #20332b;
+  color: #b8c8be;
   font-weight: 400;
   border: 0;
   padding: 40px 0 28px;
@@ -730,7 +730,7 @@
   background: #ffffff14;
 }
 .public-ui .site-footer :where(a, button):focus-visible {
-  outline-color: #e1dfe8;
+  outline-color: #dee8e2;
 }
 .public-ui .site-footer [class*="border-t"] {
   border-color: #ffffff24;
