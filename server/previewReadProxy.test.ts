@@ -80,6 +80,10 @@ test("public adapter requests execute the preview's own route without forwarding
 		const response = await app().request(new Request(`https://preview.test/api/v1/${path}`, { method }));
 		assert.equal(response.status, 201);
 	}
+	for (const method of ["GET", "OPTIONS", "POST"]) {
+		const response = await app().request(new Request("https://preview.test/api/v1/names/steve.eth/renewals", { method }));
+		assert.equal(response.status, 201);
+	}
 	assert.equal(fetchMock.mock.callCount(), 0);
 });
 
