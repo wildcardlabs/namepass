@@ -22,8 +22,8 @@ to make a broken UI release work. Never delete payment records to make a migrati
 | [Introduction](content/introduction.md), [Quickstart](content/quickstart.md) | Address → caller sends USDC → poll by source hash and chain | One end-to-end testnet payment reaches a verified, finalized renewal |
 | [Addresses](content/addresses.md) | `POST /api/v1/address` | Normalized name, full deterministic address, subname, verification boolean and funding chains; repeat activation is idempotent |
 | [Quotes](content/quotes.md) | `POST /api/v1/quote` | Exact integer amounts, estimated duration, allowance, bridge fee, rounding remainder, pricing block and 60-second expiry |
-| [Status](content/status.md) | `GET /api/v1/status/{chainId}?transactionHash={hash}` | Every matching deposit is represented; pending, processing, complete and failed have documented meanings |
-| [History](content/history.md) | `GET /api/v1/names/{name}/renewals` | Name-only results, recorded expiry and freshness, newest-first pagination, nullable unavailable fields |
+| [Status](content/status.md) | `GET /api/v1/status/{chainId}?transactionHash={hash}` | The full relevant deposit set is proven before transaction completion; renewals have exact event identifiers |
+| [History](content/history.md) | `GET /api/v1/names/{name}/renewals` | Name-only results, the same renewal identifiers as status, paired expiry provenance, newest-first pagination |
 | [Reference](content/reference.md) | Anonymous JSON HTTP API and browser CORS | Correct method, content type, request validation, documented errors and retry headers |
 | [Agents](content/agents.md), [Skills](content/skills.md) | Existing wallet/coding agents use the same interface | Markdown, OpenAPI and skill agree with the deployed service; no extra agent server |
 
@@ -59,12 +59,71 @@ receipts. Record unavailable fields and their documented null behavior. Inspect 
 direct Ethereum and cross-chain flows, multiple deposits in one transaction, pooled deposits,
 split processing and native Arc funding. Confirm whether native transfer identity is represented
 without importing the removed schema extension. Identify activation/watch propagation gaps.
+For expiry, inventory every writer of `currentExpiry` and its timestamp together. A timestamp
+column name or a recent update alone does not establish provenance for the returned value.
 
 The hard requirement is truthful completion. A stored `settled` flag or an expiry increase alone
 does not establish that a particular source payment completed. The proposed status mapping must
 prove the deposit-to-processing-to-renewal relationship, source validity and renewal finality.
 Show the complete relationship for every deposit and every applicable processing flow. Shared
 renewal duration is reported as a shared result, never divided among deposits without evidence.
+
+### Transaction deposit-set completeness
+
+Before a transaction can be `complete`, prove that its relevant deposit set is closed, nonempty
+and fully represented, then prove completion for every member. Define relevant USDC transfers
+and supported deposit addresses independently of rows already delivered by the indexer. Include
+watch/address-registry coverage and activation propagation in that proof.
+
+Use enumeration from a canonical source receipt, or equivalent ingestion-completeness evidence
+that accounts for every relevant transfer. Native Arc transfers require equivalent complete
+source evidence; ERC-20 log enumeration alone is not sufficient for that route. Record the
+source block/hash, deposit identities, coverage and applicable finality checks. An indexed count,
+quiet period or first completed renewal does not establish completeness. Pending enumeration or
+missing indexed members must prevent aggregate `complete`, even if every currently returned
+deposit is individually complete. Provider failures follow the documented retryable error policy.
+
+Change the published status wording from "all indexed deposits" to the proven full relevant set
+in the contract review. Test two deposits in one transaction with staggered index delivery: the
+first is finalized and renewed before the second arrives. The quickstart must keep polling until
+both members are represented and complete. Also test a missing member, duplicate delivery,
+coverage gaps and receipt corrections. No transaction-status release without this evidence.
+
+### Exact renewal identity
+
+Require `renewalId` in both `Renewal` and `HistoryItem` before implementing either response.
+Define it from the renewal event's chain ID, normalized transaction hash and log index, with one
+documented encoding. It identifies the canonical renewal event, not a source deposit, flow or
+whole transaction. [Receipt segmentation](../server/indexed-renewal.ts) already uses log index to
+distinguish renewals in the same transaction. Use the Namepass gateway's `Renewed` log as the
+identity source in both responses; its associated ENS expiry log is supporting evidence.
+
+The same event has the same identifier across status deposits, history entries and repeated
+polls. Distinct renewal events in one transaction have distinct identifiers. Keep `flowId` as
+processing provenance; it is not a renewal deduplication key. Document any multiple history rows
+that refer to one event and how clients count its duration once. Test shared renewals across
+deposits, two renewal events in one transaction, status/history agreement and invalidated events.
+No response may expose a renewal without a proven event identity.
+
+### Expiry value and timestamp provenance
+
+The published history contract defines `expiryUpdatedAt` as a read timestamp. Preserve that
+meaning unless a separate contract review explicitly changes it. Return a non-null timestamp
+only when evidence pairs the accompanying expiry value with that read. Return `null` when the
+read time is unknown, including when `currentExpiry` is null. Do not substitute an event block
+time, projection update time, response time or independent last-read timestamp.
+
+Do not map `names.ensSyncedAt` directly to `expiryUpdatedAt`: activation records a read time,
+[ENS event projection](../server/goldsky.ts) incorporates event block times, and renewal aggregate
+projection can change `currentExpiry` without changing that timestamp. Audit activation,
+operational refresh, direct and cross-chain settlement, event projection and correction paths.
+Test a read followed by a projected expiry change, late older events, correction rollback and
+unknown timestamps. Each non-null timestamp must describe the returned value's supported read.
+
+If a different observation-time meaning is preferred, document the source, units and correction
+rules in the guide and OpenAPI before implementation. If reliable pairing needs stored metadata,
+review that addition separately; do not silently add fields to the core schema. History remains
+read-only. Any new RPC-read strategy also needs a capacity and timeout review.
 
 Specify aggregate status for mixed deposits and define how corrections revoke previously reported
 completion. An RPC outage must not become `failed`; insufficient funds remain pending. Archive
@@ -75,7 +134,9 @@ Until this model is proven, transaction status and complete history are not rele
 
 1. **Baseline and interface review.** Record hosted schema and current core behavior. Confirm all
    response fields, pagination, error shapes, CORS and status precedence against the published
-   OpenAPI. Any discrepancy becomes an explicit documentation decision before code is written.
+   OpenAPI. Resolve the three gates above in a reviewed documentation/OpenAPI change before
+   endpoint implementation: full deposit-set completion, exact renewal identifiers and paired
+   expiry freshness. Any other discrepancy also becomes an explicit documentation decision.
 2. **Quote endpoint.** Implement fresh input validation and contract reads. Derive the active
    helper and allowance from the deployed contracts at a consistent block. Validate source route
    limits and bridge-fee assumptions. Check fee/duration arithmetic against independent contract
@@ -88,11 +149,14 @@ Until this model is proven, transaction status and complete history are not rele
    limits and capacity before opening activation publicly.
 4. **History endpoint.** Add a read-only query with explicit columns and a stable time/identity
    cursor bound to the requested name. Test equal timestamps, late events, pagination changes,
-   unknown names, recorded expiry freshness and correction handling. Verification status must
-   use the proven model; do not label ordinary indexed history finalized without evidence.
+   unknown names, paired expiry freshness and correction handling. Confirm renewal identifiers
+   agree with status and distinct events in one transaction remain distinct. Verification status
+   must use the proven model; do not label ordinary indexed history finalized without evidence.
 5. **Status endpoint.** Implement the proven deposit mapping with read-only polling. Test unknown
    hashes, source-chain separation, multiple transfer logs, pooled funds, split processing,
-   existing wallet balances, below-minimum payments, native Arc, corrections and outages.
+   existing wallet balances, below-minimum payments, native Arc, corrections and outages. Require
+   the staggered-delivery test and evidence that the relevant deposit set is complete before the
+   transaction becomes `complete`; verify shared renewal deduplication by event identity.
    Compare returned transaction hashes, amounts, duration and expiry with independent receipts.
 6. **Hosted integration release.** Validate the exact deployed commit, JSON contract and all four
    routes without relying on the UI proxy. Exercise activation-to-indexing propagation, restart
@@ -132,6 +196,9 @@ docs' unavailable notices only after hosted evidence for the documented flow is 
 
 - The actual hosted schema and migration ledger, including any leftovers from prior experiments.
 - Whether existing records can prove every documented completion case; required missing facts.
+- The proof of transaction deposit-set completeness, including watch coverage and native Arc.
+- The exact `renewalId` encoding and status/history mapping, including shared history rows.
+- Paired expiry read provenance, nullable unknown timestamps and any separately reviewed storage.
 - Native Arc identity and recovery of deposits during initial watch propagation.
 - Aggregate status precedence, source-chain finality rules and correction behavior.
 - Quote dependency availability, RPC budget and tested pricing boundaries.
