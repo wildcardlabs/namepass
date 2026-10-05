@@ -1,0 +1,25 @@
+{
+  "observedAt": "2026-10-05T19:23:17.057Z",
+  "branchId": "br-autumn-cherry-av2es7od",
+  "deployment": {
+    "id": "dpl_Hgb5L9xLJP88RniLT9GU5xgxvCF3",
+    "url": "namepass-v2-al2f3lu7q-wildcard-labs.vercel.app",
+    "readyState": "READY",
+    "target": "preview",
+    "commit": "55a22ed1031390efd0e1fdcb2795582e18d42f2b",
+    "gitBranch": "codex/public-api-address"
+  },
+  "verification": "An isolated staging-only row lock caused the hosted adapter to return sanitized retryable 503. After rollback released the lock, the same request succeeded. No data deletion, live DB access, signing or transactions.",
+  "blocked": {
+    "status": 503,
+    "cliElapsedMs": 4458,
+    "errorCode": "activation_unavailable",
+    "retryAfter": "5"
+  },
+  "retried": {
+    "status": 200,
+    "cliElapsedMs": 5336,
+    "name": "steve.eth",
+    "depositAddress": "0x5B7516768eD0b04E212041265BB1f11af71841d7"
+  }
+}

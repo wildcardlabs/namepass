@@ -189,6 +189,12 @@ without a row. No flows, indexed events, deposits or transaction intents were cr
 CI run `37361709975` passed against this code. Twelve earlier `predictWallet` reads matched
 local derivation across all four deployed factories.
 
+An isolated staging row lock returned sanitized `503 activation_unavailable` with a retry delay.
+After rollback released the lock, the same request returned 200. The
+[lock recovery receipt](deployments/2026-10-05/public-api-address-lock.json) records both results.
+Unimplemented `/api/v1` routes now return JSON 404 instead of the SPA's HTML 200 fallback.
+Focused HTTP tests and the compiled Nitro server verified this boundary; UI routes pass through.
+
 [Staging evidence](deployments/2026-10-05/public-api-address-staging.json) and the
 [address adapter report](PUBLIC_API_ADDRESS.md) record the scope and results. This is not a
 payment canary or proof of watch propagation. Actual indexer coverage/recovery, resolver
