@@ -1,6 +1,7 @@
 # Public API: fresh implementation plan
 
-Date: 2026-10-05. Status: planning only. No endpoint or worker is implemented by this plan.
+Date: 2026-10-05. Status: baseline review merged; quotes verified on a protected preview.
+Production quotes remain disabled. Address, history and status are not implemented.
 
 ## Starting point
 
@@ -198,8 +199,9 @@ docs' unavailable notices only after hosted evidence for the documented flow is 
 
 Stage 1 findings and proposed interface decisions are in
 [PUBLIC_API_BASELINE.md](PUBLIC_API_BASELINE.md). The hosted schema and migration ledger are
-recorded there and in [DEPLOYMENTS.md](DEPLOYMENTS.md). The accompanying contract changes need
-review before endpoint implementation; sample receipt matches do not close the release gates.
+recorded there and in [DEPLOYMENTS.md](DEPLOYMENTS.md). The contract review merged in PR #122.
+PR #123 added the quote adapter; protected HTTP verification is recorded in the deployment
+report. Sample receipt matches do not close status/history or activation release gates.
 
 - Whether existing records can prove every documented completion case; required missing facts.
 - The proof of transaction deposit-set completeness, including watch coverage and native Arc.
@@ -207,7 +209,8 @@ review before endpoint implementation; sample receipt matches do not close the r
 - Prove paired expiry read provenance; review the null default and any separately proposed storage.
 - Native Arc identity and recovery of deposits during initial watch propagation.
 - Aggregate status precedence, source-chain finality rules and correction behavior.
-- Quote dependency availability, RPC budget and tested pricing boundaries.
+- Quote public capacity and abuse controls; contract dependencies, RPC bounds and pricing
+  boundaries passed the recorded quote-stage checks.
 - Endpoint-specific exposure controls, abuse thresholds and staging provider configuration.
 
 These are bounded discovery tasks. The reset neither enables an API nor performs hosted database
