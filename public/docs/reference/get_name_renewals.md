@@ -2,7 +2,7 @@
 
 `GET /api/v1/names/{name}/renewals`
 
-Retrieve public renewal history and the recorded expiry for an ENS name. Renewals are ordered newest first. Complete indicates a verified, finalized renewal; processing indicates pending verification.
+Read-only renewal history and recorded expiry for an ENS name. Newest first, with a cursor bound to the requested name. Complete requires verification and finality; processing indicates pending verification. Each item has an event-specific renewalId shared with status. Expiry read timestamps are null without paired provenance.
 
 ## Parameters
 
@@ -19,6 +19,7 @@ Retrieve public renewal history and the recorded expiry for an ENS name. Renewal
 | `200` | Name expiry and renewal history. |
 | `400` | Invalid name, chain ID, transaction hash or request. |
 | `404` | This name has not been activated. Get its deposit address first. |
+| `429` | Request rate limit reached. Wait for Retry-After. |
 | `500` | Server error. |
 | `503` | Temporarily unavailable. Retry after the indicated delay. |
 
@@ -27,8 +28,8 @@ Retrieve public renewal history and the recorded expiry for an ENS name. Renewal
 | Field | Type | Required | Details |
 | --- | --- | --- | --- |
 | `name` | string | Yes |  |
-| `currentExpiry` | string or null | Yes | Format: date-time. |
-| `expiryUpdatedAt` | string or null | Yes | Format: date-time. |
+| `currentExpiry` | string or null | Yes | Last recorded ENS expiry, or null when unavailable. Does not imply a fresh read. Format: date-time. |
+| `expiryUpdatedAt` | string or null | Yes | Timestamp of the ENS read that observed the accompanying currentExpiry value. Null when that pairing is unknown or currentExpiry is null. Event time, projection time and response time are not substitutes. Format: date-time. |
 | `items` | array | Yes |  |
 | `nextCursor` | string or null | Yes |  |
 

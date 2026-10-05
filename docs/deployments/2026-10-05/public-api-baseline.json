@@ -1,0 +1,601 @@
+{
+  "observedOn": "2026-10-05",
+  "scope": "Read-only baseline discovery; historical payments only; no fresh canary or endpoint implementation.",
+  "deployment": {
+    "id": "dpl_8WMVzvmkbVrQDennAwVWCcyXYKmT",
+    "commit": "69f7142eace03d086ecb512dd66b7960929535a4",
+    "state": "READY",
+    "target": "production",
+    "aliases": [
+      "beta.namepass.com",
+      "demo-five-gray-37.vercel.app",
+      "namepass-v2-wildcard-labs.vercel.app",
+      "namepass-v2-git-main-wildcard-labs.vercel.app"
+    ]
+  },
+  "database": {
+    "observedAt": "2026-10-05T14:42:40.893Z",
+    "neonProject": "nameless-paper-91018372",
+    "neonBranch": "br-noisy-bird-avey45an",
+    "branchName": "testnet",
+    "readOnly": "on",
+    "expectedMigrations": 9,
+    "observedMigrations": 9,
+    "ledger": [
+      {
+        "tag": "0000_messy_karnak",
+        "timestamp": 1786491189013,
+        "hash": "f0316ff61d800f0e904d327c43bf6794f9eca508adc59c33e2ce7fd5065cfbbe",
+        "recordedHash": "f0316ff61d800f0e904d327c43bf6794f9eca508adc59c33e2ce7fd5065cfbbe",
+        "match": true
+      },
+      {
+        "tag": "0001_flow_expiry_after",
+        "timestamp": 1787065532041,
+        "hash": "a4621c8280b53d22f3831ca2ab84b380bbdee472b7c37f89e6467d5893a66d62",
+        "recordedHash": "a4621c8280b53d22f3831ca2ab84b380bbdee472b7c37f89e6467d5893a66d62",
+        "match": true
+      },
+      {
+        "tag": "0002_rebuild_lifetime_received",
+        "timestamp": 1787088000000,
+        "hash": "fd6cbbce9f4f4c8fa6ff5e8a68184ab046404e10ddf237e842285d2ac954396c",
+        "recordedHash": "fd6cbbce9f4f4c8fa6ff5e8a68184ab046404e10ddf237e842285d2ac954396c",
+        "match": true
+      },
+      {
+        "tag": "0003_indexed_balance_snapshots",
+        "timestamp": 1787681682487,
+        "hash": "c35266e8c232cbdca5234c56c7efcbc8cc817cb7161a63f0e0b254eba78bf330",
+        "recordedHash": "c35266e8c232cbdca5234c56c7efcbc8cc817cb7161a63f0e0b254eba78bf330",
+        "match": true
+      },
+      {
+        "tag": "0004_phase_aware_flows",
+        "timestamp": 1787753774189,
+        "hash": "98c965b744000bd4a3dc068a0db30f95a79f35585eda1b78032846b608af672d",
+        "recordedHash": "98c965b744000bd4a3dc068a0db30f95a79f35585eda1b78032846b608af672d",
+        "match": true
+      },
+      {
+        "tag": "0005_external_origin_evidence",
+        "timestamp": 1787754015795,
+        "hash": "c070b091e7cfe4569c650890a295d7e4aca9d2f5a19317a19883e2289760a4fc",
+        "recordedHash": "c070b091e7cfe4569c650890a295d7e4aca9d2f5a19317a19883e2289760a4fc",
+        "match": true
+      },
+      {
+        "tag": "0006_transaction_identity_support",
+        "timestamp": 1788514771576,
+        "hash": "4592d9ff7e1cdb1159bcc00b9ba36d04d0c79387fb843d85656342b0cedcfbc4",
+        "recordedHash": "4592d9ff7e1cdb1159bcc00b9ba36d04d0c79387fb843d85656342b0cedcfbc4",
+        "match": true
+      },
+      {
+        "tag": "0007_exact_cctp_identity",
+        "timestamp": 1788557299572,
+        "hash": "3ea11155d3e903d1d4891716811a492a358b74c12bbf8ed0ee5a49013adee25a",
+        "recordedHash": "3ea11155d3e903d1d4891716811a492a358b74c12bbf8ed0ee5a49013adee25a",
+        "match": true
+      },
+      {
+        "tag": "0008_absorbed_deposit_flows",
+        "timestamp": 1788772800000,
+        "hash": "56a7cf1e6bbb292dc1a543f382cf347260e852cbdac4b7723e7e3dd5fcec829d",
+        "recordedHash": "56a7cf1e6bbb292dc1a543f382cf347260e852cbdac4b7723e7e3dd5fcec829d",
+        "match": true
+      }
+    ],
+    "expectedColumnCount": 134,
+    "observedColumnCount": 134,
+    "differences": {
+      "missing": [],
+      "unexpected": []
+    },
+    "database": [
+      {
+        "database_name": "neondb",
+        "read_only": "on",
+        "postgres_version": "18.6 (6569466)"
+      }
+    ],
+    "tables": [
+      {
+        "table_schema": "drizzle",
+        "table_name": "__drizzle_migrations",
+        "table_type": "BASE TABLE"
+      },
+      {
+        "table_schema": "goldsky",
+        "table_name": "watched_addresses",
+        "table_type": "BASE TABLE"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "balance_scan_requests",
+        "table_type": "BASE TABLE"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "balance_snapshots",
+        "table_type": "BASE TABLE"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "chain_events",
+        "table_type": "BASE TABLE"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "deposits",
+        "table_type": "BASE TABLE"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "flow_transitions",
+        "table_type": "BASE TABLE"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "flows",
+        "table_type": "BASE TABLE"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "names",
+        "table_type": "BASE TABLE"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "relayer_nonces",
+        "table_type": "BASE TABLE"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "transaction_intents",
+        "table_type": "BASE TABLE"
+      }
+    ],
+    "eventCounts": [
+      {
+        "chain_id": "5042002",
+        "event_family": "deposit",
+        "event_type": "Transfer",
+        "canonical": true,
+        "count": "6"
+      },
+      {
+        "chain_id": "5042002",
+        "event_family": "namepass",
+        "event_type": "DepositProcessed",
+        "canonical": true,
+        "count": "8"
+      },
+      {
+        "chain_id": "5042002",
+        "event_family": "namepass",
+        "event_type": "WalletDeployed",
+        "canonical": true,
+        "count": "7"
+      },
+      {
+        "chain_id": "11155111",
+        "event_family": "deposit",
+        "event_type": "Transfer",
+        "canonical": true,
+        "count": "1"
+      },
+      {
+        "chain_id": "11155111",
+        "event_family": "namepass",
+        "event_type": "CCTPClaimed",
+        "canonical": true,
+        "count": "8"
+      },
+      {
+        "chain_id": "11155111",
+        "event_family": "namepass",
+        "event_type": "DepositProcessed",
+        "canonical": true,
+        "count": "2"
+      },
+      {
+        "chain_id": "11155111",
+        "event_family": "namepass",
+        "event_type": "Renewed",
+        "canonical": true,
+        "count": "10"
+      },
+      {
+        "chain_id": "11155111",
+        "event_family": "namepass",
+        "event_type": "WalletDeployed",
+        "canonical": true,
+        "count": "1"
+      }
+    ],
+    "depositCounts": [
+      {
+        "chain_id": "5042002",
+        "status": "detected",
+        "source": "goldsky",
+        "count": "4"
+      },
+      {
+        "chain_id": "5042002",
+        "status": "finalized",
+        "source": "goldsky",
+        "count": "2"
+      },
+      {
+        "chain_id": "11155111",
+        "status": "detected",
+        "source": "goldsky",
+        "count": "1"
+      }
+    ],
+    "flowCounts": [
+      {
+        "origin_chain_id": "5042002",
+        "trigger": "automatic",
+        "status": "settled",
+        "hold_reason": null,
+        "count": "6"
+      },
+      {
+        "origin_chain_id": "5042002",
+        "trigger": "external",
+        "status": "settled",
+        "hold_reason": null,
+        "count": "2"
+      },
+      {
+        "origin_chain_id": "5042002",
+        "trigger": "external",
+        "status": "cancelled",
+        "hold_reason": null,
+        "count": "2"
+      },
+      {
+        "origin_chain_id": "11155111",
+        "trigger": "automatic",
+        "status": "settled",
+        "hold_reason": null,
+        "count": "1"
+      },
+      {
+        "origin_chain_id": "11155111",
+        "trigger": "external",
+        "status": "settled",
+        "hold_reason": null,
+        "count": "1"
+      }
+    ],
+    "nameWatchCoverage": [
+      {
+        "names": "11",
+        "watched_addresses": "11",
+        "names_without_watch": "0"
+      }
+    ],
+    "settledLinkCoverage": [
+      {
+        "settled_flows": "10",
+        "without_single_deposit_link": "3",
+        "without_renewal_link": "0",
+        "without_origin_event_link": "1"
+      }
+    ],
+    "multipleDepositTransactions": [],
+    "sharedRenewalEvents": [],
+    "bindingEvidence": "Two public activity event/flow/transaction identities match this Neon testnet branch. The separately inspected Neon production branch has no public tables. The sensitive Vercel DATABASE_URL was not disclosed or compared."
+  },
+  "goldsky": {
+    "name": "namepass-testnet-v2",
+    "status": "ACTIVE",
+    "sourceCount": 9,
+    "sinkCount": 5,
+    "sinkUrls": [
+      "https://demo-five-gray-37.vercel.app/api/webhooks/goldsky"
+    ],
+    "limitation": "Running status and current watched-address membership do not prove historical delivery completeness or watch propagation."
+  },
+  "http": {
+    "observedAt": "2026-10-05T14:49:57.141Z",
+    "origin": "https://beta.namepass.com",
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/api/activity?limit=100",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "allowOrigin": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/names/chrismg.eth/activity?limit=20",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "allowOrigin": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/names/steve.eth/activity?limit=20",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "allowOrigin": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/config/public",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "allowOrigin": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/stats",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "allowOrigin": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/status/11155111?transactionHash=0x2d0353ea98ae0debd85bd7854fb2f7daef03d4479c07d516c5cad90e1b594958",
+        "status": 200,
+        "contentType": "text/html; charset=utf-8",
+        "allowOrigin": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/leaderboard?limit=3",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "allowOrigin": null
+      },
+      {
+        "method": "GET",
+        "path": "/docs",
+        "status": 200,
+        "contentType": "text/html; charset=utf-8",
+        "allowOrigin": null
+      },
+      {
+        "method": "GET",
+        "path": "/api/v1/names/steve.eth/renewals",
+        "status": 200,
+        "contentType": "text/html; charset=utf-8",
+        "allowOrigin": null
+      },
+      {
+        "method": "GET",
+        "path": "/openapi.json",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "allowOrigin": "*"
+      }
+    ],
+    "sampleMatches": [
+      {
+        "name": "chrismg.eth",
+        "flowId": "7a7e1c35-db06-4d17-8449-4c216f775963",
+        "renewalEventId": "11155111:log_0x0c719d3fa42be7ba9f54cc585b3202cdca38d29669edb24f8a606682d9c2cf73_304",
+        "renewalTransactionHash": "0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555",
+        "match": true
+      },
+      {
+        "name": "steve.eth",
+        "flowId": "ee8dc126-d340-4afb-a2ae-447c306f44ea",
+        "renewalEventId": "11155111:log_0x80991a9fb89dd20f524021df9dffaffb2185c0f84e03b77cbda7eb4ea808ab59_322",
+        "renewalTransactionHash": "0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409",
+        "match": true
+      }
+    ],
+    "activityItems": 10,
+    "alphaActivityStatus": 200
+  },
+  "rpc": {
+    "observedAt": "2026-10-05T14:48:59.996Z",
+    "readOnly": true,
+    "chains": [
+      {
+        "chainId": 84532,
+        "network": "Base Sepolia",
+        "configured": true,
+        "actualChainId": 84532,
+        "blockNumber": "47721725",
+        "blockHash": "0x44108b9091475668b265393be52f5042f93b19f92bc052471c8a2a24773a8052",
+        "factoryCodeHash": "0x3822dfc2cbf9fe25fbe5258eb13cf8be999c1b776c361fbd220f9412b96659e1",
+        "finalizedBlockNumber": "47721187"
+      },
+      {
+        "chainId": 421614,
+        "network": "Arbitrum Sepolia",
+        "configured": true,
+        "actualChainId": 421614,
+        "blockNumber": "316052732",
+        "blockHash": "0xc2c4e02ee65396cfc65fbc6ceeee625c62fb8acb47b3dfaa6ffa4182e42d139a",
+        "factoryCodeHash": "0x3822dfc2cbf9fe25fbe5258eb13cf8be999c1b776c361fbd220f9412b96659e1",
+        "finalizedBlockNumber": "316048608"
+      },
+      {
+        "chainId": 11155111,
+        "network": "Sepolia",
+        "configured": true,
+        "actualChainId": 11155111,
+        "blockNumber": "11849478",
+        "blockHash": "0x80f309791754295fc535f48d012b891d57db6e672384ff5d499de63e5fbf91ec",
+        "factoryCodeHash": "0x3822dfc2cbf9fe25fbe5258eb13cf8be999c1b776c361fbd220f9412b96659e1",
+        "finalizedBlockNumber": "11849395"
+      },
+      {
+        "chainId": 5042002,
+        "network": "Arc Testnet",
+        "configured": true,
+        "actualChainId": 5042002,
+        "blockNumber": "65641405",
+        "blockHash": "0xc4ec3e0929c9077fc8e26bfd163d42b1bf3316c86613ca27a70563eb31e454ce",
+        "factoryCodeHash": "0x3822dfc2cbf9fe25fbe5258eb13cf8be999c1b776c361fbd220f9412b96659e1",
+        "finalizedBlockNumber": "65641405"
+      }
+    ],
+    "receipts": [
+      {
+        "name": "chrismg.eth",
+        "flowId": "7a7e1c35-db06-4d17-8449-4c216f775963",
+        "renewalTransactionHash": "0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555",
+        "renewalLogIndex": 304,
+        "sourceChainId": "5042002",
+        "renewal": {
+          "status": "success",
+          "blockNumber": "11818636",
+          "blockHash": "0x0c719d3fa42be7ba9f54cc585b3202cdca38d29669edb24f8a606682d9c2cf73",
+          "canonical": true,
+          "secondsAdded": "12259587",
+          "amountReceived": "3210000",
+          "amountApplied": "3110000",
+          "matchesIndexedAmounts": true
+        },
+        "failure": {
+          "stage": "receipt_baseline",
+          "errorType": "InternalRpcError"
+        }
+      },
+      {
+        "name": "steve.eth",
+        "flowId": "ee8dc126-d340-4afb-a2ae-447c306f44ea",
+        "renewalTransactionHash": "0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409",
+        "renewalLogIndex": 322,
+        "sourceChainId": "11155111",
+        "renewal": {
+          "status": "success",
+          "blockNumber": "11815826",
+          "blockHash": "0x80991a9fb89dd20f524021df9dffaffb2185c0f84e03b77cbda7eb4ea808ab59",
+          "canonical": true,
+          "secondsAdded": "3547790",
+          "amountReceived": "1000000",
+          "amountApplied": "900000",
+          "matchesIndexedAmounts": true
+        },
+        "source": {
+          "transactionHash": "0x2d0353ea98ae0debd85bd7854fb2f7daef03d4479c07d516c5cad90e1b594958",
+          "status": "success",
+          "blockNumber": "11815694",
+          "blockHash": "0xa3f5b5aea968a33867b9481bf093dc95de446a336756ec246efad75a4cabbe18",
+          "canonical": true,
+          "usdcTransfers": [
+            {
+              "logIndex": 98,
+              "from": "0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6",
+              "to": "0x5B7516768eD0b04E212041265BB1f11af71841d7",
+              "amount": "1000000"
+            }
+          ],
+          "indexedAmount": "1000000",
+          "indexedLogIndex": 98,
+          "native": false,
+          "matchesErc20Deposit": true
+        }
+      }
+    ],
+    "pricing": {
+      "blockNumber": "11849478",
+      "helper": "0x7Bfee7c257ff48f8D787A61F15925e24743C8F88",
+      "helperCodeHash": "0x6753f11e11832c314a8bcdfe8406ceb866599592e11f485aeefc84226fa05aa9",
+      "registrar": "0xAbe76F6C8DFcEd81AA5A2bB8034202A7136b94ca",
+      "renewerV1": "0xd06e726e9bD8ac0f33A2a45F4Cc28fe10d656a36",
+      "allowance": "100000",
+      "checks": {
+        "pointerGateway": true,
+        "gatewayPointer": true,
+        "helperGateway": true,
+        "helperFactory": true,
+        "helperToken": true,
+        "interfaceVersion": "1",
+        "adapterSupported": true
+      },
+      "samples": [
+        {
+          "label": "steve",
+          "expirySeconds": "1884766566",
+          "renewer": "0xAbe76F6C8DFcEd81AA5A2bB8034202A7136b94ca",
+          "amount": "1000000",
+          "allowance": "100000",
+          "budget": "900000",
+          "secondsAdded": "3547790",
+          "amountApplied": "900000",
+          "roundingRemainder": "0"
+        },
+        {
+          "label": "vitalik",
+          "expirySeconds": "3151581215",
+          "renewer": "0xd06e726e9bD8ac0f33A2a45F4Cc28fe10d656a36",
+          "amount": "1000000",
+          "allowance": "100000",
+          "budget": "900000",
+          "secondsAdded": "3547790",
+          "amountApplied": "900000",
+          "roundingRemainder": "0"
+        },
+        {
+          "label": "chrismg",
+          "expirySeconds": "1992465939",
+          "renewer": "0xAbe76F6C8DFcEd81AA5A2bB8034202A7136b94ca",
+          "amount": "1000000",
+          "allowance": "100000",
+          "budget": "900000",
+          "secondsAdded": "3547790",
+          "amountApplied": "900000",
+          "roundingRemainder": "0"
+        }
+      ]
+    }
+  },
+  "nativeArcFollowup": {
+    "observedAt": "2026-10-05T14:50:53.028Z",
+    "chainId": 5042002,
+    "transactionHash": "0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db",
+    "checks": [
+      {
+        "method": "eth_getTransactionReceipt",
+        "httpStatus": 200,
+        "status": "0x1",
+        "blockNumber": "0x3ddd808",
+        "blockHash": "0x08b2fd831cc237b3ad8f5b7ddba411c35ab8ffb1e70cc50eb0a965c77e1e1203",
+        "logs": [
+          {
+            "address": "0xfffffffffffffffffffffffffffffffffffffffe",
+            "logIndex": "0xf",
+            "topics": [
+              "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+              "0x000000000000000000000000e7995a5b1b41779dea900e2204dc08110de363d5",
+              "0x0000000000000000000000000a2a97e83e879215530fbde1088d08cc2dfaf993"
+            ],
+            "data": "0x0000000000000000000000000000000000000000000000002c8c35fe21010000"
+          }
+        ]
+      },
+      {
+        "method": "eth_getTransactionByHash",
+        "httpStatus": 200,
+        "to": "0x0a2a97e83e879215530fbde1088d08cc2dfaf993",
+        "value": "0x2c8c35fe21010000",
+        "blockHash": "0x08b2fd831cc237b3ad8f5b7ddba411c35ab8ffb1e70cc50eb0a965c77e1e1203",
+        "matchesNativeDeposit": true
+      },
+      {
+        "method": "eth_getBlockByNumber",
+        "httpStatus": 200,
+        "blockHash": "0x08b2fd831cc237b3ad8f5b7ddba411c35ab8ffb1e70cc50eb0a965c77e1e1203",
+        "blockNumber": "0x3ddd808",
+        "matchesIndexedBlockNumber": true
+      }
+    ]
+  },
+  "limitations": [
+    "The initial high-level Arc receipt read failed with InternalRpcError; subsequent bounded raw JSON-RPC receipt, transaction and block reads succeeded. Cause remains unverified.",
+    "No multi-deposit, staggered-delivery, split-processing, shared-renewal or Base/Arbitrum payment sample was proven.",
+    "No full cross-chain CCTP receipt chain was verified in this discovery.",
+    "Application columns were compared by name, SQL type, underlying type and nullability. Constraints, index definitions and runtime permissions were not certified equivalent."
+  ]
+}

@@ -15,6 +15,6 @@ Base URL: `https://beta.namepass.com`. Read [the quickstart](https://beta.namepa
 
 For estimates, call `POST /api/v1/quote` with `name`, `chainId` and an integer-string `amount` in six-decimal USDC units. Quotes expire after 60 seconds and assume one processing flow with no existing deposit balance. For history and recorded expiry, call `GET /api/v1/names/{name}/renewals`; pass `nextCursor` as `cursor` for subsequent pages.
 
-Resume pending transactions with the same hash and chain ID; do not repeat the payment. Read `deposits[].renewals` for finalized receipts. Their duration can include multiple deposits and is not a per-deposit allocation.
+Resume pending transactions with the same hash and chain ID; do not repeat the payment. Aggregate `complete` requires proof of the full relevant deposit set and completion for every member. Read `deposits[].renewals` for finalized receipts. Their duration can include multiple deposits and is not a per-deposit allocation. Count duration once per `renewalId`, which identifies a gateway `Renewed` event as `{chainId}:{lowercaseTransactionHash}:{logIndex}` and agrees with history. `flowId` is processing provenance, not a renewal identity. History's `expiryUpdatedAt` is null unless a read timestamp is paired with the returned expiry value. History and status requests do not activate names or start payment work.
 
 USDC token amounts use six decimals and integer arithmetic. Use the networks returned by the address API; the current deployment is testnet. Never expose wallet keys or broadcast funds without authorization.

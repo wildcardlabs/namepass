@@ -81,9 +81,36 @@ Core schema, ingestion, receipt-expiry and recovery code return to their pre-API
 public docs and OpenAPI remain proposed interface requirements. The fresh plan is
 [PUBLIC_API_PLAN.md](PUBLIC_API_PLAN.md). No new public API is implemented by the reset.
 
-Hosted migration history has not been inspected. No hosted database objects or payment records
-are deleted, and no API flag is enabled. The corrective deployment must verify populated activity,
-name history, existing routes and unchanged public docs before this incident is marked resolved.
+The incident is resolved by PR #120, commit
+`8dc9165fb2827e1b064c249b36f1de0945d361ed`, production deployment
+`dpl_3fZ8uDQAzvtziExDxNh72usoswPt`. The previously working production backend came from the
+unmerged recovery branch at `d5999385c136c2b38dbfda8c991a63dcdbbd659b`; main did not contain
+that recovery when the homepage branch merged. The reset restores that schema-compatible
+backend while retaining the UI and proposed docs. No hosted migration or data deletion was used.
+
+## Public API baseline — 2026-10-05
+
+PR #121 merged the reviewed plan at `69f7142eace03d086ecb512dd66b7960929535a4`.
+Production deployment `dpl_8WMVzvmkbVrQDennAwVWCcyXYKmT` is READY with that exact commit.
+Both `beta.namepass.com` and the Goldsky webhook host `demo-five-gray-37.vercel.app` are its
+aliases. This deployment contains the plan, not public API endpoint implementations.
+
+Read-only discovery on the Neon `testnet` branch, `br-noisy-bird-avey45an`, found all nine
+committed migration hashes/timestamps and all 134 application columns compatible by type and
+nullability. The separate Neon branch named `production` has no public tables. Two distinct
+flow/event/transaction identities match the live beta activity to the inspected testnet data;
+the sensitive production database credential was not disclosed or directly compared.
+
+At 14:49 UTC, populated activity and two name-activity routes, statistics, leaderboard,
+public configuration and OpenAPI returned JSON with HTTP 200. Activity contained ten renewals.
+Docs returned HTML with HTTP 200; alpha's activity proxy also returned HTTP 200. This verifies
+the schema-related read recovery, not a fresh end-to-end payment canary. Missing proposed
+status/history endpoints still return SPA HTML with HTTP 200 and must not be treated as APIs.
+
+The [baseline report](PUBLIC_API_BASELINE.md) and
+[bounded evidence receipt](deployments/2026-10-05/public-api-baseline.json) record database,
+pipeline, deployed contract reads and historical receipt matches. No new contract deployment,
+hosted data mutation, API flag or wallet transaction was performed during this discovery.
 
 ## Historical evidence
 

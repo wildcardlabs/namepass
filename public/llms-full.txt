@@ -1,6 +1,6 @@
 # Namepass integration documentation
 
-API version 2026-09-30. Supported networks: testnets.
+API version 2026-10-05. Supported networks: testnets.
 
 # Introduction
 
@@ -69,7 +69,7 @@ async function waitForRenewal(baseUrl, chainId, transactionHash, signal) {
 
 Poll every five seconds, or after the delay specified by `Retry-After`. A `404` means no matching deposit has been indexed; retry the same URL. Cancel polling when the user leaves the flow.
 
-When `status` is `complete`, the renewal is verified and finalized. `deposits[].renewals` contains the renewal transaction hashes, duration added and resulting expiry. See [status responses](/docs/status) for other states and retry behavior.
+When `status` is `complete`, the full relevant deposit set is proven and every member has a verified, finalized renewal. `deposits[].renewals` contains event-specific `renewalId` values, transaction hashes, duration added and resulting expiry. Count shared renewal duration once per `renewalId`. See [status responses](/docs/status) for other states and retry behavior.
 
 Use [name history](/docs/history) to retrieve past renewals and the recorded expiry.
 
@@ -178,9 +178,19 @@ Deposits below `minimumAmount` remain pending until the address has enough USDC 
 
 ## Response
 
-The response includes `chainId`, `transactionHash`, `status` and `deposits`. Each deposit has a name, amount, log index and status. The transaction status is `complete` when all indexed deposits are complete.
+The response includes `chainId`, `transactionHash`, `status` and `deposits`. Each deposit has a name, amount, log index and status. `logIndex` is the ERC-20 transfer's log index, or `null` for native Arc funding.
 
-Completed entries include `renewals` with transaction hashes, duration added and resulting expiry. A renewal can include multiple deposits; its duration is the total renewal duration, not an allocation to an individual deposit.
+The transaction becomes `complete` only after the full relevant deposit set is proven closed and nonempty, every member is represented, and every member is complete. Source evidence and address-monitoring coverage must establish this set independently of indexed rows. A late or missing deposit prevents completion even when all currently returned deposits are complete.
+
+Completed entries include `renewals` with `renewalId`, transaction hash, duration added and resulting expiry. The identifier is `{chainId}:{lowercaseTransactionHash}:{logIndex}` for the Namepass gateway's `Renewed` event. Different renewal logs in one transaction have different identifiers. The same event has the same identifier in [history](/docs/history) and across repeated polls.
+
+A renewal can include multiple deposits. Its duration is the total renewal duration, not an allocation to one deposit. Deduplicate by `renewalId` before adding durations across deposits.
+
+## Aggregate status and corrections
+
+A proven invalidated source deposit makes the transaction `failed`. Otherwise, an unproven deposit set or any pending member keeps it `pending`; a member awaiting renewal confirmation keeps it `processing`. Only a closed, nonempty set with every member complete becomes `complete`.
+
+A provider outage returns a retryable error, not `failed`. Evidence corrections can revoke prior completion. On a later read, discard invalidated results and use the current response.
 
 ## Polling
 
@@ -211,9 +221,11 @@ curl 'https://beta.namepass.com/api/v1/names/example.eth/renewals?limit=20'
 
 ## Response
 
-The response contains `name`, `currentExpiry`, `expiryUpdatedAt`, `items` and `nextCursor`. `currentExpiry` is the last recorded ENS expiry; `expiryUpdatedAt` is its read timestamp. An [address request](/docs/addresses) refreshes this state.
+The response contains `name`, `currentExpiry`, `expiryUpdatedAt`, `items` and `nextCursor`. `currentExpiry` is the last recorded ENS expiry. `expiryUpdatedAt` is the timestamp of the ENS read that observed that same value. It is `null` when the pairing is unknown, including when `currentExpiry` is `null`. Event time, projection time and response time are not read timestamps. An [address request](/docs/addresses) refreshes ENS state, but subsequent indexed changes can leave the read timestamp unknown. History requests do not refresh state or start payment work.
 
-Each item includes a flow ID, source chain, renewal transaction, duration added, amount applied, fee, expiry and renewal timestamp. Its status is `complete` after verification and finality, or `processing` while verification is pending. Unavailable fields are `null`.
+Each item includes `renewalId`, a flow ID, source chain, renewal transaction, duration added, amount applied, fee, expiry and renewal timestamp. Its status is `complete` after verification and finality, or `processing` while verification is pending. Unavailable nullable fields are `null`. Every returned item must have a proven renewal event identity.
+
+`renewalId` uses `{chainId}:{lowercaseTransactionHash}:{logIndex}` for the Namepass gateway's `Renewed` event. It agrees with [status responses](/docs/status). Multiple flow rows can refer to the same event; count its duration once per `renewalId`. `flowId` describes processing provenance and is not a renewal deduplication key. Corrections can remove invalidated events from later responses.
 
 ## Pagination
 
@@ -331,6 +343,7 @@ Activate deposit monitoring for an ENS name and return its deposit address, subn
 | `200` | Address activated and ready for funding. |
 | `400` | Invalid name, chain ID, transaction hash or request. |
 | `422` | The ENS name cannot currently be renewed. |
+| `429` | Request rate limit reached. Wait for Retry-After. |
 | `500` | Server error. |
 | `503` | Temporarily unavailable. Retry after the indicated delay. |
 
@@ -356,7 +369,7 @@ Source: https://beta.namepass.com/docs/reference/get_status
 
 `GET /api/v1/status/{chainId}`
 
-Retrieve renewal status for a USDC deposit transaction. The transaction is complete when every indexed deposit has a verified, finalized renewal.
+Track a source transaction. Complete requires independent proof of its full relevant deposit set, watch/address coverage, source validity, processing relationships and finalized renewals for every member. Missing or late-indexed members prevent aggregate completion. Shared renewals use the same renewalId. Corrections can revoke prior completion.
 
 ## Parameters
 
@@ -372,6 +385,7 @@ Retrieve renewal status for a USDC deposit transaction. The transaction is compl
 | `200` | Current progress. Poll pending or processing; stop at complete. |
 | `400` | Invalid name, chain ID, transaction hash or request. |
 | `404` | No matching deposit has been indexed. Retry the same URL. |
+| `429` | Request rate limit reached. Wait for Retry-After. |
 | `500` | Server error. |
 | `503` | Temporarily unavailable. Retry after the indicated delay. |
 
@@ -381,7 +395,7 @@ Retrieve renewal status for a USDC deposit transaction. The transaction is compl
 | --- | --- | --- | --- |
 | `chainId` | string | Yes | Exact integer encoded as a decimal string. |
 | `transactionHash` | string | Yes |  |
-| `status` | string | Yes | Values: `pending`, `processing`, `complete`, `failed`. |
+| `status` | string | Yes | Failed for a proven invalidated source deposit. Otherwise pending while the deposit set is not proven closed or a member is pending; processing while a member awaits renewal confirmation; complete only for a proven closed, nonempty set with every member complete. Provider outages return retryable errors, not failed. Values: `pending`, `processing`, `complete`, `failed`. |
 | `deposits` | array | Yes |  |
 
 ## Full contract
@@ -421,6 +435,7 @@ Estimate renewal duration and fees for an ENS name, funding chain and USDC amoun
 | `200` | Estimated renewal time and fee breakdown. |
 | `400` | Invalid name, chain ID, transaction hash or request. |
 | `422` | Name cannot currently renew, amount is below the minimum, or amount exceeds the single-flow quote limit. |
+| `429` | Request rate limit reached. Wait for Retry-After. |
 | `500` | Server error. |
 | `503` | Temporarily unavailable. Retry after the indicated delay. |
 
@@ -452,7 +467,7 @@ Source: https://beta.namepass.com/docs/reference/get_name_renewals
 
 `GET /api/v1/names/{name}/renewals`
 
-Retrieve public renewal history and the recorded expiry for an ENS name. Renewals are ordered newest first. Complete indicates a verified, finalized renewal; processing indicates pending verification.
+Read-only renewal history and recorded expiry for an ENS name. Newest first, with a cursor bound to the requested name. Complete requires verification and finality; processing indicates pending verification. Each item has an event-specific renewalId shared with status. Expiry read timestamps are null without paired provenance.
 
 ## Parameters
 
@@ -469,6 +484,7 @@ Retrieve public renewal history and the recorded expiry for an ENS name. Renewal
 | `200` | Name expiry and renewal history. |
 | `400` | Invalid name, chain ID, transaction hash or request. |
 | `404` | This name has not been activated. Get its deposit address first. |
+| `429` | Request rate limit reached. Wait for Retry-After. |
 | `500` | Server error. |
 | `503` | Temporarily unavailable. Retry after the indicated delay. |
 
@@ -477,8 +493,8 @@ Retrieve public renewal history and the recorded expiry for an ENS name. Renewal
 | Field | Type | Required | Details |
 | --- | --- | --- | --- |
 | `name` | string | Yes |  |
-| `currentExpiry` | string or null | Yes | Format: date-time. |
-| `expiryUpdatedAt` | string or null | Yes | Format: date-time. |
+| `currentExpiry` | string or null | Yes | Last recorded ENS expiry, or null when unavailable. Does not imply a fresh read. Format: date-time. |
+| `expiryUpdatedAt` | string or null | Yes | Timestamp of the ENS read that observed the accompanying currentExpiry value. Null when that pairing is unknown or currentExpiry is null. Event time, projection time and response time are not substitutes. Format: date-time. |
 | `items` | array | Yes |  |
 | `nextCursor` | string or null | Yes |  |
 
