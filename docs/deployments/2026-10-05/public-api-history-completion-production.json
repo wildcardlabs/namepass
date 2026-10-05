@@ -1,0 +1,126 @@
+{
+  "observedAt": "2026-10-05T21:57:11.576Z",
+  "deployment": {
+    "id": "dpl_FkFHUPsESGSQhaCxegbGk6D4E74t",
+    "url": "namepass-v2-r00wphb0c-wildcard-labs.vercel.app",
+    "readyState": "READY",
+    "target": "production",
+    "commit": "b6c62f9b82e2580aa1e3211816a1f0505d9d1d98",
+    "aliases": [
+      "beta.namepass.com",
+      "demo-five-gray-37.vercel.app",
+      "namepass-v2-wildcard-labs.vercel.app",
+      "namepass-v2-git-main-wildcard-labs.vercel.app"
+    ]
+  },
+  "pullRequest": 127,
+  "finalHead": "81b6c02ef3b0afa8258e59727e6fe2edb5ede21f",
+  "ciRun": 37378773800,
+  "ciConclusion": "success",
+  "checks": [
+    {
+      "path": "/api/activity?limit=10",
+      "method": "GET",
+      "status": 200,
+      "items": 10
+    },
+    {
+      "path": "/api/names/steve.eth/activity?limit=2",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/stats",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/config/public",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/quote",
+      "method": "POST",
+      "status": 503,
+      "errorCode": "api_unavailable"
+    },
+    {
+      "path": "/api/v1/address",
+      "method": "POST",
+      "status": 503,
+      "errorCode": "api_unavailable"
+    },
+    {
+      "path": "/api/v1/address",
+      "method": "OPTIONS",
+      "status": 204
+    },
+    {
+      "path": "/api/v1/quote",
+      "method": "OPTIONS",
+      "status": 204
+    },
+    {
+      "path": "/api/v1/status/11155111?transactionHash=0x123",
+      "method": "GET",
+      "status": 404,
+      "errorCode": "api_not_found"
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals",
+      "method": "GET",
+      "status": 503,
+      "errorCode": "api_unavailable"
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals",
+      "method": "OPTIONS",
+      "status": 204
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals",
+      "method": "POST",
+      "status": 405,
+      "errorCode": "method_not_allowed"
+    },
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/docs",
+      "status": 200
+    },
+    {
+      "path": "/docs/reference",
+      "status": 200
+    },
+    {
+      "path": "/terms",
+      "status": 200
+    },
+    {
+      "path": "/openapi.json",
+      "status": 200
+    },
+    {
+      "host": "demo-five-gray-37.vercel.app",
+      "path": "/api/activity?limit=2",
+      "status": 200,
+      "populated": true
+    }
+  ],
+  "independentAliases": [
+    {
+      "host": "beta.namepass.com",
+      "deploymentId": "dpl_FkFHUPsESGSQhaCxegbGk6D4E74t"
+    },
+    {
+      "host": "demo-five-gray-37.vercel.app",
+      "deploymentId": "dpl_FkFHUPsESGSQhaCxegbGk6D4E74t"
+    }
+  ],
+  "productionApiFlags": "quote/address/history flags absent; separately inspected without exposing environment values",
+  "limits": "Production HTTP/regression verification with APIs disabled; not hosted positive history receipt verification or a new payment canary."
+}

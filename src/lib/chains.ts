@@ -24,6 +24,8 @@ export interface ChainDefinition {
 	fundingOrder: number;
 	goldskyPrefix: string;
 	usdcAddress: string;
+	/** Receipt evidence only; native amounts use 18 decimals, not ERC-20's six. */
+	nativeUsdcTransfer?: { emitter: string; activationTimestamp: number };
 	tokenNote?: string;
 	/* Planned chains have Circle deployments but no Namepass deployment yet. */
 	factoryAddress?: string;
@@ -165,6 +167,11 @@ export const CHAIN_REGISTRY: readonly ChainDefinition[] = [
 		fundingOrder: 2,
 		goldskyPrefix: "arc_testnet",
 		usdcAddress: "0x3600000000000000000000000000000000000000",
+		// Arc Zero5/Zero6 testnet activation; arc-node v0.7.1 changelog.
+		nativeUsdcTransfer: {
+			emitter: "0xfffffffffffffffffffffffffffffffffffffffe",
+			activationTimestamp: 1779894517,
+		},
 		tokenNote:
 			"USDC is Arc's gas token, so it lives at a system address rather than a deployed contract.",
 		factoryAddress: FACTORY,
@@ -326,6 +333,7 @@ export const SERVER_CHAINS = ACTIVE_CHAINS.map((chain) => ({
 	testnet: chain.environment === "testnet",
 	goldskyPrefix: chain.goldskyPrefix,
 	usdcAddress: chain.usdcAddress,
+	nativeUsdcTransfer: chain.nativeUsdcTransfer,
 	factoryAddress: chain.factoryAddress,
 	gatewayAddress: chain.gatewayAddress,
 	pointerAddress: chain.pointerAddress,
