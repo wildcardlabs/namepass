@@ -1,0 +1,505 @@
+{
+  "production": {
+    "observedAt": "2026-10-05T16:19:28.679Z",
+    "commit": "9b314c0cc1ebc73d5375b8e60b5ebb4a68d778b2",
+    "deployment": "dpl_BXeMfD5roGjEhzn3zNgLDURa32Pp",
+    "results": [
+      {
+        "path": "/api/activity",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8",
+        "items": 10
+      },
+      {
+        "path": "/api/stats",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8"
+      },
+      {
+        "path": "/api/config/public",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8"
+      },
+      {
+        "path": "/openapi.json",
+        "status": 200,
+        "contentType": "application/json; charset=utf-8"
+      },
+      {
+        "path": "/docs",
+        "status": 200,
+        "contentType": "text/html; charset=utf-8"
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "POST",
+        "status": 503,
+        "cors": "*",
+        "cacheControl": "no-store",
+        "error": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "OPTIONS",
+        "status": 204,
+        "cors": "*",
+        "cacheControl": "no-store"
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "GET",
+        "status": 405,
+        "cors": "*",
+        "cacheControl": "no-store",
+        "error": "method_not_allowed"
+      }
+    ]
+  },
+  "protectedQuotePreview": {
+    "observedAt": "2026-10-05T16:26:14.769Z",
+    "deployment": "dpl_4fkfhgY1Vo2uCX11dhUoLxcPbbvS",
+    "headCommit": "52578f8319474d85965353f893af55859ac033ec",
+    "url": "https://namepass-v2-q1dfd4dur-wildcard-labs.vercel.app",
+    "verification": "Protected preview HTTP; read-only contracts, no database, signing credentials or transaction submission. Production quote remains disabled.",
+    "results": [
+      {
+        "method": "POST",
+        "input": {
+          "name": "STEVE.eth",
+          "chainId": "11155111",
+          "amount": "1000000"
+        },
+        "status": 200,
+        "ms": 3746,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "1000000",
+          "secondsAdded": "3547790",
+          "amountApplied": "900000",
+          "renewalFee": "100000",
+          "bridgeFee": "0",
+          "roundingRemainder": "0",
+          "pricingBlock": "11849940",
+          "expiresAt": "2026-10-05T16:26:28.460Z",
+          "estimate": true
+        }
+      },
+      {
+        "method": "POST",
+        "input": {
+          "name": "STEVE.eth",
+          "chainId": "84532",
+          "amount": "1000000"
+        },
+        "status": 200,
+        "ms": 2537,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "name": "steve.eth",
+          "chainId": "84532",
+          "amount": "1000000",
+          "secondsAdded": "3547790",
+          "amountApplied": "900000",
+          "renewalFee": "100000",
+          "bridgeFee": "0",
+          "roundingRemainder": "0",
+          "pricingBlock": "11849940",
+          "expiresAt": "2026-10-05T16:26:30.978Z",
+          "estimate": true
+        }
+      },
+      {
+        "method": "POST",
+        "input": {
+          "name": "STEVE.eth",
+          "chainId": "421614",
+          "amount": "1000000"
+        },
+        "status": 200,
+        "ms": 3172,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "name": "steve.eth",
+          "chainId": "421614",
+          "amount": "1000000",
+          "secondsAdded": "3547790",
+          "amountApplied": "900000",
+          "renewalFee": "100000",
+          "bridgeFee": "0",
+          "roundingRemainder": "0",
+          "pricingBlock": "11849940",
+          "expiresAt": "2026-10-05T16:26:34.166Z",
+          "estimate": true
+        }
+      },
+      {
+        "method": "POST",
+        "input": {
+          "name": "STEVE.eth",
+          "chainId": "5042002",
+          "amount": "1000000"
+        },
+        "status": 200,
+        "ms": 2501,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "name": "steve.eth",
+          "chainId": "5042002",
+          "amount": "1000000",
+          "secondsAdded": "3547790",
+          "amountApplied": "900000",
+          "renewalFee": "100000",
+          "bridgeFee": "0",
+          "roundingRemainder": "0",
+          "pricingBlock": "11849940",
+          "expiresAt": "2026-10-05T16:26:36.761Z",
+          "estimate": true
+        }
+      },
+      {
+        "method": "POST",
+        "input": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "14100036"
+        },
+        "status": 200,
+        "ms": 3137,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "14100036",
+          "secondsAdded": "55187997",
+          "amountApplied": "14000036",
+          "renewalFee": "100000",
+          "bridgeFee": "0",
+          "roundingRemainder": "0",
+          "pricingBlock": "11849941",
+          "expiresAt": "2026-10-05T16:26:39.801Z",
+          "estimate": true
+        }
+      },
+      {
+        "method": "POST",
+        "input": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "14100037"
+        },
+        "status": 200,
+        "ms": 2586,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "14100037",
+          "secondsAdded": "63072001",
+          "amountApplied": "14000037",
+          "renewalFee": "100000",
+          "bridgeFee": "0",
+          "roundingRemainder": "0",
+          "pricingBlock": "11849941",
+          "expiresAt": "2026-10-05T16:26:42.468Z",
+          "estimate": true
+        }
+      },
+      {
+        "method": "POST",
+        "input": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "16600043"
+        },
+        "status": 200,
+        "ms": 2258,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "16600043",
+          "secondsAdded": "74334856",
+          "amountApplied": "16500043",
+          "renewalFee": "100000",
+          "bridgeFee": "0",
+          "roundingRemainder": "0",
+          "pricingBlock": "11849941",
+          "expiresAt": "2026-10-05T16:26:44.740Z",
+          "estimate": true
+        }
+      },
+      {
+        "method": "POST",
+        "input": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "16600044"
+        },
+        "status": 200,
+        "ms": 3662,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "16600044",
+          "secondsAdded": "94608004",
+          "amountApplied": "16500044",
+          "renewalFee": "100000",
+          "bridgeFee": "0",
+          "roundingRemainder": "0",
+          "pricingBlock": "11849941",
+          "expiresAt": "2026-10-05T16:26:48.405Z",
+          "estimate": true
+        }
+      },
+      {
+        "method": "POST",
+        "input": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "27100070"
+        },
+        "status": 200,
+        "ms": 3414,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "27100070",
+          "secondsAdded": "154813086",
+          "amountApplied": "27000070",
+          "renewalFee": "100000",
+          "bridgeFee": "0",
+          "roundingRemainder": "0",
+          "pricingBlock": "11849942",
+          "expiresAt": "2026-10-05T16:26:51.802Z",
+          "estimate": true
+        }
+      },
+      {
+        "method": "POST",
+        "input": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "27100071"
+        },
+        "status": 200,
+        "ms": 2309,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "27100071",
+          "secondsAdded": "189216002",
+          "amountApplied": "27000071",
+          "renewalFee": "100000",
+          "bridgeFee": "0",
+          "roundingRemainder": "0",
+          "pricingBlock": "11849942",
+          "expiresAt": "2026-10-05T16:26:54.125Z",
+          "estimate": true
+        }
+      },
+      {
+        "method": "POST",
+        "input": {
+          "name": "steve.eth",
+          "chainId": "5042002",
+          "amount": "10000000000001"
+        },
+        "status": 422,
+        "ms": 3534,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "error": {
+            "code": "amount_above_quote_limit",
+            "message": "The amount exceeds the single-flow quote limit.",
+            "details": {
+              "maximumAmount": "10000000000000"
+            }
+          },
+          "requestId": "53aed2eb-d2a7-4972-92cd-25104f815e69"
+        }
+      },
+      {
+        "method": "POST",
+        "input": {
+          "name": "steve.eth",
+          "chainId": "84532",
+          "amount": "499999"
+        },
+        "status": 422,
+        "ms": 2234,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "error": {
+            "code": "amount_below_minimum",
+            "message": "The amount is below the processing minimum."
+          },
+          "requestId": "db922336-90eb-4ec5-a9f5-df106d451c47"
+        }
+      },
+      {
+        "method": "POST",
+        "input": {
+          "name": "sub.steve.eth",
+          "chainId": "84532",
+          "amount": "1000000"
+        },
+        "status": 400,
+        "ms": 2246,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "error": {
+            "code": "invalid_name",
+            "message": "Use just the name \u2014 subnames aren't supported."
+          },
+          "requestId": "7a375ba3-b088-48b7-8fee-e4444f275f6a"
+        }
+      },
+      {
+        "method": "POST",
+        "input": {
+          "name": "steve.eth",
+          "chainId": "1",
+          "amount": "1000000"
+        },
+        "status": 400,
+        "ms": 7608,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "error": {
+            "code": "unsupported_chain",
+            "message": "Use a supported funding chain ID."
+          },
+          "requestId": "5eb93735-34ae-4624-8b38-2efcefa479f6"
+        }
+      },
+      {
+        "method": "OPTIONS",
+        "input": null,
+        "status": 204,
+        "ms": 2741,
+        "headers": {
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": null
+      },
+      {
+        "method": "GET",
+        "input": null,
+        "status": 405,
+        "ms": 2177,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "error": {
+            "code": "method_not_allowed",
+            "message": "Use POST."
+          },
+          "requestId": "11bba93d-51e1-4b2d-bac6-688cf439b13e"
+        }
+      }
+    ]
+  },
+  "footer": {
+    "background": "#20332B",
+    "headingColor": "#FFFFFF",
+    "headingWeight": 700,
+    "browserVerified": true
+  }
+}
