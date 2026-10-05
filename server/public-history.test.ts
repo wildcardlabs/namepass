@@ -390,6 +390,7 @@ test(
 		const admin = new Pool({ connectionString: base.toString() });
 		await admin.query(`CREATE DATABASE "${fixtureName}"`);
 		base.pathname = `/${fixtureName}`;
+		base.searchParams.set("options", "-c default_transaction_read_only=off -c statement_timeout=60000");
 		const db = new Pool({ connectionString: base.toString() });
 		t.after(async () => {
 			await db.end();

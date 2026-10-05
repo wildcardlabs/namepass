@@ -1,6 +1,6 @@
 {
   "observedAt": "2026-10-05T20:08:23.646Z",
-  "code": "local unmerged history adapter based on 42481ab",
+  "code": "f2a57ba1aa3f846e59b3028161419eae43f973ca (implementation checksums below; subsequent connection-option precedence fix is checked separately in real PostgreSQL CI)",
   "readOnly": true,
   "readOnlySessions": 7,
   "source": "Existing live records, queried through transaction-read-only PostgreSQL sessions and read-only Sepolia RPC; no hosted flag or production code change, no transactions.",

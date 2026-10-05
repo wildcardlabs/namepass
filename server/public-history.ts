@@ -33,13 +33,17 @@ let activeRequests = 0;
 function historyPool() {
 	if (!pool) {
 		if (!process.env.DATABASE_URL) throw new Error("History database is unavailable.");
+		// pg lets URL options override Pool options. Enforce this reader's settings in the URL itself.
+		const connection = new URL(process.env.DATABASE_URL);
+		connection.searchParams.set(
+			"options",
+			"-c default_transaction_read_only=on -c statement_timeout=5000 -c lock_timeout=1500 -c idle_in_transaction_session_timeout=10000",
+		);
 		pool = new Pool({
-			connectionString: process.env.DATABASE_URL,
+			connectionString: connection.toString(),
 			max: 2,
 			connectionTimeoutMillis: 5000,
 			query_timeout: 7000,
-			options:
-				"-c default_transaction_read_only=on -c statement_timeout=5000 -c lock_timeout=1500 -c idle_in_transaction_session_timeout=10000",
 		});
 		attachDatabasePool(pool);
 	}
