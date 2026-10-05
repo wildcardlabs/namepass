@@ -283,6 +283,19 @@ allocation and aggregate completion remain unproven. Details are in
 [PUBLIC_API_DEPOSIT_EVIDENCE.md](PUBLIC_API_DEPOSIT_EVIDENCE.md). No hosted configuration,
 Goldsky pipeline, schema, signer, processing behavior or public exposure changed.
 
+## Deposit-to-renewal discovery — 2026-10-05
+
+Seven indexed payments have matching source credit, processing debit and zero boundary balances
+in bounded wallet-history samples. Nine of ten settled flows have matching exact origin receipts;
+eight Arc paths also match Circle's ordered source message response and the exact hub claim and
+renewal segment. One external direct renewal lacks stored origin provenance. Three settled flows
+have no indexed deposit link. These results do not make those flows source-transaction proofs.
+
+[Allocation evidence](deployments/2026-10-05/public-api-allocation-evidence.json) and
+[allocation review](PUBLIC_API_ALLOCATION.md) record the read-only discovery and its limits.
+Pooling, splitting, same-block ordering, source coverage, route finality and HTTP capacity remain
+gates. This stage changes no endpoint, hosted configuration, schema, pipeline or payment behavior.
+
 ## Historical evidence
 
 The [September 18 manifest](deployments/2026-09-18/manifest.json) and accompanying receipts are

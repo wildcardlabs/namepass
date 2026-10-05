@@ -1,0 +1,525 @@
+{
+  "observedAt": "2026-10-05T22:49:12.378Z",
+  "readOnly": true,
+  "codeRevision": "2ba97f03305925a82f8f590d2333db1b7f17061f",
+  "scope": "Existing live samples only; no API completion result or hosted mutation",
+  "anchors": {
+    "5042002": {
+      "number": "65698134",
+      "hash": "0x11073967d9de4db0d53b047e2d5666c696cc9d07de3ca0a082cde16432bc0113"
+    },
+    "11155111": {
+      "number": "11851740",
+      "hash": "0x1057500664e0ee6aa7a9741b3204698426be2d7a492edf8e6247d49985d7c27f"
+    }
+  },
+  "rpcCounts": {
+    "eth_chainId": 2,
+    "eth_getBlockByNumber": 27,
+    "eth_getTransactionReceipt": 25,
+    "eth_getLogs": 48,
+    "eth_call": 14
+  },
+  "irisReads": 8,
+  "rows": [
+    {
+      "flowId": "14cb7228-00ea-4e9d-a98c-823a27f125f8",
+      "name": "steve",
+      "sourceChainId": "5042002",
+      "depositEventId": null,
+      "originEventId": "5042002:log_0xe603c16bdbd39aeabfa39e5f92359fb318ecf6b95eb3cae203895bc3f662e547_9",
+      "renewalId": "11155111:0x47fb93e99172e174c5b3da44cf5daf1d3f2a26a2260d15cc1be110b142ad843a:190",
+      "renewalBlock": "11754120",
+      "renewalBelowProviderFinalized": true,
+      "originVerified": true,
+      "originTransactionHash": "0x6f112551ae21ee509fa85afa8e65ae69f2e924bcba414392cd5f8a92214d412b",
+      "originLogIndex": 9,
+      "originBlock": "63327588",
+      "originBelowProviderFinalized": true,
+      "amountProcessed": "1000000",
+      "remaining": "0",
+      "cctp": {
+        "messageIndex": 0,
+        "immutableBytesMatch": true,
+        "irisSourceHashAndOrderedMessageMatch": true,
+        "finalNonce": "0x3b9a3b1b3d2ad34926e408ec81223cb6657f6db7f0c4fa461313a5958f14aa19",
+        "claimLogIndex": 179,
+        "claimAndRenewalMatch": true,
+        "feeExecuted": "0"
+      }
+    },
+    {
+      "flowId": "48d9cf71-7966-4e4d-a055-99ad1f2a5956",
+      "name": "steve",
+      "sourceChainId": "5042002",
+      "depositEventId": null,
+      "originEventId": "5042002:log_0x90a8539ed22a9e47e184f06313c74f8309f4ba97a306e70d0fa610a336511f35_37",
+      "renewalId": "11155111:0x51a897a78e9d8825022a6784c1d424c2fbdd97e5c26ef1372ea5c8d635199ddf:164",
+      "renewalBlock": "11754127",
+      "renewalBelowProviderFinalized": true,
+      "originVerified": true,
+      "originTransactionHash": "0x6b75f2a35a6e76d9084c89ad1f7ccbc92ac485e15b359eda9ae4dc4e57a96f6d",
+      "originLogIndex": 37,
+      "originBlock": "63327769",
+      "originBelowProviderFinalized": true,
+      "amountProcessed": "1000000",
+      "remaining": "0",
+      "cctp": {
+        "messageIndex": 0,
+        "immutableBytesMatch": true,
+        "irisSourceHashAndOrderedMessageMatch": true,
+        "finalNonce": "0xc0ae74d2d0e28624484094b0343b5e5f80a6d75c2aee099ace2773b2eb4ec081",
+        "claimLogIndex": 153,
+        "claimAndRenewalMatch": true,
+        "feeExecuted": "0"
+      }
+    },
+    {
+      "flowId": "6849f6d1-00f3-428b-9147-8bbd43099e1e",
+      "name": "steve",
+      "sourceChainId": "11155111",
+      "depositEventId": null,
+      "originEventId": null,
+      "renewalId": "11155111:0x6c7b413b55db956bd52b65242ffcba7ec15cbb770ae1f29c67930ea143a65268:176",
+      "renewalBlock": "11754105",
+      "renewalBelowProviderFinalized": true,
+      "originVerified": false,
+      "gap": "missing_origin_event"
+    },
+    {
+      "flowId": "08880f31-ea2e-409f-bde3-232e017baef9",
+      "name": "paramore",
+      "sourceChainId": "5042002",
+      "depositEventId": "5042002:native:enriched_transaction_v2_0xfac77455b4b1f72626d835c69ed6330e835eaff3ba75f7b7a1fad48ff45d1aa4_7",
+      "originEventId": "5042002:log_0xefcf2de2b42d1a33fc0d6e1507d5466f7c894cc47dead26c7ee16fa3dc30ca7c_39",
+      "renewalId": "11155111:0x92b2284a2ccec2058921f34c3b7a68785c10e1de38398d9444ee9fdc6175f89f:225",
+      "renewalBlock": "11758226",
+      "renewalBelowProviderFinalized": true,
+      "originVerified": true,
+      "originTransactionHash": "0x6082468e2d67a05842e04fceaacbe061cbf0d4d626ee9b477f519630593bd8c0",
+      "originLogIndex": 39,
+      "originBlock": "63428646",
+      "originBelowProviderFinalized": true,
+      "amountProcessed": "3000000",
+      "remaining": "0",
+      "cctp": {
+        "messageIndex": 0,
+        "immutableBytesMatch": true,
+        "irisSourceHashAndOrderedMessageMatch": true,
+        "finalNonce": "0x411d6a9466de864321f64dce612e54fb465c1ccf57717f45bf602639f2a6306c",
+        "claimLogIndex": 214,
+        "claimAndRenewalMatch": true,
+        "feeExecuted": "0"
+      }
+    },
+    {
+      "flowId": "778da1d0-b59d-4c88-818a-2d5e9784fdeb",
+      "name": "vitalik",
+      "sourceChainId": "5042002",
+      "depositEventId": "5042002:native:enriched_transaction_v2_0x17829f7b587143ea1bcc378dc3b469dc876761b9c0671e1d4918c177eb4ba667_1",
+      "originEventId": "5042002:log_0x33a7728c44f0c3dafa1cea0bb9eb02bcb246f21d7502c29ce64d9aa93ce1ec9f_23",
+      "renewalId": "11155111:0x9055fe091741e3edf419b1f83ab7acd0781d63e510e180713aff9c7565033551:164",
+      "renewalBlock": "11766145",
+      "renewalBelowProviderFinalized": true,
+      "originVerified": true,
+      "originTransactionHash": "0xa55253216246dd886a5fd4e64c51f328d9ae7b4b9d9a051058fc4b7689bf923b",
+      "originLogIndex": 23,
+      "originBlock": "63623092",
+      "originBelowProviderFinalized": true,
+      "amountProcessed": "10000000",
+      "remaining": "0",
+      "cctp": {
+        "messageIndex": 0,
+        "immutableBytesMatch": true,
+        "irisSourceHashAndOrderedMessageMatch": true,
+        "finalNonce": "0xdcb0de38a386f9490ccbf11504add750a36dd466e7c44010addc5e5751b49268",
+        "claimLogIndex": 148,
+        "claimAndRenewalMatch": true,
+        "feeExecuted": "0"
+      }
+    },
+    {
+      "flowId": "a192c01d-37ce-40b4-8639-0182a87886fe",
+      "name": "nick",
+      "sourceChainId": "5042002",
+      "depositEventId": "5042002:native:enriched_transaction_v2_0xc238edafd74b121327a907cc6377cbdaf37d90dcd2114af4d48d7d7cf6890594_2",
+      "originEventId": "5042002:log_0xedd5fe3e18a95daa92a0e99b942ec3aef5438eabf8ffef8ec4b6f17105bd0036_23",
+      "renewalId": "11155111:0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36:181",
+      "renewalBlock": "11766153",
+      "renewalBelowProviderFinalized": true,
+      "originVerified": true,
+      "originTransactionHash": "0xf1089feccf1d1843bf2dde769a21ddde1bb420f8ba392d4aa05362027ac1a855",
+      "originLogIndex": 23,
+      "originBlock": "63623306",
+      "originBelowProviderFinalized": true,
+      "amountProcessed": "11000000",
+      "remaining": "0",
+      "cctp": {
+        "messageIndex": 0,
+        "immutableBytesMatch": true,
+        "irisSourceHashAndOrderedMessageMatch": true,
+        "finalNonce": "0x753e2b1fd9d28065bc49eb085dbe45157bb96e71b2b04acccc60669d0d72698d",
+        "claimLogIndex": 164,
+        "claimAndRenewalMatch": true,
+        "feeExecuted": "0"
+      }
+    },
+    {
+      "flowId": "76f746d1-7d5a-4461-ae6c-f9c2dedd8c9d",
+      "name": "gregskril",
+      "sourceChainId": "5042002",
+      "depositEventId": "5042002:native:enriched_transaction_v2_0x8e0f2358a4c76ad317a15a1f2682b400e3aba0b6daab254eb4c1832c8a6cf077_5",
+      "originEventId": "5042002:log_0x9ec8ed0651c579dcb6164845557b2f5a0ed6546bc5fc9b49e6fa82f7421e7f22_15",
+      "renewalId": "11155111:0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7:234",
+      "renewalBlock": "11766181",
+      "renewalBelowProviderFinalized": true,
+      "originVerified": true,
+      "originTransactionHash": "0xc95c1629f6ed716f88faf851e8f1d3105b29239f68d7f9142cccb40b42a8e789",
+      "originLogIndex": 15,
+      "originBlock": "63624002",
+      "originBelowProviderFinalized": true,
+      "amountProcessed": "12000000",
+      "remaining": "0",
+      "cctp": {
+        "messageIndex": 0,
+        "immutableBytesMatch": true,
+        "irisSourceHashAndOrderedMessageMatch": true,
+        "finalNonce": "0x7628eb01aaeca12f3f753c32f6c7410ee2d4ebd0fdd3adba387d8abb2f003f7b",
+        "claimLogIndex": 218,
+        "claimAndRenewalMatch": true,
+        "feeExecuted": "0"
+      }
+    },
+    {
+      "flowId": "eec07fbc-2c4b-4396-8c47-a309b1b15cbf",
+      "name": "slobo",
+      "sourceChainId": "5042002",
+      "depositEventId": "5042002:native:enriched_transaction_v2_0x8ca5e672f67efcfbe1f6ba9cbc2fdbbd74f281f4bc18694c9a4d51be4581b4b7_10",
+      "originEventId": "5042002:log_0xbeee0274fdecf782b96c3318064556b4f6e0af6bfc1298372f854d26f14662a9_44",
+      "renewalId": "11155111:0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8:225",
+      "renewalBlock": "11766200",
+      "renewalBelowProviderFinalized": true,
+      "originVerified": true,
+      "originTransactionHash": "0xc2c0c690d6c9141febfe9cf7e8359c1e731aece4029f6b25727fd3c224cd7e1c",
+      "originLogIndex": 44,
+      "originBlock": "63624441",
+      "originBelowProviderFinalized": true,
+      "amountProcessed": "13000000",
+      "remaining": "0",
+      "cctp": {
+        "messageIndex": 0,
+        "immutableBytesMatch": true,
+        "irisSourceHashAndOrderedMessageMatch": true,
+        "finalNonce": "0x287f2e0e4f0b17b23b5390b708813d1b03b020c8ed7ad38ba0d94bab2e0a34cc",
+        "claimLogIndex": 209,
+        "claimAndRenewalMatch": true,
+        "feeExecuted": "0"
+      }
+    },
+    {
+      "flowId": "ee8dc126-d340-4afb-a2ae-447c306f44ea",
+      "name": "steve",
+      "sourceChainId": "11155111",
+      "depositEventId": "11155111:log_0xa3f5b5aea968a33867b9481bf093dc95de446a336756ec246efad75a4cabbe18_98",
+      "originEventId": "11155111:log_0x80991a9fb89dd20f524021df9dffaffb2185c0f84e03b77cbda7eb4ea808ab59_323",
+      "renewalId": "11155111:0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409:322",
+      "renewalBlock": "11815826",
+      "renewalBelowProviderFinalized": true,
+      "originVerified": true,
+      "originTransactionHash": "0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409",
+      "originLogIndex": 323,
+      "originBlock": "11815826",
+      "originBelowProviderFinalized": true,
+      "amountProcessed": "1000000",
+      "remaining": "0",
+      "directPairVerified": true
+    },
+    {
+      "flowId": "7a7e1c35-db06-4d17-8449-4c216f775963",
+      "name": "chrismg",
+      "sourceChainId": "5042002",
+      "depositEventId": "5042002:native:enriched_transaction_v2_0x08b2fd831cc237b3ad8f5b7ddba411c35ab8ffb1e70cc50eb0a965c77e1e1203_5",
+      "originEventId": "5042002:log_0xe56cd4b487c7d75e34817fb45e32cb90355fda6e92a256ead116348a82743fa4_26",
+      "renewalId": "11155111:0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555:304",
+      "renewalBlock": "11818636",
+      "renewalBelowProviderFinalized": true,
+      "originVerified": true,
+      "originTransactionHash": "0xafd4fafee19c06cdfb55653c04a3aa0fdcf66055bcd1cadf4650fa658fe1c2f0",
+      "originLogIndex": 26,
+      "originBlock": "64870424",
+      "originBelowProviderFinalized": true,
+      "amountProcessed": "3210000",
+      "remaining": "0",
+      "cctp": {
+        "messageIndex": 0,
+        "immutableBytesMatch": true,
+        "irisSourceHashAndOrderedMessageMatch": true,
+        "finalNonce": "0xbb72ac12002312854c19d947f5af0f852ec77cd6c1e582446f0fe2ef679b2ecf",
+        "claimLogIndex": 293,
+        "claimAndRenewalMatch": true,
+        "feeExecuted": "0"
+      }
+    }
+  ],
+  "movementRows": [
+    {
+      "depositEventId": "5042002:native:enriched_transaction_v2_0xfac77455b4b1f72626d835c69ed6330e835eaff3ba75f7b7a1fad48ff45d1aa4_7",
+      "name": "paramore",
+      "chainId": "5042002",
+      "fromBlock": "63411550",
+      "toBlock": "63428646",
+      "queriedEmitter": "0xfffffffffffffffffffffffffffffffffffffffe",
+      "logCalls": 36,
+      "unitDecimals": 18,
+      "preSourceBalance": "0",
+      "postProcessingBalance": "0",
+      "conservationMatches": true,
+      "singleCreditSingleDebit": true,
+      "movements": [
+        {
+          "transactionHash": "0x9531be85ef55d5e9652eeb2188f76771e110f0d441887c37f6571e62a85ae76a",
+          "blockNumber": "63411550",
+          "transactionIndex": 7,
+          "logIndex": 10,
+          "from": "0xe7995a5b1b41779dea900e2204dc08110de363d5",
+          "to": "0x690866bdde4cdca43479150aac4f2d17e2792ca1",
+          "amount": "3000000000000000000"
+        },
+        {
+          "transactionHash": "0x6082468e2d67a05842e04fceaacbe061cbf0d4d626ee9b477f519630593bd8c0",
+          "blockNumber": "63428646",
+          "transactionIndex": 10,
+          "logIndex": 32,
+          "from": "0x690866bdde4cdca43479150aac4f2d17e2792ca1",
+          "to": "0xb43db544e2c27092c107639ad201b3defabcf192",
+          "amount": "3000000000000000000"
+        }
+      ]
+    },
+    {
+      "depositEventId": "5042002:native:enriched_transaction_v2_0x17829f7b587143ea1bcc378dc3b469dc876761b9c0671e1d4918c177eb4ba667_1",
+      "name": "vitalik",
+      "chainId": "5042002",
+      "fromBlock": "63623075",
+      "toBlock": "63623092",
+      "queriedEmitter": "0xfffffffffffffffffffffffffffffffffffffffe",
+      "logCalls": 2,
+      "unitDecimals": 18,
+      "preSourceBalance": "0",
+      "postProcessingBalance": "0",
+      "conservationMatches": true,
+      "singleCreditSingleDebit": true,
+      "movements": [
+        {
+          "transactionHash": "0x8a22364859ea60cdc23cbff078efd6afdf46525f106e87a9b606676727579433",
+          "blockNumber": "63623075",
+          "transactionIndex": 1,
+          "logIndex": 0,
+          "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+          "to": "0xa61656ca2d2952a46a9d4da0aae01d8d7fe988e0",
+          "amount": "10000000000000000000"
+        },
+        {
+          "transactionHash": "0xa55253216246dd886a5fd4e64c51f328d9ae7b4b9d9a051058fc4b7689bf923b",
+          "blockNumber": "63623092",
+          "transactionIndex": 8,
+          "logIndex": 16,
+          "from": "0xa61656ca2d2952a46a9d4da0aae01d8d7fe988e0",
+          "to": "0xb43db544e2c27092c107639ad201b3defabcf192",
+          "amount": "10000000000000000000"
+        }
+      ]
+    },
+    {
+      "depositEventId": "5042002:native:enriched_transaction_v2_0xc238edafd74b121327a907cc6377cbdaf37d90dcd2114af4d48d7d7cf6890594_2",
+      "name": "nick",
+      "chainId": "5042002",
+      "fromBlock": "63623291",
+      "toBlock": "63623306",
+      "queriedEmitter": "0xfffffffffffffffffffffffffffffffffffffffe",
+      "logCalls": 2,
+      "unitDecimals": 18,
+      "preSourceBalance": "0",
+      "postProcessingBalance": "0",
+      "conservationMatches": true,
+      "singleCreditSingleDebit": true,
+      "movements": [
+        {
+          "transactionHash": "0x34c874da52586754724202301eed932702d9363cc64843c99c267b92b4435f95",
+          "blockNumber": "63623291",
+          "transactionIndex": 2,
+          "logIndex": 9,
+          "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+          "to": "0xc25eeebbf6450b83e16cae8421b6e143ae24e450",
+          "amount": "11000000000000000000"
+        },
+        {
+          "transactionHash": "0xf1089feccf1d1843bf2dde769a21ddde1bb420f8ba392d4aa05362027ac1a855",
+          "blockNumber": "63623306",
+          "transactionIndex": 7,
+          "logIndex": 16,
+          "from": "0xc25eeebbf6450b83e16cae8421b6e143ae24e450",
+          "to": "0xb43db544e2c27092c107639ad201b3defabcf192",
+          "amount": "11000000000000000000"
+        }
+      ]
+    },
+    {
+      "depositEventId": "5042002:native:enriched_transaction_v2_0x8e0f2358a4c76ad317a15a1f2682b400e3aba0b6daab254eb4c1832c8a6cf077_5",
+      "name": "gregskril",
+      "chainId": "5042002",
+      "fromBlock": "63623992",
+      "toBlock": "63624002",
+      "queriedEmitter": "0xfffffffffffffffffffffffffffffffffffffffe",
+      "logCalls": 2,
+      "unitDecimals": 18,
+      "preSourceBalance": "0",
+      "postProcessingBalance": "0",
+      "conservationMatches": true,
+      "singleCreditSingleDebit": true,
+      "movements": [
+        {
+          "transactionHash": "0xf789eb1cedf3a36ece88aaed2215b4956f66c77c26e669dba7a2659585842882",
+          "blockNumber": "63623992",
+          "transactionIndex": 5,
+          "logIndex": 11,
+          "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+          "to": "0xf0feaeb652489cf635043a5ebd7416c6e328d2fe",
+          "amount": "12000000000000000000"
+        },
+        {
+          "transactionHash": "0xc95c1629f6ed716f88faf851e8f1d3105b29239f68d7f9142cccb40b42a8e789",
+          "blockNumber": "63624002",
+          "transactionIndex": 1,
+          "logIndex": 8,
+          "from": "0xf0feaeb652489cf635043a5ebd7416c6e328d2fe",
+          "to": "0xb43db544e2c27092c107639ad201b3defabcf192",
+          "amount": "12000000000000000000"
+        }
+      ]
+    },
+    {
+      "depositEventId": "5042002:native:enriched_transaction_v2_0x8ca5e672f67efcfbe1f6ba9cbc2fdbbd74f281f4bc18694c9a4d51be4581b4b7_10",
+      "name": "slobo",
+      "chainId": "5042002",
+      "fromBlock": "63624431",
+      "toBlock": "63624441",
+      "queriedEmitter": "0xfffffffffffffffffffffffffffffffffffffffe",
+      "logCalls": 2,
+      "unitDecimals": 18,
+      "preSourceBalance": "0",
+      "postProcessingBalance": "0",
+      "conservationMatches": true,
+      "singleCreditSingleDebit": true,
+      "movements": [
+        {
+          "transactionHash": "0xc96b1e8cd633b4780973d1841011ae8a7c0b5f838b5b894b6662b9c218bf055e",
+          "blockNumber": "63624431",
+          "transactionIndex": 10,
+          "logIndex": 26,
+          "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+          "to": "0x7706018b4e0eedb99e5bf5b38446461b2b8ad8e9",
+          "amount": "13000000000000000000"
+        },
+        {
+          "transactionHash": "0xc2c0c690d6c9141febfe9cf7e8359c1e731aece4029f6b25727fd3c224cd7e1c",
+          "blockNumber": "63624441",
+          "transactionIndex": 17,
+          "logIndex": 37,
+          "from": "0x7706018b4e0eedb99e5bf5b38446461b2b8ad8e9",
+          "to": "0xb43db544e2c27092c107639ad201b3defabcf192",
+          "amount": "13000000000000000000"
+        }
+      ]
+    },
+    {
+      "depositEventId": "5042002:native:enriched_transaction_v2_0x08b2fd831cc237b3ad8f5b7ddba411c35ab8ffb1e70cc50eb0a965c77e1e1203_5",
+      "name": "chrismg",
+      "chainId": "5042002",
+      "fromBlock": "64870408",
+      "toBlock": "64870424",
+      "queriedEmitter": "0xfffffffffffffffffffffffffffffffffffffffe",
+      "logCalls": 2,
+      "unitDecimals": 18,
+      "preSourceBalance": "0",
+      "postProcessingBalance": "0",
+      "conservationMatches": true,
+      "singleCreditSingleDebit": true,
+      "movements": [
+        {
+          "transactionHash": "0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db",
+          "blockNumber": "64870408",
+          "transactionIndex": 5,
+          "logIndex": 15,
+          "from": "0xe7995a5b1b41779dea900e2204dc08110de363d5",
+          "to": "0x0a2a97e83e879215530fbde1088d08cc2dfaf993",
+          "amount": "3210000000000000000"
+        },
+        {
+          "transactionHash": "0xafd4fafee19c06cdfb55653c04a3aa0fdcf66055bcd1cadf4650fa658fe1c2f0",
+          "blockNumber": "64870424",
+          "transactionIndex": 9,
+          "logIndex": 19,
+          "from": "0x0a2a97e83e879215530fbde1088d08cc2dfaf993",
+          "to": "0xb43db544e2c27092c107639ad201b3defabcf192",
+          "amount": "3210000000000000000"
+        }
+      ]
+    },
+    {
+      "depositEventId": "11155111:log_0xa3f5b5aea968a33867b9481bf093dc95de446a336756ec246efad75a4cabbe18_98",
+      "name": "steve",
+      "chainId": "11155111",
+      "fromBlock": "11815694",
+      "toBlock": "11815826",
+      "queriedEmitter": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+      "logCalls": 2,
+      "unitDecimals": 6,
+      "preSourceBalance": "0",
+      "postProcessingBalance": "0",
+      "conservationMatches": true,
+      "singleCreditSingleDebit": true,
+      "movements": [
+        {
+          "transactionHash": "0x2d0353ea98ae0debd85bd7854fb2f7daef03d4479c07d516c5cad90e1b594958",
+          "blockNumber": "11815694",
+          "transactionIndex": 44,
+          "logIndex": 98,
+          "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+          "to": "0x5b7516768ed0b04e212041265bb1f11af71841d7",
+          "amount": "1000000"
+        },
+        {
+          "transactionHash": "0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409",
+          "blockNumber": "11815826",
+          "transactionIndex": 116,
+          "logIndex": 311,
+          "from": "0x5b7516768ed0b04e212041265bb1f11af71841d7",
+          "to": "0x39351c9f9eab6093efb4e865a6330ecd2a756f0f",
+          "amount": "1000000"
+        }
+      ]
+    }
+  ],
+  "databaseSnapshotObservedAt": "2026-10-05T22:46:35.789Z",
+  "inspectionScriptSha256": "e4250f18c28b32e98f6d58e1269021c1d2e66629719a1f75fa2b4a16f4cb2bbf",
+  "implementationSources": {
+    "contracts/NamepassFactory.sol": "172f0ae76a02fd042d43cf20df974809879ed0216b1d780e38724ede07cb94c4",
+    "workflows/cctp.ts": "af88195b18a55cdb4bfb76915a1499cd8965a09113d70a3141696c15f382f3bb",
+    "server/indexed-renewal.ts": "d752c50bc9448388678ad55a487f15241bbf6135fa5cd868807608d5c7b4a1e2",
+    "src/lib/chains.ts": "a303ffba9b049157d0446e89e993b5610b01003e8c5330a32d763979ea3ec43f"
+  },
+  "limitations": [
+    "Historical factory runtime and source finality policy are not certified.",
+    "Seven linked deposits have one credit and one debit each; no pooled or split live sample.",
+    "Three settled flows have no indexed deposit link; one has no origin link.",
+    "Current provider log-range results and registry are not independent historical indexer coverage.",
+    "Read-only operator discovery is not an API completion implementation or public enablement."
+  ],
+  "snapshotCounts": {
+    "flows": 12,
+    "settled": 10,
+    "deposits": 7,
+    "events": 36
+  }
+}

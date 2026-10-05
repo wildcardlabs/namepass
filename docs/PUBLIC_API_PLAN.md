@@ -6,6 +6,8 @@ its verification limits are in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md).
 Transaction status is not implemented. Source-receipt enumeration and indexed membership
 are being reviewed in [PUBLIC_API_DEPOSIT_EVIDENCE.md](PUBLIC_API_DEPOSIT_EVIDENCE.md); this
 is not a payment-completion model.
+Deposit-to-processing discovery is recorded in [PUBLIC_API_ALLOCATION.md](PUBLIC_API_ALLOCATION.md).
+Simple live paths have receipt evidence; pooled and split completion remain implementation gates.
 History verifies event-specific ENS expiry and hub finality. Its deployment is
 described in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md); production remains disabled.
 
