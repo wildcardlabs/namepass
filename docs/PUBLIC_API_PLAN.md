@@ -4,6 +4,8 @@ Date: 2026-10-05. Status: baseline review merged; quotes and address activation 
 Production APIs remain disabled. A private read-only history adapter has passed protected staging;
 its verification limits are in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md).
 Transaction status is not implemented.
+A proposed history enhancement verifies event-specific ENS expiry and hub finality. It is
+described in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md); production remains disabled.
 
 ## Starting point
 
@@ -131,7 +133,12 @@ read-only. Any new RPC-read strategy also needs a capacity and timeout review.
 Specify aggregate status for mixed deposits and define how corrections revoke previously reported
 completion. An RPC outage must not become `failed`; insufficient funds remain pending. Archive
 and finality capabilities are provider prerequisites, not assumptions based on local fixtures.
-Until this model is proven, transaction status and complete history are not releasable.
+Until this source-payment model is proven, transaction status cannot report completion.
+Name history has a different completion unit: one canonical gateway renewal and its matching
+authoritative ENS event in a finalized hub block. It can prove that renewal happened without
+claiming that every deposit in a source transaction was processed. This distinction follows the
+published history contract and must be retained in status/history mapping. Public history still
+requires its own hosted verification, capacity and exposure gates.
 
 ## Small implementation stages
 
@@ -156,7 +163,9 @@ Until this model is proven, transaction status and complete history are not rele
    cursor bound to the requested name. Test equal timestamps, late events, pagination changes,
    unknown names, paired expiry freshness and correction handling. Confirm renewal identifiers
    agree with status and distinct events in one transaction remain distinct. Verification status
-   must use the proven model; do not label ordinary indexed history finalized without evidence.
+   must verify the exact gateway/ENS receipt segment and hub finality. Source-deposit set and
+   allocation proofs belong to transaction status; do not use a completed history item to infer
+   source-transaction completion. Do not label ordinary indexed history finalized without evidence.
 5. **Status endpoint.** Implement the proven deposit mapping with read-only polling. Test unknown
    hashes, source-chain separation, multiple transfer logs, pooled funds, split processing,
    existing wallet balances, below-minimum payments, native Arc, corrections and outages. Require

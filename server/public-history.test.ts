@@ -6,6 +6,8 @@ import { Pool } from "pg";
 import {
 	encodeAbiParameters,
 	encodeEventTopics,
+	encodeFunctionResult,
+	toFunctionSelector,
 	keccak256,
 	parseAbi,
 	parseAbiParameters,
@@ -27,10 +29,27 @@ const renewalAbi = parseAbi([
 const claimAbi = parseAbi([
 	"event CCTPClaimed(bytes32 indexed nonce, address indexed wallet, uint32 sourceDomain, uint256 burnAmount, uint256 feeExecuted, uint256 mintedAmount)",
 ]);
+const helperRuntime = readFileSync(
+	new URL("../test/fixtures/public-quote/helper-runtime.hex", import.meta.url),
+	"utf8",
+).trim();
+const helper = "0x2222222222222222222222222222222222222222";
+const helperAbi = parseAbi([
+	"event HelperUsed(address indexed helper, bytes32 indexed labelHash, address indexed wallet)",
+	"function ethRegistrar() view returns (address)",
+	"function ethRenewerV1() view returns (address)",
+	"function referrer() view returns (bytes32)",
+]);
+const ensAbi = parseAbi([
+	"event NameRenewed(uint256 indexed tokenId, string label, uint64 duration, uint64 newExpiry, address paymentToken, bytes32 indexed referrer, uint256 amount)",
+]);
 const spec = JSON.parse(readFileSync(new URL("../docs/api/openapi.json", import.meta.url), "utf8"));
 const ajv = new Ajv({ strict: false });
 addFormats(ajv);
-const valid = ajv.compile<any>({ $ref: "#/components/schemas/HistoryResponse", components: spec.components });
+const valid = ajv.compile<any>({
+	$ref: "#/components/schemas/HistoryResponse",
+	components: spec.components,
+});
 function setup(t: TestContext, enabled = "1") {
 	const saved = { ...process.env };
 	process.env.NAMEPASS_PUBLIC_HISTORY_ENABLED = enabled;
@@ -77,15 +96,10 @@ function log(label: string, index: number, fromCctp: boolean) {
 		transactionHash: hash,
 		transactionIndex: "0x0",
 		removed: false,
-		data: encodeAbiParameters(parseAbiParameters("string,uint64,uint256,uint256,uint256,uint256,bool"), [
-			label,
-			100n,
-			1000000n,
-			100000n,
-			900000n,
-			0n,
-			fromCctp,
-		]),
+		data: encodeAbiParameters(
+			parseAbiParameters("string,uint64,uint256,uint256,uint256,uint256,bool"),
+			[label, 100n, 1000000n, 100000n, 900000n, 0n, fromCctp],
+		),
 		topics: encodeEventTopics({
 			abi: renewalAbi,
 			eventName: "Renewed",
@@ -99,7 +113,7 @@ function log(label: string, index: number, fromCctp: boolean) {
 }
 function claim() {
 	return {
-		...log("alice", 3, false),
+		...log("alice", 2, false),
 		data: encodeAbiParameters(parseAbiParameters("uint32,uint256,uint256,uint256"), [
 			6,
 			1000000n,
@@ -113,6 +127,55 @@ function claim() {
 		}),
 	};
 }
+function helperLog(label: string, index: number, wrongWallet = false) {
+	return {
+		...log(label, index, false),
+		data: "0x",
+		topics: encodeEventTopics({
+			abi: helperAbi,
+			eventName: "HelperUsed",
+			args: {
+				helper,
+				labelHash: keccak256(stringToHex(label)),
+				wallet: (wrongWallet ? executor : depositAddress(label)) as `0x${string}`,
+			},
+		}),
+	};
+}
+function ensLog(
+	label: string,
+	index: number,
+	expiry: bigint,
+	options: {
+		wrongDuration?: boolean;
+		wrongAmount?: boolean;
+		wrongReferrer?: boolean;
+		wrongToken?: boolean;
+		fakeEns?: boolean;
+	} = {},
+) {
+	return {
+		...log(label, index, false),
+		address: options.fakeEns ? executor : HUB_CHAIN.ensRegistrarAddress!,
+		topics: encodeEventTopics({
+			abi: ensAbi,
+			eventName: "NameRenewed",
+			args: {
+				tokenId: 42n,
+				referrer: (options.wrongReferrer
+					? `0x${"ff".repeat(32)}`
+					: HUB_CHAIN.ensReferrer!) as `0x${string}`,
+			},
+		}),
+		data: encodeAbiParameters(parseAbiParameters("string,uint64,uint64,address,uint256"), [
+			label,
+			options.wrongDuration ? 101n : 100n,
+			expiry,
+			(options.wrongToken ? executor : HUB_CHAIN.usdcAddress) as `0x${string}`,
+			options.wrongAmount ? 899999n : 900000n,
+		]),
+	};
+}
 function rpc(
 	t: TestContext,
 	options: {
@@ -123,6 +186,22 @@ function rpc(
 		forged?: boolean;
 		claimMismatch?: boolean;
 		timestampMismatch?: boolean;
+		finalityLag?: boolean;
+		missingFinality?: boolean;
+		badFinalityHash?: boolean;
+		wrongDuration?: boolean;
+		wrongAmount?: boolean;
+		wrongReferrer?: boolean;
+		wrongToken?: boolean;
+		fakeEns?: boolean;
+		missingEns?: boolean;
+		duplicateEns?: boolean;
+		wrongHelperWallet?: boolean;
+		unsupportedMetadata?: boolean;
+		archiveFailure?: boolean;
+		unsupportedCode?: boolean;
+		wrongLogMembership?: boolean;
+		removedLog?: boolean;
 	} = {},
 ) {
 	const calls: string[] = [];
@@ -133,7 +212,7 @@ function rpc(
 			if (options.outage) throw new Error("private provider credential");
 			assert.ok(init?.signal);
 			const payload = JSON.parse(String(init.body));
-			const answer = (call: { id: number; method: string; params: string[] }) => {
+			const answer = (call: { id: number; method: string; params: any[] }) => {
 				calls.push(call.method);
 				let result: unknown;
 				if (call.method === "eth_chainId")
@@ -154,38 +233,90 @@ function rpc(
 								gasUsed: "0x100",
 								effectiveGasPrice: "0x1",
 								logsBloom: `0x${"00".repeat(256)}`,
-								logs: [claim(), log("alice", 5, true), log("alice", 9, false), log("steve", 12, false)]
+								logs: [
+									...(options.duplicateEns ? [ensLog("alice", 1, 1900000000n)] : []),
+									claim(),
+									...(options.missingEns ? [] : [ensLog("alice", 3, 1900000000n, options)]),
+									helperLog("alice", 4, options.wrongHelperWallet),
+									log("alice", 5, true),
+									ensLog("alice", 7, 1900000100n, options),
+									helperLog("alice", 8, options.wrongHelperWallet),
+									log("alice", 9, false),
+									ensLog("steve", 10, 1900000200n),
+									helperLog("steve", 11),
+									log("steve", 12, false),
+								]
+									.map((log) =>
+										options.wrongLogMembership
+											? { ...log, blockHash: `0x${"ee".repeat(32)}` }
+											: options.removedLog
+												? { ...log, removed: true }
+												: log,
+									)
 									.map((log) =>
 										options.forged && log.logIndex === "0x9" ? { ...log, address: executor } : log,
 									)
 									.map((log) =>
-										options.claimMismatch && log.logIndex === "0x3"
+										options.claimMismatch && log.logIndex === "0x2"
 											? {
 													...log,
-													data: encodeAbiParameters(parseAbiParameters("uint32,uint256,uint256,uint256"), [
-														3,
-														1000000n,
-														0n,
-														1000000n,
-													]),
+													data: encodeAbiParameters(
+														parseAbiParameters("uint32,uint256,uint256,uint256"),
+														[3, 1000000n, 0n, 1000000n],
+													),
 												}
 											: log,
 									),
 							};
 				else if (call.method === "eth_getBlockByNumber")
-					result = {
-						number: "0x64",
-						hash: options.reorg ? `0x${"56".repeat(32)}` : blockHash,
-						timestamp: `0x${(BigInt(blockTime.getTime() / 1000) + (options.timestampMismatch ? 1n : 0n)).toString(16)}`,
-						transactions: [],
-						gasLimit: "0x10000",
-						gasUsed: "0x100",
-						size: "0x1",
-						difficulty: "0x0",
-						extraData: "0x",
-						parentHash: blockHash,
-					};
-				else throw new Error("unexpected RPC method");
+					result =
+						call.params[0] === "finalized" && options.missingFinality
+							? null
+							: {
+									number: call.params[0] === "finalized" && options.finalityLag ? "0x63" : "0x64",
+									hash:
+										options.reorg || (call.params[0] === "finalized" && options.badFinalityHash)
+											? `0x${"56".repeat(32)}`
+											: blockHash,
+									timestamp: `0x${(BigInt(blockTime.getTime() / 1000) + (options.timestampMismatch ? 1n : 0n)).toString(16)}`,
+									transactions: [],
+									gasLimit: "0x10000",
+									gasUsed: "0x100",
+									size: "0x1",
+									difficulty: "0x0",
+									extraData: "0x",
+									parentHash: blockHash,
+								};
+				else if (call.method === "eth_getCode") {
+					assert.equal(call.params[0].toLowerCase(), helper.toLowerCase());
+					assert.equal(call.params[1], "0x64");
+					result = options.unsupportedCode ? "0x1234" : helperRuntime;
+				} else if (call.method === "eth_call") {
+					if (options.archiveFailure) throw new Error("private provider credential");
+					assert.equal(
+						call.params[0].to.toLowerCase(),
+						helper.toLowerCase(),
+						"read the helper selected in this receipt",
+					);
+					assert.equal(call.params[1], "0x64", "metadata reads use the renewal block, not latest");
+					const name = ["ethRegistrar", "ethRenewerV1", "referrer"].find(
+						(name) => toFunctionSelector(name + "()") === call.params[0].data,
+					)!;
+					assert.ok(name, "only known metadata reads are allowed");
+					const value =
+						name === "ethRegistrar"
+							? options.unsupportedMetadata
+								? executor
+								: HUB_CHAIN.ensRegistrarAddress!
+							: name === "ethRenewerV1"
+								? HUB_CHAIN.ensRenewerV1Address!
+								: HUB_CHAIN.ensReferrer!;
+					result = encodeFunctionResult({
+						abi: helperAbi,
+						functionName: name as "ethRegistrar" | "ethRenewerV1" | "referrer",
+						result: value as `0x${string}`,
+					});
+				} else throw new Error("unexpected RPC method");
 				return { id: call.id, jsonrpc: "2.0", result };
 			};
 			return Response.json(Array.isArray(payload) ? payload.map(answer) : answer(payload));
@@ -288,14 +419,17 @@ test("history reads established schema, proves exact event/provenance, and pagin
 	assert.equal(page.items.length, 1);
 	assert.equal(page.items[0].renewalId, `11155111:${hash}:9`);
 	assert.equal(page.items[0].sourceChainId, "11155111");
-	assert.equal(page.items[0].status, "processing");
-	assert.equal(page.items[0].expiry, null);
+	assert.equal(page.items[0].status, "complete");
+	assert.equal(page.items[0].expiry, "2030-03-17T17:48:20.000Z");
+	assert.equal(first.headers.get("retry-after"), null);
 	const second = await route.fetch(request("alice", `?limit=1&cursor=${page.nextCursor}`));
 	assert.equal(second.status, 200, await second.clone().text());
 	const older = await second.json();
 	assert.ok(valid(older), JSON.stringify(valid.errors));
 	assert.equal(older.items[0].renewalId, `11155111:${hash}:5`);
 	assert.equal(older.items[0].sourceChainId, "84532");
+	assert.equal(older.items[0].expiry, "2030-03-17T17:46:40.000Z");
+	assert.equal(older.items[0].status, "complete");
 	assert.equal(older.nextCursor, null);
 	assert.equal((await route.fetch(request("steve.eth", `?cursor=${page.nextCursor}`))).status, 400);
 	const all = await (await route.fetch(request())).json();
@@ -305,6 +439,11 @@ test("history reads established schema, proves exact event/provenance, and pagin
 		3,
 		"same transaction is fetched once per request, including both renewal events",
 	);
+	assert.equal(
+		network.calls.filter((method) => method === "eth_call").length,
+		9,
+		"the selected helper/block metadata is read once per request, including shared receipt events",
+	);
 	assert.ok(queries.some((q) => q === "BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY"));
 	assert.ok(
 		queries.every((q) => /^(SELECT|BEGIN|COMMIT|ROLLBACK)/.test(q.trim())),
@@ -312,6 +451,24 @@ test("history reads established schema, proves exact event/provenance, and pagin
 	);
 	assert.equal((await db.query<{ n: number }>("SELECT count(*)::int n FROM flows")).rows[0].n, 3);
 	assert.equal((await db.query<{ n: number }>("SELECT count(*)::int n FROM names")).rows[0].n, 2);
+});
+test("a canonical renewal awaits finality without hiding its proven event-specific expiry", async (t) => {
+	setup(t);
+	await fixture(t);
+	rpc(t, { finalityLag: true });
+	const response = await route.fetch(request());
+	assert.equal(response.status, 200, await response.clone().text());
+	const body = await response.json();
+	assert.ok(valid(body), JSON.stringify(valid.errors));
+	assert.deepEqual(
+		body.items.map((item: any) => item.status),
+		["processing", "processing"],
+	);
+	assert.deepEqual(
+		body.items.map((item: any) => item.expiry),
+		["2030-03-17T17:48:20.000Z", "2030-03-17T17:46:40.000Z"],
+	);
+	assert.equal(response.headers.get("retry-after"), "5");
 });
 test("late indexing, corrected events and changing expiry do not cause cursor skips or false freshness", async (t) => {
 	setup(t);
@@ -344,6 +501,21 @@ test("receipt/provider failures and inconsistent provenance return retryable 503
 		"forged",
 		"claimMismatch",
 		"timestampMismatch",
+		"missingFinality",
+		"badFinalityHash",
+		"wrongDuration",
+		"wrongAmount",
+		"wrongReferrer",
+		"wrongToken",
+		"fakeEns",
+		"missingEns",
+		"duplicateEns",
+		"wrongHelperWallet",
+		"unsupportedMetadata",
+		"archiveFailure",
+		"unsupportedCode",
+		"wrongLogMembership",
+		"removedLog",
 	] as const) {
 		const mock = rpc(t, { [option]: true });
 		const response = await route.fetch(request());
@@ -390,7 +562,10 @@ test(
 		const admin = new Pool({ connectionString: base.toString() });
 		await admin.query(`CREATE DATABASE "${fixtureName}"`);
 		base.pathname = `/${fixtureName}`;
-		base.searchParams.set("options", "-c default_transaction_read_only=off -c statement_timeout=60000");
+		base.searchParams.set(
+			"options",
+			"-c default_transaction_read_only=off -c statement_timeout=60000",
+		);
 		const db = new Pool({ connectionString: base.toString() });
 		t.after(async () => {
 			await db.end();
@@ -403,7 +578,11 @@ test(
 			await db.query(readFileSync(new URL(`../drizzle/${file}`, import.meta.url), "utf8"));
 		await db.query(
 			"INSERT INTO names(normalized_label,display_name,label_hash,namehash,deposit_address,ens_synced_at) VALUES('alice','alice.eth',$1,$2,$3,now())",
-			[keccak256(stringToHex("alice")), keccak256(stringToHex("alice.eth")), depositAddress("alice")],
+			[
+				keccak256(stringToHex("alice")),
+				keccak256(stringToHex("alice.eth")),
+				depositAddress("alice"),
+			],
 		);
 		const { spawn } = await import("node:child_process");
 		const { createRequire } = await import("node:module");
