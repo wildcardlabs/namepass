@@ -213,7 +213,7 @@ export default function Navbar({
             <Dialog open={menuOpen} onOpenChange={setMenuOpen}>
               <DialogTrigger asChild>
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
                   className="site-menu-trigger"
                   aria-label="Open navigation menu"
