@@ -1,0 +1,273 @@
+{
+  "implementationChecksums": {
+    "server/source-deposit-evidence.ts": "4380acc1c9f0f6efc7b6d935179eaecf4352874cf73eec65c0444064308adeda",
+    "scripts/public-api/source-deposits.ts": "df5ebfdde4864a2311c1f4315b124bc73524e6dc33b154d20007a3a43912e823",
+    "src/lib/chains.ts": "a303ffba9b049157d0446e89e993b5610b01003e8c5330a32d763979ea3ec43f"
+  },
+  "observedAt": "2026-10-05T22:32:43.603Z",
+  "baseCommit": "b6c62f9b82e2580aa1e3211816a1f0505d9d1d98",
+  "databaseBranch": "br-noisy-bird-avey45an",
+  "readOnly": true,
+  "rows": [
+    {
+      "observedAt": "2026-10-05T22:32:32.008Z",
+      "databaseSnapshotAt": "2026-10-05T22:32:30.745Z",
+      "readOnly": true,
+      "registryCount": 11,
+      "indexedCount": 1,
+      "rpcCalls": 4,
+      "evidence": {
+        "chainId": "5042002",
+        "transactionHash": "0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db",
+        "blockNumber": "64870408",
+        "blockHash": "0x08b2fd831cc237b3ad8f5b7ddba411c35ab8ffb1e70cc50eb0a965c77e1e1203",
+        "scope": "current activated-name registry",
+        "members": [
+          {
+            "sourceId": "5042002:0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db:native:15",
+            "name": "chrismg.eth",
+            "address": "0x0a2a97e83e879215530fbde1088d08cc2dfaf993",
+            "sender": "0xe7995a5b1b41779dea900e2204dc08110de363d5",
+            "amount": "3210000",
+            "nativeAmount": "3210000000000000000",
+            "receiptLogIndex": 15,
+            "publicLogIndex": null,
+            "kind": "native_top_level",
+            "indexedEventId": "5042002:native:enriched_transaction_v2_0x08b2fd831cc237b3ad8f5b7ddba411c35ab8ffb1e70cc50eb0a965c77e1e1203_5"
+          }
+        ],
+        "missingIndexedMembers": [],
+        "unmatchedIndexedRows": [],
+        "unregisteredRecipients": [],
+        "unwatchedAddresses": [],
+        "activatedAfterSource": [],
+        "issues": [],
+        "representationComplete": true,
+        "coverage": "Current watch membership only; historical propagation and unregistered deterministic addresses are not proven."
+      }
+    },
+    {
+      "observedAt": "2026-10-05T22:32:33.996Z",
+      "databaseSnapshotAt": "2026-10-05T22:32:32.796Z",
+      "readOnly": true,
+      "registryCount": 11,
+      "indexedCount": 1,
+      "rpcCalls": 4,
+      "evidence": {
+        "chainId": "5042002",
+        "transactionHash": "0x34c874da52586754724202301eed932702d9363cc64843c99c267b92b4435f95",
+        "blockNumber": "63623291",
+        "blockHash": "0xc238edafd74b121327a907cc6377cbdaf37d90dcd2114af4d48d7d7cf6890594",
+        "scope": "current activated-name registry",
+        "members": [
+          {
+            "sourceId": "5042002:0x34c874da52586754724202301eed932702d9363cc64843c99c267b92b4435f95:native:9",
+            "name": "nick.eth",
+            "address": "0xc25eeebbf6450b83e16cae8421b6e143ae24e450",
+            "sender": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+            "amount": "11000000",
+            "nativeAmount": "11000000000000000000",
+            "receiptLogIndex": 9,
+            "publicLogIndex": null,
+            "kind": "native_top_level",
+            "indexedEventId": "5042002:native:enriched_transaction_v2_0xc238edafd74b121327a907cc6377cbdaf37d90dcd2114af4d48d7d7cf6890594_2"
+          }
+        ],
+        "missingIndexedMembers": [],
+        "unmatchedIndexedRows": [],
+        "unregisteredRecipients": [],
+        "unwatchedAddresses": [],
+        "activatedAfterSource": [],
+        "issues": [],
+        "representationComplete": true,
+        "coverage": "Current watch membership only; historical propagation and unregistered deterministic addresses are not proven."
+      }
+    },
+    {
+      "observedAt": "2026-10-05T22:32:35.942Z",
+      "databaseSnapshotAt": "2026-10-05T22:32:34.780Z",
+      "readOnly": true,
+      "registryCount": 11,
+      "indexedCount": 1,
+      "rpcCalls": 4,
+      "evidence": {
+        "chainId": "5042002",
+        "transactionHash": "0x8a22364859ea60cdc23cbff078efd6afdf46525f106e87a9b606676727579433",
+        "blockNumber": "63623075",
+        "blockHash": "0x17829f7b587143ea1bcc378dc3b469dc876761b9c0671e1d4918c177eb4ba667",
+        "scope": "current activated-name registry",
+        "members": [
+          {
+            "sourceId": "5042002:0x8a22364859ea60cdc23cbff078efd6afdf46525f106e87a9b606676727579433:native:0",
+            "name": "vitalik.eth",
+            "address": "0xa61656ca2d2952a46a9d4da0aae01d8d7fe988e0",
+            "sender": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+            "amount": "10000000",
+            "nativeAmount": "10000000000000000000",
+            "receiptLogIndex": 0,
+            "publicLogIndex": null,
+            "kind": "native_top_level",
+            "indexedEventId": "5042002:native:enriched_transaction_v2_0x17829f7b587143ea1bcc378dc3b469dc876761b9c0671e1d4918c177eb4ba667_1"
+          }
+        ],
+        "missingIndexedMembers": [],
+        "unmatchedIndexedRows": [],
+        "unregisteredRecipients": [],
+        "unwatchedAddresses": [],
+        "activatedAfterSource": [],
+        "issues": [],
+        "representationComplete": true,
+        "coverage": "Current watch membership only; historical propagation and unregistered deterministic addresses are not proven."
+      }
+    },
+    {
+      "observedAt": "2026-10-05T22:32:38.024Z",
+      "databaseSnapshotAt": "2026-10-05T22:32:36.772Z",
+      "readOnly": true,
+      "registryCount": 11,
+      "indexedCount": 1,
+      "rpcCalls": 4,
+      "evidence": {
+        "chainId": "5042002",
+        "transactionHash": "0x9531be85ef55d5e9652eeb2188f76771e110f0d441887c37f6571e62a85ae76a",
+        "blockNumber": "63411550",
+        "blockHash": "0xfac77455b4b1f72626d835c69ed6330e835eaff3ba75f7b7a1fad48ff45d1aa4",
+        "scope": "current activated-name registry",
+        "members": [
+          {
+            "sourceId": "5042002:0x9531be85ef55d5e9652eeb2188f76771e110f0d441887c37f6571e62a85ae76a:native:10",
+            "name": "paramore.eth",
+            "address": "0x690866bdde4cdca43479150aac4f2d17e2792ca1",
+            "sender": "0xe7995a5b1b41779dea900e2204dc08110de363d5",
+            "amount": "3000000",
+            "nativeAmount": "3000000000000000000",
+            "receiptLogIndex": 10,
+            "publicLogIndex": null,
+            "kind": "native_top_level",
+            "indexedEventId": "5042002:native:enriched_transaction_v2_0xfac77455b4b1f72626d835c69ed6330e835eaff3ba75f7b7a1fad48ff45d1aa4_7"
+          }
+        ],
+        "missingIndexedMembers": [],
+        "unmatchedIndexedRows": [],
+        "unregisteredRecipients": [],
+        "unwatchedAddresses": [],
+        "activatedAfterSource": [],
+        "issues": [],
+        "representationComplete": true,
+        "coverage": "Current watch membership only; historical propagation and unregistered deterministic addresses are not proven."
+      }
+    },
+    {
+      "observedAt": "2026-10-05T22:32:40.010Z",
+      "databaseSnapshotAt": "2026-10-05T22:32:38.819Z",
+      "readOnly": true,
+      "registryCount": 11,
+      "indexedCount": 1,
+      "rpcCalls": 4,
+      "evidence": {
+        "chainId": "5042002",
+        "transactionHash": "0xc96b1e8cd633b4780973d1841011ae8a7c0b5f838b5b894b6662b9c218bf055e",
+        "blockNumber": "63624431",
+        "blockHash": "0x8ca5e672f67efcfbe1f6ba9cbc2fdbbd74f281f4bc18694c9a4d51be4581b4b7",
+        "scope": "current activated-name registry",
+        "members": [
+          {
+            "sourceId": "5042002:0xc96b1e8cd633b4780973d1841011ae8a7c0b5f838b5b894b6662b9c218bf055e:native:26",
+            "name": "slobo.eth",
+            "address": "0x7706018b4e0eedb99e5bf5b38446461b2b8ad8e9",
+            "sender": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+            "amount": "13000000",
+            "nativeAmount": "13000000000000000000",
+            "receiptLogIndex": 26,
+            "publicLogIndex": null,
+            "kind": "native_top_level",
+            "indexedEventId": "5042002:native:enriched_transaction_v2_0x8ca5e672f67efcfbe1f6ba9cbc2fdbbd74f281f4bc18694c9a4d51be4581b4b7_10"
+          }
+        ],
+        "missingIndexedMembers": [],
+        "unmatchedIndexedRows": [],
+        "unregisteredRecipients": [],
+        "unwatchedAddresses": [],
+        "activatedAfterSource": [],
+        "issues": [],
+        "representationComplete": true,
+        "coverage": "Current watch membership only; historical propagation and unregistered deterministic addresses are not proven."
+      }
+    },
+    {
+      "observedAt": "2026-10-05T22:32:42.005Z",
+      "databaseSnapshotAt": "2026-10-05T22:32:40.805Z",
+      "readOnly": true,
+      "registryCount": 11,
+      "indexedCount": 1,
+      "rpcCalls": 4,
+      "evidence": {
+        "chainId": "5042002",
+        "transactionHash": "0xf789eb1cedf3a36ece88aaed2215b4956f66c77c26e669dba7a2659585842882",
+        "blockNumber": "63623992",
+        "blockHash": "0x8e0f2358a4c76ad317a15a1f2682b400e3aba0b6daab254eb4c1832c8a6cf077",
+        "scope": "current activated-name registry",
+        "members": [
+          {
+            "sourceId": "5042002:0xf789eb1cedf3a36ece88aaed2215b4956f66c77c26e669dba7a2659585842882:native:11",
+            "name": "gregskril.eth",
+            "address": "0xf0feaeb652489cf635043a5ebd7416c6e328d2fe",
+            "sender": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+            "amount": "12000000",
+            "nativeAmount": "12000000000000000000",
+            "receiptLogIndex": 11,
+            "publicLogIndex": null,
+            "kind": "native_top_level",
+            "indexedEventId": "5042002:native:enriched_transaction_v2_0x8e0f2358a4c76ad317a15a1f2682b400e3aba0b6daab254eb4c1832c8a6cf077_5"
+          }
+        ],
+        "missingIndexedMembers": [],
+        "unmatchedIndexedRows": [],
+        "unregisteredRecipients": [],
+        "unwatchedAddresses": [],
+        "activatedAfterSource": [],
+        "issues": [],
+        "representationComplete": true,
+        "coverage": "Current watch membership only; historical propagation and unregistered deterministic addresses are not proven."
+      }
+    },
+    {
+      "observedAt": "2026-10-05T22:32:43.592Z",
+      "databaseSnapshotAt": "2026-10-05T22:32:42.805Z",
+      "readOnly": true,
+      "registryCount": 11,
+      "indexedCount": 1,
+      "rpcCalls": 4,
+      "evidence": {
+        "chainId": "11155111",
+        "transactionHash": "0x2d0353ea98ae0debd85bd7854fb2f7daef03d4479c07d516c5cad90e1b594958",
+        "blockNumber": "11815694",
+        "blockHash": "0xa3f5b5aea968a33867b9481bf093dc95de446a336756ec246efad75a4cabbe18",
+        "scope": "current activated-name registry",
+        "members": [
+          {
+            "sourceId": "11155111:0x2d0353ea98ae0debd85bd7854fb2f7daef03d4479c07d516c5cad90e1b594958:98",
+            "name": "steve.eth",
+            "address": "0x5b7516768ed0b04e212041265bb1f11af71841d7",
+            "sender": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+            "amount": "1000000",
+            "nativeAmount": null,
+            "receiptLogIndex": 98,
+            "publicLogIndex": 98,
+            "kind": "erc20",
+            "indexedEventId": "11155111:log_0xa3f5b5aea968a33867b9481bf093dc95de446a336756ec246efad75a4cabbe18_98"
+          }
+        ],
+        "missingIndexedMembers": [],
+        "unmatchedIndexedRows": [],
+        "unregisteredRecipients": [],
+        "unwatchedAddresses": [],
+        "activatedAfterSource": [],
+        "issues": [],
+        "representationComplete": true,
+        "coverage": "Current watch membership only; historical propagation and unregistered deterministic addresses are not proven."
+      }
+    }
+  ],
+  "limits": "Existing single-deposit samples only; represented current-registry receipt sets are not full source finality, historical watch propagation, allocation or aggregate payment completion."
+}

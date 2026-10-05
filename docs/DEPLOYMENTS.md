@@ -235,9 +235,9 @@ was verified READY at that commit. Both `beta.namepass.com` and the ingestion ho
 to it. Eighteen production HTTP checks passed, including populated activity and disabled
 quote/address/history responses. Production API flags remain absent.
 
-## Proposed history event completion — 2026-10-05
+## Private history event completion — 2026-10-05
 
-The next local revision verifies the ENS event and finalized hub block for each history item.
+The merged history adapter verifies the ENS event and finalized hub block for each history item.
 It distinguishes completed renewal events from source-transaction completion; the latter still
 requires full deposit-set and processing proof. Details and provider limits are in
 [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md#renewal-completion-and-source-payment-completion).
@@ -258,6 +258,30 @@ Staging counts and all zero balances remained unchanged.
 [Staging evidence](deployments/2026-10-05/public-api-history-completion-staging.json)
 records schema validation with date formats and the exact implementation checksums. The
 isolated branch has no payment events, so hosted positive receipt verification remains unproven.
+
+PR #127 merged at `b6c62f9b82e2580aa1e3211816a1f0505d9d1d98` after final-head CI
+(run `37378773800`) and protected preview checks passed. Exact production deployment
+`dpl_FkFHUPsESGSQhaCxegbGk6D4E74t` was verified READY. Both public and ingestion
+aliases pointed to it; eighteen HTTP checks passed with populated activity and disabled APIs.
+[Production evidence](deployments/2026-10-05/public-api-history-completion-production.json)
+records those checks. No production API enable flag is present.
+
+## Source-deposit evidence — 2026-10-05
+
+The new bounded inspector verifies source receipts against the current activated-name registry
+and indexed deposits. It is a local read-only discovery tool, not a status endpoint. Seven
+existing source transactions matched: six top-level native Arc deposits and one Sepolia
+ERC-20 deposit. Each invocation used four RPC reads and an independently verified read-only
+PostgreSQL transaction.
+[Source evidence](deployments/2026-10-05/public-api-deposit-evidence.json) records exact
+implementation checksums, canonical source identities and matching indexed members.
+
+Staggered-delivery and internal native-transfer fixtures expose missing members independently
+of rows already delivered by the indexer. Current registry/watch membership does not prove
+historical propagation or coverage of unregistered deterministic addresses. Source finality,
+allocation and aggregate completion remain unproven. Details are in
+[PUBLIC_API_DEPOSIT_EVIDENCE.md](PUBLIC_API_DEPOSIT_EVIDENCE.md). No hosted configuration,
+Goldsky pipeline, schema, signer, processing behavior or public exposure changed.
 
 ## Historical evidence
 

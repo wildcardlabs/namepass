@@ -1,6 +1,6 @@
 # Private history adapter
 
-Date: 2026-10-05. Event-completion enhancement for review; production remains disabled.
+Date: 2026-10-05. Event-completion enhancement merged; production remains disabled.
 
 `GET /api/v1/names/{name}/renewals` reads the existing schema. It never activates a name,
 refreshes ENS state, starts a Workflow or writes payment records. No migration, contract
@@ -120,7 +120,7 @@ unknown names, input errors, methods/CORS and unchanged records. See the deploym
 limitations in [DEPLOYMENTS.md](DEPLOYMENTS.md#private-history-staging--2026-10-05).
 That deployed revision still returned `processing`; its evidence records its exact code commit.
 The isolated branch has no payment events or indexer, so it does not prove hosted receipt
-verification. The proposed enhancement has separate read-only local evidence for ten renewals
+verification. The merged enhancement has separate read-only local evidence for ten renewals
 across seven names, all finalized with matching event-specific ENS expiry. Those responses took
 0.7–1.7 seconds and used eight RPC calls for one item or 26 for four items. These small samples
 do not establish the 100-item page's latency or public capacity.
