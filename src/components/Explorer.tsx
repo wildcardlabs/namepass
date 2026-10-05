@@ -14,6 +14,7 @@ import {
 	ArrowRight,
 	ArrowUpRight,
 	Clock,
+	UserRound,
 	Globe,
 	Link as LinkIcon,
 	Github,
@@ -39,9 +40,6 @@ import {
 	minTrigger,
 	nameExpiry,
 	renewalEvent,
-	renewalCount,
-	timeDelivered,
-	totalReceived,
 	type ActivityEvent,
 	type FlowStatus,
 	type FlowStep,
@@ -58,12 +56,12 @@ import {
 	fmtDuration,
 	fmtUsdc,
 	fmtUsdcExact,
-	fmtYears,
 	truncAddress,
 	truncTx,
 } from "../lib/format";
 import { completedFlowTransactions } from "../lib/flowTransactions";
 import PassCard from "./PassCard";
+import { Card } from "./ui/card";
 import PendingBalance from "./PendingBalance";
 import ChainTag from "./ChainTag";
 import { ceilToCent, costOf, PricingNotLoadedError, rates, YEAR_SECONDS } from "../lib/pricing";
@@ -116,7 +114,7 @@ function DiscountTag({ off }: { off: string | null }) {
 		return <span className="text-ink-secondary">-</span>;
 	}
 	return (
-		<span className="inline-flex items-center rounded-md bg-savings-soft px-2 py-0.5 text-[12px] text-savings whitespace-nowrap">
+		<span className="site-discount-text text-[14px] text-savings whitespace-nowrap">
 			{off} off
 		</span>
 	);
@@ -158,7 +156,7 @@ function MobileFlowSummary({
 }) {
 	return (
 		<div
-			className={`lg:hidden px-4 md:px-5 py-4 md:py-3.5 ${expandable ? "cursor-pointer" : ""}`}
+			className={`site-mobile-flow lg:hidden px-4 py-4 ${expandable ? "cursor-pointer" : ""}`}
 			onClick={(event) => {
 				if (expandable && !(event.target as Element).closest("button, a")) onToggle();
 			}}
@@ -273,7 +271,7 @@ function FeedRowContent({
 	const transactions = row.pending && row.flow ? completedFlowTransactions(row.flow) : [];
 	const toggleExpanded = () => setExpanded((open) => !open);
 	const nameTitle = (
-		<button type="button" onClick={() => onSelect(row.name)} aria-label={`Open ${row.name}`} className="inline-flex min-w-0 max-w-full justify-self-start items-center gap-1 text-left text-[15px] lg:text-[14.5px] font-medium text-ink-link focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(28,58,41,0.6)]">
+		<button type="button" onClick={() => onSelect(row.name)} aria-label={`Open ${row.name}`} className="site-explorer-name inline-flex min-w-0 max-w-full justify-self-start items-center gap-1 text-left text-[15px] lg:text-[14.5px] font-medium text-ink-link focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(28,58,41,0.6)]">
 			<img src={`${import.meta.env.BASE_URL}logos/ens-mark-dark-blue.svg`} alt="" aria-hidden="true" className="relative top-px h-3 w-3 shrink-0 object-contain grayscale opacity-40" />
 			<span className="truncate">{row.name}</span>
 			<ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5 shrink-0" />
@@ -290,7 +288,7 @@ function FeedRowContent({
 				backgroundColor: pending ? "rgba(28,58,41,0.028)" : "rgba(28,58,41,0)",
 			}}
 			transition={reduced ? { duration: 0 } : { duration: 0.55, ease: "easeOut" }}
-			className="border-b border-[rgba(28,58,41,0.07)]"
+			className="site-activity-row border-b border-[rgba(28,58,41,0.07)]"
 		>
 			<MobileFlowSummary
 				title={nameTitle}
@@ -341,12 +339,12 @@ function FeedRowContent({
 						className="overflow-hidden"
 					>
 						{row.pending ? (
-							<div className="px-4 md:px-5 py-4 border-t border-[rgba(28,58,41,0.06)] bg-white">
+							<div className="site-pending-breakdown px-4 py-4 border-t border-[rgba(28,58,41,0.06)]">
 								<p className="text-[13px] text-ink-action">{flowPresentation(row.status, row.originChainId).detail}</p>
 								{transactions.length > 0 && (
 									<div className="mt-4">
-										<div className="text-[10px] uppercase tracking-wider text-ink-label">Transactions</div>
-										<ol className="mt-2 grid gap-2 sm:grid-cols-2">
+										<div className="site-evidence-heading"><h4>Transaction trail</h4></div>
+										<ol className="site-transaction-trail">
 											{transactions.map((transaction, index) => (
 												<TransactionRow key={transaction.tx} index={index} label={transaction.label} chain={transaction.chain} tx={transaction.tx} />
 											))}
@@ -396,7 +394,7 @@ function StatusCell({ row, reduced }: { row: FeedItem; reduced: boolean }) {
 				aria-hidden={row.pending}
 				className="inline-flex flex-col items-end gap-0.5 whitespace-nowrap tabular-nums"
 			>
-				<span className="inline-flex items-center gap-1 text-ink-action">
+				<span className="site-status-badge inline-flex items-center gap-1 text-ink-action">
 					<CheckCircle2 aria-hidden="true" className="h-3 w-3" />
 					Renewed
 				</span>
@@ -424,14 +422,14 @@ function ActivityPagination({
 	if (totalPages <= 1) return null;
 	const previous = page > 0;
 	const next = page + 1 < totalPages;
-	const buttonClass = "flex h-10 items-center justify-center rounded-xl border border-[rgba(28,58,41,0.12)] px-3 text-[13px] text-ink-action transition-colors hover:border-[rgba(28,58,41,0.3)] disabled:pointer-events-none disabled:opacity-35";
+	const buttonClass = "site-pagination flex h-10 items-center justify-center rounded-xl border border-[rgba(28,58,41,0.12)] px-3 text-[13px] text-ink-action transition-colors hover:border-[rgba(28,58,41,0.3)] disabled:pointer-events-none disabled:opacity-35";
 	return (
 		<div className="mt-6 flex items-center justify-center gap-2">
 			<button type="button" onClick={() => onPage(0)} disabled={!previous || loading} className={buttonClass}>First</button>
 			<button type="button" aria-label="Previous page" onClick={() => onPage(page - 1)} disabled={!previous || loading} className={buttonClass}>
 				<ArrowLeft className="h-4 w-4" />
 			</button>
-			<span className="flex h-10 items-center rounded-xl border border-[rgba(28,58,41,0.12)] px-4 text-[13px] text-ink-secondary tabular-nums">
+			<span className="site-pagination flex h-10 items-center rounded-xl border border-[rgba(28,58,41,0.12)] px-4 text-[13px] text-ink-secondary tabular-nums">
 				{loading && <Loader2 className="mr-2 h-3.5 w-3.5 animate-spin" />}
 				Page {page + 1} of {totalPages}
 			</span>
@@ -570,9 +568,10 @@ function LiveFeed({ onSelect, feed, setFeed, pageIndex, setPageIndex }: {
 	return (
 		<>
 			{loadError && <p role="alert" className="mb-3 text-[12.5px] text-red-700">{loadError}</p>}
-			<div ref={tableRef} className="scroll-mt-6 border border-[rgba(28,58,41,0.1)] rounded-2xl overflow-hidden">
-			{/* Desktop column headers, hidden on mobile where rows become cards */}
-			<div className={`hidden lg:grid ${LIVE_FEED_COLUMNS} gap-4 px-5 py-3 bg-surface-table border-b border-[rgba(28,58,41,0.1)] text-[11px] uppercase tracking-wider text-ink-label`}>
+			<div ref={tableRef} className="site-explorer-table site-table scroll-mt-6 border border-[rgba(28,58,41,0.1)] rounded-2xl overflow-hidden">
+			<div className="site-feed-toolbar"><span>ENS renewal activity</span><small>Testnet</small></div>
+			{/* Desktop column headers, hidden on mobile where rows become summary lists */}
+			<div className={`site-column-headings hidden lg:grid ${LIVE_FEED_COLUMNS} gap-4 px-5 py-3 bg-surface-table border-b border-[rgba(28,58,41,0.1)] text-[11px] uppercase tracking-wider text-ink-label`}>
 				<span>ENS name</span>
 				<span>Chain</span>
 				<span className="text-right">Received</span>
@@ -625,16 +624,17 @@ function TransactionRow({ index, label, chain, tx }: { index: number; label: str
 				target="_blank"
 				rel="noopener noreferrer"
 				aria-label={`View ${label.toLowerCase()} transaction on ${chain}`}
-				className="inset-panel inset-action flex min-w-0 items-center gap-2.5"
+				title={tx}
+				className="site-transaction-link"
 			>
-				<span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-surface-hover text-[10px] text-ink-secondary tabular-nums">{index + 1}</span>
-				<span className="min-w-0 flex-1">
-					<span className="flex items-center justify-between gap-2 text-[12.5px] text-ink-primary">
+				<span className="site-transaction-step" aria-hidden="true">{index + 1}</span>
+				<span className="site-transaction-content">
+					<span className="site-transaction-heading">
 						<span>{label}</span>
-						<span className="shrink-0 text-[11px] text-ink-secondary">{chain}</span>
+						<span className="site-transaction-chain">{chain}</span>
 					</span>
-					<span className="mt-1 inline-flex items-center gap-1.5 font-mono text-[12px] text-ink-action">
-						{truncTx(tx)} <ExternalLink className="w-3 h-3 shrink-0" />
+					<span className="site-transaction-hash">
+						{truncTx(tx)} <ExternalLink aria-hidden="true" className="w-3 h-3 shrink-0" />
 					</span>
 				</span>
 			</a>
@@ -648,8 +648,8 @@ function CopyableAddress({ address, label }: { address: string; label: string })
 	const copyable = /^0x[a-f\d]{40}$/i.test(address);
 
 	return (
-		<>
-			<span className="min-w-0 flex-1 break-all font-mono">
+		<span className="site-evidence-address">
+			<span className="site-evidence-address-value">
 				{address}
 				<span role="status" className="sr-only">{copied ? "Copied to clipboard" : ""}</span>
 				{error && <span role="alert" className="mt-1 block font-sans text-red-700">{error.message}</span>}
@@ -660,12 +660,12 @@ function CopyableAddress({ address, label }: { address: string; label: string })
 					onClick={() => void copy(address)}
 					aria-label={copied ? `${label} address copied` : `Copy ${label} address`}
 					title={copied ? "Copied" : `Copy ${label} address`}
-					className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-ink-secondary transition-colors hover:bg-surface-hover hover:text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(28,58,41,0.6)]"
+					className="site-data-copy inline-flex items-center justify-center transition-colors hover:text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(28,58,41,0.6)]"
 				>
 					{copied ? <Check aria-hidden="true" className="h-3.5 w-3.5" /> : <Copy aria-hidden="true" className="h-3.5 w-3.5" />}
 				</button>
 			)}
-		</>
+		</span>
 	);
 }
 
@@ -682,33 +682,34 @@ function RenewalBreakdown({ event }: { event: ActivityEvent }) {
 		? (event.amountApplied * YEAR_SECONDS + event.seconds / 2n) / event.seconds
 		: 0n;
 	return (
-		<div className="mx-4 md:mx-5 my-3 rounded-xl bg-white p-4 md:p-5 grid gap-5 md:grid-cols-2">
-			<div className="min-w-0">
-				<div className="text-[10px] uppercase tracking-wider text-ink-label">
-					Amount
+		<div className="site-renewal-breakdown">
+			<section className="site-renewal-payment" aria-label="Payment breakdown">
+				<div className="site-evidence-heading">
+					<h4>Payment breakdown</h4>
+					<span>USDC</span>
 				</div>
 				{/* Exact amounts here, not rounded ones. This is the panel someone opens
 			    to check the arithmetic, and a tier threshold can turn on a
 			    micro-unit — "$27" would be true of both $27.000071 (six years at
 			    43.75% off) and $27.00 (four years eleven months at 31.25%). */}
-				<dl className="mt-2.5 space-y-1.5 text-[13px]">
-					<div className="flex justify-between gap-4">
-						<dt className="text-ink-secondary">Received</dt>
-						<dd className="text-ink-action tabular-nums">
+				<dl className="site-payment-amounts">
+					<div>
+						<dt>Received</dt>
+						<dd>
 							{fmtUsdcExact(event.amountDeposited)}
 						</dd>
 					</div>
 					{event.gasAllowance > 0n && (
-						<div className="flex justify-between gap-4">
-							<dt className="text-ink-secondary">Gas allowance</dt>
-							<dd className="text-ink-secondary tabular-nums">
+						<div>
+							<dt>Gas allowance</dt>
+							<dd>
 								−{fmtUsdcExact(event.gasAllowance)}
 							</dd>
 						</div>
 					)}
-					<div className="flex justify-between gap-4 pt-1.5 border-t border-[rgba(28,58,41,0.08)]">
-						<dt className="text-ink-secondary">Applied to renewal</dt>
-						<dd className="text-ink-primary tabular-nums">
+					<div className="site-payment-applied">
+						<dt>Applied to renewal</dt>
+						<dd>
 							{fmtUsdcExact(event.amountApplied)}
 						</dd>
 					</div>
@@ -716,41 +717,38 @@ function RenewalBreakdown({ event }: { event: ActivityEvent }) {
 					    bought it at, so "$27 · 6 years" looks like bad arithmetic until
 					    you notice the bulk rate is $4.50, not the headline $8. */}
 					{hasMeaningfulDuration && (
-						<div className="flex justify-between gap-4">
-							<dt className="text-ink-secondary">Effective rate</dt>
-							<dd className="text-ink-secondary tabular-nums">
+						<div className="site-payment-rate">
+							<dt>Effective rate</dt>
+							<dd>
 								{fmtUsdc(effectiveRate)}/year
 							</dd>
 						</div>
 					)}
 				</dl>
-				<dl className="mt-4 space-y-1.5 border-t border-[rgba(28,58,41,0.08)] pt-3 text-[12px]">
+				<dl className="site-payment-participants">
 					<div>
-						<dt className="text-ink-secondary">Funded by</dt>
-						<dd className="mt-0.5 flex min-w-0 items-start gap-1.5 text-ink-action">
+						<dt>Funded by</dt>
+						<dd>
 							<CopyableAddress address={event.funder} label="funded by" />
 						</dd>
 					</div>
 					<div>
-						<dt className="text-ink-secondary">Processed by</dt>
-						<dd className="mt-0.5 flex min-w-0 items-start gap-1.5 text-ink-action">
-							{event.executorIsRelayer && <span className="shrink-0">Namepass ·</span>}
+						<dt>Processed by {event.executorIsRelayer && <span className="site-payment-relayer">Namepass</span>}</dt>
+						<dd>
 							<CopyableAddress address={event.executor} label="processed by" />
 						</dd>
 					</div>
 				</dl>
-				</div>
+			</section>
 
-			<div className="min-w-0 md:border-l md:border-[rgba(28,58,41,0.08)] md:pl-5">
-				<div className="text-[10px] uppercase tracking-wider text-ink-label">
-					Transactions
-				</div>
-				<ol className="mt-3 space-y-2">
+			<section className="site-renewal-transactions" aria-label="Transaction trail">
+				<div className="site-evidence-heading"><h4>Transaction trail</h4></div>
+				<ol className="site-transaction-trail">
 					{event.steps.map((s, i) => (
 						<TransactionRow key={s.tx} index={i} label={stepLabel(s, bridged)} chain={s.chain} tx={s.tx} />
 					))}
 				</ol>
-			</div>
+			</section>
 		</div>
 	);
 }
@@ -773,7 +771,7 @@ function UnclaimedFlowCard({ label, flow, renewable, onRetry }: { label: string;
 		}
 	};
 	return (
-		<div className="inset-panel mt-5">
+		<div className="site-flow-notice mt-5">
 			<h4 className="text-[15px] text-ink-primary">Waiting to renew</h4>
 			<p className="mt-1.5 text-[13px] leading-relaxed text-ink-secondary">The USDC left {chain?.name ?? "the origin chain"} and is secured in a Circle message. This name cannot be renewed now. Namepass will retry when renewal is possible.</p>
 			<dl className="mt-3 space-y-1 text-[12px] text-ink-secondary">
@@ -794,7 +792,7 @@ function FailedCctpFlowCard({ flow }: { flow: PublicFlow }) {
 	const chain = chainById(safeInteger(flow.originChainId) ?? -1);
 	const originTxHash = flow.evidence?.originTxHash;
 	return (
-		<div className="mt-5 rounded-2xl bg-red-950/[0.025] p-4">
+		<div className="site-flow-notice site-flow-notice-error mt-5">
 			<h4 className="text-[15px] text-ink-primary">Renewal needs attention</h4>
 			<p className="mt-1.5 text-[13px] leading-relaxed text-ink-secondary">
 				The USDC left {chain?.name ?? "the origin chain"} through Circle, but the Ethereum renewal did not complete. This flow needs repair by Namepass. The funds are not waiting at the deposit address.
@@ -933,24 +931,24 @@ function NameDetail({
 			animate={{ opacity: 1, y: 0 }}
 			transition={{ duration: reducedMotion ? 0 : 0.4, ease: [0.16, 1, 0.3, 1] }}
 		>
-			<div className="flex min-w-0 items-start gap-2.5">
+			<div className="site-name-heading flex min-w-0 items-center gap-3">
 				<BackButton
 					onClick={onBack}
 					label="Back to Explorer"
-					className="relative -top-0.5 md:top-1"
 				/>
 
-				<h3 className="min-w-0 break-words text-[32px] md:text-[44px] font-normal text-ink-primary tracking-tight leading-none">
+				<h3 className="site-name-title min-w-0 break-words text-[32px] md:text-[44px] font-normal text-ink-primary tracking-tight leading-none">
 					{record.name}
 				</h3>
 			</div>
 
-			{/* The two-panel model: what expires vs. what is permanent */}
-			<div className="mt-8 grid md:grid-cols-2 gap-4">
-				<div className="rounded-[1.4rem] bg-white shadow-[0_3px_10px_rgba(28,58,41,0.08)] p-5 flex flex-col">
-					<div className="flex items-center gap-2 text-[11px] uppercase tracking-section text-ink-label">
+			{/* Separate the expiring ENS name from its permanent deposit details. */}
+			<div className="site-name-overview">
+				<Card className="site-name-summary" role="region" aria-label="Expiry and profile">
+					<h4 className="site-detail-section-title">Expiry &amp; profile</h4>
+					<div className="flex items-center gap-2 text-[12px] text-ink-label">
 						<Clock className="w-3.5 h-3.5" />
-						The ENS name · expires
+						Expiry date
 					</div>
 
 					{/* Three states, and the middle two must not look alike: not read
@@ -964,7 +962,7 @@ function NameDetail({
 						</>
 					) : onchain.expiry === null ? (
 						<>
-							<div className="mt-3 text-[26px] md:text-[30px] text-ink-secondary tracking-tight leading-none">
+							<div className="site-name-expiry mt-2 text-ink-secondary">
 								Not registered
 							</div>
 							<div className="mt-2 text-[13px] text-ink-secondary">
@@ -973,7 +971,7 @@ function NameDetail({
 						</>
 					) : (
 						<>
-							<div className="mt-3 text-[26px] md:text-[30px] text-ink-primary tracking-tight leading-none">
+							<div className="site-name-expiry mt-2 text-ink-primary">
 								{fmtDate(expiry)}
 							</div>
 							<div className="mt-2 text-[13px] text-ink-secondary">
@@ -988,7 +986,7 @@ function NameDetail({
 					    All three matter to someone deciding whether to send, and the
 					    amount is the actionable part — see `graceMinimum`. */}
 					{onchain?.graceRemaining != null && (
-						<div className="mt-3 flex items-start gap-2 inset-panel">
+						<div className="site-flow-notice mt-3 flex items-start gap-2">
 							<Clock className="w-3.5 h-3.5 mt-[2px] shrink-0 text-ink-secondary" />
 							<p className="text-[12.5px] text-ink-secondary leading-relaxed">
 								<span className="text-ink-primary">
@@ -1018,7 +1016,7 @@ function NameDetail({
 					    sent here, so it's worth saying before someone sends any
 					    rather than explaining it afterwards next to a stuck balance. */}
 					{onchain && !onchain.renewable && (
-						<div className="mt-3 flex items-start gap-2 inset-panel">
+						<div className="site-flow-notice mt-3 flex items-start gap-2">
 							<Clock className="w-3.5 h-3.5 mt-[2px] shrink-0 text-ink-secondary" />
 							<p className="text-[12.5px] text-ink-secondary leading-relaxed">
 								ENS won't renew this name right now. The address still works —
@@ -1056,7 +1054,8 @@ function NameDetail({
 					{/* ENS records — identity, not payment history */}
 					<div className="mt-5 pt-5 border-t border-[rgba(28,58,41,0.08)] flex-1">
 						<div className="flex items-center justify-between">
-							<span className="text-[10px] uppercase tracking-wider text-ink-label">
+							<span className="inline-flex items-center gap-2 text-[12px] text-ink-label">
+								<UserRound aria-hidden="true" className="w-3.5 h-3.5" />
 								Profile
 							</span>
 							{profile?.contenthash && (
@@ -1131,7 +1130,7 @@ function NameDetail({
 													href={href}
 													target="_blank"
 														rel="noopener noreferrer"
-													className="truncate hover:text-ink-primary hover:font-semibold transition-colors"
+													className="truncate hover:text-ink-primary transition-colors"
 												>
 													{label}
 													</a>
@@ -1144,7 +1143,7 @@ function NameDetail({
 							</div>
 						)}
 					</div>
-				</div>
+				</Card>
 
 				<PassCard
 					name={record.name}
@@ -1153,35 +1152,11 @@ function NameDetail({
 				/>
 			</div>
 
-			{/* Aggregates */}
-			<div className="mt-4 grid grid-cols-3 gap-px bg-[rgba(28,58,41,0.1)] rounded-2xl overflow-hidden">
-				{[
-					/* "y" not " years" — at three-up on a phone the long form wraps and
-					   drops this value below the other two. Matches fmtDuration anyway. */
-						{ k: "Time delivered", value: `${fmtYears(timeDelivered(record))}y` },
-						{
-							k: "Total received",
-							value: fmtUsdc(totalReceived(record)),
-						},
-						{ k: "Renewals", value: renewalCount(record).toString() },
-				].map((s) => (
-					/* Labels wrap to two lines at narrow widths ("Renewals" doesn't), so
-					   the label absorbs the slack and the values stay on one line. */
-					<div key={s.k} className="bg-white px-3 md:px-4 py-4 flex flex-col">
-						<div className="flex-1 text-[10px] uppercase tracking-wider text-ink-label">
-							{s.k}
-						</div>
-							<span className="mt-1.5 block text-[19px] text-ink-primary tracking-tight tabular-nums whitespace-nowrap">
-								{s.value}
-							</span>
-					</div>
-				))}
-			</div>
 
 			{/* Activity table */}
 			<div ref={activityRef} className="mt-10 scroll-mt-6">
 				<div className="flex items-baseline justify-between mb-4">
-					<span className="text-[11px] uppercase tracking-section text-ink-label">
+					<span className="site-eyebrow text-[11px] uppercase tracking-section text-ink-label">
 						Activity
 					</span>
 					{emptyActivity && (
@@ -1191,8 +1166,8 @@ function NameDetail({
 					)}
 				</div>
 
-				<div className="border border-[rgba(28,58,41,0.1)] rounded-2xl overflow-hidden">
-					<div className={`hidden lg:grid ${NAME_ACTIVITY_COLUMNS} gap-4 px-5 py-3 bg-surface-table border-b border-[rgba(28,58,41,0.1)] text-[11px] uppercase tracking-wider text-ink-label`}>
+				<div className="site-explorer-table site-table border border-[rgba(28,58,41,0.1)] rounded-2xl overflow-hidden">
+					<div className={`site-column-headings hidden lg:grid ${NAME_ACTIVITY_COLUMNS} gap-4 px-5 py-3 bg-surface-table border-b border-[rgba(28,58,41,0.1)] text-[11px] uppercase tracking-wider text-ink-label`}>
 						<span>Date</span>
 						<span>Event</span>
 						<span>Chain</span>
@@ -1445,19 +1420,20 @@ export default function Explorer({ selected, onSelect, onActivated, onSupportedT
 	}, [query]);
 
 	return (
-		<section id="explorer" className="bg-surface-canvas px-5 md:px-10 py-14 md:py-20">
+		<section id="explorer" className="site-section bg-surface-canvas px-5 md:px-10 py-14 md:py-20">
 			<div className="max-w-[1100px] mx-auto">
-				<div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+				<div className={`flex flex-col md:flex-row md:justify-between gap-6 ${record ? "md:items-center" : "md:items-end"}`}>
 					<div>
 						<div className="flex items-center gap-2.5">
 							<span className="relative flex w-2 h-2">
 								<span className="absolute inline-flex w-full h-full rounded-full bg-[rgba(28,58,41,0.35)] animate-ping" />
 								<span className="relative inline-flex w-2 h-2 rounded-full bg-[rgba(28,58,41,0.8)]" />
 							</span>
-							<span className="text-[11px] uppercase tracking-section text-ink-label">
+							<span className="site-eyebrow text-[11px] uppercase tracking-section text-ink-label">
 								Explorer · Testnet activity
 							</span>
 						</div>
+						{!record && <>
 						<h2 className="mt-3 text-[36px] md:text-[52px] font-normal text-ink-primary tracking-tight leading-[1.05]">
 							ENS renewal activity.
 						</h2>
@@ -1465,10 +1441,11 @@ export default function Explorer({ selected, onSelect, onActivated, onSupportedT
 							Search a name to inspect its universal deposit wallet, balances, and renewal history.
 							Recent public deposits and flows appear below.
 						</p>
+						</>}
 					</div>
 
 					<div className="w-full md:w-[340px] shrink-0">
-						<div className="flex items-center gap-2 bg-white rounded-[12px] pl-4 pr-1.5 py-1.5 shadow-[0_3px_10px_rgba(28,58,41,0.08)] focus-within:shadow-[0_4px_14px_rgba(28,58,41,0.14)] transition-shadow">
+						<div className="site-search flex items-center gap-2 bg-white rounded-[12px] pl-4 pr-1.5 py-1.5 shadow-[0_3px_10px_rgba(28,58,41,0.08)] focus-within:shadow-[0_4px_14px_rgba(28,58,41,0.14)] transition-shadow">
 							<input
 								aria-label="Search an ENS name"
 								value={query}
@@ -1491,7 +1468,7 @@ export default function Explorer({ selected, onSelect, onActivated, onSupportedT
 						</div>
 
 						{suggestions.length > 0 && (
-							<div className="mt-2 rounded-[0.9rem] overflow-hidden bg-white shadow-[0_3px_10px_rgba(28,58,41,0.08)]">
+							<div className="site-panel mt-2 rounded-[0.9rem] overflow-hidden bg-white shadow-[0_3px_10px_rgba(28,58,41,0.08)]">
 								{suggestions.map((s) => (
 									<button
 										key={s.name}
@@ -1578,7 +1555,7 @@ export default function Explorer({ selected, onSelect, onActivated, onSupportedT
 				</div>
 				{requestError && <p role="alert" className="mt-3 text-[12.5px] text-red-700">{requestError}</p>}
 
-				<div className="mt-8 md:mt-10 bg-white rounded-2xl p-4 md:p-6">
+				<div className="site-explorer-content mt-8">
 					{record ? (
 						<NameDetail
 							record={record}

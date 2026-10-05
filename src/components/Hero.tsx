@@ -1,43 +1,71 @@
-import { motion } from "motion/react";
 import HeroBadge from "./HeroBadge";
-import BottomLeftCard from "./BottomLeftCard";
-import BottomRightCorner from "./BottomRightCorner";
+import { ArrowRight } from "lucide-react";
+import { Button } from "./ui/button";
+import CoverGrid from "./CoverGrid";
+import { useEffect, useState } from "react";
+import { getActivity } from "../lib/publicApi";
+import { HeroCommunity, HeroCompanyCarousel } from "./HeroSocial";
 
-interface Props {
-	onExplore: () => void;
-	onLeaderboard: () => void;
-	/**
-	 * Whether ENS's rates have been read yet. Only the renewal ticker needs
-	 * them — the rest of the hero is copy over video and must never wait on a
-	 * network call, since it's the whole of the first paint.
-	 */
-	priced: boolean;
-}
+/** Shared type, framing and actions introduce the public application. */
+export default function Hero({
+  onExplore,
+  onDocs,
+}: {
+  onExplore: () => void;
+  onDocs: () => void;
+}) {
+  const [names, setNames] = useState<string[]>([]);
 
-/** Home's hero content, rendered inside PageShell's video card, below Navbar. */
-export default function Hero({ onExplore, onLeaderboard, priced }: Props) {
-	return (
-		<>
-			<div className="w-full flex flex-col items-center pt-12 md:pt-16 px-6 text-center max-w-4xl">
-				<HeroBadge />
+  useEffect(() => {
+    let alive = true;
+    getActivity(1, 40)
+      .then((activity) => {
+        if (!alive) return;
+        const renewed = activity.items
+          .filter(
+            (item) =>
+              BigInt(item.renewal.durationSeconds.split(".")[0] || "0") > 0n,
+          )
+          .map((item) => item.name.displayName);
+        setNames([...new Set(renewed)].slice(0, 4));
+      })
+      .catch(() => {
+        // Leave decorative identities empty when public activity is unavailable.
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
 
-				<h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-[70px] font-normal text-ink-primary mb-2 tracking-tight leading-[1.05]">
-					Give a name more time
-				</h1>
+  return (
+    <section className="home-hero">
+      <CoverGrid />
+      <div className="home-hero-content">
+        <div className="home-hero-copy">
+          <HeroBadge />
 
-				<motion.p
-					initial={{ opacity: 0 }}
-					animate={{ opacity: 1 }}
-					transition={{ duration: 0.7, delay: 0.15, ease: "easeOut" }}
-					className="text-sm sm:text-base md:text-lg text-ink-secondary leading-relaxed max-w-xl font-normal"
-				>
-					Send USDC to an ENS name’s deposit address. Watch it turn into renewal time.
-				</motion.p>
-			</div>
+          <h1 className="text-ink-primary">
+            Give a name <span className="text-ink-action">more time</span>
+          </h1>
 
-			{/* The ticker needs ENS rates, while the headline renders immediately. */}
-			{priced && <BottomLeftCard onLeaderboard={onLeaderboard} />}
-			<BottomRightCorner onOpen={onExplore} />
-		</>
-	);
+          <p className="text-ink-secondary">
+            Send USDC to an ENS name’s deposit address. Watch it turn into
+            renewal time.
+          </p>
+          <div className="home-hero-actions">
+            <Button className="primary-action" onClick={onExplore}>
+              Get Started
+              <ArrowRight size={16} aria-hidden="true" />
+            </Button>
+            <Button variant="outline" onClick={onDocs}>
+              Read the docs
+              <ArrowRight size={16} aria-hidden="true" />
+            </Button>
+          </div>
+          <HeroCommunity names={names} />
+        </div>
+        <HeroCompanyCarousel />
+      </div>
+    </section>
+  );
 }
