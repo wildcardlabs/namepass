@@ -135,6 +135,32 @@ The 10-second deadline, 24-method RPC ceiling and two-request limit per warm pro
 bound local work. The process limit is not a distributed public rate limit; public
 exposure needs deployment-level capacity controls.
 
+## Quote adapter release and protected tests — 2026-10-05
+
+PR #123 merged at `9b314c0cc1ebc73d5375b8e60b5ebb4a68d778b2` after required CI
+and preview checks passed. Production deployment `dpl_BXeMfD5roGjEhzn3zNgLDURa32Pp`
+is READY and serves beta plus the existing Goldsky webhook alias. The shared footer
+uses forest charcoal `#20332B`, with white Product/Legal headings at weight 700.
+
+[Hosted evidence](deployments/2026-10-05/public-api-quote-release.json) records populated
+production activity (ten rows), statistics, configuration, docs and OpenAPI responses.
+Production quotes remain disabled: POST returns JSON `503 api_unavailable`, OPTIONS
+returns `204`, and GET returns `405`, with CORS and `no-store` headers.
+
+The protected quote branch preview is `dpl_4fkfhgY1Vo2uCX11dhUoLxcPbbvS`, built
+from PR head `52578f8319474d85965353f893af55859ac033ec`. Only that Preview branch,
+`codex/public-api-quote`, has the four read-only RPC settings and quote enable flag.
+No database, signing key or indexer input was configured for this quote-only test.
+No production environment setting, public domain or deployment-protection rule changed.
+
+Sixteen hosted HTTP checks passed: ten valid quotes across four testnets and the three
+discount boundaries; above-limit and below-minimum amounts; invalid names and chains;
+preflight and method rejection. Amounts preserve the exact USDC accounting identity.
+Earlier independent forward-price checks remain in the read-only quote receipt above.
+These are quote tests, not funding or renewal canaries. Address, history and transaction
+status remain unimplemented. Public quote exposure still needs deployment-level abuse
+and capacity controls; the per-process concurrency limit is not a global rate limit.
+
 ## Historical evidence
 
 The [September 18 manifest](deployments/2026-09-18/manifest.json) and accompanying receipts are
