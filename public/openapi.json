@@ -973,7 +973,8 @@
             "enum": [
               "processing",
               "complete"
-            ]
+            ],
+            "description": "Completion of this verified, finalized renewal event. It does not establish completion of every source-transaction deposit; use the transaction status response for that."
           },
           "renewedAt": {
             "type": "string",

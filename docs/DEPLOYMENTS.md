@@ -229,6 +229,36 @@ returns `processing` for every history item, including existing completed renewa
 an API verification limitation, not a change to stored payment state or the explorer. It must
 not be used as a public completion indicator.
 
+PR #126 merged at `d606d5ef08e811b53db095700861ecc39eaebf53` after final-head CI passed
+(run `37370139995`, attempt 2). Production deployment `dpl_CJf74kbui2oJbc8EEYnsRc8Eq5Ah`
+was verified READY at that commit. Both `beta.namepass.com` and the ingestion hostname pointed
+to it. Eighteen production HTTP checks passed, including populated activity and disabled
+quote/address/history responses. Production API flags remain absent.
+
+## Proposed history event completion — 2026-10-05
+
+The next local revision verifies the ENS event and finalized hub block for each history item.
+It distinguishes completed renewal events from source-transaction completion; the latter still
+requires full deposit-set and processing proof. Details and provider limits are in
+[PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md#renewal-completion-and-source-payment-completion).
+
+Read-only local execution against existing records verified ten renewals across seven names,
+including direct and Arc-funded results. Every item had a matching event-specific ENS expiry
+and a canonical renewal below Sepolia's finalized head. Seven database sessions were independently
+checked read-only. Single-item responses used eight RPC calls; the four-item response used 26.
+Responses took 0.7–1.7 seconds. [Completion evidence](deployments/2026-10-05/public-api-history-completion.json)
+records the exact local implementation checksums. This is not hosted verification or a new
+payment canary. No data, production API flag, indexer or signing configuration changed.
+
+Protected preview `dpl_2PjgbbCmzLvRmYymKYmEXydDZCPG` at implementation commit
+`4b8dc80c6b7e17d74d9dd4c91899ea4faf2b98c5` passed fifteen API checks and four HTML
+route checks. Anonymous history GET/POST both redirected to Vercel SSO. The existing three
+isolated history settings moved by branch scope only; their stored values were preserved.
+Staging counts and all zero balances remained unchanged.
+[Staging evidence](deployments/2026-10-05/public-api-history-completion-staging.json)
+records schema validation with date formats and the exact implementation checksums. The
+isolated branch has no payment events, so hosted positive receipt verification remains unproven.
+
 ## Historical evidence
 
 The [September 18 manifest](deployments/2026-09-18/manifest.json) and accompanying receipts are

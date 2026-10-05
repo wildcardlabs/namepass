@@ -12,6 +12,8 @@ The response contains `name`, `currentExpiry`, `expiryUpdatedAt`, `items` and `n
 
 Each item includes `renewalId`, a flow ID, source chain, renewal transaction, duration added, amount applied, fee, expiry and renewal timestamp. Its status is `complete` after verification and finality, or `processing` while verification is pending. Unavailable nullable fields are `null`. Every returned item must have a proven renewal event identity.
 
+History completion describes that renewal event. It does not establish that every deposit in a source transaction was processed. Use the [transaction status response](/docs/status) for source-payment completion.
+
 `renewalId` uses `{chainId}:{lowercaseTransactionHash}:{logIndex}` for the Namepass gateway's `Renewed` event. It agrees with [status responses](/docs/status). Multiple flow rows can refer to the same event; count its duration once per `renewalId`. `flowId` describes processing provenance and is not a renewal deduplication key. Corrections can remove invalidated events from later responses.
 
 ## Pagination

@@ -1,6 +1,6 @@
 # Private history adapter
 
-Date: 2026-10-05. Implementation for review; production remains disabled.
+Date: 2026-10-05. Event-completion enhancement for review; production remains disabled.
 
 `GET /api/v1/names/{name}/renewals` reads the existing schema. It never activates a name,
 refreshes ENS state, starts a Workflow or writes payment records. No migration, contract
@@ -19,8 +19,8 @@ deployment, ingestion change or verification worker is introduced.
 | `chainId`, `transactionHash` | Successful Sepolia receipt, expected transaction/block and current canonical block hash |
 | `secondsAdded`, `amountApplied`, `renewalFee` | Indexed gateway facts checked against the exact receipt log |
 | `renewedAt` | Indexed block time checked against the receipt block's timestamp |
-| `expiry` | `null` until this adapter verifies event-specific ENS expiry evidence |
-| `status` | Always `processing` in this private stage; canonical receipt checks do not prove finality or the complete source-payment model |
+| `expiry` | Exact ENS `NameRenewed.newExpiry` from the same gateway helper-call segment |
+| `status` | `complete` after gateway/ENS verification and hub finality; `processing` for a valid renewal above the finalized block |
 | `nextCursor` | Versioned, normalized-name-bound timestamp, transaction hash, log index and flow UUID tuple |
 
 The established [expiry writer audit](PUBLIC_API_BASELINE.md#expiry-writer-audit) still applies.
@@ -33,6 +33,38 @@ does not fabricate a flow. Receipt disagreements, missing receipts, unsupported 
 provider failures return retryable 503 instead of incomplete guessed responses. Invalidated
 indexed events disappear on subsequent reads. This is an observation, not an irrevocable
 completion guarantee.
+
+## Renewal completion and source-payment completion
+
+History reports one renewal event. A completed history item does not claim that every deposit
+in its source transaction was processed. The transaction-status endpoint still needs a closed
+deposit set and complete deposit-to-processing mapping. Neither `flows.status = settled` nor
+a later name expiry is used to complete a history item.
+
+The gateway receipt segment must contain one matching `HelperUsed` event for the requested
+label and deterministic wallet. The selected helper must match the reviewed ENS helper
+runtime used by the quote adapter, read at the renewal block. Its registrar, V1 renewer and
+referrer are read at the renewal block. They must match the reviewed ENS deployment in the chain registry.
+An ENS deployment change needs a separate registry review; arbitrary helper metadata cannot
+authorize an event emitter.
+
+The same segment must contain exactly one authenticated `NameRenewed` event. Its label,
+payment token, referrer, duration and amount must match the gateway renewal. Its `newExpiry`
+is event-specific; `names.current_expiry` and indexed expiry projections are not substitutes.
+Missing, ambiguous or inconsistent proof returns retryable 503. This enhancement therefore
+requires historical helper metadata reads as well as receipt/block reads.
+
+For each nonempty page, the adapter reads Sepolia's `finalized` block once. Each successful
+receipt must match its canonical block and indexed timestamp. A renewal at or below the
+finalized height is complete; at the same height its block hash must also equal the anchor.
+The finalized timestamp must not precede a completed renewal. A newer canonical renewal
+keeps `processing` and its verified event-specific expiry. Missing finality evidence or an
+RPC outage returns 503. `Retry-After: 5` is returned only when items remain processing.
+
+This uses the [Ethereum execution API's finalized block semantics](https://ethereum.github.io/execution-apis/api/methods/eth_getBlockByNumber/).
+It trusts the configured RPC's canonical-chain and finality reports; it is not an independent
+consensus verifier. The anchor and receipts are refreshed on each request. No confirmation-count
+heuristic, new contract, verification worker or persistent proof table is required.
 
 ## Pagination and resource bounds
 
@@ -56,9 +88,11 @@ a repeatable-read, read-only transaction. It selects existing columns, fetches a
 candidate rows and releases the database connection before RPC work.
 
 Each process admits two history requests. Each request has at most two verification workers
-and four logical RPC calls in flight. Only chain ID, receipt and block reads are allowed;
-the budget is 201 logical calls for the maximum 100-item page. Receipts and blocks are shared
-within a request. Retries are disabled, individual RPC transport timeout is 10000 ms, and
+and four logical RPC calls in flight. Only chain ID, receipt, block, helper runtime and helper
+metadata reads are used. The worst-case budget is 602 logical calls for the maximum 100-item page: two page
+reads plus six reads per distinct renewal block/helper. Receipts, blocks and helper/block
+metadata are shared within a request. Metadata reads are sequential within each worker.
+Retries are disabled, individual RPC transport timeout is 10000 ms, and
 RPC reads use a 15000 ms deadline measured from request start plus caller cancellation.
 Database work has its own bounds; the RPC deadline does not cancel a database transaction.
 The per-process capacity limit is not distributed abuse protection. Public exposure remains
@@ -84,8 +118,14 @@ Protected hosted verification passed against the isolated `api-staging` branch w
 SELECT-only reader and the existing Sepolia RPC setting. It covered activated empty history,
 unknown names, input errors, methods/CORS and unchanged records. See the deployment and
 limitations in [DEPLOYMENTS.md](DEPLOYMENTS.md#private-history-staging--2026-10-05).
-This branch has no payment events or indexer, so it does not prove hosted receipt verification.
-Finality, event-specific expiry, status/history agreement, shared deposit results, source
-coverage and the complete payment mapping remain separate gates in
-[PUBLIC_API_PLAN.md](PUBLIC_API_PLAN.md). Do not enable public history or return `complete`
-until those gates pass. The public guides' unavailable notice remains.
+That deployed revision still returned `processing`; its evidence records its exact code commit.
+The isolated branch has no payment events or indexer, so it does not prove hosted receipt
+verification. The proposed enhancement has separate read-only local evidence for ten renewals
+across seven names, all finalized with matching event-specific ENS expiry. Those responses took
+0.7–1.7 seconds and used eight RPC calls for one item or 26 for four items. These small samples
+do not establish the 100-item page's latency or public capacity.
+
+Hosted receipt verification, status/history identity agreement, distributed abuse protection
+and public capacity remain release gates. Source coverage, pooled/split deposit mapping and
+staggered index delivery remain transaction-status gates in [PUBLIC_API_PLAN.md](PUBLIC_API_PLAN.md).
+The public guides' unavailable notice remains. No hosted enable setting is part of this change.

@@ -3,6 +3,7 @@ import { Pool } from "pg";
 import {
 	createPublicClient,
 	decodeEventLog,
+	getAddress,
 	http,
 	keccak256,
 	parseAbi,
@@ -11,9 +12,11 @@ import {
 	type TransactionReceipt,
 } from "viem";
 import { HUB_CHAIN, SERVER_CHAINS } from "../src/lib/chains";
+import { assertEnsV2Adapter } from "../src/lib/helperAdapter";
 import { depositAddress, InvalidLabelError, normalizeLabel } from "../src/lib/namepass";
 import { ApiError, json, pathSegment } from "./http";
 import { indexedRenewalSegment } from "./indexed-renewal";
+import { parseEnsRenewalExpiry, receiptHelper } from "./ens-renewal";
 import type { GoldskyEvent } from "./goldsky";
 import { logOperation } from "./log";
 
@@ -27,6 +30,15 @@ const HEADERS = {
 };
 const CLAIM = parseAbi([
 	"event CCTPClaimed(bytes32 indexed nonce, address indexed wallet, uint32 sourceDomain, uint256 burnAmount, uint256 feeExecuted, uint256 mintedAmount)",
+]);
+const HELPER = parseAbi([
+	"event HelperUsed(address indexed helper, bytes32 indexed labelHash, address indexed wallet)",
+	"function ethRegistrar() view returns (address)",
+	"function ethRenewerV1() view returns (address)",
+	"function referrer() view returns (bytes32)",
+]);
+const ENS_RENEWAL = parseAbi([
+	"event NameRenewed(uint256 indexed tokenId, string label, uint64 duration, uint64 newExpiry, address paymentToken, bytes32 indexed referrer, uint256 amount)",
 ]);
 let pool: Pool | undefined;
 let activeRequests = 0;
@@ -74,7 +86,8 @@ function pagination(request: Request, label: string) {
 	if (rawLimit !== null && !/^[1-9][0-9]{0,2}$/.test(rawLimit))
 		throw new ApiError(400, "invalid_pagination", "limit must be an integer from 1 to 100.");
 	const limit = rawLimit === null ? 20 : Number(rawLimit);
-	if (limit > 100) throw new ApiError(400, "invalid_pagination", "limit must be an integer from 1 to 100.");
+	if (limit > 100)
+		throw new ApiError(400, "invalid_pagination", "limit must be an integer from 1 to 100.");
 	const raw = params.get("cursor");
 	let cursor: Cursor | undefined;
 	if (raw !== null) {
@@ -101,7 +114,11 @@ function pagination(request: Request, label: string) {
 				throw new Error();
 			cursor = value as Cursor;
 		} catch {
-			throw new ApiError(400, "invalid_pagination", "cursor must be a valid nextCursor for this name.");
+			throw new ApiError(
+				400,
+				"invalid_pagination",
+				"cursor must be a valid nextCursor for this name.",
+			);
 		}
 	}
 	return { limit, cursor };
@@ -131,7 +148,15 @@ async function candidates(label: string, limit: number, cursor?: Cursor) {
    ${cursor ? "AND (e.block_time,lower(e.tx_hash),e.log_index,f.id)<($3::timestamptz,$4,$5::integer,$6::uuid)" : ""}
    ORDER BY e.block_time DESC,lower(e.tx_hash) DESC,e.log_index DESC,f.id DESC LIMIT ${cursor ? "$7" : "$3"}`,
 				cursor
-					? [name.id, String(HUB_CHAIN.chainId), cursor[2], cursor[3], cursor[4], cursor[5], limit + 1]
+					? [
+							name.id,
+							String(HUB_CHAIN.chainId),
+							cursor[2],
+							cursor[3],
+							cursor[4],
+							cursor[5],
+							limit + 1,
+						]
 					: [name.id, String(HUB_CHAIN.chainId), limit + 1],
 			)
 		).rows;
@@ -162,6 +187,19 @@ function receiptItem(
 		block.timestamp * 1000n !== BigInt(new Date(row.block_time).getTime())
 	)
 		throw new Error("Renewal receipt is not canonical indexed evidence.");
+	let previousLog = -1;
+	for (const log of receipt.logs) {
+		if (
+			log.removed ||
+			log.blockHash?.toLowerCase() !== receipt.blockHash.toLowerCase() ||
+			log.transactionHash?.toLowerCase() !== receipt.transactionHash.toLowerCase() ||
+			log.blockNumber !== receipt.blockNumber ||
+			!Number.isSafeInteger(log.logIndex) ||
+			log.logIndex! <= previousLog
+		)
+			throw new Error("Receipt log membership is inconsistent.");
+		previousLog = log.logIndex!;
+	}
 	const facts = row.facts;
 	if (
 		facts.label !== label ||
@@ -206,18 +244,74 @@ function receiptItem(
 		return value;
 	};
 	return {
-		renewalId: `${HUB_CHAIN.chainId}:${row.tx_hash.toLowerCase()}:${row.log_index}`,
-		flowId: row.flow_id,
-		sourceChainId: source,
-		chainId: String(HUB_CHAIN.chainId),
-		transactionHash: row.tx_hash.toLowerCase(),
-		secondsAdded: integer("duration"),
-		amountApplied: integer("amount_applied"),
-		renewalFee: integer("gas_allowance"),
-		expiry: null,
-		status: "processing" as const,
-		renewedAt: new Date(row.block_time).toISOString(),
+		segment,
+		item: {
+			renewalId: `${HUB_CHAIN.chainId}:${row.tx_hash.toLowerCase()}:${row.log_index}`,
+			flowId: row.flow_id,
+			sourceChainId: source,
+			chainId: String(HUB_CHAIN.chainId),
+			transactionHash: row.tx_hash.toLowerCase(),
+			secondsAdded: integer("duration"),
+			amountApplied: integer("amount_applied"),
+			renewalFee: integer("gas_allowance"),
+			expiry: null as string | null,
+			status: "processing" as "processing" | "complete",
+			renewedAt: new Date(row.block_time).toISOString(),
+		},
 	};
+}
+function selectedHelper(segment: TransactionReceipt["logs"], label: string) {
+	const helper = receiptHelper(segment, label);
+	const selection = segment.flatMap((log) => {
+		if (getAddress(log.address) !== getAddress(HUB_CHAIN.gatewayAddress!)) return [];
+		try {
+			const event = decodeEventLog({ abi: HELPER, ...log, strict: true });
+			return event.args.labelHash === keccak256(stringToHex(label)) ? [event.args] : [];
+		} catch {
+			return [];
+		}
+	});
+	if (
+		selection.length !== 1 ||
+		getAddress(selection[0].wallet) !== getAddress(depositAddress(label))
+	)
+		throw new Error("Helper selection does not belong to this wallet.");
+	return helper;
+}
+function eventExpiry(
+	segment: TransactionReceipt["logs"],
+	label: string,
+	row: Row,
+	metadata: { registrar: string; renewerV1: string; referrer: string },
+) {
+	// ENS emitters are authenticated against the reviewed deployment, not arbitrary helper metadata.
+	if (
+		getAddress(metadata.registrar) !== getAddress(HUB_CHAIN.ensRegistrarAddress!) ||
+		getAddress(metadata.renewerV1) !== getAddress(HUB_CHAIN.ensRenewerV1Address!) ||
+		metadata.referrer.toLowerCase() !== HUB_CHAIN.ensReferrer!.toLowerCase()
+	)
+		throw new Error("Unsupported ENS renewal deployment.");
+	const expiry = parseEnsRenewalExpiry(segment, { label, ...metadata });
+	const events = segment.flatMap((log) => {
+		if (
+			![getAddress(metadata.registrar), getAddress(metadata.renewerV1)].includes(
+				getAddress(log.address),
+			)
+		)
+			return [];
+		try {
+			return [decodeEventLog({ abi: ENS_RENEWAL, ...log, strict: true }).args];
+		} catch {
+			return [];
+		}
+	});
+	if (
+		events.length !== 1 ||
+		events[0].duration !== BigInt(String(row.facts.duration)) ||
+		events[0].amount !== BigInt(String(row.facts.amount_applied))
+	)
+		throw new Error("ENS event does not match the gateway renewal.");
+	return expiry.toISOString();
 }
 async function history(request: Request, signal: AbortSignal) {
 	signal.throwIfAborted();
@@ -234,7 +328,7 @@ async function history(request: Request, signal: AbortSignal) {
 	const { name, rows } = await candidates(label, limit, cursor);
 	signal.throwIfAborted();
 	const page = rows.slice(0, limit);
-	const items: Array<ReturnType<typeof receiptItem>> = [];
+	const items: Array<ReturnType<typeof receiptItem>["item"]> = [];
 	if (page.length) {
 		const url = process.env[HUB_CHAIN.rpcEnv];
 		if (!url) throw new Error("Receipt RPC is unavailable.");
@@ -249,10 +343,16 @@ async function history(request: Request, signal: AbortSignal) {
 					const calls = Array.isArray(payload) ? payload : [payload];
 					operations += calls.length;
 					if (
-						operations > 201 ||
+						operations > 602 ||
 						calls.some(
 							(call) =>
-								!["eth_chainId", "eth_getTransactionReceipt", "eth_getBlockByNumber"].includes(call.method),
+								![
+									"eth_chainId",
+									"eth_getTransactionReceipt",
+									"eth_getBlockByNumber",
+									"eth_call",
+									"eth_getCode",
+								].includes(call.method),
 						)
 					)
 						throw new Error("History RPC budget exceeded.");
@@ -264,6 +364,14 @@ async function history(request: Request, signal: AbortSignal) {
 			}),
 		});
 		if ((await client.getChainId()) !== HUB_CHAIN.chainId) throw new Error("Wrong receipt chain.");
+		const finalized = await client.getBlock({ blockTag: "finalized" });
+		if (
+			finalized.number === null ||
+			finalized.number < 0n ||
+			!finalized.hash ||
+			!/^0x[0-9a-fA-F]{64}$/.test(finalized.hash)
+		)
+			throw new Error("Finality evidence is unavailable.");
 		const receipts = new Map<string, Promise<TransactionReceipt>>();
 		const blocks = new Map<string, ReturnType<typeof client.getBlock>>();
 		const receiptFor = (hash: string) => {
@@ -282,6 +390,41 @@ async function history(request: Request, signal: AbortSignal) {
 			}
 			return result;
 		};
+		const metadata = new Map<
+			string,
+			Promise<{ registrar: string; renewerV1: string; referrer: string }>
+		>();
+		const metadataFor = (helper: `0x${string}`, blockNumber: bigint) => {
+			const key = `${helper.toLowerCase()}:${blockNumber}`;
+			let result = metadata.get(key);
+			if (!result) {
+				result = (async () => {
+					// Sequential reads keep two workers within four RPC calls in flight.
+					assertEnsV2Adapter(await client.getCode({ address: helper, blockNumber }));
+					const registrar = await client.readContract({
+						address: helper,
+						abi: HELPER,
+						functionName: "ethRegistrar",
+						blockNumber,
+					});
+					const renewerV1 = await client.readContract({
+						address: helper,
+						abi: HELPER,
+						functionName: "ethRenewerV1",
+						blockNumber,
+					});
+					const referrer = await client.readContract({
+						address: helper,
+						abi: HELPER,
+						functionName: "referrer",
+						blockNumber,
+					});
+					return { registrar, renewerV1, referrer };
+				})();
+				metadata.set(key, result);
+			}
+			return result;
+		};
 		// At most four logical RPC calls are in flight. All workers finish before request capacity is released.
 		let next = 0;
 		let failed: unknown;
@@ -296,7 +439,22 @@ async function history(request: Request, signal: AbortSignal) {
 							receiptFor(row.tx_hash.toLowerCase()),
 							blockFor(row.block_number),
 						]);
-						items[index] = receiptItem(row, label, receipt, block);
+						const { item, segment } = receiptItem(row, label, receipt, block);
+						const helper = selectedHelper(segment, label);
+						const expiry = eventExpiry(
+							segment,
+							label,
+							row,
+							await metadataFor(helper, receipt.blockNumber),
+						);
+						const isFinal = receipt.blockNumber <= finalized.number!;
+						if (
+							isFinal &&
+							(finalized.timestamp < block.timestamp ||
+								(finalized.number === receipt.blockNumber && finalized.hash !== receipt.blockHash))
+						)
+							throw new Error("Finality evidence disagrees with the renewal block.");
+						items[index] = { ...item, expiry, status: isFinal ? "complete" : "processing" };
 					} catch (error) {
 						failed = error;
 					}
@@ -345,12 +503,24 @@ export const publicHistory = {
 		if (process.env.NAMEPASS_MAINTENANCE === "1")
 			return error(503, "maintenance", "Namepass is being upgraded. Try again later.");
 		if (activeRequests >= 2)
-			return error(429, "history_capacity", "History capacity is busy. Retry after the indicated delay.");
+			return error(
+				429,
+				"history_capacity",
+				"History capacity is busy. Retry after the indicated delay.",
+			);
 		activeRequests++;
 		try {
-			const result = await history(request, AbortSignal.any([request.signal, AbortSignal.timeout(15000)]));
+			const result = await history(
+				request,
+				AbortSignal.any([request.signal, AbortSignal.timeout(15000)]),
+			);
 			logOperation("public_history.response", { requestId, step: "history" });
-			return json(result, 200, { ...HEADERS, ...(result.items.length ? { "retry-after": "5" } : {}) });
+			return json(result, 200, {
+				...HEADERS,
+				...(result.items.some((item) => item.status === "processing")
+					? { "retry-after": "5" }
+					: {}),
+			});
 		} catch (cause) {
 			logOperation("public_history.error", {
 				requestId,
