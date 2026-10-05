@@ -250,6 +250,15 @@ Responses took 0.7–1.7 seconds. [Completion evidence](deployments/2026-10-05/p
 records the exact local implementation checksums. This is not hosted verification or a new
 payment canary. No data, production API flag, indexer or signing configuration changed.
 
+Protected preview `dpl_2PjgbbCmzLvRmYymKYmEXydDZCPG` at implementation commit
+`4b8dc80c6b7e17d74d9dd4c91899ea4faf2b98c5` passed fifteen API checks and four HTML
+route checks. Anonymous history GET/POST both redirected to Vercel SSO. The existing three
+isolated history settings moved by branch scope only; their stored values were preserved.
+Staging counts and all zero balances remained unchanged.
+[Staging evidence](deployments/2026-10-05/public-api-history-completion-staging.json)
+records schema validation with date formats and the exact implementation checksums. The
+isolated branch has no payment events, so hosted positive receipt verification remains unproven.
+
 ## Historical evidence
 
 The [September 18 manifest](deployments/2026-09-18/manifest.json) and accompanying receipts are

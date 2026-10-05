@@ -1,0 +1,176 @@
+{
+  "observedAt": "2026-10-05T21:51:28.779Z",
+  "deployment": {
+    "id": "dpl_2PjgbbCmzLvRmYymKYmEXydDZCPG",
+    "url": "namepass-v2-ju7oocel6-wildcard-labs.vercel.app",
+    "readyState": "READY",
+    "target": "preview",
+    "commit": "4b8dc80c6b7e17d74d9dd4c91899ea4faf2b98c5",
+    "gitBranch": "codex/public-api-completion-proof"
+  },
+  "environmentScope": {
+    "observedAt": "2026-10-05T21:49:09.641Z",
+    "from": "codex/public-api-history",
+    "to": "codex/public-api-completion-proof",
+    "mutation": "gitBranch only; value/type/target omitted and preserved",
+    "variables": [
+      {
+        "key": "NAMEPASS_PUBLIC_HISTORY_ENABLED",
+        "type": "encrypted",
+        "target": [
+          "preview"
+        ],
+        "gitBranch": "codex/public-api-completion-proof"
+      },
+      {
+        "key": "ETHEREUM_SEPOLIA_RPC_URL",
+        "type": "sensitive",
+        "target": [
+          "preview"
+        ],
+        "gitBranch": "codex/public-api-completion-proof"
+      },
+      {
+        "key": "DATABASE_URL",
+        "type": "sensitive",
+        "target": [
+          "preview"
+        ],
+        "gitBranch": "codex/public-api-completion-proof"
+      }
+    ],
+    "productionApiFlags": 0
+  },
+  "database": {
+    "branchId": "br-autumn-cherry-av2es7od",
+    "apiRole": "api_history_reader",
+    "inspectionTransactionReadOnly": true,
+    "countsAfter": {
+      "names": 2,
+      "watches": 2,
+      "snapshots": 8,
+      "scans": 0,
+      "flows": 0,
+      "events": 0,
+      "deposits": 0,
+      "transaction_intents": 0
+    },
+    "allBalancesZero": true
+  },
+  "checks": [
+    {
+      "path": "/api/v1/names/steve.eth/renewals",
+      "method": "GET",
+      "status": 200,
+      "historyItems": 0,
+      "schemaWithFormatsValid": true
+    },
+    {
+      "path": "/api/v1/names/vitalik.eth/renewals?limit=100",
+      "method": "GET",
+      "status": 200,
+      "historyItems": 0,
+      "schemaWithFormatsValid": true
+    },
+    {
+      "path": "/api/v1/names/STEVE.ETH/renewals?limit=1",
+      "method": "GET",
+      "status": 200,
+      "historyItems": 0,
+      "schemaWithFormatsValid": true
+    },
+    {
+      "path": "/api/v1/names/not-activated-history-test.eth/renewals",
+      "method": "GET",
+      "status": 404,
+      "errorCode": "name_not_found"
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals?limit=0",
+      "method": "GET",
+      "status": 400,
+      "errorCode": "invalid_pagination"
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals?limit=1&limit=2",
+      "method": "GET",
+      "status": 400,
+      "errorCode": "invalid_pagination"
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals?extra=1",
+      "method": "GET",
+      "status": 400,
+      "errorCode": "invalid_pagination"
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals?cursor=invalid",
+      "method": "GET",
+      "status": 400,
+      "errorCode": "invalid_pagination"
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals",
+      "method": "OPTIONS",
+      "status": 204
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals",
+      "method": "POST",
+      "status": 405,
+      "errorCode": "method_not_allowed"
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals/unknown",
+      "method": "GET",
+      "status": 404,
+      "errorCode": "api_not_found"
+    },
+    {
+      "path": "/api/v1/status/11155111?transactionHash=0x123",
+      "method": "GET",
+      "status": 404,
+      "errorCode": "api_not_found"
+    },
+    {
+      "path": "/api/v1/address",
+      "method": "POST",
+      "status": 503,
+      "errorCode": "api_unavailable"
+    },
+    {
+      "path": "/api/v1/quote",
+      "method": "POST",
+      "status": 503,
+      "errorCode": "api_unavailable"
+    },
+    {
+      "path": "/api/activity?limit=2",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "htmlRoutes": [
+    "/",
+    "/docs",
+    "/docs/reference",
+    "/terms"
+  ],
+  "anonymousProtection": [
+    {
+      "method": "GET",
+      "status": 302,
+      "protection": "Vercel SSO"
+    },
+    {
+      "method": "POST",
+      "status": 302,
+      "protection": "Vercel SSO"
+    }
+  ],
+  "implementationChecksums": {
+    "server/public-history.ts": "436f0aca345d2ed580eec043353f8c508e428940fb9ebb55a3e9a6415fa6429e",
+    "routes/api/v1/names/[name]/renewals.ts": "1681e4fffc8f1e7a2b35e35b590840af97eafad948c8194f5e7dbce1840cac06"
+  },
+  "limits": "Isolated staging has no payment events or indexer. Hosted empty-history and transport checks passed; positive renewal receipt verification is local read-only evidence, not hosted. No production API flags enabled, signer added, database grants changed or records copied. Public exposure remains gated."
+}
