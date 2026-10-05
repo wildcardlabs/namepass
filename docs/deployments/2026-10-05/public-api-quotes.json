@@ -1,0 +1,249 @@
+{
+  "observedAt": "2026-10-05T15:50:38.601Z",
+  "verification": "Local adapter against deployed contracts; independent ENS forward-price reads at each returned pricing block. No database access, activation, transactions or hosted API enablement.",
+  "samples": [
+    {
+      "chainId": "11155111",
+      "amount": "1000000",
+      "status": 200,
+      "ms": 572,
+      "body": {
+        "name": "steve.eth",
+        "chainId": "11155111",
+        "amount": "1000000",
+        "secondsAdded": "3547790",
+        "amountApplied": "900000",
+        "renewalFee": "100000",
+        "bridgeFee": "0",
+        "roundingRemainder": "0",
+        "pricingBlock": "11849772",
+        "expiresAt": "2026-10-05T15:51:31.396Z",
+        "estimate": true
+      },
+      "independentForwardPrice": "900000"
+    },
+    {
+      "chainId": "84532",
+      "amount": "1000000",
+      "status": 200,
+      "ms": 557,
+      "body": {
+        "name": "steve.eth",
+        "chainId": "84532",
+        "amount": "1000000",
+        "secondsAdded": "3547790",
+        "amountApplied": "900000",
+        "renewalFee": "100000",
+        "bridgeFee": "0",
+        "roundingRemainder": "0",
+        "pricingBlock": "11849772",
+        "expiresAt": "2026-10-05T15:51:32.161Z",
+        "estimate": true
+      },
+      "independentForwardPrice": "900000"
+    },
+    {
+      "chainId": "421614",
+      "amount": "1000000",
+      "status": 200,
+      "ms": 818,
+      "body": {
+        "name": "steve.eth",
+        "chainId": "421614",
+        "amount": "1000000",
+        "secondsAdded": "3547790",
+        "amountApplied": "900000",
+        "renewalFee": "100000",
+        "bridgeFee": "0",
+        "roundingRemainder": "0",
+        "pricingBlock": "11849772",
+        "expiresAt": "2026-10-05T15:51:33.125Z",
+        "estimate": true
+      },
+      "independentForwardPrice": "900000"
+    },
+    {
+      "chainId": "5042002",
+      "amount": "1000000",
+      "status": 200,
+      "ms": 810,
+      "body": {
+        "name": "steve.eth",
+        "chainId": "5042002",
+        "amount": "1000000",
+        "secondsAdded": "3547790",
+        "amountApplied": "900000",
+        "renewalFee": "100000",
+        "bridgeFee": "0",
+        "roundingRemainder": "0",
+        "pricingBlock": "11849772",
+        "expiresAt": "2026-10-05T15:51:34.085Z",
+        "estimate": true
+      },
+      "independentForwardPrice": "900000"
+    },
+    {
+      "chainId": "11155111",
+      "amount": "14100036",
+      "status": 200,
+      "ms": 307,
+      "body": {
+        "name": "steve.eth",
+        "chainId": "11155111",
+        "amount": "14100036",
+        "secondsAdded": "55187997",
+        "amountApplied": "14000036",
+        "renewalFee": "100000",
+        "bridgeFee": "0",
+        "roundingRemainder": "0",
+        "pricingBlock": "11849772",
+        "expiresAt": "2026-10-05T15:51:34.542Z",
+        "estimate": true
+      },
+      "independentForwardPrice": "14000036"
+    },
+    {
+      "chainId": "11155111",
+      "amount": "14100037",
+      "status": 200,
+      "ms": 308,
+      "body": {
+        "name": "steve.eth",
+        "chainId": "11155111",
+        "amount": "14100037",
+        "secondsAdded": "63072001",
+        "amountApplied": "14000037",
+        "renewalFee": "100000",
+        "bridgeFee": "0",
+        "roundingRemainder": "0",
+        "pricingBlock": "11849772",
+        "expiresAt": "2026-10-05T15:51:34.992Z",
+        "estimate": true
+      },
+      "independentForwardPrice": "14000037"
+    },
+    {
+      "chainId": "11155111",
+      "amount": "16600043",
+      "status": 200,
+      "ms": 311,
+      "body": {
+        "name": "steve.eth",
+        "chainId": "11155111",
+        "amount": "16600043",
+        "secondsAdded": "74334856",
+        "amountApplied": "16500043",
+        "renewalFee": "100000",
+        "bridgeFee": "0",
+        "roundingRemainder": "0",
+        "pricingBlock": "11849772",
+        "expiresAt": "2026-10-05T15:51:35.453Z",
+        "estimate": true
+      },
+      "independentForwardPrice": "16500043"
+    },
+    {
+      "chainId": "11155111",
+      "amount": "16600044",
+      "status": 200,
+      "ms": 303,
+      "body": {
+        "name": "steve.eth",
+        "chainId": "11155111",
+        "amount": "16600044",
+        "secondsAdded": "94608004",
+        "amountApplied": "16500044",
+        "renewalFee": "100000",
+        "bridgeFee": "0",
+        "roundingRemainder": "0",
+        "pricingBlock": "11849772",
+        "expiresAt": "2026-10-05T15:51:35.904Z",
+        "estimate": true
+      },
+      "independentForwardPrice": "16500044"
+    },
+    {
+      "chainId": "11155111",
+      "amount": "27100070",
+      "status": 200,
+      "ms": 303,
+      "body": {
+        "name": "steve.eth",
+        "chainId": "11155111",
+        "amount": "27100070",
+        "secondsAdded": "154813086",
+        "amountApplied": "27000070",
+        "renewalFee": "100000",
+        "bridgeFee": "0",
+        "roundingRemainder": "0",
+        "pricingBlock": "11849772",
+        "expiresAt": "2026-10-05T15:51:36.355Z",
+        "estimate": true
+      },
+      "independentForwardPrice": "27000070"
+    },
+    {
+      "chainId": "11155111",
+      "amount": "27100071",
+      "status": 200,
+      "ms": 631,
+      "body": {
+        "name": "steve.eth",
+        "chainId": "11155111",
+        "amount": "27100071",
+        "secondsAdded": "189216002",
+        "amountApplied": "27000071",
+        "renewalFee": "100000",
+        "bridgeFee": "0",
+        "roundingRemainder": "0",
+        "pricingBlock": "11849772",
+        "expiresAt": "2026-10-05T15:51:37.144Z",
+        "estimate": true
+      },
+      "independentForwardPrice": "27000071"
+    },
+    {
+      "chainId": "11155111",
+      "amount": "1000001",
+      "status": 200,
+      "ms": 304,
+      "body": {
+        "name": "steve.eth",
+        "chainId": "11155111",
+        "amount": "1000001",
+        "secondsAdded": "3547794",
+        "amountApplied": "900001",
+        "renewalFee": "100000",
+        "bridgeFee": "0",
+        "roundingRemainder": "0",
+        "pricingBlock": "11849773",
+        "expiresAt": "2026-10-05T15:51:37.601Z",
+        "estimate": true
+      },
+      "independentForwardPrice": "900001"
+    },
+    {
+      "chainId": "5042002",
+      "amount": "10000000000001",
+      "status": 422,
+      "ms": 855,
+      "body": {
+        "error": {
+          "code": "amount_above_quote_limit",
+          "message": "The amount exceeds the single-flow quote limit.",
+          "details": {
+            "maximumAmount": "10000000000000"
+          }
+        },
+        "requestId": "00e90193-c66c-4875-b9dd-5ffc45c968f9"
+      }
+    }
+  ],
+  "sourceBaseCommit": "af9c04b278f6b9f128da498286f647e662b7bbd9",
+  "feePolicy": {
+    "processingAllowance": "100000",
+    "bridgeFee": "0",
+    "route": "Standard",
+    "feeSource": "Namepass automation policy; no Circle fee API queries"
+  }
+}

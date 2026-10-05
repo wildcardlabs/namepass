@@ -98,15 +98,15 @@ response: it has different status/response semantics and no new anonymous API ab
 | `name`, `chainId`, `amount` | Validated normalized request; supported source route and exact unsigned integer amount. |
 | `secondsAdded`, `amountApplied` | Gateway `quote(label, budget)` at the pinned pricing block; checked active helper and renewer dependencies. |
 | `renewalFee` | Gateway `GAS_ALLOWANCE()` at that same block, one flow only. |
-| `bridgeFee` | Route configuration and factory/Circle fee assumptions. Zero is conditional, not a universal fallback. Validate finality mode and supported route limits before exposing it. |
+| `bridgeFee` | Namepass automation’s transfer policy: currently zero for Standard transfers. Validate the supported route configuration and limits. Do not query Circle for pricing; future fee-bearing transfers require an explicit policy and quote update. |
 | `roundingRemainder` | Exact `amount - renewalFee - bridgeFee - amountApplied`; reject unsupported or inconsistent arithmetic. |
 | `pricingBlock` | Sepolia block used for helper discovery and every pricing read; not a source-chain block. |
 | `expiresAt`, `estimate` | Calculation timestamp plus 60 seconds; `estimate: true`. This is an estimate lifetime, not a guaranteed execution price. |
 
 Use a fresh server adapter. `src/lib/oracle.ts` contains browser-specific code and cannot be
-imported wholesale into a server route. Source-chain burn limits and fees need their own
-bounded, validated reads and resource budget. No activation, signing or database write is
-permitted in the quote path. Unsupported helper or pricing dependencies return `503`.
+imported wholesale into a server route. Source-chain burn limits and Standard route configuration
+need bounded, validated reads. The quote uses the automation fee policy, not an external
+fee-pricing service. No activation, signing or database write is permitted in the quote path. Unsupported helper or pricing dependencies return `503`.
 
 ### Transaction status and renewal
 

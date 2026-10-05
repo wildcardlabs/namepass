@@ -69,7 +69,7 @@ export default function Footer({
 
 					<div className="grid grid-cols-2 gap-10 sm:gap-16">
 						<div>
-							<div className="text-[10px] uppercase tracking-wider text-ink-label">
+							<div className="text-[10px] font-bold uppercase tracking-wider text-white">
 								Product
 							</div>
 							<ul className="mt-3 space-y-1">
@@ -87,7 +87,7 @@ export default function Footer({
 						</div>
 
 						<div>
-							<div className="text-[10px] uppercase tracking-wider text-ink-label">
+							<div className="text-[10px] font-bold uppercase tracking-wider text-white">
 								Legal
 							</div>
 							<ul className="mt-3 space-y-1">

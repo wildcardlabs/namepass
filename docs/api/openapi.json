@@ -295,7 +295,7 @@
       "post": {
         "operationId": "post_quote",
         "summary": "Estimate a renewal",
-        "description": "Estimate renewal duration and fees for an ENS name, funding chain and USDC amount. Quotes expire after 60 seconds and assume one processing flow with no existing balance at the deposit address.",
+        "description": "Estimate renewal duration, the protocol allowance and rounding remainder for an ENS name, funding chain and USDC amount. Uses Namepass automation’s current Standard transfer policy with zero bridge fee, without Circle fee queries. Quotes expire after 60 seconds and assume one processing flow with no existing balance at the deposit address.",
         "requestBody": {
           "required": true,
           "content": {
@@ -369,8 +369,28 @@
               }
             }
           },
+          "413": {
+            "description": "Request body exceeds 8192 bytes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Use Content-Type: application/json.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
           "422": {
-            "description": "Name cannot currently renew, amount is below the minimum, or amount exceeds the single-flow quote limit.",
+            "description": "Name cannot currently renew, amount is below the minimum, renewal duration is unsupported, or amount exceeds the source chain single-flow quote limit.",
             "content": {
               "application/json": {
                 "schema": {
@@ -854,7 +874,7 @@
           "bridgeFee": {
             "type": "string",
             "pattern": "^(0|[1-9][0-9]*)$",
-            "description": "Exact integer encoded as a decimal string."
+            "description": "USDC fee amount in six-decimal token units, not a percentage. Namepass automation currently uses Standard transfers with zero bridge fee. Quotes use that policy without querying Circle; future fee-bearing transfers require an explicit quote update."
           },
           "roundingRemainder": {
             "type": "string",
