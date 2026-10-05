@@ -201,12 +201,33 @@ payment canary or proof of watch propagation. Actual indexer coverage/recovery, 
 verification and public abuse controls remain release gates. `subnameVerified` stays false;
 use the full address. No production API is opened by merging the adapter.
 
-## History adapter review — 2026-10-05
+## Private history staging — 2026-10-05
 
-The history stage is under review in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md).
+The private history stage is described in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md).
 Its local adapter passed enforced read-only checks against ten existing renewals across seven
-names, including direct and Arc-funded results. This does not enable a hosted endpoint or
-establish finality; all items remain `processing`. No live data or configuration changed.
+names, including direct and Arc-funded results. This local evidence does not establish
+finality. Those reads did not change live data or configuration.
+
+Protected Preview branch `codex/public-api-history` now uses the existing isolated Neon
+`api-staging` branch through `api_history_reader`. This role can select only `names`,
+`chain_events` and `flows`; it has no table write or database/schema creation privileges.
+Only this preview branch received its database setting, existing Sepolia RPC setting and
+`NAMEPASS_PUBLIC_HISTORY_ENABLED=1`. Production API flags remain absent.
+
+At code commit `d99fd9565fc05464c7919dc25ddda9196e3ed10b`, deployment
+`dpl_8ZPQJ54BAHLJK2sSVDZCWPNhkx3v` passed 15 hosted HTTP checks and four HTML page checks.
+Activated names returned empty history, input errors returned 400, unknown names returned 404,
+and UI activity remained populated through its existing proxy. Anonymous requests still
+redirected to Vercel SSO. Staging retained two names, two watches and eight zero balance
+snapshots; payment tables remained empty. Full CI passed, including the real PostgreSQL
+read-only connection test. [Staging evidence](deployments/2026-10-05/public-api-history-staging.json)
+records the tested deployment and implementation checksums.
+
+This staging branch has no indexed payment events or indexer. Hosted receipt verification,
+finality and the complete payment mapping remain unproven. The private adapter temporarily
+returns `processing` for every history item, including existing completed renewals. This is
+an API verification limitation, not a change to stored payment state or the explorer. It must
+not be used as a public completion indicator.
 
 ## Historical evidence
 

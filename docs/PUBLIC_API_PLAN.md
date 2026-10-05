@@ -1,7 +1,7 @@
 # Public API: fresh implementation plan
 
 Date: 2026-10-05. Status: baseline review merged; quotes and address activation verified on protected previews.
-Production APIs remain disabled. A private read-only history adapter is under review;
+Production APIs remain disabled. A private read-only history adapter has passed protected staging;
 its verification limits are in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md).
 Transaction status is not implemented.
 

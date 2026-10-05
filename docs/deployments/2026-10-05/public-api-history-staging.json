@@ -1,0 +1,397 @@
+{
+  "observedAt": "2026-10-05T20:29:34.575Z",
+  "deployment": {
+    "id": "dpl_8ZPQJ54BAHLJK2sSVDZCWPNhkx3v",
+    "url": "namepass-v2-nku81bsif-wildcard-labs.vercel.app",
+    "readyState": "READY",
+    "target": "preview",
+    "commit": "d99fd9565fc05464c7919dc25ddda9196e3ed10b",
+    "gitBranch": "codex/public-api-history"
+  },
+  "staging": {
+    "observedAt": "2026-10-05T20:23:32.572Z",
+    "branchId": "br-autumn-cherry-av2es7od",
+    "role": "api_history_reader",
+    "readOnlyDefault": true,
+    "tableWrites": false,
+    "ddlPrivileges": false,
+    "selectTables": [
+      "names",
+      "chain_events",
+      "flows"
+    ],
+    "selectedNames": [
+      "steve",
+      "vitalik"
+    ],
+    "counts": {
+      "names": 2,
+      "events": 0,
+      "flows": 0,
+      "deposits": 0,
+      "transaction_intents": 0
+    },
+    "gitBranch": "codex/public-api-history",
+    "variables": [
+      "DATABASE_URL",
+      "ETHEREUM_SEPOLIA_RPC_URL",
+      "NAMEPASS_PUBLIC_HISTORY_ENABLED"
+    ],
+    "signingCredentials": false,
+    "operationalSecrets": false,
+    "protectionChanged": false,
+    "productionChanged": false
+  },
+  "countsAfterReads": {
+    "names": 2,
+    "watches": 2,
+    "snapshots": 8,
+    "scans": 0,
+    "flows": 0,
+    "events": 0,
+    "deposits": 0,
+    "transaction_intents": 0
+  },
+  "allBalancesZero": true,
+  "productionFlags": {
+    "quote": false,
+    "address": false,
+    "history": false
+  },
+  "ci": {
+    "runId": "37368209153",
+    "commit": "d99fd9565fc05464c7919dc25ddda9196e3ed10b",
+    "result": "success",
+    "realPostgreSQLHistoryTest": "passed"
+  },
+  "results": [
+    {
+      "path": "/api/v1/names/steve.eth/renewals",
+      "method": "GET",
+      "input": null,
+      "status": 200,
+      "cliElapsedMs": 2937,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "body": {
+        "name": "steve.eth",
+        "currentExpiry": "2029-09-22T10:16:06.000Z",
+        "expiryUpdatedAt": null,
+        "items": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "path": "/api/v1/names/vitalik.eth/renewals?limit=100",
+      "method": "GET",
+      "input": null,
+      "status": 200,
+      "cliElapsedMs": 4030,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "body": {
+        "name": "vitalik.eth",
+        "currentExpiry": "2069-11-13T15:13:35.000Z",
+        "expiryUpdatedAt": null,
+        "items": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "path": "/api/v1/names/STEVE.ETH/renewals?limit=1",
+      "method": "GET",
+      "input": null,
+      "status": 200,
+      "cliElapsedMs": 2171,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "body": {
+        "name": "steve.eth",
+        "currentExpiry": "2029-09-22T10:16:06.000Z",
+        "expiryUpdatedAt": null,
+        "items": [],
+        "nextCursor": null
+      }
+    },
+    {
+      "path": "/api/v1/names/not-activated-history-test.eth/renewals",
+      "method": "GET",
+      "input": null,
+      "status": 404,
+      "cliElapsedMs": 2296,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "body": {
+        "error": {
+          "code": "name_not_found",
+          "message": "This name has not been activated. Retrieve its deposit address first."
+        },
+        "requestId": "04e68c72-ce94-4723-93be-31e68bbc82ef"
+      }
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals?limit=0",
+      "method": "GET",
+      "input": null,
+      "status": 400,
+      "cliElapsedMs": 2007,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "body": {
+        "error": {
+          "code": "invalid_pagination",
+          "message": "limit must be an integer from 1 to 100."
+        },
+        "requestId": "e003e166-dd25-4d9e-a71d-cd2b935ab8c9"
+      }
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals?limit=1&limit=2",
+      "method": "GET",
+      "input": null,
+      "status": 400,
+      "cliElapsedMs": 2304,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "body": {
+        "error": {
+          "code": "invalid_pagination",
+          "message": "Use one limit and one cursor parameter."
+        },
+        "requestId": "d67285f7-e3f1-4458-885e-809c2cbe5cdd"
+      }
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals?extra=1",
+      "method": "GET",
+      "input": null,
+      "status": 400,
+      "cliElapsedMs": 2007,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "body": {
+        "error": {
+          "code": "invalid_pagination",
+          "message": "Use one limit and one cursor parameter."
+        },
+        "requestId": "649043ce-25b6-4c24-8438-9b4740577304"
+      }
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals?cursor=invalid",
+      "method": "GET",
+      "input": null,
+      "status": 400,
+      "cliElapsedMs": 2192,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "body": {
+        "error": {
+          "code": "invalid_pagination",
+          "message": "cursor must be a valid nextCursor for this name."
+        },
+        "requestId": "82ad1c75-9d82-4576-8c5d-e260397d7b47"
+      }
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals",
+      "method": "OPTIONS",
+      "input": null,
+      "status": 204,
+      "cliElapsedMs": 1947,
+      "headers": {
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "body": null
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals",
+      "method": "POST",
+      "input": null,
+      "status": 405,
+      "cliElapsedMs": 2019,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After",
+        "allow": "GET, OPTIONS"
+      },
+      "body": {
+        "error": {
+          "code": "method_not_allowed",
+          "message": "Use GET."
+        },
+        "requestId": "020f8c83-e8a8-442b-b12f-84d002bef728"
+      }
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals/unknown",
+      "method": "GET",
+      "input": null,
+      "status": 404,
+      "cliElapsedMs": 1977,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*"
+      },
+      "body": {
+        "error": {
+          "code": "api_not_found",
+          "message": "This API endpoint is not available."
+        }
+      }
+    },
+    {
+      "path": "/api/v1/status/11155111?transactionHash=0x123",
+      "method": "GET",
+      "input": null,
+      "status": 404,
+      "cliElapsedMs": 1944,
+      "headers": {
+        "content-type": "application/json",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*"
+      },
+      "body": {
+        "error": {
+          "code": "api_not_found",
+          "message": "This API endpoint is not available."
+        }
+      }
+    },
+    {
+      "path": "/api/v1/address",
+      "method": "POST",
+      "input": {
+        "name": "steve.eth"
+      },
+      "status": 503,
+      "cliElapsedMs": 2462,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-expose-headers": "Retry-After",
+        "retry-after": "5"
+      },
+      "body": {
+        "error": {
+          "code": "api_unavailable",
+          "message": "The address API is not enabled."
+        },
+        "requestId": "ed34bb69-1b3b-4bef-b009-8efc82418d1a"
+      }
+    },
+    {
+      "path": "/api/v1/quote",
+      "method": "POST",
+      "input": {
+        "name": "steve.eth",
+        "chainId": "11155111",
+        "amount": "1000000"
+      },
+      "status": 503,
+      "cliElapsedMs": 2086,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-expose-headers": "Retry-After",
+        "retry-after": "5"
+      },
+      "body": {
+        "error": {
+          "code": "api_unavailable",
+          "message": "The quote API is not enabled."
+        },
+        "requestId": "9855bb62-d5ac-4ab9-b987-f9dfe378e68d"
+      }
+    },
+    {
+      "path": "/api/activity?limit=2",
+      "method": "GET",
+      "input": null,
+      "status": 200,
+      "cliElapsedMs": 2088,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "items": 2
+      }
+    }
+  ],
+  "anonymous": [
+    {
+      "method": "GET",
+      "status": 302,
+      "protection": "Vercel SSO"
+    },
+    {
+      "method": "POST",
+      "status": 302,
+      "protection": "Vercel SSO"
+    }
+  ],
+  "uiPaths": [
+    "/",
+    "/docs",
+    "/docs/reference",
+    "/terms"
+  ],
+  "uiHttpStatus": 200,
+  "limits": "Hosted staging has activated names but no payment events or indexer. These checks do not prove hosted receipt verification, finality or payment completion. Existing receipt-backed reads were checked locally in public-api-history-reads.json.",
+  "implementationChecksums": {
+    "server/public-history.ts": "9455284435f73ec019cff5fffa13c092393e5b23d093e3caf121314dcac14c42",
+    "routes/api/v1/names/[name]/renewals.ts": "1681e4fffc8f1e7a2b35e35b590840af97eafad948c8194f5e7dbce1840cac06"
+  }
+}

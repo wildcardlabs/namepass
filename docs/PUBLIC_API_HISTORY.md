@@ -80,7 +80,11 @@ database session was verified read-only. No hosted flag, live record, ingestion 
 or signing credential changed. [Read evidence](deployments/2026-10-05/public-api-history-reads.json)
 includes the implementation file checksums; this is not a deployed endpoint or payment canary.
 
-Protected hosted verification still needs an explicitly scoped staging reader and RPC setting.
+Protected hosted verification passed against the isolated `api-staging` branch with a
+SELECT-only reader and the existing Sepolia RPC setting. It covered activated empty history,
+unknown names, input errors, methods/CORS and unchanged records. See the deployment and
+limitations in [DEPLOYMENTS.md](DEPLOYMENTS.md#private-history-staging--2026-10-05).
+This branch has no payment events or indexer, so it does not prove hosted receipt verification.
 Finality, event-specific expiry, status/history agreement, shared deposit results, source
 coverage and the complete payment mapping remain separate gates in
 [PUBLIC_API_PLAN.md](PUBLIC_API_PLAN.md). Do not enable public history or return `complete`
