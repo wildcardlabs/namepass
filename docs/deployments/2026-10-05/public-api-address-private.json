@@ -1,0 +1,77 @@
+{
+  "observedAt": "2026-10-05T16:54:14.748Z",
+  "deployment": "dpl_2yRf4eoAuQ6A9sKpi7j94cnCHEPx",
+  "headCommit": "90f9ca2484080f982cb6206b38035eb075738aab",
+  "url": "https://namepass-v2-nzenj083w-wildcard-labs.vercel.app",
+  "verification": "Protected preview disabled-route HTTP checks. No address enable flag, database, signing, activation or transactions.",
+  "results": [
+    {
+      "method": "POST",
+      "input": {
+        "name": "steve.eth"
+      },
+      "status": 503,
+      "ms": 2798,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-expose-headers": "Retry-After",
+        "cache-control": "no-store",
+        "retry-after": "5"
+      },
+      "body": {
+        "error": {
+          "code": "api_unavailable",
+          "message": "The address API is not enabled."
+        },
+        "requestId": "33488e9d-aed1-452c-a1bb-4c8cb4f12a86"
+      }
+    },
+    {
+      "method": "OPTIONS",
+      "input": null,
+      "status": 204,
+      "ms": 2034,
+      "headers": {
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-expose-headers": "Retry-After",
+        "cache-control": "no-store"
+      },
+      "body": null
+    },
+    {
+      "method": "GET",
+      "input": null,
+      "status": 405,
+      "ms": 2178,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-expose-headers": "Retry-After",
+        "cache-control": "no-store"
+      },
+      "body": {
+        "error": {
+          "code": "method_not_allowed",
+          "message": "Use POST."
+        },
+        "requestId": "016087fc-630f-4b65-bcdc-84b5e0f5416f"
+      }
+    }
+  ],
+  "ci": {
+    "runId": "37344004543",
+    "headCommit": "90f9ca2484080f982cb6206b38035eb075738aab",
+    "url": "https://github.com/wildcardlabs/namepass/actions/runs/37344004543",
+    "conclusion": "success",
+    "serverTests": {
+      "pass": 166,
+      "fail": 0,
+      "skipped": 0
+    },
+    "postgresqlActivationConcurrency": "passed with a disposable PostgreSQL 18 database; no database mocking"
+  }
+}

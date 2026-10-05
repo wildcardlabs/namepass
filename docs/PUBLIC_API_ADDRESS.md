@@ -49,6 +49,12 @@ its own disposable local database from migrations 0000–0008. It overlaps two n
 requests, checks one name/watch registration and four balance snapshots, and verifies that
 unavailable balance reads retain four pending scans. CI supplies PostgreSQL; local runs without
 `TEST_DATABASE_URL` explicitly skip that integration case. No mocked database proves concurrency.
+At code head `90f9ca2484080f982cb6206b38035eb075738aab`, CI run `37344004543` passed,
+including 166 server tests with none skipped. The PostgreSQL activation test passed. Protected
+preview `dpl_2yRf4eoAuQ6A9sKpi7j94cnCHEPx` returned disabled JSON for POST, 204 for
+OPTIONS and 405 for GET, all with correct CORS/no-store headers. The bounded receipt is in
+`deployments/2026-10-05/public-api-address-private.json`. This does not prove hosted activation
+or watch propagation; no preview database or address enable flag was configured.
 
 Before opening public activation:
 
