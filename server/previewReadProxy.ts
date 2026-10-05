@@ -32,9 +32,9 @@ export default async function previewReadProxy(event: H3Event): Promise<Response
 	if (process.env.VERCEL_ENV !== "preview") return;
 	const { req, url } = event;
 	if (!url.pathname.startsWith("/api/")) return;
-	// This read-only route must execute this deployment's adapter, never beta's UI backend.
-	// Its independent availability switch is off by default.
-	if (url.pathname === "/api/v1/quote") return;
+	// These routes use their own deployment and independent switches, off by default.
+	// Address activation requires an isolated preview database; never proxy it to beta.
+	if (["/api/v1/quote", "/api/v1/address"].includes(url.pathname)) return;
 	if (req.method !== "GET") {
 		return unavailable(405, "preview_read_only", "This preview supports public reads only.");
 	}

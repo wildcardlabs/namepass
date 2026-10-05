@@ -73,11 +73,11 @@ test("production and development requests retain their local handlers", async (t
 	assert.equal(fetchMock.mock.callCount(), 0);
 });
 
-test("quote requests execute the preview's own route without forwarding to beta", async (t) => {
+test("public adapter requests execute the preview's own route without forwarding to beta", async (t) => {
 	environment(t, "preview");
 	const fetchMock = t.mock.method(globalThis, "fetch", async () => { throw new Error("must not proxy"); });
-	for (const method of ["POST", "OPTIONS", "GET"]) {
-		const response = await app().request(new Request("https://preview.test/api/v1/quote", { method }));
+	for (const path of ["quote", "address"]) for (const method of ["POST", "OPTIONS", "GET"]) {
+		const response = await app().request(new Request(`https://preview.test/api/v1/${path}`, { method }));
 		assert.equal(response.status, 201);
 	}
 	assert.equal(fetchMock.mock.callCount(), 0);

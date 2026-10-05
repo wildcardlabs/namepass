@@ -1,7 +1,7 @@
 # Public API: fresh implementation plan
 
-Date: 2026-10-05. Status: baseline review merged; quotes verified on a protected preview.
-Production quotes remain disabled. Address, history and status are not implemented.
+Date: 2026-10-05. Status: baseline review merged; quotes and address activation verified on protected previews.
+Production APIs remain disabled. History and status are not implemented.
 
 ## Starting point
 

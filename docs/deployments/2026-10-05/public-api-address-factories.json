@@ -1,0 +1,102 @@
+{
+  "observedAt": "2026-10-05T16:49:23.606Z",
+  "verification": "Read-only predictWallet checks on all four deployed factories against local address derivation. No activation, database access, signing or transactions.",
+  "samples": [
+    {
+      "chainId": "84532",
+      "label": "steve",
+      "factory": "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150",
+      "blockNumber": "47725337",
+      "blockHash": "0x6837750e0ac1178b837d8aa195d091f745363f94dac276eb089767895ac8d5e4",
+      "predictedAddress": "0x5B7516768eD0b04E212041265BB1f11af71841d7"
+    },
+    {
+      "chainId": "84532",
+      "label": "vitalik",
+      "factory": "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150",
+      "blockNumber": "47725337",
+      "blockHash": "0x6837750e0ac1178b837d8aa195d091f745363f94dac276eb089767895ac8d5e4",
+      "predictedAddress": "0xa61656CA2D2952a46a9d4DA0AAE01d8D7fe988E0"
+    },
+    {
+      "chainId": "84532",
+      "label": "alice",
+      "factory": "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150",
+      "blockNumber": "47725337",
+      "blockHash": "0x6837750e0ac1178b837d8aa195d091f745363f94dac276eb089767895ac8d5e4",
+      "predictedAddress": "0x405D9d8B063feC72137aBDf8158Be9C723ed7817"
+    },
+    {
+      "chainId": "421614",
+      "label": "steve",
+      "factory": "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150",
+      "blockNumber": "316081610",
+      "blockHash": "0xf6f20e153cae2e52b55117b56a52835d69633bc2ad4afdaff02f31a639ccac71",
+      "predictedAddress": "0x5B7516768eD0b04E212041265BB1f11af71841d7"
+    },
+    {
+      "chainId": "421614",
+      "label": "vitalik",
+      "factory": "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150",
+      "blockNumber": "316081610",
+      "blockHash": "0xf6f20e153cae2e52b55117b56a52835d69633bc2ad4afdaff02f31a639ccac71",
+      "predictedAddress": "0xa61656CA2D2952a46a9d4DA0AAE01d8D7fe988E0"
+    },
+    {
+      "chainId": "421614",
+      "label": "alice",
+      "factory": "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150",
+      "blockNumber": "316081610",
+      "blockHash": "0xf6f20e153cae2e52b55117b56a52835d69633bc2ad4afdaff02f31a639ccac71",
+      "predictedAddress": "0x405D9d8B063feC72137aBDf8158Be9C723ed7817"
+    },
+    {
+      "chainId": "11155111",
+      "label": "steve",
+      "factory": "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150",
+      "blockNumber": "11850059",
+      "blockHash": "0x4fd3b2a2ec949b44dfaba40fbba01d5f3556ab66377c90aa511e23ebc60d3bf8",
+      "predictedAddress": "0x5B7516768eD0b04E212041265BB1f11af71841d7"
+    },
+    {
+      "chainId": "11155111",
+      "label": "vitalik",
+      "factory": "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150",
+      "blockNumber": "11850059",
+      "blockHash": "0x4fd3b2a2ec949b44dfaba40fbba01d5f3556ab66377c90aa511e23ebc60d3bf8",
+      "predictedAddress": "0xa61656CA2D2952a46a9d4DA0AAE01d8D7fe988E0"
+    },
+    {
+      "chainId": "11155111",
+      "label": "alice",
+      "factory": "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150",
+      "blockNumber": "11850059",
+      "blockHash": "0x4fd3b2a2ec949b44dfaba40fbba01d5f3556ab66377c90aa511e23ebc60d3bf8",
+      "predictedAddress": "0x405D9d8B063feC72137aBDf8158Be9C723ed7817"
+    },
+    {
+      "chainId": "5042002",
+      "label": "steve",
+      "factory": "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150",
+      "blockNumber": "65655644",
+      "blockHash": "0x3a0e2878251443b8aa690c3aadc633c26d3496b96b6cff4eb6a58e9d062a56e8",
+      "predictedAddress": "0x5B7516768eD0b04E212041265BB1f11af71841d7"
+    },
+    {
+      "chainId": "5042002",
+      "label": "vitalik",
+      "factory": "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150",
+      "blockNumber": "65655644",
+      "blockHash": "0x3a0e2878251443b8aa690c3aadc633c26d3496b96b6cff4eb6a58e9d062a56e8",
+      "predictedAddress": "0xa61656CA2D2952a46a9d4DA0AAE01d8D7fe988E0"
+    },
+    {
+      "chainId": "5042002",
+      "label": "alice",
+      "factory": "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150",
+      "blockNumber": "65655644",
+      "blockHash": "0x3a0e2878251443b8aa690c3aadc633c26d3496b96b6cff4eb6a58e9d062a56e8",
+      "predictedAddress": "0x405D9d8B063feC72137aBDf8158Be9C723ed7817"
+    }
+  ]
+}

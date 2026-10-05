@@ -18,6 +18,8 @@ curl -X POST 'https://beta.namepass.com/api/v1/address' \
 - `subnameVerified`: whether the subname resolves to the deposit address on this deployment.
 - `chains`: supported chain IDs, USDC token addresses and minimum funding amounts.
 
+`subnameVerified: false` means resolution is unverified. Use the full `depositAddress` in that case.
+
 The request activates deposit monitoring. Repeated requests for the same name return the same address. Use the returned chain configuration for funding.
 
 ## Send the payment

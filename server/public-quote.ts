@@ -5,6 +5,7 @@ import { normalizeLabel, InvalidLabelError } from "../src/lib/namepass";
 import { minimumTriggerAmount } from "./config";
 import { ApiError, json, requiredString } from "./http";
 import { logOperation } from "./log";
+import { readPublicObject } from "./public-json";
 
 const ABI = parseAbi([
 	"function currentHelper() view returns (address)", "function gateway() view returns (address)",
@@ -33,38 +34,8 @@ function same(actual: string, expected: string) {
 	if (actual.toLowerCase() !== expected.toLowerCase()) unavailable();
 }
 
-async function bodyObject(request: Request, signal: AbortSignal): Promise<Record<string, unknown>> {
-	if (Number(request.headers.get("content-length")) > 8192) throw new ApiError(413, "body_too_large", "The request body is too large.");
-	const reader = request.body?.getReader();
-	if (!reader) throw new ApiError(400, "invalid_json", "A JSON object is required.");
-	const chunks: Uint8Array[] = [];
-	let size = 0;
-	const cancel = () => { void reader.cancel().catch(() => {}); };
-	signal.addEventListener("abort", cancel, { once: true });
-	try {
-		for (;;) {
-			signal.throwIfAborted();
-			const chunk = await reader.read();
-			signal.throwIfAborted();
-			if (chunk.done) break;
-			size += chunk.value.length;
-			if (size > 8192) throw new ApiError(413, "body_too_large", "The request body is too large.");
-			chunks.push(chunk.value);
-		}
-	} finally { signal.removeEventListener("abort", cancel); void reader.cancel().catch(() => {}); }
-	const bytes = new Uint8Array(size);
-	let offset = 0;
-	for (const chunk of chunks) { bytes.set(chunk, offset); offset += chunk.length; }
-	let value: unknown;
-	try { value = JSON.parse(new TextDecoder("utf-8", { fatal: true }).decode(bytes)); }
-	catch { throw new ApiError(400, "invalid_json", "A valid JSON object is required."); }
-	if (!value || typeof value !== "object" || Array.isArray(value)) throw new ApiError(400, "invalid_request", "A JSON object is required.");
-	if (Object.keys(value).some(key => !["name", "chainId", "amount"].includes(key))) throw new ApiError(400, "invalid_request", "The request contains unknown fields.");
-	return value as Record<string, unknown>;
-}
-
 async function quote(request: Request, signal: AbortSignal) {
-	const input = await bodyObject(request, signal);
+	const input = await readPublicObject(request, ["name", "chainId", "amount"], signal);
 	let label: string;
 	try { label = normalizeLabel(requiredString(input, "name", 255)); }
 	catch (error) {
