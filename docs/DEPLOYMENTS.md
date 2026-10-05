@@ -112,6 +112,29 @@ The [baseline report](PUBLIC_API_BASELINE.md) and
 pipeline, deployed contract reads and historical receipt matches. No new contract deployment,
 hosted data mutation, API flag or wallet transaction was performed during this discovery.
 
+## Quote adapter verification — 2026-10-05
+
+The fresh `POST /api/v1/quote` adapter uses gateway `GAS_ALLOWANCE()` and `quote()`
+reads at one Sepolia block. It uses Namepass automation's Standard transfer policy,
+with `bridgeFee: "0"`. It does not query Circle for fees, estimate transaction gas,
+activate names, access the database or submit transactions. Future fee-bearing
+transfers require a separate policy and quote update.
+
+[Read-only verification](deployments/2026-10-05/public-api-quotes.json) ran the local
+adapter against deployed contracts on all four supported testnets. Eleven successful
+quotes matched independent ENS forward prices at the returned blocks, including
+amounts just below and above the 2-, 3- and 6-year discount boundaries. A cross-chain
+amount above the live per-message burn limit returned `422` with `maximumAmount`.
+This verifies contract reads, not a hosted API release or a new payment canary.
+
+The route is off unless `NAMEPASS_PUBLIC_QUOTE_ENABLED=1`. Its preview route executes
+its own adapter instead of proxying beta; other preview write restrictions stay in
+place. No hosted flag, RPC setting, migration or production deployment changed during
+this verification. Protected hosted verification is still required before release.
+The 10-second deadline, 24-method RPC ceiling and two-request limit per warm process
+bound local work. The process limit is not a distributed public rate limit; public
+exposure needs deployment-level capacity controls.
+
 ## Historical evidence
 
 The [September 18 manifest](deployments/2026-09-18/manifest.json) and accompanying receipts are

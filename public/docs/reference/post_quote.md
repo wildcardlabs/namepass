@@ -2,7 +2,7 @@
 
 `POST /api/v1/quote`
 
-Estimate renewal duration and fees for an ENS name, funding chain and USDC amount. Quotes expire after 60 seconds and assume one processing flow with no existing balance at the deposit address.
+Estimate renewal duration, the protocol allowance and rounding remainder for an ENS name, funding chain and USDC amount. Uses Namepass automation’s current Standard transfer policy with zero bridge fee, without Circle fee queries. Quotes expire after 60 seconds and assume one processing flow with no existing balance at the deposit address.
 
 ## Request body
 
@@ -26,7 +26,9 @@ Estimate renewal duration and fees for an ENS name, funding chain and USDC amoun
 | --- | --- |
 | `200` | Estimated renewal time and fee breakdown. |
 | `400` | Invalid name, chain ID, transaction hash or request. |
-| `422` | Name cannot currently renew, amount is below the minimum, or amount exceeds the single-flow quote limit. |
+| `413` | Request body exceeds 8192 bytes. |
+| `415` | Use Content-Type: application/json. |
+| `422` | Name cannot currently renew, amount is below the minimum, renewal duration is unsupported, or amount exceeds the source chain single-flow quote limit. |
 | `429` | Request rate limit reached. Wait for Retry-After. |
 | `500` | Server error. |
 | `503` | Temporarily unavailable. Retry after the indicated delay. |
@@ -41,7 +43,7 @@ Estimate renewal duration and fees for an ENS name, funding chain and USDC amoun
 | `secondsAdded` | string | Yes | Exact integer encoded as a decimal string. |
 | `amountApplied` | string | Yes | Exact integer encoded as a decimal string. |
 | `renewalFee` | string | Yes | Exact integer encoded as a decimal string. |
-| `bridgeFee` | string | Yes | Exact integer encoded as a decimal string. |
+| `bridgeFee` | string | Yes | USDC fee amount in six-decimal token units, not a percentage. Namepass automation currently uses Standard transfers with zero bridge fee. Quotes use that policy without querying Circle; future fee-bearing transfers require an explicit quote update. |
 | `roundingRemainder` | string | Yes | Exact integer encoded as a decimal string. |
 | `pricingBlock` | string | Yes | Exact integer encoded as a decimal string. |
 | `expiresAt` | string | Yes | Format: date-time. |

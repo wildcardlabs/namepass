@@ -139,7 +139,9 @@ Until this model is proven, transaction status and complete history are not rele
    expiry freshness. Any other discrepancy also becomes an explicit documentation decision.
 2. **Quote endpoint.** Implement fresh input validation and contract reads. Derive the active
    helper and allowance from the deployed contracts at a consistent block. Validate source route
-   limits and bridge-fee assumptions. Check fee/duration arithmetic against independent contract
+   limits and the automation’s current Standard transfer policy (`bridgeFee: "0"`). No Circle fee
+   lookup or future fee-pricing implementation is part of this stage. Fee-bearing transfers need
+   a later policy and quote update. Check fee/duration arithmetic against independent contract
    examples, including discount boundaries, rounding and the maximum supported amount. Return
    unavailable pricing instead of a fallback rate. Deploy privately and verify JSON responses.
 3. **Address endpoint.** Adapt existing normalization, address derivation and activation. Test
