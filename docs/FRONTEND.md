@@ -36,6 +36,20 @@ completed totals; a deposit is not a renewal. Sender and executor are distinct e
 The browser renders server flow identity without merging rows by name, amount or transaction hash.
 After a source-chain burn, an unclaimed payment is not a spendable source-wallet balance.
 
+## Read-only branch previews
+
+Vercel preview deployments use `server/previewReadProxy.ts` as Nitro API middleware.
+When `VERCEL_ENV=preview`, anonymous public GET requests for activity, names and their
+activity, flows, leaderboard, stats and public configuration read from `https://beta.namepass.com`.
+The path and query are preserved. Browser cookies and authorization are not forwarded.
+Responses are not cached and upstream error statuses remain errors. Failed upstream reads
+return `502` rather than empty activity. These previews need no database or relayer credentials.
+
+Preview API writes return `405`. Auth, monitoring, cron, webhooks, CCIP and integration APIs
+are unavailable through this proxy. Name activation and manual renewal triggers are unavailable;
+existing tracked names and their renewal data remain readable. Production and local development
+retain their normal handlers. The localhost Vite-only read proxy is a separate preview setup.
+
 ## Interface conventions
 
 `/docs` is a standalone, lazy documentation application with its own header and responsive navigation

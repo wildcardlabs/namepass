@@ -18,6 +18,13 @@ evidence are in [DEPLOYMENTS.md](DEPLOYMENTS.md).
 5. Fund the dedicated relayer with native gas on each supported chain. Use the authenticated
    monitoring page to inspect stored state and request gas checks.
 
+UI-only Vercel previews use the read-only public API proxy described in
+[FRONTEND.md](FRONTEND.md#read-only-branch-previews). They read existing testnet data
+from `beta.namepass.com` and do not need database, relayer or operational credentials.
+`VERCEL_ENV=preview` enables the proxy; production and local handlers are unchanged.
+Keep operational secrets out of preview deployments. Writes and operational API paths
+are blocked in these previews.
+
 Changing the factory changes all derived deposit addresses. Treat that as a coordinated release
 of contracts, chain configuration, indexing and application data. Stop old writers and resolve
 pending transaction intents before a deliberately authorized reset. Do not truncate a running
