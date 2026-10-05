@@ -1,0 +1,647 @@
+{
+  "observedAt": "2026-10-05T19:15:31.833Z",
+  "schema": {
+    "observedAt": "2026-10-05T19:09:40.709Z",
+    "project": "nameless-paper-91018372",
+    "branchId": "br-autumn-cherry-av2es7od",
+    "name": "api-staging",
+    "initSource": "parent-schema",
+    "endpointId": "ep-nameless-lab-avfifjeh",
+    "host": "ep-nameless-lab-avfifjeh.c-11.us-east-1.aws.neon.tech",
+    "createdAt": "2026-10-05T19:07:39Z",
+    "computeMin": 0.25,
+    "computeMax": 0.25,
+    "role": "api_staging",
+    "schemaColumnCount": 134,
+    "schemaMatchesMigrations": "0000\u20130008",
+    "initialCounts": [
+      {
+        "table_schema": "drizzle",
+        "table_name": "__drizzle_migrations",
+        "count": "0"
+      },
+      {
+        "table_schema": "goldsky",
+        "table_name": "watched_addresses",
+        "count": "0"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "balance_scan_requests",
+        "count": "0"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "balance_snapshots",
+        "count": "0"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "chain_events",
+        "count": "0"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "deposits",
+        "count": "0"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "flow_transitions",
+        "count": "0"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "flows",
+        "count": "0"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "names",
+        "count": "0"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "relayer_nonces",
+        "count": "0"
+      },
+      {
+        "table_schema": "public",
+        "table_name": "transaction_intents",
+        "count": "0"
+      }
+    ],
+    "signingCredentials": false,
+    "indexerAttached": false,
+    "credentialStoredInReceipt": false
+  },
+  "configuration": {
+    "observedAt": "2026-10-05T19:11:07.620Z",
+    "branchId": "br-autumn-cherry-av2es7od",
+    "gitBranch": "codex/public-api-address",
+    "environment": "preview",
+    "variables": [
+      "DATABASE_URL",
+      "ETHEREUM_SEPOLIA_RPC_URL",
+      "BASE_SEPOLIA_RPC_URL",
+      "ARBITRUM_SEPOLIA_RPC_URL",
+      "ARC_TESTNET_RPC_URL",
+      "NAMEPASS_PUBLIC_ADDRESS_ENABLED"
+    ],
+    "signingCredentials": false,
+    "protectionChanged": false,
+    "productionChanged": false,
+    "databaseTimeoutsMs": {
+      "statement": 5000,
+      "lock": 1500,
+      "idleTransaction": 10000
+    }
+  },
+  "preflight": {
+    "observedAt": "2026-10-05T19:11:58.293Z",
+    "readOnly": true,
+    "samples": [
+      {
+        "label": "steve",
+        "address": "0x5B7516768eD0b04E212041265BB1f11af71841d7",
+        "ens": {
+          "expiry": "2029-09-22T10:16:06.000Z",
+          "renewableBy": "registrar"
+        },
+        "balances": [
+          {
+            "chainId": 84532,
+            "amount": "0",
+            "blockNumber": "47729612"
+          },
+          {
+            "chainId": 421614,
+            "amount": "0",
+            "blockNumber": "316115755"
+          },
+          {
+            "chainId": 11155111,
+            "amount": "0",
+            "blockNumber": "11850758"
+          },
+          {
+            "chainId": 5042002,
+            "amount": "0",
+            "blockNumber": "65672498"
+          }
+        ]
+      },
+      {
+        "label": "vitalik",
+        "address": "0xa61656CA2D2952a46a9d4DA0AAE01d8D7fe988E0",
+        "ens": {
+          "expiry": "2069-11-13T15:13:35.000Z",
+          "renewableBy": "v1"
+        },
+        "balances": [
+          {
+            "chainId": 84532,
+            "amount": "0",
+            "blockNumber": "47729612"
+          },
+          {
+            "chainId": 421614,
+            "amount": "0",
+            "blockNumber": "316115783"
+          },
+          {
+            "chainId": 11155111,
+            "amount": "0",
+            "blockNumber": "11850758"
+          },
+          {
+            "chainId": 5042002,
+            "amount": "0",
+            "blockNumber": "65672498"
+          }
+        ]
+      }
+    ]
+  },
+  "hosted": {
+    "observedAt": "2026-10-05T19:14:26.545Z",
+    "deployment": {
+      "id": "dpl_Hgb5L9xLJP88RniLT9GU5xgxvCF3",
+      "url": "namepass-v2-al2f3lu7q-wildcard-labs.vercel.app",
+      "readyState": "READY",
+      "target": "preview",
+      "commit": "55a22ed1031390efd0e1fdcb2795582e18d42f2b",
+      "gitBranch": "codex/public-api-address"
+    },
+    "verification": "Protected HTTP activation against dedicated empty schema-only staging database and existing read RPCs; no signing key, transactions, indexer or production writes. Two client-concurrent requests and repeated activation produce the same address. CLI elapsed time includes authentication overhead.",
+    "results": [
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "input": {
+          "name": "STEVE.eth"
+        },
+        "status": 200,
+        "cliElapsedMs": 3790,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "name": "steve.eth",
+          "depositAddress": "0x5B7516768eD0b04E212041265BB1f11af71841d7",
+          "subname": "steve.namepass.eth",
+          "subnameVerified": false,
+          "chains": [
+            {
+              "chainId": "84532",
+              "name": "Base Sepolia",
+              "tokenAddress": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+              "minimumAmount": "500000"
+            },
+            {
+              "chainId": "421614",
+              "name": "Arbitrum Sepolia",
+              "tokenAddress": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+              "minimumAmount": "500000"
+            },
+            {
+              "chainId": "11155111",
+              "name": "Sepolia",
+              "tokenAddress": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+              "minimumAmount": "500000"
+            },
+            {
+              "chainId": "5042002",
+              "name": "Arc Testnet",
+              "tokenAddress": "0x3600000000000000000000000000000000000000",
+              "minimumAmount": "500000"
+            }
+          ]
+        }
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "input": {
+          "name": "steve"
+        },
+        "status": 200,
+        "cliElapsedMs": 4322,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "name": "steve.eth",
+          "depositAddress": "0x5B7516768eD0b04E212041265BB1f11af71841d7",
+          "subname": "steve.namepass.eth",
+          "subnameVerified": false,
+          "chains": [
+            {
+              "chainId": "84532",
+              "name": "Base Sepolia",
+              "tokenAddress": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+              "minimumAmount": "500000"
+            },
+            {
+              "chainId": "421614",
+              "name": "Arbitrum Sepolia",
+              "tokenAddress": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+              "minimumAmount": "500000"
+            },
+            {
+              "chainId": "11155111",
+              "name": "Sepolia",
+              "tokenAddress": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+              "minimumAmount": "500000"
+            },
+            {
+              "chainId": "5042002",
+              "name": "Arc Testnet",
+              "tokenAddress": "0x3600000000000000000000000000000000000000",
+              "minimumAmount": "500000"
+            }
+          ]
+        }
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "input": {
+          "name": "steve.eth"
+        },
+        "status": 200,
+        "cliElapsedMs": 2793,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "name": "steve.eth",
+          "depositAddress": "0x5B7516768eD0b04E212041265BB1f11af71841d7",
+          "subname": "steve.namepass.eth",
+          "subnameVerified": false,
+          "chains": [
+            {
+              "chainId": "84532",
+              "name": "Base Sepolia",
+              "tokenAddress": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+              "minimumAmount": "500000"
+            },
+            {
+              "chainId": "421614",
+              "name": "Arbitrum Sepolia",
+              "tokenAddress": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+              "minimumAmount": "500000"
+            },
+            {
+              "chainId": "11155111",
+              "name": "Sepolia",
+              "tokenAddress": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+              "minimumAmount": "500000"
+            },
+            {
+              "chainId": "5042002",
+              "name": "Arc Testnet",
+              "tokenAddress": "0x3600000000000000000000000000000000000000",
+              "minimumAmount": "500000"
+            }
+          ]
+        }
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "input": {
+          "name": "vitalik.eth"
+        },
+        "status": 200,
+        "cliElapsedMs": 2722,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "name": "vitalik.eth",
+          "depositAddress": "0xa61656CA2D2952a46a9d4DA0AAE01d8D7fe988E0",
+          "subname": "vitalik.namepass.eth",
+          "subnameVerified": false,
+          "chains": [
+            {
+              "chainId": "84532",
+              "name": "Base Sepolia",
+              "tokenAddress": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+              "minimumAmount": "500000"
+            },
+            {
+              "chainId": "421614",
+              "name": "Arbitrum Sepolia",
+              "tokenAddress": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+              "minimumAmount": "500000"
+            },
+            {
+              "chainId": "11155111",
+              "name": "Sepolia",
+              "tokenAddress": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+              "minimumAmount": "500000"
+            },
+            {
+              "chainId": "5042002",
+              "name": "Arc Testnet",
+              "tokenAddress": "0x3600000000000000000000000000000000000000",
+              "minimumAmount": "500000"
+            }
+          ]
+        }
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "input": {
+          "name": "api-staging-unregistered-20261005.eth"
+        },
+        "status": 422,
+        "cliElapsedMs": 2319,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "error": {
+            "code": "name_not_renewable",
+            "message": "This name cannot currently be renewed."
+          },
+          "requestId": "abde415c-64fc-49cf-bc89-3523fcff6763"
+        }
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "input": {
+          "name": "sub.steve.eth"
+        },
+        "status": 400,
+        "cliElapsedMs": 2022,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "error": {
+            "code": "invalid_name",
+            "message": "Use just the name \u2014 subnames aren't supported."
+          },
+          "requestId": "2b7d1dfe-4386-4e09-87fa-5843254e58c5"
+        }
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "input": {
+          "name": "steve.eth",
+          "extra": true
+        },
+        "status": 400,
+        "cliElapsedMs": 2080,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "error": {
+            "code": "invalid_request",
+            "message": "The request contains unknown fields."
+          },
+          "requestId": "97e743ea-4ffb-40b6-b1a4-89a00cedd1a8"
+        }
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "OPTIONS",
+        "input": null,
+        "status": 204,
+        "cliElapsedMs": 2011,
+        "headers": {
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": null
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "GET",
+        "input": null,
+        "status": 405,
+        "cliElapsedMs": 2090,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "allow": "POST, OPTIONS"
+        },
+        "body": {
+          "error": {
+            "code": "method_not_allowed",
+            "message": "Use POST."
+          },
+          "requestId": "b36bcaf3-2a4b-4162-b781-32c84e2cde5f"
+        }
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "POST",
+        "input": {
+          "name": "steve.eth",
+          "chainId": "11155111",
+          "amount": "1000000"
+        },
+        "status": 503,
+        "cliElapsedMs": 1991,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "retry-after": "5"
+        },
+        "body": {
+          "error": {
+            "code": "api_unavailable",
+            "message": "The quote API is not enabled."
+          },
+          "requestId": "fc529f41-d518-4893-b677-79741fe94cbd"
+        }
+      },
+      {
+        "path": "/api/activity?limit=2",
+        "method": "GET",
+        "input": null,
+        "status": 200,
+        "cliElapsedMs": 2416,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "items": 2
+        }
+      }
+    ]
+  },
+  "postActivation": {
+    "observedAt": "2026-10-05T19:15:31.833Z",
+    "branchId": "br-autumn-cherry-av2es7od",
+    "role": "api_staging",
+    "transactionReadOnly": true,
+    "rows": [
+      {
+        "normalized_label": "steve",
+        "display_name": "steve.eth",
+        "deposit_address": "0x5b7516768ed0b04e212041265bb1f11af71841d7",
+        "current_expiry": "2029-09-22T10:16:06.000Z",
+        "renewable_by": "registrar",
+        "unscanned_chain_ids": [],
+        "watches": 1,
+        "snapshots": 4
+      },
+      {
+        "normalized_label": "vitalik",
+        "display_name": "vitalik.eth",
+        "deposit_address": "0xa61656ca2d2952a46a9d4da0aae01d8d7fe988e0",
+        "current_expiry": "2069-11-13T15:13:35.000Z",
+        "renewable_by": "v1",
+        "unscanned_chain_ids": [],
+        "watches": 1,
+        "snapshots": 4
+      }
+    ],
+    "counts": {
+      "names": 2,
+      "watches": 2,
+      "snapshots": 8,
+      "scans": 0,
+      "flows": 0,
+      "events": 0,
+      "deposits": 0,
+      "transaction_intents": 0
+    },
+    "balances": [
+      {
+        "normalized_label": "steve",
+        "chain_id": "84532",
+        "amount": "0",
+        "block_number": "47729679"
+      },
+      {
+        "normalized_label": "steve",
+        "chain_id": "421614",
+        "amount": "0",
+        "block_number": "316116304"
+      },
+      {
+        "normalized_label": "steve",
+        "chain_id": "5042002",
+        "amount": "0",
+        "block_number": "65672760"
+      },
+      {
+        "normalized_label": "steve",
+        "chain_id": "11155111",
+        "amount": "0",
+        "block_number": "11850769"
+      },
+      {
+        "normalized_label": "vitalik",
+        "chain_id": "84532",
+        "amount": "0",
+        "block_number": "47729679"
+      },
+      {
+        "normalized_label": "vitalik",
+        "chain_id": "421614",
+        "amount": "0",
+        "block_number": "316116304"
+      },
+      {
+        "normalized_label": "vitalik",
+        "chain_id": "5042002",
+        "amount": "0",
+        "block_number": "65672768"
+      },
+      {
+        "normalized_label": "vitalik",
+        "chain_id": "11155111",
+        "amount": "0",
+        "block_number": "11850769"
+      }
+    ],
+    "verification": "Real hosted activation left one registration/watch per normalized name, four exact zero balance snapshots per name, and no payment work or transaction intents. The rejected unrenewable name has no stored row."
+  },
+  "unauthenticatedPostStatus": 401,
+  "ci": {
+    "headCommit": "55a22ed1031390efd0e1fdcb2795582e18d42f2b",
+    "runId": "37361709975",
+    "conclusion": "success"
+  },
+  "productionAfterPr124": {
+    "observedAt": "2026-10-05T19:12:02.485Z",
+    "commit": "b428f02e1f47dccfbd4c6b1bf73435df587dd570",
+    "deployment": "dpl_GLm3mEJqvPyjeoumgZZEkGXodcsV",
+    "rows": [
+      {
+        "path": "/api/activity?limit=10",
+        "method": "GET",
+        "status": 200,
+        "items": 10
+      },
+      {
+        "path": "/api/names/steve.eth/activity?limit=2",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/stats",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/config/public",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "POST",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      }
+    ]
+  }
+}

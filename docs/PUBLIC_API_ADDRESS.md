@@ -1,6 +1,6 @@
 # Public address adapter
 
-Date: 2026-10-05. Private implementation; public activation remains disabled.
+Date: 2026-10-05. Protected hosted activation verified; production activation remains disabled.
 
 ## Field sources
 
@@ -38,8 +38,9 @@ chain verification cache. That deadline does not cancel database transactions or
 recovery. The two-request limit is per process, not distributed abuse protection.
 
 Preview requests execute this deployment's adapter. They never proxy public activation to
-beta. No address flag, database, signer, indexer or production configuration is added by this
-implementation.
+beta. The approved protected preview uses its own schema-only Neon branch and dedicated role,
+four read RPC settings and its address flag. It has no signing credential or attached indexer.
+Production configuration is unchanged.
 
 ## Acceptance and remaining release gates
 
@@ -54,12 +55,21 @@ including 166 server tests with none skipped. The PostgreSQL activation test pas
 preview `dpl_2yRf4eoAuQ6A9sKpi7j94cnCHEPx` returned disabled JSON for POST, 204 for
 OPTIONS and 405 for GET, all with correct CORS/no-store headers. The bounded receipt is in
 `deployments/2026-10-05/public-api-address-private.json`. This does not prove hosted activation
-or watch propagation; no preview database or address enable flag was configured.
+or watch propagation; that initial preview had no database or address enable flag.
+
+Protected preview `dpl_Hgb5L9xLJP88RniLT9GU5xgxvCF3` at
+`55a22ed1031390efd0e1fdcb2795582e18d42f2b` then passed eleven hosted HTTP checks.
+The dedicated schema-only `api-staging` branch started with all tables empty. Both registrar
+and V1 names activated through the real service. Concurrent and repeated normalized requests
+returned the same address. The resulting database contained two names, two watches and eight
+zero balance snapshots; flows, events, deposits and transaction intents remained empty.
+An unrenewable name returned 422 and did not create a row. Anonymous POST returned 401.
+The receipt is `deployments/2026-10-05/public-api-address-staging.json`.
 
 Before opening public activation:
 
-- Record successful real PostgreSQL CI results and hosted tests with an isolated database and
-  controlled indexer. Do not give an API preview the production database or signing key.
+- Preserve successful CI and isolated hosted activation checks. Controlled indexer and watch
+  propagation tests still remain. Do not give an API preview the live database or signing key.
 - Preserve the verified factory/address agreement. Twelve block-pinned read-only checks for
   `steve`, `vitalik` and `alice` across all four factories passed; evidence is in
   `deployments/2026-10-05/public-api-address-factories.json`. No activation or transactions were sent.
@@ -68,7 +78,8 @@ Before opening public activation:
 - Prove new watch rows propagate to deposit detection and that activation-time deposits cannot
   fall between the initial balance snapshot and watch coverage. A successful database commit
   alone is insufficient. Review any necessary core recovery change separately.
-- Review distributed activation abuse limits and database timeouts before anonymous access.
+- Review distributed activation abuse limits and production database timeouts before anonymous
+  access. Staging uses 5000 ms statement, 1500 ms lock and 10000 ms idle-transaction timeouts.
 
 Transaction status and history are separate stages. Their completion, renewal identity and
 expiry provenance requirements in `PUBLIC_API_PLAN.md` remain unchanged.

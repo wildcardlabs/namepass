@@ -161,6 +161,40 @@ These are quote tests, not funding or renewal canaries. Address, history and tra
 status remain unimplemented. Public quote exposure still needs deployment-level abuse
 and capacity controls; the per-process concurrency limit is not a global rate limit.
 
+## Address adapter staging — 2026-10-05
+
+The private `POST /api/v1/address` adapter reuses existing name activation. Its default is off;
+production has no address enable flag. PR #124 merged the quote release records at
+`b428f02e1f47dccfbd4c6b1bf73435df587dd570`, deployment `dpl_GLm3mEJqvPyjeoumgZZEkGXodcsV`.
+Production activity remained populated and quotes remained disabled after that merge.
+
+With explicit approval, a schema-only Neon branch `api-staging`, `br-autumn-cherry-av2es7od`,
+was created in project `nameless-paper-91018372`. Its schema matched all 134 application columns
+from migrations 0000–0008, and all 11 tables started empty. Its copied migration-ledger table
+is empty because schema-only creation copies no rows; do not replay migrations over this snapshot.
+A dedicated `api_staging` role is used only by Preview branch `codex/public-api-address`.
+Compute is fixed at 0.25 CU and suspends when idle. No live payment data was copied or changed.
+
+That preview alone has the staging database, four existing read RPC settings and
+`NAMEPASS_PUBLIC_ADDRESS_ENABLED=1`. It has no signing credential, operational secret or
+attached indexer. Deployment protection is unchanged; anonymous POST returned 401.
+Staging connection settings bound statements to 5000 ms, locks to 1500 ms and idle transactions
+to 10000 ms. Secrets were passed in memory and never written to receipts or repository files.
+
+Protected deployment `dpl_Hgb5L9xLJP88RniLT9GU5xgxvCF3`, code
+`55a22ed1031390efd0e1fdcb2795582e18d42f2b`, passed eleven hosted HTTP checks. Real activation
+of `steve` and `vitalik` produced two name rows, two watch rows and eight zero balance snapshots.
+Concurrent/repeated requests returned the same full address; an unrenewable name returned 422
+without a row. No flows, indexed events, deposits or transaction intents were created.
+CI run `37361709975` passed against this code. Twelve earlier `predictWallet` reads matched
+local derivation across all four deployed factories.
+
+[Staging evidence](deployments/2026-10-05/public-api-address-staging.json) and the
+[address adapter report](PUBLIC_API_ADDRESS.md) record the scope and results. This is not a
+payment canary or proof of watch propagation. Actual indexer coverage/recovery, resolver
+verification and public abuse controls remain release gates. `subnameVerified` stays false;
+use the full address. No production API is opened by merging the adapter.
+
 ## Historical evidence
 
 The [September 18 manifest](deployments/2026-09-18/manifest.json) and accompanying receipts are
