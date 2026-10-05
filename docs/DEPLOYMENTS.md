@@ -1,5 +1,20 @@
 # Testnet deployments
 
+## Public design preview — 2026-10-05
+
+`https://alpha.namepass.com` is the stable Preview domain for
+`codex/homepage-docs-design` in the Vercel project `namepass-v2`. It follows successful
+deployments from that branch. A failed build does not replace the last ready preview.
+It does not follow other branches or the production branch `main`.
+
+The domain has an `alias-protection-override` Deployment Protection Exception. External
+visitors can open alpha without a Vercel account or a share-link token. The generated
+deployment URL remains protected. The production domain `beta.namepass.com` is unchanged.
+
+Alpha uses the [read-only branch preview proxy](FRONTEND.md#read-only-branch-previews).
+Anonymous verification returned HTTP 200 for the homepage and populated activity,
+HTTP 405 for activation writes, and HTTP 403 for the private monitoring route.
+
 ## Current release — 2026-09-22
 
 The replacement contracts and hosted testnet services are deployed. The application uses the
