@@ -296,6 +296,22 @@ have no indexed deposit link. These results do not make those flows source-trans
 Pooling, splitting, same-block ordering, source coverage, route finality and HTTP capacity remain
 gates. This stage changes no endpoint, hosted configuration, schema, pipeline or payment behavior.
 
+## Source inspector release and allocation operator — 2026-10-06
+
+PR #128 merged at `31d1255952fb69bfb0380019822649de29aeafe1`. Its exact production deployment,
+`dpl_5Pk4SSNyXdDqw7NNabkgVRCLyPZm`, is ready. Both the site and ingestion aliases point to that
+deployment. Eighteen HTTP checks passed with populated activity, docs/legal routes and disabled
+public APIs. Quote, address and history enable flags remain absent.
+[Release evidence](deployments/2026-10-06/public-api-source-production.json) records the checks.
+
+The allocation operator is a separate unmerged change on PR #129. Six existing simple wallet
+windows closed with 14 read-only RPC calls each; a long-delay payment stayed open within the
+2,048-block limit. [Operator evidence](deployments/2026-10-06/public-api-allocation-operator.json)
+pins the inspected files. Pooled/split cases passed independent receipt fixtures, including the
+actual CLI transport boundary; no new wallet funding or hosted mutation occurred.
+See [allocation review](PUBLIC_API_ALLOCATION.md#bounded-source-to-processing-verifier--2026-10-06)
+for the remaining long-window, claim/finality and coverage gates. There is no public status route.
+
 ## Historical evidence
 
 The [September 18 manifest](deployments/2026-09-18/manifest.json) and accompanying receipts are

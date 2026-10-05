@@ -1,0 +1,125 @@
+{
+  "observedAt": "2026-10-05T23:27:05.928Z",
+  "mergeCommit": "31d1255952fb69bfb0380019822649de29aeafe1",
+  "pullRequest": 128,
+  "testedHead": "2ba97f03305925a82f8f590d2333db1b7f17061f",
+  "ciRun": "37383558282",
+  "deployment": {
+    "id": "dpl_5Pk4SSNyXdDqw7NNabkgVRCLyPZm",
+    "url": "namepass-v2-rd7re5g97-wildcard-labs.vercel.app",
+    "readyState": "READY",
+    "target": "production",
+    "commit": "31d1255952fb69bfb0380019822649de29aeafe1",
+    "aliases": [
+      "beta.namepass.com",
+      "demo-five-gray-37.vercel.app",
+      "namepass-v2-wildcard-labs.vercel.app",
+      "namepass-v2-git-main-wildcard-labs.vercel.app"
+    ]
+  },
+  "aliases": [
+    {
+      "host": "beta.namepass.com",
+      "deploymentId": "dpl_5Pk4SSNyXdDqw7NNabkgVRCLyPZm"
+    },
+    {
+      "host": "demo-five-gray-37.vercel.app",
+      "deploymentId": "dpl_5Pk4SSNyXdDqw7NNabkgVRCLyPZm"
+    }
+  ],
+  "httpChecks": [
+    {
+      "path": "/api/activity?limit=10",
+      "method": "GET",
+      "status": 200,
+      "items": 10
+    },
+    {
+      "path": "/api/names/steve.eth/activity?limit=2",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/stats",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/config/public",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/api/v1/quote",
+      "method": "POST",
+      "status": 503,
+      "errorCode": "api_unavailable"
+    },
+    {
+      "path": "/api/v1/address",
+      "method": "POST",
+      "status": 503,
+      "errorCode": "api_unavailable"
+    },
+    {
+      "path": "/api/v1/address",
+      "method": "OPTIONS",
+      "status": 204
+    },
+    {
+      "path": "/api/v1/quote",
+      "method": "OPTIONS",
+      "status": 204
+    },
+    {
+      "path": "/api/v1/status/11155111?transactionHash=0x123",
+      "method": "GET",
+      "status": 404,
+      "errorCode": "api_not_found"
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals",
+      "method": "GET",
+      "status": 503,
+      "errorCode": "api_unavailable"
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals",
+      "method": "OPTIONS",
+      "status": 204
+    },
+    {
+      "path": "/api/v1/names/steve.eth/renewals",
+      "method": "POST",
+      "status": 405,
+      "errorCode": "method_not_allowed"
+    },
+    {
+      "path": "/",
+      "status": 200
+    },
+    {
+      "path": "/docs",
+      "status": 200
+    },
+    {
+      "path": "/docs/reference",
+      "status": 200
+    },
+    {
+      "path": "/terms",
+      "status": 200
+    },
+    {
+      "path": "/openapi.json",
+      "status": 200
+    },
+    {
+      "host": "demo-five-gray-37.vercel.app",
+      "path": "/api/activity?limit=2",
+      "status": 200,
+      "populated": true
+    }
+  ],
+  "productionApiEnableFlagsAbsent": true
+}

@@ -1,0 +1,307 @@
+{
+  "observedAt": "2026-10-05T23:39:02.787Z",
+  "readOnly": true,
+  "implementationChecksums": {
+    "server/allocation-evidence.ts": "5a2789b26348bd664a70c5cefdaac29b76242fe5ef056665ee53a0e107fec50e",
+    "scripts/public-api/allocations.ts": "c2e8a7f09934d7f97ba1600f5aef4917832aebec56877f160c0cfef0e488d602"
+  },
+  "baseProductionCommit": "31d1255952fb69bfb0380019822649de29aeafe1",
+  "rows": [
+    {
+      "observedAt": "2026-10-05T23:38:51.831Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one wallet source-to-processing window",
+        "chainId": "5042002",
+        "name": "paramore.eth",
+        "depositAddress": "0x690866bdde4cdca43479150aac4f2d17e2792ca1",
+        "transactionHash": "0x9531be85ef55d5e9652eeb2188f76771e110f0d441887c37f6571e62a85ae76a",
+        "fromBlock": "63411550",
+        "throughBlock": "63413597",
+        "fromBlockHash": "0xfac77455b4b1f72626d835c69ed6330e835eaff3ba75f7b7a1fad48ff45d1aa4",
+        "throughBlockHash": "0xdfab540213f7d53fb11729a7e497980814dec957e334ae2020fbd8d43ab8dfb8",
+        "openingBalance": "0",
+        "closingBalance": "3000000",
+        "movements": 1,
+        "deposits": [
+          {
+            "movementId": "5042002:0x9531be85ef55d5e9652eeb2188f76771e110f0d441887c37f6571e62a85ae76a:10",
+            "receiptLogIndex": 10,
+            "amount": "3000000",
+            "windowClosed": false,
+            "processingCallIds": []
+          }
+        ],
+        "processingCalls": [],
+        "windowClosed": false,
+        "rpcCalls": 17,
+        "limitations": "Not API completion: registry/index coverage, source finality, cross-chain claim and finalized ENS renewal verification remain separate gates. Call lists describe whole shared windows, not per-deposit amount allocation."
+      }
+    },
+    {
+      "observedAt": "2026-10-05T23:38:53.844Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one wallet source-to-processing window",
+        "chainId": "5042002",
+        "name": "vitalik.eth",
+        "depositAddress": "0xa61656ca2d2952a46a9d4da0aae01d8d7fe988e0",
+        "transactionHash": "0x8a22364859ea60cdc23cbff078efd6afdf46525f106e87a9b606676727579433",
+        "fromBlock": "63623075",
+        "throughBlock": "63623092",
+        "fromBlockHash": "0x17829f7b587143ea1bcc378dc3b469dc876761b9c0671e1d4918c177eb4ba667",
+        "throughBlockHash": "0x33a7728c44f0c3dafa1cea0bb9eb02bcb246f21d7502c29ce64d9aa93ce1ec9f",
+        "openingBalance": "0",
+        "closingBalance": "0",
+        "movements": 2,
+        "deposits": [
+          {
+            "movementId": "5042002:0x8a22364859ea60cdc23cbff078efd6afdf46525f106e87a9b606676727579433:0",
+            "receiptLogIndex": 0,
+            "amount": "10000000",
+            "windowClosed": true,
+            "processingCallIds": [
+              "5042002:0xa55253216246dd886a5fd4e64c51f328d9ae7b4b9d9a051058fc4b7689bf923b:23"
+            ]
+          }
+        ],
+        "processingCalls": [
+          {
+            "processingId": "5042002:0xa55253216246dd886a5fd4e64c51f328d9ae7b4b9d9a051058fc4b7689bf923b:23",
+            "transactionHash": "0xa55253216246dd886a5fd4e64c51f328d9ae7b4b9d9a051058fc4b7689bf923b",
+            "logIndex": 23,
+            "blockNumber": "63623092",
+            "amount": "10000000",
+            "remaining": "0",
+            "directRenewalId": null,
+            "cctpMessageIndex": 0
+          }
+        ],
+        "windowClosed": true,
+        "rpcCalls": 14,
+        "limitations": "Not API completion: registry/index coverage, source finality, cross-chain claim and finalized ENS renewal verification remain separate gates. Call lists describe whole shared windows, not per-deposit amount allocation."
+      }
+    },
+    {
+      "observedAt": "2026-10-05T23:38:55.840Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one wallet source-to-processing window",
+        "chainId": "5042002",
+        "name": "nick.eth",
+        "depositAddress": "0xc25eeebbf6450b83e16cae8421b6e143ae24e450",
+        "transactionHash": "0x34c874da52586754724202301eed932702d9363cc64843c99c267b92b4435f95",
+        "fromBlock": "63623291",
+        "throughBlock": "63623306",
+        "fromBlockHash": "0xc238edafd74b121327a907cc6377cbdaf37d90dcd2114af4d48d7d7cf6890594",
+        "throughBlockHash": "0xedd5fe3e18a95daa92a0e99b942ec3aef5438eabf8ffef8ec4b6f17105bd0036",
+        "openingBalance": "0",
+        "closingBalance": "0",
+        "movements": 2,
+        "deposits": [
+          {
+            "movementId": "5042002:0x34c874da52586754724202301eed932702d9363cc64843c99c267b92b4435f95:9",
+            "receiptLogIndex": 9,
+            "amount": "11000000",
+            "windowClosed": true,
+            "processingCallIds": [
+              "5042002:0xf1089feccf1d1843bf2dde769a21ddde1bb420f8ba392d4aa05362027ac1a855:23"
+            ]
+          }
+        ],
+        "processingCalls": [
+          {
+            "processingId": "5042002:0xf1089feccf1d1843bf2dde769a21ddde1bb420f8ba392d4aa05362027ac1a855:23",
+            "transactionHash": "0xf1089feccf1d1843bf2dde769a21ddde1bb420f8ba392d4aa05362027ac1a855",
+            "logIndex": 23,
+            "blockNumber": "63623306",
+            "amount": "11000000",
+            "remaining": "0",
+            "directRenewalId": null,
+            "cctpMessageIndex": 0
+          }
+        ],
+        "windowClosed": true,
+        "rpcCalls": 14,
+        "limitations": "Not API completion: registry/index coverage, source finality, cross-chain claim and finalized ENS renewal verification remain separate gates. Call lists describe whole shared windows, not per-deposit amount allocation."
+      }
+    },
+    {
+      "observedAt": "2026-10-05T23:38:57.922Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one wallet source-to-processing window",
+        "chainId": "5042002",
+        "name": "gregskril.eth",
+        "depositAddress": "0xf0feaeb652489cf635043a5ebd7416c6e328d2fe",
+        "transactionHash": "0xf789eb1cedf3a36ece88aaed2215b4956f66c77c26e669dba7a2659585842882",
+        "fromBlock": "63623992",
+        "throughBlock": "63624002",
+        "fromBlockHash": "0x8e0f2358a4c76ad317a15a1f2682b400e3aba0b6daab254eb4c1832c8a6cf077",
+        "throughBlockHash": "0x9ec8ed0651c579dcb6164845557b2f5a0ed6546bc5fc9b49e6fa82f7421e7f22",
+        "openingBalance": "0",
+        "closingBalance": "0",
+        "movements": 2,
+        "deposits": [
+          {
+            "movementId": "5042002:0xf789eb1cedf3a36ece88aaed2215b4956f66c77c26e669dba7a2659585842882:11",
+            "receiptLogIndex": 11,
+            "amount": "12000000",
+            "windowClosed": true,
+            "processingCallIds": [
+              "5042002:0xc95c1629f6ed716f88faf851e8f1d3105b29239f68d7f9142cccb40b42a8e789:15"
+            ]
+          }
+        ],
+        "processingCalls": [
+          {
+            "processingId": "5042002:0xc95c1629f6ed716f88faf851e8f1d3105b29239f68d7f9142cccb40b42a8e789:15",
+            "transactionHash": "0xc95c1629f6ed716f88faf851e8f1d3105b29239f68d7f9142cccb40b42a8e789",
+            "logIndex": 15,
+            "blockNumber": "63624002",
+            "amount": "12000000",
+            "remaining": "0",
+            "directRenewalId": null,
+            "cctpMessageIndex": 0
+          }
+        ],
+        "windowClosed": true,
+        "rpcCalls": 14,
+        "limitations": "Not API completion: registry/index coverage, source finality, cross-chain claim and finalized ENS renewal verification remain separate gates. Call lists describe whole shared windows, not per-deposit amount allocation."
+      }
+    },
+    {
+      "observedAt": "2026-10-05T23:38:59.884Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one wallet source-to-processing window",
+        "chainId": "5042002",
+        "name": "slobo.eth",
+        "depositAddress": "0x7706018b4e0eedb99e5bf5b38446461b2b8ad8e9",
+        "transactionHash": "0xc96b1e8cd633b4780973d1841011ae8a7c0b5f838b5b894b6662b9c218bf055e",
+        "fromBlock": "63624431",
+        "throughBlock": "63624441",
+        "fromBlockHash": "0x8ca5e672f67efcfbe1f6ba9cbc2fdbbd74f281f4bc18694c9a4d51be4581b4b7",
+        "throughBlockHash": "0xbeee0274fdecf782b96c3318064556b4f6e0af6bfc1298372f854d26f14662a9",
+        "openingBalance": "0",
+        "closingBalance": "0",
+        "movements": 2,
+        "deposits": [
+          {
+            "movementId": "5042002:0xc96b1e8cd633b4780973d1841011ae8a7c0b5f838b5b894b6662b9c218bf055e:26",
+            "receiptLogIndex": 26,
+            "amount": "13000000",
+            "windowClosed": true,
+            "processingCallIds": [
+              "5042002:0xc2c0c690d6c9141febfe9cf7e8359c1e731aece4029f6b25727fd3c224cd7e1c:44"
+            ]
+          }
+        ],
+        "processingCalls": [
+          {
+            "processingId": "5042002:0xc2c0c690d6c9141febfe9cf7e8359c1e731aece4029f6b25727fd3c224cd7e1c:44",
+            "transactionHash": "0xc2c0c690d6c9141febfe9cf7e8359c1e731aece4029f6b25727fd3c224cd7e1c",
+            "logIndex": 44,
+            "blockNumber": "63624441",
+            "amount": "13000000",
+            "remaining": "0",
+            "directRenewalId": null,
+            "cctpMessageIndex": 0
+          }
+        ],
+        "windowClosed": true,
+        "rpcCalls": 14,
+        "limitations": "Not API completion: registry/index coverage, source finality, cross-chain claim and finalized ENS renewal verification remain separate gates. Call lists describe whole shared windows, not per-deposit amount allocation."
+      }
+    },
+    {
+      "observedAt": "2026-10-05T23:39:01.868Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one wallet source-to-processing window",
+        "chainId": "5042002",
+        "name": "chrismg.eth",
+        "depositAddress": "0x0a2a97e83e879215530fbde1088d08cc2dfaf993",
+        "transactionHash": "0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db",
+        "fromBlock": "64870408",
+        "throughBlock": "64870424",
+        "fromBlockHash": "0x08b2fd831cc237b3ad8f5b7ddba411c35ab8ffb1e70cc50eb0a965c77e1e1203",
+        "throughBlockHash": "0xe56cd4b487c7d75e34817fb45e32cb90355fda6e92a256ead116348a82743fa4",
+        "openingBalance": "0",
+        "closingBalance": "0",
+        "movements": 2,
+        "deposits": [
+          {
+            "movementId": "5042002:0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db:15",
+            "receiptLogIndex": 15,
+            "amount": "3210000",
+            "windowClosed": true,
+            "processingCallIds": [
+              "5042002:0xafd4fafee19c06cdfb55653c04a3aa0fdcf66055bcd1cadf4650fa658fe1c2f0:26"
+            ]
+          }
+        ],
+        "processingCalls": [
+          {
+            "processingId": "5042002:0xafd4fafee19c06cdfb55653c04a3aa0fdcf66055bcd1cadf4650fa658fe1c2f0:26",
+            "transactionHash": "0xafd4fafee19c06cdfb55653c04a3aa0fdcf66055bcd1cadf4650fa658fe1c2f0",
+            "logIndex": 26,
+            "blockNumber": "64870424",
+            "amount": "3210000",
+            "remaining": "0",
+            "directRenewalId": null,
+            "cctpMessageIndex": 0
+          }
+        ],
+        "windowClosed": true,
+        "rpcCalls": 14,
+        "limitations": "Not API completion: registry/index coverage, source finality, cross-chain claim and finalized ENS renewal verification remain separate gates. Call lists describe whole shared windows, not per-deposit amount allocation."
+      }
+    },
+    {
+      "observedAt": "2026-10-05T23:39:02.768Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one wallet source-to-processing window",
+        "chainId": "11155111",
+        "name": "steve.eth",
+        "depositAddress": "0x5b7516768ed0b04e212041265bb1f11af71841d7",
+        "transactionHash": "0x2d0353ea98ae0debd85bd7854fb2f7daef03d4479c07d516c5cad90e1b594958",
+        "fromBlock": "11815694",
+        "throughBlock": "11815826",
+        "fromBlockHash": "0xa3f5b5aea968a33867b9481bf093dc95de446a336756ec246efad75a4cabbe18",
+        "throughBlockHash": "0x80991a9fb89dd20f524021df9dffaffb2185c0f84e03b77cbda7eb4ea808ab59",
+        "openingBalance": "0",
+        "closingBalance": "0",
+        "movements": 2,
+        "deposits": [
+          {
+            "movementId": "11155111:0x2d0353ea98ae0debd85bd7854fb2f7daef03d4479c07d516c5cad90e1b594958:98",
+            "receiptLogIndex": 98,
+            "amount": "1000000",
+            "windowClosed": true,
+            "processingCallIds": [
+              "11155111:0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409:323"
+            ]
+          }
+        ],
+        "processingCalls": [
+          {
+            "processingId": "11155111:0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409:323",
+            "transactionHash": "0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409",
+            "logIndex": 323,
+            "blockNumber": "11815826",
+            "amount": "1000000",
+            "remaining": "0",
+            "directRenewalId": "11155111:0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409:322",
+            "cctpMessageIndex": null
+          }
+        ],
+        "windowClosed": true,
+        "rpcCalls": 14,
+        "limitations": "Not API completion: registry/index coverage, source finality, cross-chain claim and finalized ENS renewal verification remain separate gates. Call lists describe whole shared windows, not per-deposit amount allocation."
+      }
+    }
+  ],
+  "limits": "Six closed simple windows and one bounded open window; no new wallet funding, hosted mutation, API completion or pooling/split live proof."
+}

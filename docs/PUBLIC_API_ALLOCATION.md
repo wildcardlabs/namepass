@@ -1,6 +1,6 @@
 # Deposit-to-renewal allocation review
 
-Date: 2026-10-05. Read-only discovery for the transaction-status stage.
+Date: 2026-10-05. Updated 2026-10-06 with a bounded operator verifier.
 No status endpoint, migration, worker or public API enable setting is introduced.
 
 ## Result
@@ -107,8 +107,63 @@ anchors. This is capability evidence for these Arc/Sepolia samples, not a review
 all routes. No Base/Arbitrum payments, pooled or split live payments, same-block funding,
 late watch propagation, distributed load or correction rehearsal was exercised.
 
-The next change can implement the bounded read-only allocator with independent fixtures for
-two deposits sharing one renewal, a capped balance requiring two settlements, a new credit
-between slices, same-block ordering, an unindexed processing call, an unknown debit, corrections
-and provider failure. Keep public status disabled until those tests, source-set/coverage rules,
-finality policy and exact hosted end-to-end verification pass. No new contract is required.
+The bounded verifier below implements the source-to-processing part of this model. Shared
+finalized renewal joins remain separate. Keep public status disabled until source-set/coverage
+rules, finality policy and exact hosted end-to-end verification pass. No new contract is required.
+
+## Bounded source-to-processing verifier — 2026-10-06
+
+The operator CLI now implements that consumption-window check without reading or modifying
+the database. Run it with the selected chain's RPC variable supplied securely:
+
+```bash
+node --import tsx scripts/public-api/allocations.ts 11155111 steve '<source-hash>' '<decimal-end-block>'
+```
+
+It queries both movement directions from the source block through the supplied boundary.
+The window is limited to 2,048 blocks, in 512-block ranges; 256 distinct movements, 16 receipts,
+64 total RPC requests and one 15-second deadline bound the work. The transport has a one-MiB
+response limit and no retries. Only chain/block/receipt/log/code reads and `eth_call` are allowed.
+Provider errors and credentials are suppressed. No signer, activation, Workflow or database path
+is used. The CLI reports failure rather than truncating excess evidence.
+
+The verifier independently fetches the source receipt, checks all returned movement identities
+against complete successful receipts and canonical block hashes, and checks for wallet movements
+missing from the range result within those receipts. It pins the factory's reviewed runtime at
+the source and processing blocks and checks the wallet's exact ERC-1167 runtime at each call.
+These reads support the factory custody assumptions; they do not pin every token/Circle/gateway
+dependency. Provider range completeness remains a trust prerequisite. A whole omitted transaction
+with offsetting movements cannot be ruled out solely by boundary-balance conservation.
+
+Every debit must match one exact factory call segment and amount. Direct calls must contain the
+matching gateway renewal and transfer destination; cross-chain calls must contain the matching
+source message at its exact ordered index. Balances are replayed in block, transaction and log
+order, checked against each reported remainder and the historical boundary balances. Both block
+boundaries are rechecked after inspection; a correction prevents a successful proof.
+
+`windowClosed` means the requested source credits reached a verified zero six-decimal token
+balance within this window. Each credit lists whole `processingCallIds` after its credit and
+through its first drain. Pooled credits share identifiers; split credits list several calls.
+No amount or renewal time is apportioned. Later credits do not acquire earlier call identities.
+An unfinished slice leaves the window open. The tool also checks unrelated movements in the
+same bounded window conservatively; an unknown debit fails inspection.
+
+These are private movement/call identities. Arc uses its authoritative system log positions,
+including for ERC-20 mirrors; mapping them to the existing public source-deposit representation
+needs a reviewed, unambiguous join. `directRenewalId` is a matched gateway event candidate,
+not a finalized ENS result. Cross-chain claim verification, registry/index coverage, source
+finality and aggregate transaction completion are deliberately absent from this output.
+
+Nine regression tests cover pooling with prior balances, split calls, later credits, two burns
+in one transaction, same-block drains, duplicates, missing/unknown movements, wrong runtime,
+corrections, precision and resource limits. The actual CLI is exercised through an HTTP fixture
+with serialized receipts and provider-error sanitization. The factory bytecode fixture matches
+the historical Sepolia runtime and the reviewed deployment hash; these tests do not execute
+Solidity or substitute for live pooled/split funding.
+
+The actual CLI inspected all seven existing indexed payments: six simple windows closed with
+14 RPC reads each. The long-delay payment stayed open after 17 reads at the window boundary.
+[Operator evidence](deployments/2026-10-06/public-api-allocation-operator.json) records the exact
+implementation checksums. This fixed-window tool cannot verify that long payment through its
+later processing block. A bounded coverage/resumption strategy remains a status-release decision;
+no worker or schema was added to bypass it.
