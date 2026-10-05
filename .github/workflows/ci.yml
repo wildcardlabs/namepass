@@ -67,9 +67,6 @@ jobs:
         env:
           TEST_DATABASE_URL: postgresql://postgres:integration-test@127.0.0.1:5432/namepass_test
 
-      - name: Validate the API contract and generated types
-        run: npm run check:api
-
       - name: Validate documentation and agent artifacts
         run: npm run check:docs
 

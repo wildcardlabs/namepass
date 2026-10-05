@@ -1,4 +1,5 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
+import SwaggerParser from "@apidevtools/swagger-parser";
 
 const check = process.argv.includes("--check");
 const origin = "https://beta.namepass.com";
@@ -6,6 +7,7 @@ const navigation = JSON.parse(
   await readFile("docs/content/navigation.json", "utf8"),
 );
 const spec = JSON.parse(await readFile("docs/api/openapi.json", "utf8"));
+await SwaggerParser.validate(structuredClone(spec));
 const skill = await readFile("skills/namepass-integration/SKILL.md", "utf8");
 const pages = [];
 const resolve = (schema) =>
@@ -96,7 +98,7 @@ for (const [path, methods] of Object.entries(spec.paths)) {
       description: `${method.toUpperCase()} /api/v1${path}`,
       group: "Endpoints",
       tab: "api",
-      source: "scripts/integrations/openapi.mjs",
+      source: "docs/api/openapi.json",
       method: method.toUpperCase(),
       path,
       operationId: operation.operationId,
@@ -109,6 +111,7 @@ const duplicates = pages.filter(
 );
 if (duplicates.length) throw new Error("Duplicate documentation slugs");
 const outputs = new Map();
+outputs.set("public/openapi.json", JSON.stringify(spec, null, 2) + "\n");
 outputs.set(
   "shared/docs/catalog.generated.json",
   JSON.stringify(

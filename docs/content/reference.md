@@ -1,3 +1,5 @@
+> **API not yet available.** The following contract describes planned endpoints, not a deployed service.
+
 Base URL: `{{DOCS_ORIGIN}}/api/v1`
 
 | Endpoint | Purpose |
