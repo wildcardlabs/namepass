@@ -1,0 +1,15 @@
+{
+  "event_id": "5042002:native:enriched_transaction_v2_0x1c1fdc1c78c0be77dfc10f354963030bc82deb63c9b7fd461e75ee904083ee24_1",
+  "event_family": "deposit",
+  "event_type": "Transfer",
+  "chain_id": 5042002,
+  "block_number": 65859073,
+  "block_time": 1791322130,
+  "tx_hash": "0x83be711fb69f2bd185a5a418177438a43827d99c5f53b8df6bfc2a9936f2d562",
+  "log_index": 1,
+  "token_address": "0x3600000000000000000000000000000000000000",
+  "sender_address": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+  "recipient_address": "0x16cfeb29157376f55e7976562a850d04435c171d",
+  "amount": "500000.000000000000000000",
+  "_gs_op": "i"
+}

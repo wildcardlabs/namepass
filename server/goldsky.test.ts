@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
+import { readFileSync } from "node:fs";
 
 import {
 	goldskyHandler,
@@ -156,6 +157,35 @@ test("the receiver accepts Goldsky ISO block timestamps", () => {
 		block_time: "2024-08-12T00:00:00.000Z",
 	});
 	assert.equal(event.blockTime.toISOString(), "2024-08-12T00:00:00.000Z");
+});
+
+test("a captured Arc native whole amount with decimal zeros reaches the deposit and flow path", async () => {
+	const captured = JSON.parse(readFileSync(new URL("../test/fixtures/goldsky/arc-native-zero-scale.json", import.meta.url), "utf8"));
+	const store = new MemoryStore();
+	store.nameIdForAddress = async (address) => address === captured.recipient_address ? "name-1" : undefined;
+	const started: string[] = [];
+	const route = goldskyHandler(store, async (id) => void started.push(id), () => secret);
+	const response = await route.fetch(request(JSON.stringify(captured)));
+	assert.equal(response.status, 200);
+	assert.equal((await response.json()).accepted, true);
+	assert.equal(store.deposits.length, 1);
+	assert.equal(store.deposits[0].amount, "500000");
+	assert.equal(store.events[0].facts.amount, "500000");
+	assert.equal(store.events[0].payload.amount, "500000.000000000000000000");
+	assert.deepEqual(store.flowRequests, [{ nameId: "name-1", chainId: 5042002, amount: "500000", depositEventId: captured.event_id }]);
+	assert.deepEqual(started, ["flow-1"]);
+
+	for (const invalid of [
+		{ ...captured, amount: "500000.000001" },
+		{ ...captured, amount: "5e5" },
+		{ ...captured, amount: "+500000.0" },
+		{ ...captured, amount: "0500000.0" },
+		{ ...captured, event_id: "5042002:log_fixture_1" },
+		{ ...transfer(), amount: "500000.000000" },
+	]) {
+		assert.throws(() => parseGoldskyEvent(invalid),
+			(error: unknown) => error instanceof ApiError && error.code === "invalid_goldsky_event");
+	}
 });
 
 test("automatic flow creation starts at the configured minimum", async () => {

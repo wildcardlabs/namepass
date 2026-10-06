@@ -18,6 +18,12 @@ rejects the request, cancel it and select another browser wallet. Never reload
 while a signature is pending. The page shows the preparation and signature
 stages, and restores recorded payments and the first-watch name after reload.
 
+The separate gas-funding control requests one 0.01-Sepolia-ETH transfer to the
+displayed automation account. It is not an ENS deposit. The user signs it, and
+the journal prevents submitting it twice. Existing production recovery retries
+prepared claims after funding; this page does not call recovery or broadcast
+with a backend key.
+
 The first-watch section checks a renewable name is not activated, then uses the
 existing application's `/api/names/activate` route. It requires a running bounded
 read-only inspection of the existing Goldsky pipeline before activation/funding.

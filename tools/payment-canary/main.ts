@@ -26,7 +26,8 @@ const payments: Payment[] = [
   { id: "arc-native", chainId: 5042002, native: true, label: "farcaster", amount: 500000n, title: "Arc Testnet · native", note: "Native USDC transfer; gas also uses USDC" },
 ];
 type Entry = { id: string; chainId: number; name: string; destination: Address; amount: string; native: boolean; signedAt: string; transactionHash: Hex; receipt?: { status: string; blockNumber: string; logIndices: number[] } };
-type Journal = { entries: Entry[]; firstWatch?: { name: string; destination: Address; checkedAt: string; activatedAt?: string; activationResponse?: unknown }; capture?: unknown };
+type Journal = { entries: Entry[]; firstWatch?: { name: string; destination: Address; checkedAt: string; activatedAt?: string; activationResponse?: unknown }; capture?: unknown; gasFunding?: { chainId: number; destination: Address; amountWei: string; transactionHash: Hex; receipt?: { status: string; blockNumber: string } } };
+const gasRecipient = getAddress("0xd3f6f8F45F1cc6DcA75B918311302E852d268d9C");
 const key = "namepass-api-payment-canary:october-2026";
 let journal: Journal;
 try { journal = JSON.parse(localStorage.getItem(key) ?? '{"entries":[]}'); if (!Array.isArray(journal.entries)) throw Error(); }
@@ -40,6 +41,7 @@ app.innerHTML = `<header><span class="brand">Namepass</span><span class="badge">
 <section class="panel"><div class="row between wallet-row"><h2>Browser wallet</h2><div class="row wallet-row"><select id="wallet" aria-label="Browser wallet"></select><button id="connect">Connect Rainbow</button></div></div><div id="account" class="status">No wallet connected.</div><div id="error" class="error hidden" role="alert"></div></section>
 <div class="notice">Four route checks: <strong>2.00 testnet USDC total</strong>, plus network gas. Each click requests one payment signature. This page holds no backend key and grants no token approvals.</div>
 <div class="payment-grid" id="payments"></div>
+<section class="panel"><span class="number">Automation gas · separate transfer</span><h2>Fund the pending claims</h2><p>The automation account needs Sepolia ETH to execute the Base and Arc claims. This sends 0.01 testnet ETH to the automation account, not to an ENS deposit address. Existing recovery will retry the prepared claims.</p><p class="destination">${gasRecipient}</p><button id="fund-gas" disabled>Sign 0.01 Sepolia ETH</button><div id="gas-state" class="payment-state" aria-live="polite"></div></section>
 <section class="panel"><span class="number">First-time activation · separate check</span><h2>A newly watched name</h2><p>Check an eligible name that Namepass has never activated. Activate through the same core route used by the app, then fund it while the existing Goldsky capture is running.</p><label for="new-name">ENS name</label><input id="new-name" value="stressfully.eth" autocomplete="off" spellcheck="false"><div class="row actions wallet-row"><button id="check-new" class="secondary">Check name</button><button id="activate" disabled>Activate monitoring</button><button id="fund-new" disabled>Sign 0.50 USDC · Sepolia</button></div><div id="new-destination" class="destination"></div><div id="new-state" class="payment-state" aria-live="polite"></div></section>
 <section class="panel"><h2>Payment record</h2><p class="tip">A successful transfer receipt confirms funding. The API checks must separately confirm indexing, finality and renewal. Export or copy these hashes for verification.</p><button id="export" class="secondary">Export public payment record</button><div id="journal" class="journal"></div></section>`;
 const el = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
@@ -54,6 +56,8 @@ function render() {
   el<HTMLInputElement>("new-name").disabled = busy || !!journal.firstWatch?.activatedAt;
   el<HTMLButtonElement>("activate").disabled = busy || !journal.firstWatch || !!journal.firstWatch.activatedAt;
   el<HTMLButtonElement>("fund-new").disabled = busy || !account || !journal.firstWatch?.activatedAt || journal.entries.some(e => e.id === "first-watch");
+  el<HTMLButtonElement>("fund-gas").disabled = busy || !account || !!journal.gasFunding;
+  if (journal.gasFunding) setText("gas-state", `Gas funding ${journal.gasFunding.receipt?.status ?? "submitted"}. Transaction: ${journal.gasFunding.transactionHash}`);
   el("journal").replaceChildren();
   for (const e of journal.entries) { const row = document.createElement("p"); row.append(`${chainById(e.chainId)!.network} · ${e.name} · ${(Number(e.amount) / 1e6).toFixed(2)} USDC · ${e.receipt?.status ?? "submitted"}\n`, hashLink(e)); el("journal").append(row); }
   if (journal.firstWatch) setText("new-destination", journal.firstWatch.destination);
@@ -128,6 +132,23 @@ for (const p of payments) {
   el("payments").append(card); bind("sign-" + p.id, () => send(p));
 }
 bind("connect", async () => { const wallet = wallets[Number(el<HTMLSelectElement>("wallet").value)]; if (!wallet) throw Error("Open this page in Chrome with Rainbow enabled."); provider = wallet.provider; const accounts = await provider.request({ method: "eth_requestAccounts" }); if (!accounts[0]) throw Error("Select a wallet account."); account = getAddress(accounts[0]); setText("account", `${wallet.name} · ${account}`); });
+bind("fund-gas", async () => {
+  if (!provider || !account || journal.gasFunding) throw Error("Connect your wallet; gas funding must not be submitted twice.");
+  setText("gas-state", "Waiting for the wallet to switch to Ethereum Sepolia…");
+  await provider.request({ method: "wallet_switchEthereumChain", params: [{ chainId: `0x${sepolia.id.toString(16)}` }] });
+  await walletCheck(sepolia.id);
+  const tx = { account, to: gasRecipient, value: parseEther("0.01") };
+  const [gas, fees, balance] = await Promise.all([hub.estimateGas(tx), hub.estimateFeesPerGas(), hub.getBalance({ address: account })]);
+  const gasLimit = gas * 12n / 10n;
+  if (!fees.maxFeePerGas || balance < tx.value + gasLimit * fees.maxFeePerGas) throw Error("Insufficient Sepolia ETH for the top-up and gas.");
+  await walletCheck(sepolia.id);
+  setText("gas-state", "Review the 0.01 testnet ETH transfer and automation address in your wallet. Waiting for your signature…");
+  const wallet = createWalletClient({ chain: sepolia, transport: custom(provider) });
+  const transactionHash = await wallet.sendTransaction({ ...tx, ...fees, gas: gasLimit });
+  journal.gasFunding = { chainId: sepolia.id, destination: gasRecipient, amountWei: tx.value.toString(), transactionHash }; save(); render();
+  const receipt = await hub.waitForTransactionReceipt({ hash: transactionHash, timeout: 120000 });
+  journal.gasFunding.receipt = { status: receipt.status, blockNumber: receipt.blockNumber.toString() }; save();
+});
 bind("check-new", async () => {
   if (journal.firstWatch?.activatedAt) throw Error("The recorded first-watch activation is already complete.");
   const label = normalizeLabel(el<HTMLInputElement>("new-name").value); await quote(label, 500000n);
