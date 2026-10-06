@@ -33,9 +33,9 @@ cleanup results are in the [current canary receipt](deployments/2026-10-06/ens-o
 The historical audits above belong to the previous ENS configuration. They remain
 regression evidence; obsolete hosted payment history is not a compatibility requirement.
 
-Repeat the protected hosted API checks using the fresh isolated projection. Keep the
-production flags off until hosted route, first-watch, aggregate funding and capacity
-gates pass. The funded Sepolia payment used an existing watch, so it does not establish
+The protected hosted preview passed current-ENS status/history, schema, privacy and
+read-only checks. Keep production flags off until the remaining source-route, first-watch,
+aggregate funding and capacity gates pass. The funded Sepolia payment used an existing watch, so it does not establish
 first-watch propagation. No additional Goldsky pipeline or schema is required for this step.
 
 ## Starting point

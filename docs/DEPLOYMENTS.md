@@ -49,6 +49,16 @@ recomputed from remaining canonical renewals. Verification found one settled
 nonce counters and pipeline checkpoints were preserved. A private local backup was
 saved; raw transaction data is not committed.
 
+Protected preview `dpl_9wE7sSRU7WTTN6HhojgzfzyfWwXW`, commit
+`4da8af636af2e3cf9334b7e1c2adc499ffe81ba1`, passed 14 HTTP checks. Status returned
+`complete`; history agreed on the exact renewal ID, duration and expiry. Both passed
+the published OpenAPI schema. Two simultaneous status reads also returned the same
+verified result. Anonymous GET/POST requests redirected to Vercel authentication.
+All staging data and reader privileges matched the pre-request fingerprint. Quote
+and address stayed disabled. Live activity remained populated and all four production
+API flags remained off. CI passed all 221 server tests against PostgreSQL 18, with no
+server test skips. These checks do not establish distributed polling capacity.
+
 Isolated `api-staging` now contains the minimal fresh `farcaster` projection instead
 of the five copied obsolete payments. The existing SELECT-only reader and eight
 balance snapshots are unchanged. Public production APIs remain disabled. The older
