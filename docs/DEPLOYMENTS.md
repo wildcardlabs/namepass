@@ -460,6 +460,28 @@ Base/Arbitrum source payments, live pooled/split/multiple-deposit cases, fresh f
 activation/watch/index propagation, restart recovery and sustained/distributed capacity remain
 open gates. The two-read probe is not a public load test. No public API enablement is approved.
 
+PR #136 merged as `1aebd659aaf95c06ed1939f3a89b53a223b37461`. Its exact production deployment,
+`dpl_HLtTbRGWjFcy4jjUBgYp4aJXqb2s`, is READY; both site and ingestion aliases resolve to it.
+All twenty-one post-merge HTTP checks passed with populated activity and disabled public APIs.
+The merged PR passed required CI with 220 server tests, zero failures and zero skips. See the
+[release receipt](deployments/2026-10-06/public-api-status-staging-production.json).
+
+## Activation and watch rehearsal — 2026-10-06
+
+The local rehearsal now exercises actual address, webhook and status handlers with the migrated
+SQL store. An early delivery rolls back and retries after registration; duplicate deliveries
+retain one deposit and one queued flow. Withheld source indexing remains retryable 404, and
+index delivery alone returns processing rather than completion. Read-only discovery confirms the
+production Goldsky pipeline is ACTIVE. The proposed additional pipeline was never deployed
+and its configuration has been removed because the current plan does not allow another pipeline.
+Read-only inspection and any user-signed delivery canary must use the existing pipeline.
+An already-watched name cannot prove first-watch propagation or restart recovery.
+[Discovery receipt](deployments/2026-10-06/public-api-activation-rehearsal.json) records the
+runtime fingerprint, plan limit and renewable canary target.
+[Scope and proposed hosted procedure](PUBLIC_API_ACTIVATION_REHEARSAL.md) distinguish this local
+boundary from stream propagation, payment completion and public capacity. No hosted setting,
+schema, production pipeline, wallet transaction or API flag changed for this rehearsal.
+
 ## ENS V1 expiry correction — 2026-10-06
 
 The deployed helper reads the V2 registry for both renewal routes. Unmigrated V1 reservations

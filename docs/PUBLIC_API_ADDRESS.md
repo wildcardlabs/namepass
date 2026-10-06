@@ -75,6 +75,9 @@ Before opening public activation:
   `deployments/2026-10-05/public-api-address-factories.json`. No activation or transactions were sent.
 - Verify the actual `namepass.eth` resolver and gateway before enabling a `true` subname result.
   Until then, clients must use the full address.
+- The [local activation/webhook/status rehearsal](PUBLIC_API_ACTIVATION_REHEARSAL.md) verifies
+  rollback, retry and duplicate delivery against real SQL. Hosted checks must use the existing
+  pipeline under the current Goldsky plan; first-watch propagation remains unverified.
 - Prove new watch rows propagate to deposit detection and that activation-time deposits cannot
   fall between the initial balance snapshot and watch coverage. A successful database commit
   alone is insufficient. Review any necessary core recovery change separately.
