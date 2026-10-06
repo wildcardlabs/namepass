@@ -417,6 +417,15 @@ This does not establish hosted enabled-route capacity or new-payment canaries. P
 remain disabled. Known status URLs now have an off-by-default JSON 503 route, replacing their
 previous absent-route 404; OPTIONS and method handling execute locally in preview as well.
 
+PR #135 merged as `6b8c6c4657e03be7aaed3a842aede2b5660ce5a2`. Production deployment
+`dpl_3etZBZBRxDhobQhxwTVZW7CUUDyU` is READY; both site and ingestion aliases resolve to it.
+Required CI passed all 220 server tests without failures or skips. Twenty-one post-merge HTTP
+checks passed, including populated activity, site/docs/legal pages, disabled API responses,
+status preflight/method handling and unknown-subpath JSON 404. See the
+[production verification](deployments/2026-10-06/public-api-status-production.json).
+Public API flags remain off. This verifies the disabled production boundary, not enabled-route
+capacity or new-payment completion.
+
 ## ENS V1 expiry correction — 2026-10-06
 
 The deployed helper reads the V2 registry for both renewal routes. Unmigrated V1 reservations

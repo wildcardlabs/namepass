@@ -1,6 +1,7 @@
 # Transaction status adapter
 
-Date: 2026-10-06. Read-only HTTP adapter, disabled by default. Public release gates remain open.
+Date: 2026-10-06. Read-only HTTP adapter merged in PR #135, disabled by default.
+Production boundaries are verified in [DEPLOYMENTS.md](DEPLOYMENTS.md#private-transaction-status-adapter--2026-10-06). Public release gates remain open.
 
 `GET /api/v1/status/{chainId}?transactionHash={hash}` runs the existing source, allocation and
 renewal verifiers inside a bounded request. No client manifest, processing boundary, caller fee,
