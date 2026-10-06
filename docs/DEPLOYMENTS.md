@@ -59,6 +59,12 @@ and address stayed disabled. Live activity remained populated and all four produ
 API flags remained off. CI passed all 221 server tests against PostgreSQL 18, with no
 server test skips. These checks do not establish distributed polling capacity.
 
+PR #138 merged as `0c6d427ac33786d72ce078802f640e1ebb5136cf`. Production
+deployment `dpl_E8zJijUQpnrZbzcxNutd1MnHyUJa` is READY at that exact commit.
+The [post-merge smoke record](deployments/2026-10-06/ens-october-api-release.json)
+contains 21 passing checks: populated live activity, existing pages and all four
+public APIs still disabled.
+
 Isolated `api-staging` now contains the minimal fresh `farcaster` projection instead
 of the five copied obsolete payments. The existing SELECT-only reader and eight
 balance snapshots are unchanged. Public production APIs remain disabled. The older
