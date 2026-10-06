@@ -304,13 +304,32 @@ deployment. Eighteen HTTP checks passed with populated activity, docs/legal rout
 public APIs. Quote, address and history enable flags remain absent.
 [Release evidence](deployments/2026-10-06/public-api-source-production.json) records the checks.
 
-The allocation operator is a separate unmerged change on PR #129. Six existing simple wallet
-windows closed with 14 read-only RPC calls each; a long-delay payment stayed open within the
+PR #129 merged at `fa00a1cb8f333888754a1a78f07326ae2f99b697`; production deployment
+`dpl_AUox74HVpPkAgJNv7mCoPKUSS2c9` is ready. Both site and ingestion aliases point to that
+exact commit. Eighteen HTTP checks passed with populated activity and disabled public APIs;
+the quote/address/history enable flags remain absent.
+[Release evidence](deployments/2026-10-06/public-api-allocation-production.json) records the checks.
+Full CI passed all 193 server tests, including the real PostgreSQL source inspector.
+
+Six existing simple wallet windows closed with 14 read-only RPC calls each; a long-delay payment stayed open within the
 2,048-block limit. [Operator evidence](deployments/2026-10-06/public-api-allocation-operator.json)
 pins the inspected files. Pooled/split cases passed independent receipt fixtures, including the
 actual CLI transport boundary; no new wallet funding or hosted mutation occurred.
 See [allocation review](PUBLIC_API_ALLOCATION.md#bounded-source-to-processing-verifier--2026-10-06)
 for the remaining long-window, claim/finality and coverage gates. There is no public status route.
+
+## Processing-to-renewal operator verification — 2026-10-06
+
+The new read-only operator verified nine existing processing calls against exact gateway/ENS
+receipt segments and provider finality anchors. Eight Arc claims use the exact Circle message
+index/nonce; one direct Sepolia call shares its processing receipt with the renewal. Cross-chain
+inspection used 19 RPC reads and one public Circle request; direct inspection used 13 RPC reads.
+[Operator evidence](deployments/2026-10-06/public-api-processing-renewal-operator.json) pins
+the inspected implementation. No wallet funding, database write or hosted configuration changed.
+
+[Verification scope](PUBLIC_API_RENEWAL_EVIDENCE.md) distinguishes these individual joins from
+full source-payment completion. Coverage, long allocation windows, source-route finality and
+hosted integration/capacity remain release gates. There is still no transaction-status endpoint.
 
 ## Historical evidence
 

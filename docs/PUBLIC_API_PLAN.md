@@ -8,7 +8,9 @@ are being reviewed in [PUBLIC_API_DEPOSIT_EVIDENCE.md](PUBLIC_API_DEPOSIT_EVIDEN
 is not a payment-completion model.
 Deposit-to-processing discovery is recorded in [PUBLIC_API_ALLOCATION.md](PUBLIC_API_ALLOCATION.md).
 The bounded operator now verifies source-to-processing windows, with pooled/split receipt fixtures.
-Finalized renewal joins, long-window coverage and aggregate completion remain implementation gates.
+Processing-to-renewal joins are being verified by the bounded operator in
+[PUBLIC_API_RENEWAL_EVIDENCE.md](PUBLIC_API_RENEWAL_EVIDENCE.md).
+Long-window coverage, source-route finality and aggregate completion remain implementation gates.
 History verifies event-specific ENS expiry and hub finality. Its deployment is
 described in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md); production remains disabled.
 
