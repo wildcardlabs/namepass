@@ -275,7 +275,7 @@ test(
 	"real PostgreSQL inspector detects staggered delivery, enforces read-only URL options and rejects mismatched event projections",
 	{ skip: !process.env.TEST_DATABASE_URL },
 	async (t) => {
-		const { Pool } = await import("pg");
+		const { Client, Pool } = await import("pg");
 		const { randomBytes } = await import("node:crypto");
 		const { readFileSync } = await import("node:fs");
 		const { createServer } = await import("node:http");
@@ -283,6 +283,10 @@ test(
 		const { createRequire } = await import("node:module");
 		const { fileURLToPath } = await import("node:url");
 		const base = new URL(process.env.TEST_DATABASE_URL!);
+		assert.ok(
+			["localhost", "127.0.0.1", "[::1]"].includes(base.hostname),
+			"disposable source fixture must be local",
+		);
 		const name = "namepass_source_" + randomBytes(6).toString("hex");
 		const admin = new Pool({ connectionString: base.toString(), max: 1 });
 		await admin.query(`CREATE DATABASE "${name}"`);
@@ -291,7 +295,8 @@ test(
 			"options",
 			"-c default_transaction_read_only=off -c statement_timeout=60000",
 		);
-		const db = new Pool({ connectionString: base.toString(), max: 1 });
+		const db = new Client({ connectionString: base.toString() });
+		await db.connect();
 		const f = fixture();
 		f.receipt.logs = [
 			transfer(ethToken, 9, steve, 1000000n),
@@ -327,8 +332,9 @@ test(
 			await new Promise<void>((resolve, reject) =>
 				server.close((err) => (err ? reject(err) : resolve())),
 			);
+			// Client.end waits for the socket to close; Pool.end can resolve before it does.
 			await db.end();
-			await admin.query(`DROP DATABASE "${name}" WITH (FORCE)`);
+			await admin.query(`DROP DATABASE "${name}"`);
 			await admin.end();
 		});
 		const journal = JSON.parse(
