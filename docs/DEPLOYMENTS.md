@@ -371,6 +371,29 @@ implementation. [Policy and limits](PUBLIC_API_DEPOSIT_EVIDENCE.md) preserve unk
 historical propagation, hosted canary and aggregate completion gates. No hosted writes,
 funding, contract changes or public API flags were involved.
 
+PR #133 merged as `64209bd31f8e05f5a7fbd241a3c33fd7ae50dd2a`. Production deployment
+`dpl_Hu4cpBSQKSXiR7QGx3k3oREpcxxp` is READY; both site and ingestion aliases are confirmed.
+All 211 server tests passed without skips. Eighteen post-merge HTTP checks passed with populated
+activity and unchanged public API gates. See the
+[production verification](deployments/2026-10-06/public-api-source-finality-production.json).
+
+## Combined transaction evidence — 2026-10-06
+
+The new private operator runs the existing source, allocation and renewal inspectors together.
+It joins exact source credits to processing calls and whole event-specific renewal results.
+It then repeats the source/index inspection and rechecks every retained block identity before
+printing a result. Open source sets, missing slices or unfinalized renewals stay incomplete;
+provider failures and corrections emit sanitized unavailability.
+
+The actual CLI verified seven existing single-deposit payments with read-only database sessions:
+six Arc-to-Sepolia payments and one direct Sepolia payment. All seven evidence sets passed,
+including the delayed payment. The audit used 432 RPC reads and six Circle message responses.
+[Operator evidence](deployments/2026-10-06/public-api-transaction-operator.json) pins the implementation.
+The delayed sample used 119 RPC reads and approximately 21.7 seconds including startup. This is
+private operator evidence; it does not establish a public polling budget or hosted capacity.
+[Interface and remaining gates](PUBLIC_API_TRANSACTION_EVIDENCE.md) keep status disabled.
+No hosted writes, new funding, schema, pipeline, Workflow, contract or API setting changed.
+
 ## ENS V1 expiry correction — 2026-10-06
 
 The deployed helper reads the V2 registry for both renewal routes. Unmigrated V1 reservations

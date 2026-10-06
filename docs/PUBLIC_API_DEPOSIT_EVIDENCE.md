@@ -160,7 +160,8 @@ the inspected implementation. One earlier whole-audit attempt exited with saniti
 unavailability; a fresh audit passed. The CLI never retries or accepts incomplete evidence.
 Base/Arbitrum tag capability is verified; new live payments on those routes are still untested.
 
-The next adapter must combine these separate source facts with complete allocation windows
-and every finalized renewal join, then prove its hosted budget and correction behavior. Fresh
+The [private combined operator](PUBLIC_API_TRANSACTION_EVIDENCE.md) now joins these source facts
+with complete allocation windows and finalized renewals. The HTTP adapter must still prove its
+hosted budget and correction behavior. Fresh
 multi-deposit, activation-propagation and pooled/split hosted canaries remain release gates.
 No API route, schema, ingestion change, wallet funding or public enable setting was added.

@@ -10,8 +10,10 @@ Deposit-to-processing discovery is recorded in [PUBLIC_API_ALLOCATION.md](PUBLIC
 The bounded operator now verifies source-to-processing windows, with pooled/split receipt fixtures.
 Processing-to-renewal joins are being verified by the bounded operator in
 [PUBLIC_API_RENEWAL_EVIDENCE.md](PUBLIC_API_RENEWAL_EVIDENCE.md).
-An extended read-only audit now covers the known delayed payment. Public long-window polling
-cost, hosted source-route canaries and aggregate completion remain implementation gates.
+An extended read-only audit now covers the known delayed payment. A private combined operator now joins complete source sets, allocation windows and finalized
+renewals for all seven existing samples; see [combined evidence](PUBLIC_API_TRANSACTION_EVIDENCE.md).
+Public long-window polling cost, hosted source-route canaries and hosted aggregate verification
+remain release gates.
 The source inspector now reports conservative receipt-set closure and rechecked configured-provider
 finality; [policy and limitations](PUBLIC_API_DEPOSIT_EVIDENCE.md) keep these separate from API completion.
 History verifies event-specific ENS expiry and hub finality. Its deployment is

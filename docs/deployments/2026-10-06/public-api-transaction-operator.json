@@ -1,0 +1,854 @@
+{
+  "implementationChecksums": {
+    "server/source-deposit-evidence.ts": "71c00cbd0a24607fca5187a2a41a6fbdde111c5d46b8489225aa292fe6170543",
+    "server/allocation-evidence.ts": "b041b330b0643839e2cafd53494dfb5a2134d1eb917ef9bdc419c58d2a07f841",
+    "server/processing-renewal-evidence.ts": "c27fa225dd8e67c5fecf44808c8a076f028565cf5c60d8f8fddf4ad09b0f0921",
+    "server/transaction-evidence.ts": "e73e371e67f833e79543c38df77fd627750dd38a08f0c1ef757faeda29eb79b8",
+    "scripts/public-api/source-deposits.ts": "9dba70f1ddbe566a2eea04d79c2f87ef19075935ad48cf7fe53213ddd46c877d",
+    "scripts/public-api/transaction-evidence.ts": "cebeb47f1b5cf44f0b8e187034de167caf8c052bd7f0c012fd7ed607b6408c67",
+    "src/lib/chains.ts": "a303ffba9b049157d0446e89e993b5610b01003e8c5330a32d763979ea3ec43f"
+  },
+  "observedAt": "2026-10-06T12:33:34.630Z",
+  "baseCommit": "64209bd31f8e05f5a7fbd241a3c33fd7ae50dd2a",
+  "databaseBranch": "br-noisy-bird-avey45an",
+  "readOnly": true,
+  "rows": [
+    {
+      "observedAt": "2026-10-06T12:32:25.305Z",
+      "readOnly": true,
+      "sourceSnapshots": [
+        "2026-10-06T12:32:15.765Z",
+        "2026-10-06T12:32:22.647Z"
+      ],
+      "rpcCalls": 53,
+      "circleReads": 1,
+      "limits": {
+        "rpcCalls": 256,
+        "circleReads": 16,
+        "deadlineMs": 90000,
+        "members": 16,
+        "wallets": 8,
+        "blockRechecks": 64,
+        "responseBytes": 1048576
+      },
+      "allocationRpcCalls": [
+        14
+      ],
+      "renewalRpcCalls": [
+        19
+      ],
+      "evidence": {
+        "scope": "one transaction source-to-renewal operator evidence",
+        "chainId": "5042002",
+        "transactionHash": "0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db",
+        "evidenceComplete": true,
+        "reasons": [],
+        "deposits": [
+          {
+            "sourceId": "5042002:0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db:native:15",
+            "name": "chrismg.eth",
+            "amount": "3210000",
+            "indexedEventId": "5042002:native:enriched_transaction_v2_0x08b2fd831cc237b3ad8f5b7ddba411c35ab8ffb1e70cc50eb0a965c77e1e1203_5",
+            "processingCallIds": [
+              "5042002:0xafd4fafee19c06cdfb55653c04a3aa0fdcf66055bcd1cadf4650fa658fe1c2f0:26"
+            ],
+            "renewalIds": [
+              "11155111:0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555:304"
+            ]
+          }
+        ],
+        "renewals": [
+          {
+            "scope": "one processing call to one ENS renewal",
+            "processingId": "5042002:0xafd4fafee19c06cdfb55653c04a3aa0fdcf66055bcd1cadf4650fa658fe1c2f0:26",
+            "processingBlockNumber": "64870424",
+            "processingBlockHash": "0xe56cd4b487c7d75e34817fb45e32cb90355fda6e92a256ead116348a82743fa4",
+            "renewalId": "11155111:0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555:304",
+            "renewalBlockNumber": "11818636",
+            "renewalBlockHash": "0x0c719d3fa42be7ba9f54cc585b3202cdca38d29669edb24f8a606682d9c2cf73",
+            "name": "chrismg.eth",
+            "depositAddress": "0x0a2a97e83e879215530fbde1088d08cc2dfaf993",
+            "sourceChainId": "5042002",
+            "chainId": "11155111",
+            "transactionHash": "0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555",
+            "secondsAdded": "12259587",
+            "amountApplied": "3110000",
+            "renewalFee": "100000",
+            "expiry": "2033-02-19T22:45:39.000Z",
+            "ensLogIndex": 298,
+            "cctp": {
+              "messageIndex": 0,
+              "nonce": "0xbb72ac12002312854c19d947f5af0f852ec77cd6c1e582446f0fe2ef679b2ecf",
+              "claimLogIndex": 293,
+              "feeExecuted": "0"
+            },
+            "providerFinalized": true,
+            "anchors": [
+              {
+                "chainId": "5042002",
+                "number": "65795584",
+                "hash": "0xe78c5dcd7b3273aabbdfe0428f3a3736b38437aa2cb2817216ce3655bedc0cd4"
+              },
+              {
+                "chainId": "11155111",
+                "number": "11855859",
+                "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+              }
+            ],
+            "rpcCalls": 19,
+            "irisReads": 1,
+            "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+          }
+        ],
+        "blocks": [
+          {
+            "chainId": "5042002",
+            "number": "64870408",
+            "hash": "0x08b2fd831cc237b3ad8f5b7ddba411c35ab8ffb1e70cc50eb0a965c77e1e1203"
+          },
+          {
+            "chainId": "5042002",
+            "number": "65795578",
+            "hash": "0xbb692495beec79ddc990093a7421142982aab2bb082b0fa2cd7e7668b1eeef24"
+          },
+          {
+            "chainId": "5042002",
+            "number": "64870424",
+            "hash": "0xe56cd4b487c7d75e34817fb45e32cb90355fda6e92a256ead116348a82743fa4"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11818636",
+            "hash": "0x0c719d3fa42be7ba9f54cc585b3202cdca38d29669edb24f8a606682d9c2cf73"
+          },
+          {
+            "chainId": "5042002",
+            "number": "65795584",
+            "hash": "0xe78c5dcd7b3273aabbdfe0428f3a3736b38437aa2cb2817216ce3655bedc0cd4"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855859",
+            "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+          }
+        ],
+        "limitations": "Private evidence only. Source snapshots and all blocks require a final recheck. Provider completeness and finality are trusted; hosted canaries and public polling capacity remain release gates."
+      },
+      "elapsedMs": 10664
+    },
+    {
+      "observedAt": "2026-10-06T12:32:35.638Z",
+      "readOnly": true,
+      "sourceSnapshots": [
+        "2026-10-06T12:32:26.285Z",
+        "2026-10-06T12:32:33.023Z"
+      ],
+      "rpcCalls": 54,
+      "circleReads": 1,
+      "limits": {
+        "rpcCalls": 256,
+        "circleReads": 16,
+        "deadlineMs": 90000,
+        "members": 16,
+        "wallets": 8,
+        "blockRechecks": 64,
+        "responseBytes": 1048576
+      },
+      "allocationRpcCalls": [
+        14
+      ],
+      "renewalRpcCalls": [
+        20
+      ],
+      "evidence": {
+        "scope": "one transaction source-to-renewal operator evidence",
+        "chainId": "5042002",
+        "transactionHash": "0x34c874da52586754724202301eed932702d9363cc64843c99c267b92b4435f95",
+        "evidenceComplete": true,
+        "reasons": [],
+        "deposits": [
+          {
+            "sourceId": "5042002:0x34c874da52586754724202301eed932702d9363cc64843c99c267b92b4435f95:native:9",
+            "name": "nick.eth",
+            "amount": "11000000",
+            "indexedEventId": "5042002:native:enriched_transaction_v2_0xc238edafd74b121327a907cc6377cbdaf37d90dcd2114af4d48d7d7cf6890594_2",
+            "processingCallIds": [
+              "5042002:0xf1089feccf1d1843bf2dde769a21ddde1bb420f8ba392d4aa05362027ac1a855:23"
+            ],
+            "renewalIds": [
+              "11155111:0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36:181"
+            ]
+          }
+        ],
+        "renewals": [
+          {
+            "scope": "one processing call to one ENS renewal",
+            "processingId": "5042002:0xf1089feccf1d1843bf2dde769a21ddde1bb420f8ba392d4aa05362027ac1a855:23",
+            "processingBlockNumber": "63623306",
+            "processingBlockHash": "0xedd5fe3e18a95daa92a0e99b942ec3aef5438eabf8ffef8ec4b6f17105bd0036",
+            "renewalId": "11155111:0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36:181",
+            "renewalBlockNumber": "11766153",
+            "renewalBlockHash": "0x306160db68c966f8b9c3e27903ad36241c5596705b501bf84f9f42b361e36a67",
+            "name": "nick.eth",
+            "depositAddress": "0xc25eeebbf6450b83e16cae8421b6e143ae24e450",
+            "sourceChainId": "5042002",
+            "chainId": "11155111",
+            "transactionHash": "0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36",
+            "secondsAdded": "2148389",
+            "amountApplied": "10899996",
+            "renewalFee": "100000",
+            "expiry": "2026-12-30T05:30:33.000Z",
+            "ensLogIndex": 170,
+            "cctp": {
+              "messageIndex": 0,
+              "nonce": "0x753e2b1fd9d28065bc49eb085dbe45157bb96e71b2b04acccc60669d0d72698d",
+              "claimLogIndex": 164,
+              "feeExecuted": "0"
+            },
+            "providerFinalized": true,
+            "anchors": [
+              {
+                "chainId": "5042002",
+                "number": "65795604",
+                "hash": "0x0fd3ce32303cad08abf39343e035749e5b5602a26cc7a2297fe66097d10a950e"
+              },
+              {
+                "chainId": "11155111",
+                "number": "11855859",
+                "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+              }
+            ],
+            "rpcCalls": 20,
+            "irisReads": 1,
+            "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+          }
+        ],
+        "blocks": [
+          {
+            "chainId": "5042002",
+            "number": "63623291",
+            "hash": "0xc238edafd74b121327a907cc6377cbdaf37d90dcd2114af4d48d7d7cf6890594"
+          },
+          {
+            "chainId": "5042002",
+            "number": "65795599",
+            "hash": "0xa8c6b951b1b56b325cc275229e9634b33c02a49070b4f8f86025c5e5ecac50bf"
+          },
+          {
+            "chainId": "5042002",
+            "number": "63623306",
+            "hash": "0xedd5fe3e18a95daa92a0e99b942ec3aef5438eabf8ffef8ec4b6f17105bd0036"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11766153",
+            "hash": "0x306160db68c966f8b9c3e27903ad36241c5596705b501bf84f9f42b361e36a67"
+          },
+          {
+            "chainId": "5042002",
+            "number": "65795604",
+            "hash": "0x0fd3ce32303cad08abf39343e035749e5b5602a26cc7a2297fe66097d10a950e"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855859",
+            "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+          }
+        ],
+        "limitations": "Private evidence only. Source snapshots and all blocks require a final recheck. Provider completeness and finality are trusted; hosted canaries and public polling capacity remain release gates."
+      },
+      "elapsedMs": 10338
+    },
+    {
+      "observedAt": "2026-10-06T12:32:46.531Z",
+      "readOnly": true,
+      "sourceSnapshots": [
+        "2026-10-06T12:32:36.651Z",
+        "2026-10-06T12:32:43.295Z"
+      ],
+      "rpcCalls": 54,
+      "circleReads": 1,
+      "limits": {
+        "rpcCalls": 256,
+        "circleReads": 16,
+        "deadlineMs": 90000,
+        "members": 16,
+        "wallets": 8,
+        "blockRechecks": 64,
+        "responseBytes": 1048576
+      },
+      "allocationRpcCalls": [
+        14
+      ],
+      "renewalRpcCalls": [
+        20
+      ],
+      "evidence": {
+        "scope": "one transaction source-to-renewal operator evidence",
+        "chainId": "5042002",
+        "transactionHash": "0x8a22364859ea60cdc23cbff078efd6afdf46525f106e87a9b606676727579433",
+        "evidenceComplete": true,
+        "reasons": [],
+        "deposits": [
+          {
+            "sourceId": "5042002:0x8a22364859ea60cdc23cbff078efd6afdf46525f106e87a9b606676727579433:native:0",
+            "name": "vitalik.eth",
+            "amount": "10000000",
+            "indexedEventId": "5042002:native:enriched_transaction_v2_0x17829f7b587143ea1bcc378dc3b469dc876761b9c0671e1d4918c177eb4ba667_1",
+            "processingCallIds": [
+              "5042002:0xa55253216246dd886a5fd4e64c51f328d9ae7b4b9d9a051058fc4b7689bf923b:23"
+            ],
+            "renewalIds": [
+              "11155111:0x9055fe091741e3edf419b1f83ab7acd0781d63e510e180713aff9c7565033551:164"
+            ]
+          }
+        ],
+        "renewals": [
+          {
+            "scope": "one processing call to one ENS renewal",
+            "processingId": "5042002:0xa55253216246dd886a5fd4e64c51f328d9ae7b4b9d9a051058fc4b7689bf923b:23",
+            "processingBlockNumber": "63623092",
+            "processingBlockHash": "0x33a7728c44f0c3dafa1cea0bb9eb02bcb246f21d7502c29ce64d9aa93ce1ec9f",
+            "renewalId": "11155111:0x9055fe091741e3edf419b1f83ab7acd0781d63e510e180713aff9c7565033551:164",
+            "renewalBlockNumber": "11766145",
+            "renewalBlockHash": "0xc26ae8dbd36388afc2d94ce972f56c7fd17ebd8fcab2295b648069658fcbdb11",
+            "name": "vitalik.eth",
+            "depositAddress": "0xa61656ca2d2952a46a9d4da0aae01d8d7fe988e0",
+            "sourceChainId": "5042002",
+            "chainId": "11155111",
+            "transactionHash": "0x9055fe091741e3edf419b1f83ab7acd0781d63e510e180713aff9c7565033551",
+            "secondsAdded": "39025697",
+            "amountApplied": "9900000",
+            "renewalFee": "100000",
+            "expiry": "2069-09-12T15:13:35.000Z",
+            "ensLogIndex": 154,
+            "cctp": {
+              "messageIndex": 0,
+              "nonce": "0xdcb0de38a386f9490ccbf11504add750a36dd466e7c44010addc5e5751b49268",
+              "claimLogIndex": 148,
+              "feeExecuted": "0"
+            },
+            "providerFinalized": true,
+            "anchors": [
+              {
+                "chainId": "5042002",
+                "number": "65795624",
+                "hash": "0xc9ec6b6024728e033a8371cf08a71b0c24fef161a3b7514b8c2e0d6e63912746"
+              },
+              {
+                "chainId": "11155111",
+                "number": "11855859",
+                "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+              }
+            ],
+            "rpcCalls": 20,
+            "irisReads": 1,
+            "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+          }
+        ],
+        "blocks": [
+          {
+            "chainId": "5042002",
+            "number": "63623075",
+            "hash": "0x17829f7b587143ea1bcc378dc3b469dc876761b9c0671e1d4918c177eb4ba667"
+          },
+          {
+            "chainId": "5042002",
+            "number": "65795619",
+            "hash": "0xcce24e40930367056d161599bd3844ea2f6385d42f32bb7b051af828f4f3571f"
+          },
+          {
+            "chainId": "5042002",
+            "number": "63623092",
+            "hash": "0x33a7728c44f0c3dafa1cea0bb9eb02bcb246f21d7502c29ce64d9aa93ce1ec9f"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11766145",
+            "hash": "0xc26ae8dbd36388afc2d94ce972f56c7fd17ebd8fcab2295b648069658fcbdb11"
+          },
+          {
+            "chainId": "5042002",
+            "number": "65795624",
+            "hash": "0xc9ec6b6024728e033a8371cf08a71b0c24fef161a3b7514b8c2e0d6e63912746"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855859",
+            "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+          }
+        ],
+        "limitations": "Private evidence only. Source snapshots and all blocks require a final recheck. Provider completeness and finality are trusted; hosted canaries and public polling capacity remain release gates."
+      },
+      "elapsedMs": 10895
+    },
+    {
+      "observedAt": "2026-10-06T12:33:08.238Z",
+      "readOnly": true,
+      "sourceSnapshots": [
+        "2026-10-06T12:32:47.549Z",
+        "2026-10-06T12:33:05.614Z"
+      ],
+      "rpcCalls": 119,
+      "circleReads": 1,
+      "limits": {
+        "rpcCalls": 256,
+        "circleReads": 16,
+        "deadlineMs": 90000,
+        "members": 16,
+        "wallets": 8,
+        "blockRechecks": 64,
+        "responseBytes": 1048576
+      },
+      "allocationRpcCalls": [
+        80
+      ],
+      "renewalRpcCalls": [
+        19
+      ],
+      "evidence": {
+        "scope": "one transaction source-to-renewal operator evidence",
+        "chainId": "5042002",
+        "transactionHash": "0x9531be85ef55d5e9652eeb2188f76771e110f0d441887c37f6571e62a85ae76a",
+        "evidenceComplete": true,
+        "reasons": [],
+        "deposits": [
+          {
+            "sourceId": "5042002:0x9531be85ef55d5e9652eeb2188f76771e110f0d441887c37f6571e62a85ae76a:native:10",
+            "name": "paramore.eth",
+            "amount": "3000000",
+            "indexedEventId": "5042002:native:enriched_transaction_v2_0xfac77455b4b1f72626d835c69ed6330e835eaff3ba75f7b7a1fad48ff45d1aa4_7",
+            "processingCallIds": [
+              "5042002:0x6082468e2d67a05842e04fceaacbe061cbf0d4d626ee9b477f519630593bd8c0:39"
+            ],
+            "renewalIds": [
+              "11155111:0x92b2284a2ccec2058921f34c3b7a68785c10e1de38398d9444ee9fdc6175f89f:225"
+            ]
+          }
+        ],
+        "renewals": [
+          {
+            "scope": "one processing call to one ENS renewal",
+            "processingId": "5042002:0x6082468e2d67a05842e04fceaacbe061cbf0d4d626ee9b477f519630593bd8c0:39",
+            "processingBlockNumber": "63428646",
+            "processingBlockHash": "0xefcf2de2b42d1a33fc0d6e1507d5466f7c894cc47dead26c7ee16fa3dc30ca7c",
+            "renewalId": "11155111:0x92b2284a2ccec2058921f34c3b7a68785c10e1de38398d9444ee9fdc6175f89f:225",
+            "renewalBlockNumber": "11758226",
+            "renewalBlockHash": "0x93a84434b6749e6b9dcbbad65369ba2c3298f834ae406b2986298ff64326a63f",
+            "name": "paramore.eth",
+            "depositAddress": "0x690866bdde4cdca43479150aac4f2d17e2792ca1",
+            "sourceChainId": "5042002",
+            "chainId": "11155111",
+            "transactionHash": "0x92b2284a2ccec2058921f34c3b7a68785c10e1de38398d9444ee9fdc6175f89f",
+            "secondsAdded": "11431770",
+            "amountApplied": "2900000",
+            "renewalFee": "100000",
+            "expiry": "2028-02-02T03:05:30.000Z",
+            "ensLogIndex": 219,
+            "cctp": {
+              "messageIndex": 0,
+              "nonce": "0x411d6a9466de864321f64dce612e54fb465c1ccf57717f45bf602639f2a6306c",
+              "claimLogIndex": 214,
+              "feeExecuted": "0"
+            },
+            "providerFinalized": true,
+            "anchors": [
+              {
+                "chainId": "5042002",
+                "number": "65795669",
+                "hash": "0xaf89cd7c79baad53daabe32051069e81c1ffc6b68690c48c2b2b3bd8928f84fa"
+              },
+              {
+                "chainId": "11155111",
+                "number": "11855859",
+                "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+              }
+            ],
+            "rpcCalls": 19,
+            "irisReads": 1,
+            "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+          }
+        ],
+        "blocks": [
+          {
+            "chainId": "5042002",
+            "number": "63411550",
+            "hash": "0xfac77455b4b1f72626d835c69ed6330e835eaff3ba75f7b7a1fad48ff45d1aa4"
+          },
+          {
+            "chainId": "5042002",
+            "number": "65795641",
+            "hash": "0x7789736a23ef6a76402c8ce89c9164ca095b646e96171a2f44c5b3aa15085f85"
+          },
+          {
+            "chainId": "5042002",
+            "number": "63428646",
+            "hash": "0xefcf2de2b42d1a33fc0d6e1507d5466f7c894cc47dead26c7ee16fa3dc30ca7c"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11758226",
+            "hash": "0x93a84434b6749e6b9dcbbad65369ba2c3298f834ae406b2986298ff64326a63f"
+          },
+          {
+            "chainId": "5042002",
+            "number": "65795669",
+            "hash": "0xaf89cd7c79baad53daabe32051069e81c1ffc6b68690c48c2b2b3bd8928f84fa"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855859",
+            "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+          }
+        ],
+        "limitations": "Private evidence only. Source snapshots and all blocks require a final recheck. Provider completeness and finality are trusted; hosted canaries and public polling capacity remain release gates."
+      },
+      "elapsedMs": 21699
+    },
+    {
+      "observedAt": "2026-10-06T12:33:19.216Z",
+      "readOnly": true,
+      "sourceSnapshots": [
+        "2026-10-06T12:33:09.243Z",
+        "2026-10-06T12:33:16.616Z"
+      ],
+      "rpcCalls": 54,
+      "circleReads": 1,
+      "limits": {
+        "rpcCalls": 256,
+        "circleReads": 16,
+        "deadlineMs": 90000,
+        "members": 16,
+        "wallets": 8,
+        "blockRechecks": 64,
+        "responseBytes": 1048576
+      },
+      "allocationRpcCalls": [
+        14
+      ],
+      "renewalRpcCalls": [
+        20
+      ],
+      "evidence": {
+        "scope": "one transaction source-to-renewal operator evidence",
+        "chainId": "5042002",
+        "transactionHash": "0xc96b1e8cd633b4780973d1841011ae8a7c0b5f838b5b894b6662b9c218bf055e",
+        "evidenceComplete": true,
+        "reasons": [],
+        "deposits": [
+          {
+            "sourceId": "5042002:0xc96b1e8cd633b4780973d1841011ae8a7c0b5f838b5b894b6662b9c218bf055e:native:26",
+            "name": "slobo.eth",
+            "amount": "13000000",
+            "indexedEventId": "5042002:native:enriched_transaction_v2_0x8ca5e672f67efcfbe1f6ba9cbc2fdbbd74f281f4bc18694c9a4d51be4581b4b7_10",
+            "processingCallIds": [
+              "5042002:0xc2c0c690d6c9141febfe9cf7e8359c1e731aece4029f6b25727fd3c224cd7e1c:44"
+            ],
+            "renewalIds": [
+              "11155111:0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8:225"
+            ]
+          }
+        ],
+        "renewals": [
+          {
+            "scope": "one processing call to one ENS renewal",
+            "processingId": "5042002:0xc2c0c690d6c9141febfe9cf7e8359c1e731aece4029f6b25727fd3c224cd7e1c:44",
+            "processingBlockNumber": "63624441",
+            "processingBlockHash": "0xbeee0274fdecf782b96c3318064556b4f6e0af6bfc1298372f854d26f14662a9",
+            "renewalId": "11155111:0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8:225",
+            "renewalBlockNumber": "11766200",
+            "renewalBlockHash": "0xa881039931fbee539129482bd24bb1a412fe49ee4278e55c7f774a3ce190a2cf",
+            "name": "slobo.eth",
+            "depositAddress": "0x7706018b4e0eedb99e5bf5b38446461b2b8ad8e9",
+            "sourceChainId": "5042002",
+            "chainId": "11155111",
+            "transactionHash": "0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8",
+            "secondsAdded": "50851666",
+            "amountApplied": "12900000",
+            "renewalFee": "100000",
+            "expiry": "2028-06-23T06:53:34.000Z",
+            "ensLogIndex": 215,
+            "cctp": {
+              "messageIndex": 0,
+              "nonce": "0x287f2e0e4f0b17b23b5390b708813d1b03b020c8ed7ad38ba0d94bab2e0a34cc",
+              "claimLogIndex": 209,
+              "feeExecuted": "0"
+            },
+            "providerFinalized": true,
+            "anchors": [
+              {
+                "chainId": "5042002",
+                "number": "65795690",
+                "hash": "0x4494b283e871cbee1fbe8c1987005a6f7b5ee4f40ad3e9e65a28fae1f391dfd8"
+              },
+              {
+                "chainId": "11155111",
+                "number": "11855859",
+                "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+              }
+            ],
+            "rpcCalls": 20,
+            "irisReads": 1,
+            "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+          }
+        ],
+        "blocks": [
+          {
+            "chainId": "5042002",
+            "number": "63624431",
+            "hash": "0x8ca5e672f67efcfbe1f6ba9cbc2fdbbd74f281f4bc18694c9a4d51be4581b4b7"
+          },
+          {
+            "chainId": "5042002",
+            "number": "65795683",
+            "hash": "0xa6d8ba020fd91e22fb08b1b2f1a61b74104cc8a9186cbc6e49804b05e27e016b"
+          },
+          {
+            "chainId": "5042002",
+            "number": "63624441",
+            "hash": "0xbeee0274fdecf782b96c3318064556b4f6e0af6bfc1298372f854d26f14662a9"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11766200",
+            "hash": "0xa881039931fbee539129482bd24bb1a412fe49ee4278e55c7f774a3ce190a2cf"
+          },
+          {
+            "chainId": "5042002",
+            "number": "65795690",
+            "hash": "0x4494b283e871cbee1fbe8c1987005a6f7b5ee4f40ad3e9e65a28fae1f391dfd8"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855859",
+            "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+          }
+        ],
+        "limitations": "Private evidence only. Source snapshots and all blocks require a final recheck. Provider completeness and finality are trusted; hosted canaries and public polling capacity remain release gates."
+      },
+      "elapsedMs": 10983
+    },
+    {
+      "observedAt": "2026-10-06T12:33:29.516Z",
+      "readOnly": true,
+      "sourceSnapshots": [
+        "2026-10-06T12:33:20.242Z",
+        "2026-10-06T12:33:26.771Z"
+      ],
+      "rpcCalls": 54,
+      "circleReads": 1,
+      "limits": {
+        "rpcCalls": 256,
+        "circleReads": 16,
+        "deadlineMs": 90000,
+        "members": 16,
+        "wallets": 8,
+        "blockRechecks": 64,
+        "responseBytes": 1048576
+      },
+      "allocationRpcCalls": [
+        14
+      ],
+      "renewalRpcCalls": [
+        20
+      ],
+      "evidence": {
+        "scope": "one transaction source-to-renewal operator evidence",
+        "chainId": "5042002",
+        "transactionHash": "0xf789eb1cedf3a36ece88aaed2215b4956f66c77c26e669dba7a2659585842882",
+        "evidenceComplete": true,
+        "reasons": [],
+        "deposits": [
+          {
+            "sourceId": "5042002:0xf789eb1cedf3a36ece88aaed2215b4956f66c77c26e669dba7a2659585842882:native:11",
+            "name": "gregskril.eth",
+            "amount": "12000000",
+            "indexedEventId": "5042002:native:enriched_transaction_v2_0x8e0f2358a4c76ad317a15a1f2682b400e3aba0b6daab254eb4c1832c8a6cf077_5",
+            "processingCallIds": [
+              "5042002:0xc95c1629f6ed716f88faf851e8f1d3105b29239f68d7f9142cccb40b42a8e789:15"
+            ],
+            "renewalIds": [
+              "11155111:0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7:234"
+            ]
+          }
+        ],
+        "renewals": [
+          {
+            "scope": "one processing call to one ENS renewal",
+            "processingId": "5042002:0xc95c1629f6ed716f88faf851e8f1d3105b29239f68d7f9142cccb40b42a8e789:15",
+            "processingBlockNumber": "63624002",
+            "processingBlockHash": "0x9ec8ed0651c579dcb6164845557b2f5a0ed6546bc5fc9b49e6fa82f7421e7f22",
+            "renewalId": "11155111:0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7:234",
+            "renewalBlockNumber": "11766181",
+            "renewalBlockHash": "0x4e3fc01f5c8bd263091b0fdfac3394dab420aac1bd0c9ec436413bd294765e4a",
+            "name": "gregskril.eth",
+            "depositAddress": "0xf0feaeb652489cf635043a5ebd7416c6e328d2fe",
+            "sourceChainId": "5042002",
+            "chainId": "11155111",
+            "transactionHash": "0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7",
+            "secondsAdded": "46909677",
+            "amountApplied": "11900000",
+            "renewalFee": "100000",
+            "expiry": "2028-03-22T01:02:21.000Z",
+            "ensLogIndex": 224,
+            "cctp": {
+              "messageIndex": 0,
+              "nonce": "0x7628eb01aaeca12f3f753c32f6c7410ee2d4ebd0fdd3adba387d8abb2f003f7b",
+              "claimLogIndex": 218,
+              "feeExecuted": "0"
+            },
+            "providerFinalized": true,
+            "anchors": [
+              {
+                "chainId": "5042002",
+                "number": "65795710",
+                "hash": "0x0b345ec2ff7f8e3a0ad7e54eabd5297d0fc8a2cb16fbf897c418744c241b9993"
+              },
+              {
+                "chainId": "11155111",
+                "number": "11855859",
+                "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+              }
+            ],
+            "rpcCalls": 20,
+            "irisReads": 1,
+            "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+          }
+        ],
+        "blocks": [
+          {
+            "chainId": "5042002",
+            "number": "63623992",
+            "hash": "0x8e0f2358a4c76ad317a15a1f2682b400e3aba0b6daab254eb4c1832c8a6cf077"
+          },
+          {
+            "chainId": "5042002",
+            "number": "65795705",
+            "hash": "0xfb340f962c5f378f0b85c52ed8c1814f89a6d42e19502919111c02e079065ddc"
+          },
+          {
+            "chainId": "5042002",
+            "number": "63624002",
+            "hash": "0x9ec8ed0651c579dcb6164845557b2f5a0ed6546bc5fc9b49e6fa82f7421e7f22"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11766181",
+            "hash": "0x4e3fc01f5c8bd263091b0fdfac3394dab420aac1bd0c9ec436413bd294765e4a"
+          },
+          {
+            "chainId": "5042002",
+            "number": "65795710",
+            "hash": "0x0b345ec2ff7f8e3a0ad7e54eabd5297d0fc8a2cb16fbf897c418744c241b9993"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855859",
+            "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+          }
+        ],
+        "limitations": "Private evidence only. Source snapshots and all blocks require a final recheck. Provider completeness and finality are trusted; hosted canaries and public polling capacity remain release gates."
+      },
+      "elapsedMs": 10302
+    },
+    {
+      "observedAt": "2026-10-06T12:33:34.616Z",
+      "readOnly": true,
+      "sourceSnapshots": [
+        "2026-10-06T12:33:30.532Z",
+        "2026-10-06T12:33:33.642Z"
+      ],
+      "rpcCalls": 44,
+      "circleReads": 0,
+      "limits": {
+        "rpcCalls": 256,
+        "circleReads": 16,
+        "deadlineMs": 90000,
+        "members": 16,
+        "wallets": 8,
+        "blockRechecks": 64,
+        "responseBytes": 1048576
+      },
+      "allocationRpcCalls": [
+        14
+      ],
+      "renewalRpcCalls": [
+        13
+      ],
+      "evidence": {
+        "scope": "one transaction source-to-renewal operator evidence",
+        "chainId": "11155111",
+        "transactionHash": "0x2d0353ea98ae0debd85bd7854fb2f7daef03d4479c07d516c5cad90e1b594958",
+        "evidenceComplete": true,
+        "reasons": [],
+        "deposits": [
+          {
+            "sourceId": "11155111:0x2d0353ea98ae0debd85bd7854fb2f7daef03d4479c07d516c5cad90e1b594958:98",
+            "name": "steve.eth",
+            "amount": "1000000",
+            "indexedEventId": "11155111:log_0xa3f5b5aea968a33867b9481bf093dc95de446a336756ec246efad75a4cabbe18_98",
+            "processingCallIds": [
+              "11155111:0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409:323"
+            ],
+            "renewalIds": [
+              "11155111:0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409:322"
+            ]
+          }
+        ],
+        "renewals": [
+          {
+            "scope": "one processing call to one ENS renewal",
+            "processingId": "11155111:0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409:323",
+            "processingBlockNumber": "11815826",
+            "processingBlockHash": "0x80991a9fb89dd20f524021df9dffaffb2185c0f84e03b77cbda7eb4ea808ab59",
+            "renewalId": "11155111:0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409:322",
+            "renewalBlockNumber": "11815826",
+            "renewalBlockHash": "0x80991a9fb89dd20f524021df9dffaffb2185c0f84e03b77cbda7eb4ea808ab59",
+            "name": "steve.eth",
+            "depositAddress": "0x5b7516768ed0b04e212041265bb1f11af71841d7",
+            "sourceChainId": "11155111",
+            "chainId": "11155111",
+            "transactionHash": "0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409",
+            "secondsAdded": "3547790",
+            "amountApplied": "900000",
+            "renewalFee": "100000",
+            "expiry": "2029-09-22T10:16:06.000Z",
+            "ensLogIndex": 316,
+            "cctp": null,
+            "providerFinalized": true,
+            "anchors": [
+              {
+                "chainId": "11155111",
+                "number": "11855859",
+                "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+              }
+            ],
+            "rpcCalls": 13,
+            "irisReads": 0,
+            "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+          }
+        ],
+        "blocks": [
+          {
+            "chainId": "11155111",
+            "number": "11815694",
+            "hash": "0xa3f5b5aea968a33867b9481bf093dc95de446a336756ec246efad75a4cabbe18"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855859",
+            "hash": "0x83af60dc9471b54f46ee353c0f1573aee3de904c0e50ee0cbbccf21461abe7b7"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11815826",
+            "hash": "0x80991a9fb89dd20f524021df9dffaffb2185c0f84e03b77cbda7eb4ea808ab59"
+          }
+        ],
+        "limitations": "Private evidence only. Source snapshots and all blocks require a final recheck. Provider completeness and finality are trusted; hosted canaries and public polling capacity remain release gates."
+      },
+      "elapsedMs": 5095
+    }
+  ],
+  "limits": "Fresh combined operator audit of existing single-deposit Arc/Sepolia samples only. No live pooled/split payments, Base/Arbitrum payments, hosted capacity, public poll budget, or API enable setting is verified."
+}
