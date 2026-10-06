@@ -1,0 +1,292 @@
+{
+  "observedAt": "2026-10-06T11:07:52.426Z",
+  "readOnly": true,
+  "baseProductionCommit": "fa00a1cb8f333888754a1a78f07326ae2f99b697",
+  "limits": "At most 100 names, events and linked flows. SELECT-only database snapshot, registration reads and canonical receipt verification. No offsets, hosted writes, schema change, signers or funding.",
+  "names": [
+    {
+      "id": "d33a0e7f-3f07-4614-9a70-db739620c8f2",
+      "label": "chrismg",
+      "readAt": "2026-10-06T11:07:47.303Z",
+      "before": "2033-02-19T22:45:39.000Z",
+      "after": "2033-02-19T22:45:39.000Z",
+      "renewableBy": "registrar",
+      "previousRenewableBy": "registrar",
+      "previousSyncedAt": "2026-10-05T14:46:27.320Z"
+    },
+    {
+      "id": "975f3c03-725b-424f-ba4c-57d2e2f92507",
+      "label": "farcaster",
+      "readAt": "2026-10-06T11:07:47.639Z",
+      "before": "2032-05-08T21:32:37.000Z",
+      "after": "2032-03-07T21:32:37.000Z",
+      "renewableBy": "v1",
+      "previousRenewableBy": "v1",
+      "previousSyncedAt": "2026-09-23T20:08:25.698Z"
+    },
+    {
+      "id": "d440a810-bbf1-4c4b-919c-6275b9a4a898",
+      "label": "gregskril",
+      "readAt": "2026-10-06T11:07:47.992Z",
+      "before": "2028-05-23T01:02:21.000Z",
+      "after": "2028-03-22T01:02:21.000Z",
+      "renewableBy": "v1",
+      "previousRenewableBy": "v1",
+      "previousSyncedAt": "2026-10-05T09:57:16.322Z"
+    },
+    {
+      "id": "87921a4f-7739-4cec-9a23-be72335b7e02",
+      "label": "nick",
+      "readAt": "2026-10-06T11:07:48.329Z",
+      "before": "2027-03-02T05:30:33.000Z",
+      "after": "2026-12-30T05:30:33.000Z",
+      "renewableBy": "v1",
+      "previousRenewableBy": "v1",
+      "previousSyncedAt": "2026-10-02T11:44:15.308Z"
+    },
+    {
+      "id": "bb26e686-7815-4f35-b460-d328960104d7",
+      "label": "paramore",
+      "readAt": "2026-10-06T11:07:48.669Z",
+      "before": "2028-02-02T03:05:30.000Z",
+      "after": "2028-02-02T03:05:30.000Z",
+      "renewableBy": "registrar",
+      "previousRenewableBy": "registrar",
+      "previousSyncedAt": "2026-10-03T10:14:59.719Z"
+    },
+    {
+      "id": "eb6622dc-02ed-4701-b6f0-65a847e976f4",
+      "label": "sharon",
+      "readAt": "2026-10-06T11:07:48.997Z",
+      "before": null,
+      "after": null,
+      "renewableBy": null,
+      "previousRenewableBy": null,
+      "previousSyncedAt": "2026-09-28T11:29:11.685Z"
+    },
+    {
+      "id": "9e0e695c-255c-4759-af82-2763225d61c6",
+      "label": "slobo",
+      "readAt": "2026-10-06T11:07:49.333Z",
+      "before": "2028-08-24T06:53:34.000Z",
+      "after": "2028-06-23T06:53:34.000Z",
+      "renewableBy": "v1",
+      "previousRenewableBy": "v1",
+      "previousSyncedAt": "2026-10-03T10:10:12.905Z"
+    },
+    {
+      "id": "988a8b2d-8f5e-4513-ba1e-33beb70a4dc0",
+      "label": "steve",
+      "readAt": "2026-10-06T11:07:49.574Z",
+      "before": "2029-09-22T10:16:06.000Z",
+      "after": "2029-09-22T10:16:06.000Z",
+      "renewableBy": "registrar",
+      "previousRenewableBy": "registrar",
+      "previousSyncedAt": "2026-10-05T13:42:20.216Z"
+    },
+    {
+      "id": "89c139d4-256d-4955-88c6-a920e73e0bdd",
+      "label": "stevegachau",
+      "readAt": "2026-10-06T11:07:49.828Z",
+      "before": null,
+      "after": null,
+      "renewableBy": null,
+      "previousRenewableBy": null,
+      "previousSyncedAt": "2026-10-02T23:40:25.292Z"
+    },
+    {
+      "id": "5190729a-f079-47fc-83b2-2dd19ad14a72",
+      "label": "violah",
+      "readAt": "2026-10-06T11:07:50.072Z",
+      "before": null,
+      "after": null,
+      "renewableBy": null,
+      "previousRenewableBy": null,
+      "previousSyncedAt": "2026-09-28T11:29:09.583Z"
+    },
+    {
+      "id": "5d0f2e10-cea9-4e99-975f-b2d31ecd323e",
+      "label": "vitalik",
+      "readAt": "2026-10-06T11:07:50.433Z",
+      "before": "2069-11-13T15:13:35.000Z",
+      "after": "2069-09-12T15:13:35.000Z",
+      "renewableBy": "v1",
+      "previousRenewableBy": "v1",
+      "previousSyncedAt": "2026-10-03T10:23:57.716Z"
+    }
+  ],
+  "events": [
+    {
+      "eventId": "11155111:log_0x7c7068e2fafb39423d4c35f10798cfe14dea0a256c7040e535d157b4679cf67d_176",
+      "eventFamily": "namepass",
+      "label": "steve",
+      "transactionHash": "0x6c7b413b55db956bd52b65242ffcba7ec15cbb770ae1f29c67930ea143a65268",
+      "logIndex": 176,
+      "blockNumber": "11754105",
+      "before": "1874123196",
+      "after": "1874123196"
+    },
+    {
+      "eventId": "11155111:log_0x9e4edd3c27e3282a4af61d1079a18aa8d21cf3ced6169a190ba75288db15d07e_190",
+      "eventFamily": "namepass",
+      "label": "steve",
+      "transactionHash": "0x47fb93e99172e174c5b3da44cf5daf1d3f2a26a2260d15cc1be110b142ad843a",
+      "logIndex": 190,
+      "blockNumber": "11754120",
+      "before": "1877670986",
+      "after": "1877670986"
+    },
+    {
+      "eventId": "11155111:log_0x9bae7f0d0671542a558423e38d61e193ac0c3b58b1ee7266a1e7ac8ca8e8c94a_164",
+      "eventFamily": "namepass",
+      "label": "steve",
+      "transactionHash": "0x51a897a78e9d8825022a6784c1d424c2fbdd97e5c26ef1372ea5c8d635199ddf",
+      "logIndex": 164,
+      "blockNumber": "11754127",
+      "before": "1881218776",
+      "after": "1881218776"
+    },
+    {
+      "eventId": "11155111:log_0x93a84434b6749e6b9dcbbad65369ba2c3298f834ae406b2986298ff64326a63f_225",
+      "eventFamily": "namepass",
+      "label": "paramore",
+      "transactionHash": "0x92b2284a2ccec2058921f34c3b7a68785c10e1de38398d9444ee9fdc6175f89f",
+      "logIndex": 225,
+      "blockNumber": "11758226",
+      "before": "1833073530",
+      "after": "1833073530"
+    },
+    {
+      "eventId": "11155111:log_0xc26ae8dbd36388afc2d94ce972f56c7fd17ebd8fcab2295b648069658fcbdb11_164",
+      "eventFamily": "namepass",
+      "label": "vitalik",
+      "transactionHash": "0x9055fe091741e3edf419b1f83ab7acd0781d63e510e180713aff9c7565033551",
+      "logIndex": 164,
+      "blockNumber": "11766145",
+      "before": "3151581215",
+      "after": "3146224415"
+    },
+    {
+      "eventId": "11155111:log_0x306160db68c966f8b9c3e27903ad36241c5596705b501bf84f9f42b361e36a67_181",
+      "eventFamily": "namepass",
+      "label": "nick",
+      "transactionHash": "0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36",
+      "logIndex": 181,
+      "blockNumber": "11766153",
+      "before": "1803965433",
+      "after": "1798608633"
+    },
+    {
+      "eventId": "11155111:log_0x4e3fc01f5c8bd263091b0fdfac3394dab420aac1bd0c9ec436413bd294765e4a_234",
+      "eventFamily": "namepass",
+      "label": "gregskril",
+      "transactionHash": "0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7",
+      "logIndex": 234,
+      "blockNumber": "11766181",
+      "before": "1842656541",
+      "after": "1837299741"
+    },
+    {
+      "eventId": "11155111:log_0xa881039931fbee539129482bd24bb1a412fe49ee4278e55c7f774a3ce190a2cf_225",
+      "eventFamily": "namepass",
+      "label": "slobo",
+      "transactionHash": "0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8",
+      "logIndex": 225,
+      "blockNumber": "11766200",
+      "before": "1850712814",
+      "after": "1845356014"
+    },
+    {
+      "eventId": "11155111:log_0x80991a9fb89dd20f524021df9dffaffb2185c0f84e03b77cbda7eb4ea808ab59_322",
+      "eventFamily": "namepass",
+      "label": "steve",
+      "transactionHash": "0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409",
+      "logIndex": 322,
+      "blockNumber": "11815826",
+      "before": "1884766566",
+      "after": "1884766566"
+    },
+    {
+      "eventId": "11155111:log_0x0c719d3fa42be7ba9f54cc585b3202cdca38d29669edb24f8a606682d9c2cf73_304",
+      "eventFamily": "namepass",
+      "label": "chrismg",
+      "transactionHash": "0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555",
+      "logIndex": 304,
+      "blockNumber": "11818636",
+      "before": "1992465939",
+      "after": "1992465939"
+    }
+  ],
+  "flows": [
+    {
+      "id": "08880f31-ea2e-409f-bde3-232e017baef9",
+      "renewalEventId": "11155111:log_0x93a84434b6749e6b9dcbbad65369ba2c3298f834ae406b2986298ff64326a63f_225",
+      "label": "paramore",
+      "before": "2028-02-02T03:05:30.000Z",
+      "after": "2028-02-02T03:05:30.000Z"
+    },
+    {
+      "id": "14cb7228-00ea-4e9d-a98c-823a27f125f8",
+      "renewalEventId": "11155111:log_0x9e4edd3c27e3282a4af61d1079a18aa8d21cf3ced6169a190ba75288db15d07e_190",
+      "label": "steve",
+      "before": "2029-07-02T07:16:26.000Z",
+      "after": "2029-07-02T07:16:26.000Z"
+    },
+    {
+      "id": "48d9cf71-7966-4e4d-a055-99ad1f2a5956",
+      "renewalEventId": "11155111:log_0x9bae7f0d0671542a558423e38d61e193ac0c3b58b1ee7266a1e7ac8ca8e8c94a_164",
+      "label": "steve",
+      "before": "2029-08-12T08:46:16.000Z",
+      "after": "2029-08-12T08:46:16.000Z"
+    },
+    {
+      "id": "6849f6d1-00f3-428b-9147-8bbd43099e1e",
+      "renewalEventId": "11155111:log_0x7c7068e2fafb39423d4c35f10798cfe14dea0a256c7040e535d157b4679cf67d_176",
+      "label": "steve",
+      "before": "2029-05-22T05:46:36.000Z",
+      "after": "2029-05-22T05:46:36.000Z"
+    },
+    {
+      "id": "76f746d1-7d5a-4461-ae6c-f9c2dedd8c9d",
+      "renewalEventId": "11155111:log_0x4e3fc01f5c8bd263091b0fdfac3394dab420aac1bd0c9ec436413bd294765e4a_234",
+      "label": "gregskril",
+      "before": "2028-05-23T01:02:21.000Z",
+      "after": "2028-03-22T01:02:21.000Z"
+    },
+    {
+      "id": "778da1d0-b59d-4c88-818a-2d5e9784fdeb",
+      "renewalEventId": "11155111:log_0xc26ae8dbd36388afc2d94ce972f56c7fd17ebd8fcab2295b648069658fcbdb11_164",
+      "label": "vitalik",
+      "before": "2069-11-13T15:13:35.000Z",
+      "after": "2069-09-12T15:13:35.000Z"
+    },
+    {
+      "id": "7a7e1c35-db06-4d17-8449-4c216f775963",
+      "renewalEventId": "11155111:log_0x0c719d3fa42be7ba9f54cc585b3202cdca38d29669edb24f8a606682d9c2cf73_304",
+      "label": "chrismg",
+      "before": "2033-02-19T22:45:39.000Z",
+      "after": "2033-02-19T22:45:39.000Z"
+    },
+    {
+      "id": "a192c01d-37ce-40b4-8639-0182a87886fe",
+      "renewalEventId": "11155111:log_0x306160db68c966f8b9c3e27903ad36241c5596705b501bf84f9f42b361e36a67_181",
+      "label": "nick",
+      "before": "2027-03-02T05:30:33.000Z",
+      "after": "2026-12-30T05:30:33.000Z"
+    },
+    {
+      "id": "ee8dc126-d340-4afb-a2ae-447c306f44ea",
+      "renewalEventId": "11155111:log_0x80991a9fb89dd20f524021df9dffaffb2185c0f84e03b77cbda7eb4ea808ab59_322",
+      "label": "steve",
+      "before": "2029-09-22T10:16:06.000Z",
+      "after": "2029-09-22T10:16:06.000Z"
+    },
+    {
+      "id": "eec07fbc-2c4b-4396-8c47-a309b1b15cbf",
+      "renewalEventId": "11155111:log_0xa881039931fbee539129482bd24bb1a412fe49ee4278e55c7f774a3ce190a2cf_225",
+      "label": "slobo",
+      "before": "2028-08-24T06:53:34.000Z",
+      "after": "2028-06-23T06:53:34.000Z"
+    }
+  ]
+}

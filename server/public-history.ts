@@ -40,6 +40,7 @@ const HELPER = parseAbi([
 const ENS_RENEWAL = parseAbi([
 	"event NameRenewed(uint256 indexed tokenId, string label, uint64 duration, uint64 newExpiry, address paymentToken, bytes32 indexed referrer, uint256 amount)",
 ]);
+const V1_METADATA = parseAbi(["function BASE_REGISTRAR() view returns (address)"]);
 let pool: Pool | undefined;
 let activeRequests = 0;
 function historyPool() {
@@ -282,7 +283,7 @@ function eventExpiry(
 	segment: TransactionReceipt["logs"],
 	label: string,
 	row: Row,
-	metadata: { registrar: string; renewerV1: string; referrer: string },
+	metadata: { registrar: string; renewerV1: string; referrer: string; baseRegistrarV1?: string },
 ) {
 	// ENS emitters are authenticated against the reviewed deployment, not arbitrary helper metadata.
 	if (
@@ -343,7 +344,7 @@ async function history(request: Request, signal: AbortSignal) {
 					const calls = Array.isArray(payload) ? payload : [payload];
 					operations += calls.length;
 					if (
-						operations > 602 ||
+						operations > 702 ||
 						calls.some(
 							(call) =>
 								![
@@ -441,11 +442,15 @@ async function history(request: Request, signal: AbortSignal) {
 						]);
 						const { item, segment } = receiptItem(row, label, receipt, block);
 						const helper = selectedHelper(segment, label);
+						const ensMetadata = await metadataFor(helper, receipt.blockNumber);
+						const baseRegistrarV1 = segment.some(log => getAddress(log.address) === getAddress(ensMetadata.renewerV1))
+							? await client.readContract({ address: ensMetadata.renewerV1 as Hex, abi: V1_METADATA, functionName: "BASE_REGISTRAR", blockNumber: receipt.blockNumber })
+							: undefined;
 						const expiry = eventExpiry(
 							segment,
 							label,
 							row,
-							await metadataFor(helper, receipt.blockNumber),
+							{ ...ensMetadata, baseRegistrarV1 },
 						);
 						const isFinal = receipt.blockNumber <= finalized.number!;
 						if (

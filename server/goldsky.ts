@@ -506,7 +506,10 @@ export function goldskyHandler(
 			});
 			return json({ accepted: false, skipped: true }, 200);
 		}
-		if (event.eventFamily === "namepass" && event.eventType === "Renewed" && event.gsOp === "c") {
+		if (event.gsOp === "c" && (
+			(event.eventFamily === "namepass" && event.eventType === "Renewed")
+			|| (event.eventFamily === "ens" && event.eventType === "NameRenewed")
+		)) {
 			event.facts.new_expiry = await readRenewalExpiry(event);
 		}
 		let observedBalance: string | undefined;

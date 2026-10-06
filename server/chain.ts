@@ -152,10 +152,28 @@ export async function readEnsState(label: string, signal?: AbortSignal): Promise
 	const metadata = await readEnsV2Metadata(read, helper);
 	const [state] = await read([{ to: helper, signature: "nameState(string)", args: [encodeString(label)] }]);
 	if (!/^[0-9a-f]{128}$/i.test(state)) throw new Error("Invalid helper name state.");
-	const rawExpiry = state.slice(0, 64);
+	let rawExpiry = state.slice(0, 64);
 	const renewer = addressWord(state.slice(64));
 	if (!/^0x0+$/.test(renewer) && renewer !== metadata.registrar && renewer !== metadata.renewerV1) {
 		throw new Error("The helper returned an unknown ENS renewer.");
+	}
+	let isV1 = renewer === metadata.renewerV1;
+	if (/^0x0+$/.test(renewer) && word(rawExpiry) !== 0n) {
+		// Beyond grace neither renewer accepts the name. A reservation has no
+		// latest V2 owner; a migrated registration retains its latest owner.
+		const [registryWord] = await read([{ to: metadata.registrar, signature: "ETH_REGISTRY()" }]);
+		const registry = addressWord(registryWord);
+		const [registryState] = await read([{ to: registry, signature: "getState(uint256)", args: [labelHash(label).slice(2)] }]);
+		if (!/^[0-9a-f]{320}$/i.test(registryState)) throw new Error("Invalid ENS registry state.");
+		isV1 = /^0x0+$/.test(addressWord(registryState.slice(128, 192)));
+	}
+	if (isV1) {
+		// The helper's expiry is the V2 reservation (V1 expiry plus the
+		// premigration bonus). Read the registration itself, without offsets.
+		const [baseWord] = await read([{ to: metadata.renewerV1, signature: "BASE_REGISTRAR()" }]);
+		const base = addressWord(baseWord);
+		if (/^0x0+$/.test(base)) throw new Error("The ENS V1 registrar is not configured.");
+		[rawExpiry] = await read([{ to: base, signature: "nameExpires(uint256)", args: [labelHash(label).slice(2)] }]);
 	}
 	const seconds = word(rawExpiry);
 	if (seconds > BigInt(Math.floor(Number.MAX_SAFE_INTEGER / 1000))) {

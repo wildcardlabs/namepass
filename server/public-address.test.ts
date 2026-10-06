@@ -20,6 +20,10 @@ const abi = parseAbi([
 	"function ethRenewerV1() view returns (address)",
 	"function referrer() view returns (bytes32)",
 	"function nameState(string label) view returns (uint256 expiry,address renewer)",
+	"function ETH_REGISTRY() view returns (address)",
+	"function BASE_REGISTRAR() view returns (address)",
+	"function nameExpires(uint256) view returns (uint256)",
+	"function getState(uint256) view returns ((uint8 status,uint64 expiry,address latestOwner,uint256 tokenId,uint256 resource))",
 	"function balanceOf(address account) view returns (uint256)",
 ]);
 const ajv = new Ajv({ strict: false });
@@ -108,6 +112,10 @@ function rpcFixture(
 								: HUB_CHAIN.ensRegistrarAddress,
 					],
 					balanceOf: 0n,
+					ETH_REGISTRY: "0x3333333333333333333333333333333333333333",
+					BASE_REGISTRAR: "0x4444444444444444444444444444444444444444",
+					nameExpires: 1794643200n,
+					getState: { status: 0, expiry: 1800000000n, latestOwner: zeroAddress, tokenId: 1n, resource: 1n },
 				};
 				result = encodeFunctionResult({
 					abi,

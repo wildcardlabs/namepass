@@ -56,6 +56,19 @@ returns zero as renewer and reads expiry from the registrar's registry. Registry
 calls therefore remain inside replaceable code. The concrete helper also exposes its immutable
 ENS addresses and referrer. The oracle is still read from the selected ENS contract on each quote.
 
+The September 22 helper reports the V2 registry expiry for both renewal routes. For an
+unmigrated V1 name this is a reservation expiry, not the V1 registration expiry. The backend
+uses the helper's selected renewer, discovers `BASE_REGISTRAR()` through `ETHRenewerV1`, and
+reads `nameExpires(keccak256(label))` at the same block. Migrated and new V2 registrations
+retain their V2 expiry. When neither route is renewable, the V2 registry's `latestOwner`
+distinguishes a former reservation from a former registration. No fixed bonus is subtracted.
+
+For a V1 renewal receipt, expiry comes from the V1 BaseRegistrar's `NameRenewed(id, expires)`
+before the V2 renewer event in the same call segment. Later wrapper synchronization can emit
+another V1 event and does not supply the registration extension. The V1 registrar address is
+read from the selected V1 renewer at the receipt block. V2 renewals retain their own event expiry.
+These backend reads do not require a helper replacement or change renewal execution.
+
 The gateway emits `CCTPClaimed` before ENS executes and `Renewed` after settlement. `HelperUsed`
 identifies the adapter immediately before `Renewed`. Existing settlement event signatures remain
 unchanged. Event emitters move from the old helper to the new gateway. Failed settlement reverts
