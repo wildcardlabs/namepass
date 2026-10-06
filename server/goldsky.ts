@@ -335,7 +335,14 @@ export function parseGoldskyEvent(object: Record<string, unknown>): GoldskyEvent
 		parsed.tokenAddress = patternField(object, "token_address", ADDRESS);
 		parsed.senderAddress = patternField(object, "sender_address", ADDRESS);
 		parsed.recipientAddress = patternField(object, "recipient_address", ADDRESS);
-		parsed.amount = decimalField(object, "amount");
+		// The deployed Arc native SQL division emits whole micro-USDC amounts
+		// with a zero decimal scale. Accept that exact representation only;
+		// fractional micro-USDC and other event amounts stay invalid.
+		const amount = chain.nativeUsdcTransfer && parsed.eventId.startsWith(`${chainId}:native:`)
+			? stringField(object, "amount", 128).replace(/\.0+$/, "")
+			: object.amount;
+		parsed.amount = decimalField({ amount }, "amount");
+		parsed.facts.amount = parsed.amount;
 	} else if (key === "namepass:WalletDeployed") {
 		parsed.facts.label_key = hashField(object, "label_key");
 		patternField(object, "wallet_address", ADDRESS);

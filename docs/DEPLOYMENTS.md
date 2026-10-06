@@ -59,12 +59,57 @@ and address stayed disabled. Live activity remained populated and all four produ
 API flags remained off. CI passed all 221 server tests against PostgreSQL 18, with no
 server test skips. These checks do not establish distributed polling capacity.
 
+PR #138 merged as `0c6d427ac33786d72ce078802f640e1ebb5136cf`. Production
+deployment `dpl_E8zJijUQpnrZbzcxNutd1MnHyUJa` is READY at that exact commit.
+The [post-merge smoke record](deployments/2026-10-06/ens-october-api-release.json)
+contains 21 passing checks: populated live activity, existing pages and all four
+public APIs still disabled.
+
 Isolated `api-staging` now contains the minimal fresh `farcaster` projection instead
 of the five copied obsolete payments. The existing SELECT-only reader and eight
 balance snapshots are unchanged. Public production APIs remain disabled. The older
 seven-payment and five-payment reports are historical checks of the previous ENS
 configuration; they do not verify the current helper. First-watch propagation,
 other source routes, aggregate funding and public polling capacity remain gates.
+
+## Fresh browser-signed route checks and native Arc indexing — 2026-10-06
+
+The user signed $0.50 transfers on Base Sepolia, Arbitrum Sepolia, native Arc
+and Arc ERC-20, plus a separate $0.50 Sepolia transfer to newly activated
+`stressfully.eth`. The temporary localhost page is in
+[tools/payment-canary](../tools/payment-canary/README.md). It uses browser wallet
+signatures and public RPC reads. It has no backend key and is outside the
+production entry point. Explicit RPC gas pricing allowed both Arc transactions
+to confirm after Rainbow rejected its earlier fee preparation.
+
+The existing Goldsky pipeline delivered the first-watch Sepolia event at
+21:19:51 UTC, about three seconds after its source block and 23 seconds after
+activation returned. Ordinary automation renewed the name at 21:20:00 UTC.
+This is a positive first-watch canary, not proof of zero-delay visibility or
+replay of earlier filtered transfers. Inspection ended after twenty minutes;
+the pipeline remained ACTIVE with unchanged definition and runtime.
+
+Both Arc payments reached the wallet. One origin call processed their combined
+1,000,000 micro-USDC balance. The native $0.50 event reached both inspected stream
+nodes but was missing from the deposit table: the deployed native transform
+uses decimal division and emits `500000.000000000000000000`, which the receiver
+rejected. The committed generator uses integer U256 division. The receiver fix
+accepts only trailing decimal zeros on native Arc deposit amounts and normalizes
+stored facts to integer units. Fractional units and other event amounts remain
+strict. No hosted pipeline change is part of this fix.
+
+The [one-event repair](deployments/2026-10-06/arc-native-deposit-repair.sql) is
+prepared, not applied. Its [receipt and rehearsal](deployments/2026-10-06/arc-native-deposit-repair.json)
+verify the finalized native source transaction and successful rollback/replay
+against a disposable migrated database. It inserts one canonical event and one
+deposit, with guards on the existing 1-USDC drain. It does not alter names, flows,
+intents, balances, watches or on-chain payments. Hosted application needs approval.
+
+Arbitrum renewed successfully. Base's prepared claim was rejected for insufficient
+relayer gas; Arc's claim waits behind that nonce. The user confirmed a
+0.01-Sepolia-ETH refill in transaction
+`0x90e5434f8e196c1c09d4598dff35d6a1f038578762f044bfb733970dd1115edb`.
+Recovery and finalized API verification remain in progress. Public API flags stay off.
 
 ## Current release — 2026-09-22
 
