@@ -108,6 +108,7 @@ history test.
 Transaction status still requires a closed full source-deposit set, indexed representation,
 watch/activation coverage, an unambiguous native Arc identity join, complete allocation windows,
 all corresponding renewal joins and reviewed source-route finality. The long-delay payment's
-processing-to-renewal join passes; its bounded source-allocation window remains open.
+processing-to-renewal join passes, and the explicit extended allocation audit now closes its
+source-to-processing window. The default short polling window still cannot cover that delay.
 Do not infer API completion from this individual join. Public status is absent and other public
 API enable flags remain off. Hosted integration/capacity verification remains a separate stage.
