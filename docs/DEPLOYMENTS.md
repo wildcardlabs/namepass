@@ -426,6 +426,40 @@ status preflight/method handling and unknown-subpath JSON 404. See the
 Public API flags remain off. This verifies the disabled production boundary, not enabled-route
 capacity or new-payment completion.
 
+## Protected status and history replay — 2026-10-06
+
+The user approved an insert-only copy of minimal projections for `chrismg.eth`, `nick.eth`,
+`paramore.eth`, `slobo.eth` and `gregskril.eth` into isolated Neon `api-staging`. Five names,
+five deposits, five existing flow projections, fifteen public event projections and five watches
+were added atomically. The two existing names, their watches and all eight balances stayed intact.
+No transaction intent or new payment work was created. Production was read-only throughout.
+
+The new `api_status_reader` role has SELECT access to names, chain events, flows, deposits and
+watched addresses. It defaults to read-only transactions and has no table-write or durable DDL
+privileges. Seven encrypted variables enable only status/history and their read dependencies on
+`codex/public-api-status-staging`. Quote/address stay disabled. Production settings, SSO protection
+and public custom-domain assignments are unchanged. No indexer, Workflow or signer is attached.
+
+Deployment `dpl_AfczvwRHYv9Wtu8f1V9pVzjiCcLK` is READY for evidence commit
+`6dd8299538644d5d849357a8ffe106497b3d3977`. All five status requests returned `complete`.
+Their history results have the same exact renewal identifiers, durations and registration expiry;
+unknown expiry read timestamps remain null. Twenty-five API checks passed, including validation,
+methods, CORS, disabled quote/address routes and source-chain namespace isolation. Two simultaneous
+status reads returned the same verified result. Four site/docs/legal checks passed; two anonymous
+requests still redirected to Vercel SSO. All 33 checks passed. The five status times were 5.8–8.3
+seconds including CLI authentication/startup, rather than pure server latency.
+
+A final SELECT-only audit confirmed unchanged existing rows, copied fields and counts after all
+probes. The twenty-one production boundary checks also passed again after staging configuration,
+with populated activity and all public APIs disabled. The
+[staging receipt](deployments/2026-10-06/public-api-status-staging.json) pins the runtime checksums,
+fixture manifest hash, grants, deployment, response comparisons and database invariants.
+
+This is replay of existing single-deposit Arc-to-Sepolia payments. Positive hosted direct Sepolia,
+Base/Arbitrum source payments, live pooled/split/multiple-deposit cases, fresh funding,
+activation/watch/index propagation, restart recovery and sustained/distributed capacity remain
+open gates. The two-read probe is not a public load test. No public API enablement is approved.
+
 ## ENS V1 expiry correction — 2026-10-06
 
 The deployed helper reads the V2 registry for both renewal routes. Unmigrated V1 reservations

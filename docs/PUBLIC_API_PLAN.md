@@ -13,8 +13,11 @@ Processing-to-renewal joins are being verified by the bounded operator in
 [PUBLIC_API_RENEWAL_EVIDENCE.md](PUBLIC_API_RENEWAL_EVIDENCE.md).
 An extended read-only audit now covers the known delayed payment. A private combined operator now joins complete source sets, allocation windows and finalized
 renewals for all seven existing samples; see [combined evidence](PUBLIC_API_TRANSACTION_EVIDENCE.md).
-Public long-window polling cost, hosted source-route canaries and hosted aggregate verification
-remain release gates.
+Protected hosted status/history replay passed for five existing Arc-to-Sepolia payments, including
+the delayed sample; exact renewal identifiers, durations and expiry agree. See the
+[staging receipt](deployments/2026-10-06/public-api-status-staging.json). This proves the bounded
+read path for those payments only. Public polling capacity, positive hosted direct-Sepolia and
+Base/Arbitrum payments, new-payment propagation and aggregate funding canaries remain release gates.
 The source inspector now reports conservative receipt-set closure and rechecked configured-provider
 finality; [policy and limitations](PUBLIC_API_DEPOSIT_EVIDENCE.md) keep these separate from API completion.
 History verifies event-specific ENS expiry and hub finality. Its deployment is
