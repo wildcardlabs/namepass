@@ -93,9 +93,9 @@ source-chain token separation, current watch gaps, unknown recipients, registry 
 internal Arc funding, mirror duplication, ambiguous identities, fractional precision and
 malformed or forged receipt evidence. Base/Arbitrum cases are fixtures, not new live payments.
 
-These samples are all single-deposit transactions. No fresh multi-deposit payment, activation
-propagation interval, source-finality policy, pooled/split allocation or public polling capacity
-was proven. Source receipt membership is one gate. The next proof must bind every member to
+The original audit used only single-deposit transactions. It did not prove fresh multi-deposit
+payments, activation propagation, a source-finality policy, pooled/split allocation or public
+polling capacity. The later source-finality policy is documented below. Receipt membership is one gate. The next proof must bind every member to
 all applicable `DepositProcessed` segments, CCTP messages/claims and exact finalized renewal
 identities. A `settled` flow, a quiet index or an empty remainder inference alone is insufficient.
 The [public API plan](PUBLIC_API_PLAN.md) retains those requirements.
