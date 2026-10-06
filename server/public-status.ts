@@ -1,3 +1,4 @@
+import { admitPublicRequest } from "./public-admission";
 import { attachDatabasePool } from "@vercel/functions";
 import { Pool } from "pg";
 import { getAddress } from "viem";
@@ -435,7 +436,7 @@ export const publicStatus = {
 		const error = (status: number, code: string, message: string) =>
 			json({ error: { code, message }, requestId }, status, {
 				...HEADERS,
-				...([429, 503].includes(status) ? { "retry-after": "5" } : {}),
+				...([429, 503].includes(status) ? { "retry-after": code === "rate_limited" ? "60" : "5" } : {}),
 			});
 		if (request.method === "OPTIONS")
 			return new Response(null, { status: 204, headers: HEADERS });
@@ -464,6 +465,7 @@ export const publicStatus = {
 			);
 		activeRequests++;
 		try {
+			await admitPublicRequest("status", request);
 			const result = await status(
 				request,
 				AbortSignal.any([request.signal, AbortSignal.timeout(15000)]),
