@@ -1,0 +1,670 @@
+{
+  "observedAt": "2026-10-06T17:15:18.064Z",
+  "deployment": {
+    "id": "dpl_AfczvwRHYv9Wtu8f1V9pVzjiCcLK",
+    "url": "namepass-v2-7zrncpr6w-wildcard-labs.vercel.app",
+    "readyState": "READY",
+    "target": "preview",
+    "commit": "6dd8299538644d5d849357a8ffe106497b3d3977",
+    "gitBranch": "codex/public-api-status-staging"
+  },
+  "implementationChecksums": {
+    "server/public-status.ts": "4674e067d79de5fa2b156e00b2bca22c5aa4fcf8d230fd0f23202a832c7f34de",
+    "server/source-inspection.ts": "896f4208c07a287e6e3667cf591d96b63ad8edc67227f3fc3851e5463a9b1a03",
+    "server/source-deposit-evidence.ts": "b3d12872aacdb8fbc9aa77e7bde63ec5f9c048d3670276428871d9e997ac718e",
+    "server/allocation-evidence.ts": "81c5cc8fbe313e2ca38eafd4475ec102df8918ca584d0437043e9c4f453742b5",
+    "server/processing-renewal-evidence.ts": "c27fa225dd8e67c5fecf44808c8a076f028565cf5c60d8f8fddf4ad09b0f0921",
+    "server/transaction-evidence.ts": "e73e371e67f833e79543c38df77fd627750dd38a08f0c1ef757faeda29eb79b8",
+    "src/lib/chains.ts": "a303ffba9b049157d0446e89e993b5610b01003e8c5330a32d763979ea3ec43f"
+  },
+  "authorizedScope": "Insert-only minimal payment projections for five named existing payments into isolated api-staging; SELECT-only role and protected branch-only status/history settings.",
+  "database": {
+    "stagingBranch": "br-autumn-cherry-av2es7od",
+    "before": {
+      "names": 2,
+      "events": 0,
+      "flows": 0,
+      "deposits": 0,
+      "intents": 0,
+      "watches": 2,
+      "balances": 8
+    },
+    "after": {
+      "names": 7,
+      "events": 15,
+      "flows": 5,
+      "deposits": 5,
+      "intents": 0,
+      "watches": 7,
+      "balances": 8
+    },
+    "preservedExistingSha256": "7fa51c53b9a64164f296d1f911b5cbff111998b437424a25e20e02dccb44b31e",
+    "fixtureSha256": "3e8168d0815bf4ee31ea9c64f30bc9cbdbf9e28a6bc7ccf8e61dc3cdc24d7f27",
+    "readerRole": "api_status_reader",
+    "readOnlyDefault": true,
+    "tableWrites": false,
+    "durableDDLPrivileges": false,
+    "selectTables": [
+      "names",
+      "chain_events",
+      "flows",
+      "deposits",
+      "goldsky.watched_addresses"
+    ],
+    "productionWritten": false
+  },
+  "copyManifest": {
+    "counts": {
+      "names": 5,
+      "deposits": 5,
+      "flows": 5,
+      "events": 15,
+      "watches": 5
+    },
+    "labels": [
+      "chrismg.eth",
+      "gregskril.eth",
+      "nick.eth",
+      "paramore.eth",
+      "slobo.eth"
+    ],
+    "columns": {
+      "names": [
+        "id",
+        "normalized_label",
+        "display_name",
+        "label_hash",
+        "namehash",
+        "deposit_address",
+        "activated_at",
+        "current_expiry",
+        "renewable_by",
+        "ens_synced_at"
+      ],
+      "deposits": [
+        "event_id",
+        "name_id",
+        "chain_id",
+        "token_address",
+        "sender_address",
+        "amount",
+        "tx_hash",
+        "log_index",
+        "block_number",
+        "block_time",
+        "source",
+        "status"
+      ],
+      "flows": [
+        "id",
+        "name_id",
+        "origin_chain_id",
+        "trigger",
+        "status",
+        "amount_detected",
+        "amount_processed",
+        "origin_event_id",
+        "renewal_event_id",
+        "cctp_nonce"
+      ],
+      "events": [
+        "event_id",
+        "event_family",
+        "event_type",
+        "chain_id",
+        "tx_hash",
+        "log_index",
+        "block_number",
+        "block_time",
+        "gs_op",
+        "canonical",
+        "facts"
+      ],
+      "watches": [
+        "value",
+        "updated_at"
+      ]
+    },
+    "excluded": [
+      "keys",
+      "credentials",
+      "raw payloads",
+      "transaction intents",
+      "workflow IDs",
+      "CCTP messages and attestations"
+    ]
+  },
+  "previewConfiguration": {
+    "gitBranch": "codex/public-api-status-staging",
+    "variables": [
+      "DATABASE_URL",
+      "ETHEREUM_SEPOLIA_RPC_URL",
+      "BASE_SEPOLIA_RPC_URL",
+      "ARBITRUM_SEPOLIA_RPC_URL",
+      "ARC_TESTNET_RPC_URL",
+      "NAMEPASS_PUBLIC_STATUS_ENABLED",
+      "NAMEPASS_PUBLIC_HISTORY_ENABLED"
+    ],
+    "signingCredentials": false,
+    "operationalSecrets": false,
+    "protectionChanged": false,
+    "productionSettingsChanged": false,
+    "publicCustomDomain": false
+  },
+  "cases": [
+    {
+      "name": "chrismg.eth",
+      "sourceChainId": "5042002",
+      "status": "complete",
+      "statusCliElapsedMs": 8278,
+      "renewal": {
+        "renewalId": "11155111:0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555:304",
+        "chainId": "11155111",
+        "transactionHash": "0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555",
+        "secondsAdded": "12259587",
+        "expiry": "2033-02-19T22:45:39.000Z"
+      },
+      "statusHistoryFieldsMatch": true,
+      "expiryUpdatedAt": null,
+      "schemaAndFormatsValid": true
+    },
+    {
+      "name": "nick.eth",
+      "sourceChainId": "5042002",
+      "status": "complete",
+      "statusCliElapsedMs": 6648,
+      "renewal": {
+        "renewalId": "11155111:0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36:181",
+        "chainId": "11155111",
+        "transactionHash": "0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36",
+        "secondsAdded": "2148389",
+        "expiry": "2026-12-30T05:30:33.000Z"
+      },
+      "statusHistoryFieldsMatch": true,
+      "expiryUpdatedAt": null,
+      "schemaAndFormatsValid": true
+    },
+    {
+      "name": "paramore.eth",
+      "sourceChainId": "5042002",
+      "status": "complete",
+      "statusCliElapsedMs": 6846,
+      "renewal": {
+        "renewalId": "11155111:0x92b2284a2ccec2058921f34c3b7a68785c10e1de38398d9444ee9fdc6175f89f:225",
+        "chainId": "11155111",
+        "transactionHash": "0x92b2284a2ccec2058921f34c3b7a68785c10e1de38398d9444ee9fdc6175f89f",
+        "secondsAdded": "11431770",
+        "expiry": "2028-02-02T03:05:30.000Z"
+      },
+      "statusHistoryFieldsMatch": true,
+      "expiryUpdatedAt": null,
+      "schemaAndFormatsValid": true
+    },
+    {
+      "name": "slobo.eth",
+      "sourceChainId": "5042002",
+      "status": "complete",
+      "statusCliElapsedMs": 6660,
+      "renewal": {
+        "renewalId": "11155111:0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8:225",
+        "chainId": "11155111",
+        "transactionHash": "0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8",
+        "secondsAdded": "50851666",
+        "expiry": "2028-06-23T06:53:34.000Z"
+      },
+      "statusHistoryFieldsMatch": true,
+      "expiryUpdatedAt": null,
+      "schemaAndFormatsValid": true
+    },
+    {
+      "name": "gregskril.eth",
+      "sourceChainId": "5042002",
+      "status": "complete",
+      "statusCliElapsedMs": 5840,
+      "renewal": {
+        "renewalId": "11155111:0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7:234",
+        "chainId": "11155111",
+        "transactionHash": "0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7",
+        "secondsAdded": "46909677",
+        "expiry": "2028-03-22T01:02:21.000Z"
+      },
+      "statusHistoryFieldsMatch": true,
+      "expiryUpdatedAt": null,
+      "schemaAndFormatsValid": true
+    }
+  ],
+  "checks": {
+    "total": 33,
+    "api": [
+      {
+        "path": "/api/v1/status/5042002?transactionHash=0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 8278,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        }
+      },
+      {
+        "path": "/api/v1/names/chrismg.eth/renewals?limit=1",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 2624,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        }
+      },
+      {
+        "path": "/api/v1/status/5042002?transactionHash=0x34c874da52586754724202301eed932702d9363cc64843c99c267b92b4435f95",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 6648,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        }
+      },
+      {
+        "path": "/api/v1/names/nick.eth/renewals?limit=1",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 3598,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        }
+      },
+      {
+        "path": "/api/v1/status/5042002?transactionHash=0x9531be85ef55d5e9652eeb2188f76771e110f0d441887c37f6571e62a85ae76a",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 6846,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        }
+      },
+      {
+        "path": "/api/v1/names/paramore.eth/renewals?limit=1",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 2458,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        }
+      },
+      {
+        "path": "/api/v1/status/5042002?transactionHash=0xc96b1e8cd633b4780973d1841011ae8a7c0b5f838b5b894b6662b9c218bf055e",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 6660,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        }
+      },
+      {
+        "path": "/api/v1/names/slobo.eth/renewals?limit=1",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 2653,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        }
+      },
+      {
+        "path": "/api/v1/status/5042002?transactionHash=0xf789eb1cedf3a36ece88aaed2215b4956f66c77c26e669dba7a2659585842882",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 5840,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        }
+      },
+      {
+        "path": "/api/v1/names/gregskril.eth/renewals?limit=1",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 2310,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        }
+      },
+      {
+        "path": "/api/v1/status/5042002?transactionHash=0xabababababababababababababababababababababababababababababababab",
+        "method": "GET",
+        "status": 404,
+        "cliElapsedMs": 2306,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "errorCode": "transaction_not_found"
+      },
+      {
+        "path": "/api/v1/status/1?transactionHash=0xabababababababababababababababababababababababababababababababab",
+        "method": "GET",
+        "status": 400,
+        "cliElapsedMs": 1939,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "errorCode": "invalid_transaction"
+      },
+      {
+        "path": "/api/v1/status/5042002?transactionHash=bad",
+        "method": "GET",
+        "status": 400,
+        "cliElapsedMs": 1936,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "errorCode": "invalid_transaction"
+      },
+      {
+        "path": "/api/v1/status/5042002?transactionHash=0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db&throughBlock=999",
+        "method": "GET",
+        "status": 400,
+        "cliElapsedMs": 1970,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "errorCode": "invalid_transaction"
+      },
+      {
+        "path": "/api/v1/status/5042002",
+        "method": "OPTIONS",
+        "status": 204,
+        "cliElapsedMs": 2078,
+        "headers": {
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        }
+      },
+      {
+        "path": "/api/v1/status/5042002",
+        "method": "POST",
+        "status": 405,
+        "cliElapsedMs": 1958,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "allow": "GET, OPTIONS"
+        },
+        "errorCode": "method_not_allowed"
+      },
+      {
+        "path": "/api/v1/status/5042002/unknown",
+        "method": "GET",
+        "status": 404,
+        "cliElapsedMs": 2329,
+        "headers": {
+          "content-type": "application/json",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*"
+        },
+        "errorCode": "api_not_found"
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 1960,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        }
+      },
+      {
+        "path": "/api/v1/names/fixture-not-activated.eth/renewals",
+        "method": "GET",
+        "status": 404,
+        "cliElapsedMs": 2038,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "errorCode": "name_not_found"
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "POST",
+        "status": 503,
+        "cliElapsedMs": 2257,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "retry-after": "5"
+        },
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "status": 503,
+        "cliElapsedMs": 2447,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "retry-after": "5"
+        },
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/activity?limit=2",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 2343,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store"
+        }
+      },
+      {
+        "path": "/api/v1/status/11155111?transactionHash=0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db",
+        "method": "GET",
+        "status": 404,
+        "cliElapsedMs": 2848,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "errorCode": "transaction_not_found"
+      },
+      {
+        "path": "/api/v1/status/84532?transactionHash=0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db",
+        "method": "GET",
+        "status": 404,
+        "cliElapsedMs": 1978,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "errorCode": "transaction_not_found"
+      },
+      {
+        "path": "/api/v1/status/421614?transactionHash=0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db",
+        "method": "GET",
+        "status": 404,
+        "cliElapsedMs": 3132,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "errorCode": "transaction_not_found"
+      }
+    ],
+    "concurrent": {
+      "requests": 2,
+      "results": [
+        {
+          "path": "/api/v1/status/5042002?transactionHash=0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db",
+          "method": "GET",
+          "status": 200,
+          "cliElapsedMs": 5439,
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "no-store",
+            "access-control-allow-origin": "*",
+            "access-control-allow-methods": "GET, OPTIONS",
+            "access-control-expose-headers": "Retry-After"
+          }
+        },
+        {
+          "path": "/api/v1/status/5042002?transactionHash=0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db",
+          "method": "GET",
+          "status": 200,
+          "cliElapsedMs": 6622,
+          "headers": {
+            "content-type": "application/json; charset=utf-8",
+            "cache-control": "no-store",
+            "access-control-allow-origin": "*",
+            "access-control-allow-methods": "GET, OPTIONS",
+            "access-control-expose-headers": "Retry-After"
+          }
+        }
+      ],
+      "matchingVerifiedBodies": true,
+      "scope": "Two simultaneous existing-payment reads only. Does not prove distributed admission, sustained polling load or public capacity."
+    },
+    "pages": [
+      {
+        "path": "/",
+        "status": 200,
+        "html": true
+      },
+      {
+        "path": "/docs",
+        "status": 200,
+        "html": true
+      },
+      {
+        "path": "/docs/reference",
+        "status": 200,
+        "html": true
+      },
+      {
+        "path": "/terms",
+        "status": 200,
+        "html": true
+      }
+    ],
+    "anonymousProtection": [
+      {
+        "method": "GET",
+        "status": 302,
+        "redirectHost": "vercel.com"
+      },
+      {
+        "method": "POST",
+        "status": 302,
+        "redirectHost": "vercel.com"
+      }
+    ]
+  },
+  "postProbeDatabase": {
+    "observedAt": "2026-10-06T17:15:18.064Z",
+    "stagingBranch": "br-autumn-cherry-av2es7od",
+    "readOnly": true,
+    "counts": {
+      "names": 7,
+      "events": 15,
+      "flows": 5,
+      "deposits": 5,
+      "intents": 0,
+      "watches": 7,
+      "balances": 8
+    },
+    "preservedExistingSha256": "7fa51c53b9a64164f296d1f911b5cbff111998b437424a25e20e02dccb44b31e",
+    "copiedFieldsUnchanged": true,
+    "intentsCreated": 0,
+    "flowsStarted": 0
+  },
+  "limitations": [
+    "Existing single-deposit Arc-to-Sepolia replay only; five cases including delayed processing.",
+    "No hosted positive direct-Sepolia status or Base/Arbitrum source payment.",
+    "No fresh wallet funding, activation/watch/index propagation or restart recovery test.",
+    "No hosted pooled, split or multiple-deposit positive payment case.",
+    "Two concurrent reads do not prove distributed admission or sustained public polling capacity.",
+    "Elapsed times include Vercel CLI authentication/startup; not pure server latency.",
+    "Production APIs remain disabled. Quote/address remain disabled on this staging branch.",
+    "No indexer, Workflow, signer, schema migration or contract deployment attached to staging."
+  ]
+}

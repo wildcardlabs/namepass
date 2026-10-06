@@ -1,11 +1,15 @@
 # Transaction status adapter
 
-Date: 2026-10-06. Read-only HTTP adapter, disabled by default. Public release gates remain open.
+Date: 2026-10-06. Read-only HTTP adapter merged in PR #135, disabled by default.
+Production boundaries are verified in [DEPLOYMENTS.md](DEPLOYMENTS.md#private-transaction-status-adapter--2026-10-06). Public release gates remain open.
 
 `GET /api/v1/status/{chainId}?transactionHash={hash}` runs the existing source, allocation and
 renewal verifiers inside a bounded request. No client manifest, processing boundary, caller fee,
 background job or saved completion record is accepted. `NAMEPASS_PUBLIC_STATUS_ENABLED=1` is
-required. Production and preview flags remain off. Known status URLs now return JSON 503 rather
+required. Production flags remain off. Status is enabled only on the protected
+`codex/public-api-status-staging` preview branch. That branch also enables history against isolated
+`api-staging` through a SELECT-only reader.
+Quote and address remain disabled on that branch. Disabled status URLs return JSON 503 rather
 than the earlier absent-route 404. OPTIONS returns 204 and unsupported methods return 405.
 The preview read proxy leaves this route to its own adapter.
 
@@ -94,11 +98,22 @@ mid-request canonical index correction. Allocation tests require gap-free 4,096-
 retention of late credits and rejection of a hidden debit in a delayed window. Underlying receipt
 and combined-join tests retain pooled/split/shared-event proof.
 
-These are existing-payment reads and local regressions. They do not establish hosted enabled-route
-latency/capacity, distributed abuse controls, fresh multi-deposit/pool/split funding,
-Base/Arbitrum hosted canaries or activation/watch propagation. The delayed sample is close to the
-15-second provider deadline; larger or slower cases may truthfully return 503. Protected hosted
-verification, public polling cost and the end-to-end quickstart gates in the
+The protected hosted adapter also returned `complete` for five existing Arc-to-Sepolia payments,
+including the delayed sample. Status and history agree on renewal identity, duration and expiry;
+history returns null for an unknown expiry read timestamp. Twenty-five API checks, two concurrent
+reads, four page checks and two anonymous SSO checks passed. Status elapsed times were 5.8–8.3
+seconds including CLI authentication/startup. Existing staging rows and the approved copied fields
+remained unchanged after these probes. See the
+[protected staging receipt](deployments/2026-10-06/public-api-status-staging.json).
+
+These are existing-payment reads and local regressions. They do not establish sustained hosted
+capacity, distributed abuse controls, fresh multi-deposit/pool/split funding, positive hosted direct
+Sepolia or Base/Arbitrum payments, restart recovery or activation/watch propagation. The local
+delayed sample was close to the 15-second provider deadline; larger or slower cases may truthfully
+return 503. Further hosted source-route verification, public polling cost and the end-to-end
+quickstart gates in the
 [rollout plan](PUBLIC_API_PLAN.md) must pass before public enablement. Provider receipt/range
-completeness and configured-provider finality remain explicit trust boundaries. No new storage,
-worker, schema, ingestion, Workflow, contract, signer or hosted setting is introduced here.
+completeness and configured-provider finality remain explicit trust boundaries. The adapter
+introduces no new storage, worker, schema, ingestion, Workflow, contract or signer.
+The approved hosted staging settings are limited to the branch and SELECT-only database role
+recorded in the receipt; production settings are unchanged.
