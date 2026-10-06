@@ -304,13 +304,33 @@ deployment. Eighteen HTTP checks passed with populated activity, docs/legal rout
 public APIs. Quote, address and history enable flags remain absent.
 [Release evidence](deployments/2026-10-06/public-api-source-production.json) records the checks.
 
-The allocation operator is a separate unmerged change on PR #129. Six existing simple wallet
-windows closed with 14 read-only RPC calls each; a long-delay payment stayed open within the
+PR #129 merged at `fa00a1cb8f333888754a1a78f07326ae2f99b697`; production deployment
+`dpl_AUox74HVpPkAgJNv7mCoPKUSS2c9` is ready. Both site and ingestion aliases point to that
+exact commit. Eighteen HTTP checks passed with populated activity and disabled public APIs;
+the quote/address/history enable flags remain absent.
+[Release evidence](deployments/2026-10-06/public-api-allocation-production.json) records the checks.
+Full CI passed all 193 server tests, including the real PostgreSQL source inspector.
+
+Six existing simple wallet windows closed with 14 read-only RPC calls each; a long-delay payment stayed open within the
 2,048-block limit. [Operator evidence](deployments/2026-10-06/public-api-allocation-operator.json)
 pins the inspected files. Pooled/split cases passed independent receipt fixtures, including the
 actual CLI transport boundary; no new wallet funding or hosted mutation occurred.
 See [allocation review](PUBLIC_API_ALLOCATION.md#bounded-source-to-processing-verifier--2026-10-06)
 for the remaining long-window, claim/finality and coverage gates. There is no public status route.
+
+## Processing-to-renewal operator verification — 2026-10-06
+
+The new read-only operator verified nine existing processing calls against exact gateway/ENS
+receipt segments and provider finality anchors. Eight Arc claims use the exact Circle message
+index/nonce; one direct Sepolia call shares its processing receipt with the renewal. Cross-chain
+inspection used 19 RPC reads for V2 names or 20 for V1 names and one public Circle request;
+direct inspection used 13 RPC reads.
+[Operator evidence](deployments/2026-10-06/public-api-processing-renewal-operator.json) pins
+the inspected implementation. No wallet funding, database write or hosted configuration changed.
+
+[Verification scope](PUBLIC_API_RENEWAL_EVIDENCE.md) distinguishes these individual joins from
+full source-payment completion. Coverage, long allocation windows, source-route finality and
+hosted integration/capacity remain release gates. There is still no transaction-status endpoint.
 
 ## ENS V1 expiry correction — 2026-10-06
 
@@ -330,15 +350,26 @@ No helper, pointer, pricing, migration, signer, or funding change is needed.
 
 The [SELECT-only audit](deployments/2026-10-06/ens-expiry-audit.json) checked eleven names,
 ten canonical renewal events and ten linked flows. Five name dates, four event expiry facts,
-and four flow expiry dates need correction. The
+and four flow expiry dates required correction. The
 [bounded repair](deployments/2026-10-06/ens-expiry-repair.sql) changes only these date fields
 and the paired name read timestamps. It compares the audited values, accepts already corrected
-rows, and aborts the entire transaction if evidence is stale. This repair is prepared but has
-not been applied to the hosted database. Deployment and data repair need separate authorization.
+rows, and aborts the entire transaction if evidence is stale. After separate user authorization,
+the repair was applied at 11:20 UTC. Before/after assertions verified all thirteen corrections
+and unchanged unrelated names, event facts, flow statuses, amounts and durations. See the
+[applied repair record](deployments/2026-10-06/ens-expiry-repair-applied.json).
+
+PR #131 was merged as `ce235c5f858398247537b7c96c82476fe7e287fb`. Production deployment
+`dpl_FVVwwYsfWSZEqGZaZYHGtdT4hAqh` is READY for that commit. Both the site and ingestion
+aliases resolve to it. Eighteen HTTP checks passed with populated activity and unchanged API
+gates. Live name responses show all five corrected V1 dates; four historical renewal dates
+match the repair. The V2 control name retains its prior expiry. See the
+[production verification](deployments/2026-10-06/ens-expiry-production.json).
+Required CI passed all 197 server tests without skips. No contracts or hosted settings changed.
 
 Earlier history and PR #130 operator evidence used V2 reservation expiry for V1 results.
 Those expiry values are superseded by this audit. Renewal identity, amount and duration evidence
-is unchanged. PR #130 must use the corrected parser before merging.
+is unchanged. PR #130 now discovers the V1 BaseRegistrar at the receipt block and its
+read-only operator re-run returns the correct registration dates for all four V1 renewals.
 
 ## Historical evidence
 

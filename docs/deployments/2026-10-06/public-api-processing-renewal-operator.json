@@ -1,0 +1,407 @@
+{
+  "observedAt": "2026-10-06T11:15:11.486Z",
+  "readOnly": true,
+  "implementationChecksums": {
+    "server/processing-renewal-evidence.ts": "c27fa225dd8e67c5fecf44808c8a076f028565cf5c60d8f8fddf4ad09b0f0921",
+    "scripts/public-api/processing-renewals.ts": "389ca5f8e6bb74f7724b25186ad7924176fbe9fd17bed8daa642a579d7f3f61d"
+  },
+  "baseProductionCommit": "fa00a1cb8f333888754a1a78f07326ae2f99b697",
+  "rows": [
+    {
+      "observedAt": "2026-10-06T11:14:54.358Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one processing call to one ENS renewal",
+        "processingId": "5042002:0x6f112551ae21ee509fa85afa8e65ae69f2e924bcba414392cd5f8a92214d412b:9",
+        "processingBlockNumber": "63327588",
+        "processingBlockHash": "0xe603c16bdbd39aeabfa39e5f92359fb318ecf6b95eb3cae203895bc3f662e547",
+        "renewalId": "11155111:0x47fb93e99172e174c5b3da44cf5daf1d3f2a26a2260d15cc1be110b142ad843a:190",
+        "renewalBlockNumber": "11754120",
+        "renewalBlockHash": "0x9e4edd3c27e3282a4af61d1079a18aa8d21cf3ced6169a190ba75288db15d07e",
+        "name": "steve.eth",
+        "depositAddress": "0x5b7516768ed0b04e212041265bb1f11af71841d7",
+        "sourceChainId": "5042002",
+        "chainId": "11155111",
+        "transactionHash": "0x47fb93e99172e174c5b3da44cf5daf1d3f2a26a2260d15cc1be110b142ad843a",
+        "secondsAdded": "3547790",
+        "amountApplied": "900000",
+        "renewalFee": "100000",
+        "expiry": "2029-07-02T07:16:26.000Z",
+        "ensLogIndex": 184,
+        "cctp": {
+          "messageIndex": 0,
+          "nonce": "0x3b9a3b1b3d2ad34926e408ec81223cb6657f6db7f0c4fa461313a5958f14aa19",
+          "claimLogIndex": 179,
+          "feeExecuted": "0"
+        },
+        "providerFinalized": true,
+        "anchors": [
+          {
+            "chainId": "5042002",
+            "number": "65786414",
+            "hash": "0x146318866a855da6e33f52f31c4d609cfb9b0bc13530d29fd890bd37466aefcd"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855476",
+            "hash": "0xd256af942b32db7b087f7dc1ffb5f16be893a8c1313629070c27fdb3ecfe61b4"
+          }
+        ],
+        "rpcCalls": 19,
+        "irisReads": 1,
+        "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+      }
+    },
+    {
+      "observedAt": "2026-10-06T11:14:56.588Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one processing call to one ENS renewal",
+        "processingId": "5042002:0x6b75f2a35a6e76d9084c89ad1f7ccbc92ac485e15b359eda9ae4dc4e57a96f6d:37",
+        "processingBlockNumber": "63327769",
+        "processingBlockHash": "0x90a8539ed22a9e47e184f06313c74f8309f4ba97a306e70d0fa610a336511f35",
+        "renewalId": "11155111:0x51a897a78e9d8825022a6784c1d424c2fbdd97e5c26ef1372ea5c8d635199ddf:164",
+        "renewalBlockNumber": "11754127",
+        "renewalBlockHash": "0x9bae7f0d0671542a558423e38d61e193ac0c3b58b1ee7266a1e7ac8ca8e8c94a",
+        "name": "steve.eth",
+        "depositAddress": "0x5b7516768ed0b04e212041265bb1f11af71841d7",
+        "sourceChainId": "5042002",
+        "chainId": "11155111",
+        "transactionHash": "0x51a897a78e9d8825022a6784c1d424c2fbdd97e5c26ef1372ea5c8d635199ddf",
+        "secondsAdded": "3547790",
+        "amountApplied": "900000",
+        "renewalFee": "100000",
+        "expiry": "2029-08-12T08:46:16.000Z",
+        "ensLogIndex": 158,
+        "cctp": {
+          "messageIndex": 0,
+          "nonce": "0xc0ae74d2d0e28624484094b0343b5e5f80a6d75c2aee099ace2773b2eb4ec081",
+          "claimLogIndex": 153,
+          "feeExecuted": "0"
+        },
+        "providerFinalized": true,
+        "anchors": [
+          {
+            "chainId": "5042002",
+            "number": "65786418",
+            "hash": "0xf8b3fdeca954eb60988f47ebcbe4d1973163cc992591d767b638ad0910d9b238"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855476",
+            "hash": "0xd256af942b32db7b087f7dc1ffb5f16be893a8c1313629070c27fdb3ecfe61b4"
+          }
+        ],
+        "rpcCalls": 19,
+        "irisReads": 1,
+        "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+      }
+    },
+    {
+      "observedAt": "2026-10-06T11:14:58.767Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one processing call to one ENS renewal",
+        "processingId": "5042002:0x6082468e2d67a05842e04fceaacbe061cbf0d4d626ee9b477f519630593bd8c0:39",
+        "processingBlockNumber": "63428646",
+        "processingBlockHash": "0xefcf2de2b42d1a33fc0d6e1507d5466f7c894cc47dead26c7ee16fa3dc30ca7c",
+        "renewalId": "11155111:0x92b2284a2ccec2058921f34c3b7a68785c10e1de38398d9444ee9fdc6175f89f:225",
+        "renewalBlockNumber": "11758226",
+        "renewalBlockHash": "0x93a84434b6749e6b9dcbbad65369ba2c3298f834ae406b2986298ff64326a63f",
+        "name": "paramore.eth",
+        "depositAddress": "0x690866bdde4cdca43479150aac4f2d17e2792ca1",
+        "sourceChainId": "5042002",
+        "chainId": "11155111",
+        "transactionHash": "0x92b2284a2ccec2058921f34c3b7a68785c10e1de38398d9444ee9fdc6175f89f",
+        "secondsAdded": "11431770",
+        "amountApplied": "2900000",
+        "renewalFee": "100000",
+        "expiry": "2028-02-02T03:05:30.000Z",
+        "ensLogIndex": 219,
+        "cctp": {
+          "messageIndex": 0,
+          "nonce": "0x411d6a9466de864321f64dce612e54fb465c1ccf57717f45bf602639f2a6306c",
+          "claimLogIndex": 214,
+          "feeExecuted": "0"
+        },
+        "providerFinalized": true,
+        "anchors": [
+          {
+            "chainId": "5042002",
+            "number": "65786422",
+            "hash": "0x26e36dde7b87fa17255f15ead85af69628891faaf3926db9ab49c4ad115d1d16"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855476",
+            "hash": "0xd256af942b32db7b087f7dc1ffb5f16be893a8c1313629070c27fdb3ecfe61b4"
+          }
+        ],
+        "rpcCalls": 19,
+        "irisReads": 1,
+        "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+      }
+    },
+    {
+      "observedAt": "2026-10-06T11:15:01.033Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one processing call to one ENS renewal",
+        "processingId": "5042002:0xa55253216246dd886a5fd4e64c51f328d9ae7b4b9d9a051058fc4b7689bf923b:23",
+        "processingBlockNumber": "63623092",
+        "processingBlockHash": "0x33a7728c44f0c3dafa1cea0bb9eb02bcb246f21d7502c29ce64d9aa93ce1ec9f",
+        "renewalId": "11155111:0x9055fe091741e3edf419b1f83ab7acd0781d63e510e180713aff9c7565033551:164",
+        "renewalBlockNumber": "11766145",
+        "renewalBlockHash": "0xc26ae8dbd36388afc2d94ce972f56c7fd17ebd8fcab2295b648069658fcbdb11",
+        "name": "vitalik.eth",
+        "depositAddress": "0xa61656ca2d2952a46a9d4da0aae01d8d7fe988e0",
+        "sourceChainId": "5042002",
+        "chainId": "11155111",
+        "transactionHash": "0x9055fe091741e3edf419b1f83ab7acd0781d63e510e180713aff9c7565033551",
+        "secondsAdded": "39025697",
+        "amountApplied": "9900000",
+        "renewalFee": "100000",
+        "expiry": "2069-09-12T15:13:35.000Z",
+        "ensLogIndex": 154,
+        "cctp": {
+          "messageIndex": 0,
+          "nonce": "0xdcb0de38a386f9490ccbf11504add750a36dd466e7c44010addc5e5751b49268",
+          "claimLogIndex": 148,
+          "feeExecuted": "0"
+        },
+        "providerFinalized": true,
+        "anchors": [
+          {
+            "chainId": "5042002",
+            "number": "65786427",
+            "hash": "0x871133062bc29a6ff878f1c116f1294ff64b9d45a8909b188750f956129f8a11"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855476",
+            "hash": "0xd256af942b32db7b087f7dc1ffb5f16be893a8c1313629070c27fdb3ecfe61b4"
+          }
+        ],
+        "rpcCalls": 20,
+        "irisReads": 1,
+        "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+      }
+    },
+    {
+      "observedAt": "2026-10-06T11:15:03.359Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one processing call to one ENS renewal",
+        "processingId": "5042002:0xf1089feccf1d1843bf2dde769a21ddde1bb420f8ba392d4aa05362027ac1a855:23",
+        "processingBlockNumber": "63623306",
+        "processingBlockHash": "0xedd5fe3e18a95daa92a0e99b942ec3aef5438eabf8ffef8ec4b6f17105bd0036",
+        "renewalId": "11155111:0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36:181",
+        "renewalBlockNumber": "11766153",
+        "renewalBlockHash": "0x306160db68c966f8b9c3e27903ad36241c5596705b501bf84f9f42b361e36a67",
+        "name": "nick.eth",
+        "depositAddress": "0xc25eeebbf6450b83e16cae8421b6e143ae24e450",
+        "sourceChainId": "5042002",
+        "chainId": "11155111",
+        "transactionHash": "0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36",
+        "secondsAdded": "2148389",
+        "amountApplied": "10899996",
+        "renewalFee": "100000",
+        "expiry": "2026-12-30T05:30:33.000Z",
+        "ensLogIndex": 170,
+        "cctp": {
+          "messageIndex": 0,
+          "nonce": "0x753e2b1fd9d28065bc49eb085dbe45157bb96e71b2b04acccc60669d0d72698d",
+          "claimLogIndex": 164,
+          "feeExecuted": "0"
+        },
+        "providerFinalized": true,
+        "anchors": [
+          {
+            "chainId": "5042002",
+            "number": "65786431",
+            "hash": "0x4ea02a3c92cf5d155fd29f2d6d0603491b0ec584bf1f4dac65c8b937d1fec6ec"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855476",
+            "hash": "0xd256af942b32db7b087f7dc1ffb5f16be893a8c1313629070c27fdb3ecfe61b4"
+          }
+        ],
+        "rpcCalls": 20,
+        "irisReads": 1,
+        "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+      }
+    },
+    {
+      "observedAt": "2026-10-06T11:15:05.693Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one processing call to one ENS renewal",
+        "processingId": "5042002:0xc95c1629f6ed716f88faf851e8f1d3105b29239f68d7f9142cccb40b42a8e789:15",
+        "processingBlockNumber": "63624002",
+        "processingBlockHash": "0x9ec8ed0651c579dcb6164845557b2f5a0ed6546bc5fc9b49e6fa82f7421e7f22",
+        "renewalId": "11155111:0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7:234",
+        "renewalBlockNumber": "11766181",
+        "renewalBlockHash": "0x4e3fc01f5c8bd263091b0fdfac3394dab420aac1bd0c9ec436413bd294765e4a",
+        "name": "gregskril.eth",
+        "depositAddress": "0xf0feaeb652489cf635043a5ebd7416c6e328d2fe",
+        "sourceChainId": "5042002",
+        "chainId": "11155111",
+        "transactionHash": "0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7",
+        "secondsAdded": "46909677",
+        "amountApplied": "11900000",
+        "renewalFee": "100000",
+        "expiry": "2028-03-22T01:02:21.000Z",
+        "ensLogIndex": 224,
+        "cctp": {
+          "messageIndex": 0,
+          "nonce": "0x7628eb01aaeca12f3f753c32f6c7410ee2d4ebd0fdd3adba387d8abb2f003f7b",
+          "claimLogIndex": 218,
+          "feeExecuted": "0"
+        },
+        "providerFinalized": true,
+        "anchors": [
+          {
+            "chainId": "5042002",
+            "number": "65786436",
+            "hash": "0x5661c9d310aaeb2a4a56f6573f243ce8dcb4cde815818ea46024656cab6d8205"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855476",
+            "hash": "0xd256af942b32db7b087f7dc1ffb5f16be893a8c1313629070c27fdb3ecfe61b4"
+          }
+        ],
+        "rpcCalls": 20,
+        "irisReads": 1,
+        "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+      }
+    },
+    {
+      "observedAt": "2026-10-06T11:15:08.193Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one processing call to one ENS renewal",
+        "processingId": "5042002:0xc2c0c690d6c9141febfe9cf7e8359c1e731aece4029f6b25727fd3c224cd7e1c:44",
+        "processingBlockNumber": "63624441",
+        "processingBlockHash": "0xbeee0274fdecf782b96c3318064556b4f6e0af6bfc1298372f854d26f14662a9",
+        "renewalId": "11155111:0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8:225",
+        "renewalBlockNumber": "11766200",
+        "renewalBlockHash": "0xa881039931fbee539129482bd24bb1a412fe49ee4278e55c7f774a3ce190a2cf",
+        "name": "slobo.eth",
+        "depositAddress": "0x7706018b4e0eedb99e5bf5b38446461b2b8ad8e9",
+        "sourceChainId": "5042002",
+        "chainId": "11155111",
+        "transactionHash": "0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8",
+        "secondsAdded": "50851666",
+        "amountApplied": "12900000",
+        "renewalFee": "100000",
+        "expiry": "2028-06-23T06:53:34.000Z",
+        "ensLogIndex": 215,
+        "cctp": {
+          "messageIndex": 0,
+          "nonce": "0x287f2e0e4f0b17b23b5390b708813d1b03b020c8ed7ad38ba0d94bab2e0a34cc",
+          "claimLogIndex": 209,
+          "feeExecuted": "0"
+        },
+        "providerFinalized": true,
+        "anchors": [
+          {
+            "chainId": "5042002",
+            "number": "65786441",
+            "hash": "0x735459a40423521ab721d8dc4cde99478ef58a005b9436660d8ae96fe8e84739"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855476",
+            "hash": "0xd256af942b32db7b087f7dc1ffb5f16be893a8c1313629070c27fdb3ecfe61b4"
+          }
+        ],
+        "rpcCalls": 20,
+        "irisReads": 1,
+        "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+      }
+    },
+    {
+      "observedAt": "2026-10-06T11:15:09.209Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one processing call to one ENS renewal",
+        "processingId": "11155111:0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409:323",
+        "processingBlockNumber": "11815826",
+        "processingBlockHash": "0x80991a9fb89dd20f524021df9dffaffb2185c0f84e03b77cbda7eb4ea808ab59",
+        "renewalId": "11155111:0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409:322",
+        "renewalBlockNumber": "11815826",
+        "renewalBlockHash": "0x80991a9fb89dd20f524021df9dffaffb2185c0f84e03b77cbda7eb4ea808ab59",
+        "name": "steve.eth",
+        "depositAddress": "0x5b7516768ed0b04e212041265bb1f11af71841d7",
+        "sourceChainId": "11155111",
+        "chainId": "11155111",
+        "transactionHash": "0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409",
+        "secondsAdded": "3547790",
+        "amountApplied": "900000",
+        "renewalFee": "100000",
+        "expiry": "2029-09-22T10:16:06.000Z",
+        "ensLogIndex": 316,
+        "cctp": null,
+        "providerFinalized": true,
+        "anchors": [
+          {
+            "chainId": "11155111",
+            "number": "11855476",
+            "hash": "0xd256af942b32db7b087f7dc1ffb5f16be893a8c1313629070c27fdb3ecfe61b4"
+          }
+        ],
+        "rpcCalls": 13,
+        "irisReads": 0,
+        "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+      }
+    },
+    {
+      "observedAt": "2026-10-06T11:15:11.471Z",
+      "readOnly": true,
+      "evidence": {
+        "scope": "one processing call to one ENS renewal",
+        "processingId": "5042002:0xafd4fafee19c06cdfb55653c04a3aa0fdcf66055bcd1cadf4650fa658fe1c2f0:26",
+        "processingBlockNumber": "64870424",
+        "processingBlockHash": "0xe56cd4b487c7d75e34817fb45e32cb90355fda6e92a256ead116348a82743fa4",
+        "renewalId": "11155111:0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555:304",
+        "renewalBlockNumber": "11818636",
+        "renewalBlockHash": "0x0c719d3fa42be7ba9f54cc585b3202cdca38d29669edb24f8a606682d9c2cf73",
+        "name": "chrismg.eth",
+        "depositAddress": "0x0a2a97e83e879215530fbde1088d08cc2dfaf993",
+        "sourceChainId": "5042002",
+        "chainId": "11155111",
+        "transactionHash": "0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555",
+        "secondsAdded": "12259587",
+        "amountApplied": "3110000",
+        "renewalFee": "100000",
+        "expiry": "2033-02-19T22:45:39.000Z",
+        "ensLogIndex": 298,
+        "cctp": {
+          "messageIndex": 0,
+          "nonce": "0xbb72ac12002312854c19d947f5af0f852ec77cd6c1e582446f0fe2ef679b2ecf",
+          "claimLogIndex": 293,
+          "feeExecuted": "0"
+        },
+        "providerFinalized": true,
+        "anchors": [
+          {
+            "chainId": "5042002",
+            "number": "65786447",
+            "hash": "0x023f489b0e57b8c97bc618db565f2b03850c5247049d0a71b6883e0bdfc5ecb5"
+          },
+          {
+            "chainId": "11155111",
+            "number": "11855476",
+            "hash": "0xd256af942b32db7b087f7dc1ffb5f16be893a8c1313629070c27fdb3ecfe61b4"
+          }
+        ],
+        "rpcCalls": 19,
+        "irisReads": 1,
+        "limitations": "Not API completion: source-deposit membership, allocation windows, watch coverage and route finality policy remain separate gates. Finality relies on the configured providers' finalized anchors; this is not a light-client proof."
+      }
+    }
+  ],
+  "limits": "Existing simple Arc and direct Sepolia payments only; no new funding, API completion, source allocation, L2 policy or hosted mutation."
+}

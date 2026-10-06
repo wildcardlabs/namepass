@@ -1,0 +1,113 @@
+{
+  "observedAt": "2026-10-06T11:20:26.572Z",
+  "authorized": true,
+  "fixProductionCommit": "ce235c5f858398247537b7c96c82476fe7e287fb",
+  "fixDeploymentId": "dpl_FVVwwYsfWSZEqGZaZYHGtdT4hAqh",
+  "neonProject": "nameless-paper-91018372",
+  "neonBranch": "br-noisy-bird-avey45an",
+  "names": [
+    {
+      "id": "975f3c03-725b-424f-ba4c-57d2e2f92507",
+      "label": "farcaster",
+      "before": "2032-05-08T21:32:37.000Z",
+      "after": "2032-03-07T21:32:37.000Z"
+    },
+    {
+      "id": "d440a810-bbf1-4c4b-919c-6275b9a4a898",
+      "label": "gregskril",
+      "before": "2028-05-23T01:02:21.000Z",
+      "after": "2028-03-22T01:02:21.000Z"
+    },
+    {
+      "id": "87921a4f-7739-4cec-9a23-be72335b7e02",
+      "label": "nick",
+      "before": "2027-03-02T05:30:33.000Z",
+      "after": "2026-12-30T05:30:33.000Z"
+    },
+    {
+      "id": "9e0e695c-255c-4759-af82-2763225d61c6",
+      "label": "slobo",
+      "before": "2028-08-24T06:53:34.000Z",
+      "after": "2028-06-23T06:53:34.000Z"
+    },
+    {
+      "id": "5d0f2e10-cea9-4e99-975f-b2d31ecd323e",
+      "label": "vitalik",
+      "before": "2069-11-13T15:13:35.000Z",
+      "after": "2069-09-12T15:13:35.000Z"
+    }
+  ],
+  "events": [
+    {
+      "eventId": "11155111:log_0xc26ae8dbd36388afc2d94ce972f56c7fd17ebd8fcab2295b648069658fcbdb11_164",
+      "eventFamily": "namepass",
+      "label": "vitalik",
+      "transactionHash": "0x9055fe091741e3edf419b1f83ab7acd0781d63e510e180713aff9c7565033551",
+      "logIndex": 164,
+      "blockNumber": "11766145",
+      "before": "3151581215",
+      "after": "3146224415"
+    },
+    {
+      "eventId": "11155111:log_0x306160db68c966f8b9c3e27903ad36241c5596705b501bf84f9f42b361e36a67_181",
+      "eventFamily": "namepass",
+      "label": "nick",
+      "transactionHash": "0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36",
+      "logIndex": 181,
+      "blockNumber": "11766153",
+      "before": "1803965433",
+      "after": "1798608633"
+    },
+    {
+      "eventId": "11155111:log_0x4e3fc01f5c8bd263091b0fdfac3394dab420aac1bd0c9ec436413bd294765e4a_234",
+      "eventFamily": "namepass",
+      "label": "gregskril",
+      "transactionHash": "0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7",
+      "logIndex": 234,
+      "blockNumber": "11766181",
+      "before": "1842656541",
+      "after": "1837299741"
+    },
+    {
+      "eventId": "11155111:log_0xa881039931fbee539129482bd24bb1a412fe49ee4278e55c7f774a3ce190a2cf_225",
+      "eventFamily": "namepass",
+      "label": "slobo",
+      "transactionHash": "0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8",
+      "logIndex": 225,
+      "blockNumber": "11766200",
+      "before": "1850712814",
+      "after": "1845356014"
+    }
+  ],
+  "flows": [
+    {
+      "id": "76f746d1-7d5a-4461-ae6c-f9c2dedd8c9d",
+      "renewalEventId": "11155111:log_0x4e3fc01f5c8bd263091b0fdfac3394dab420aac1bd0c9ec436413bd294765e4a_234",
+      "label": "gregskril",
+      "before": "2028-05-23T01:02:21.000Z",
+      "after": "2028-03-22T01:02:21.000Z"
+    },
+    {
+      "id": "778da1d0-b59d-4c88-818a-2d5e9784fdeb",
+      "renewalEventId": "11155111:log_0xc26ae8dbd36388afc2d94ce972f56c7fd17ebd8fcab2295b648069658fcbdb11_164",
+      "label": "vitalik",
+      "before": "2069-11-13T15:13:35.000Z",
+      "after": "2069-09-12T15:13:35.000Z"
+    },
+    {
+      "id": "a192c01d-37ce-40b4-8639-0182a87886fe",
+      "renewalEventId": "11155111:log_0x306160db68c966f8b9c3e27903ad36241c5596705b501bf84f9f42b361e36a67_181",
+      "label": "nick",
+      "before": "2027-03-02T05:30:33.000Z",
+      "after": "2026-12-30T05:30:33.000Z"
+    },
+    {
+      "id": "eec07fbc-2c4b-4396-8c47-a309b1b15cbf",
+      "renewalEventId": "11155111:log_0xa881039931fbee539129482bd24bb1a412fe49ee4278e55c7f774a3ce190a2cf_225",
+      "label": "slobo",
+      "before": "2028-08-24T06:53:34.000Z",
+      "after": "2028-06-23T06:53:34.000Z"
+    }
+  ],
+  "verified": "Approved expiry fields corrected; unrelated names, event facts, flow statuses, amounts and durations unchanged in before/after snapshots. No schema, funding or hosted settings changes."
+}
