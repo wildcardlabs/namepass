@@ -472,10 +472,12 @@ The local rehearsal now exercises actual address, webhook and status handlers wi
 SQL store. An early delivery rolls back and retries after registration; duplicate deliveries
 retain one deposit and one queued flow. Withheld source indexing remains retryable 404, and
 index delivery alone returns processing rather than completion. Read-only discovery confirms the
-production Goldsky pipeline is ACTIVE. A separate one-address Sepolia pipeline with blackhole
-sinks is prepared for measuring actual watch visibility and restart behavior; it is not deployed.
+production Goldsky pipeline is ACTIVE. The proposed additional pipeline was never deployed
+and its configuration has been removed because the current plan does not allow another pipeline.
+Read-only inspection and any user-signed delivery canary must use the existing pipeline.
+An already-watched name cannot prove first-watch propagation or restart recovery.
 [Discovery receipt](deployments/2026-10-06/public-api-activation-rehearsal.json) records the
-validator scope and the renewable canary target.
+runtime fingerprint, plan limit and renewable canary target.
 [Scope and proposed hosted procedure](PUBLIC_API_ACTIVATION_REHEARSAL.md) distinguish this local
 boundary from stream propagation, payment completion and public capacity. No hosted setting,
 schema, production pipeline, wallet transaction or API flag changed for this rehearsal.

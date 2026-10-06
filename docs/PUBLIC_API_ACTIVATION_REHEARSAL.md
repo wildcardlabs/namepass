@@ -1,6 +1,7 @@
 # Activation and watch propagation rehearsal
 
-Date: 2026-10-06. Local application boundary verified. Hosted watch test prepared, not deployed.
+Date: 2026-10-06. Local application boundary verified. Additional-pipeline proposal withdrawn because
+the current Goldsky plan does not allow another pipeline.
 Production public APIs remain disabled.
 
 ## What the local test proves
@@ -42,48 +43,42 @@ optional caching. Neither reference nor the pipeline definition establishes the 
 setting or an acknowledgement barrier for this application. Do not assume a cache interval or
 change the production writer protocol from that reference alone.
 
-## Prepared hosted test
+## Hosted checks within the current plan
 
-[The proposed YAML](deployments/2026-10-06/public-api-watch-rehearsal.yaml) creates only
-`namepass-api-watch-rehearsal`, at resource size `s`. It selects Sepolia USDC transfers to
-`0x16CfEB29157376F55e7976562a850d04435C171d` (`farcaster.eth`). A bounded read-only ENS check
-confirmed this name uses V1 and is renewable. It is absent from the seven-name staging fixture.
-The YAML passed the installed Goldsky validator without applying it.
-Both source and watch-filter outputs use a
-[blackhole sink](https://docs.goldsky.com/turbo-pipelines/sinks/blackhole), inspected live.
-There is no webhook sink, payment executor, production database credential or public API setting.
-This is a watch visibility test, not an end-to-end renewal canary.
+Use the existing `namepass-testnet-v2` pipeline. Do not create another pipeline, database
+reader or Goldsky secret. The previously validated blackhole-only YAML has been removed;
+it was never applied. No staging watch was inserted and no test transfer was sent.
 
-After separate approval:
+Start with read-only inspection. Any fresh transfer is a separate user-signed action:
 
-1. Create a dedicated SELECT-only `api_watch_reader` on isolated `api-staging`, limited to
-   `goldsky.watched_addresses`, and a new `NAMEPASS_API_STAGING_WATCH_READER` Goldsky secret.
-   Preserve all existing reader credentials, rows and settings. Assert the canary watch is absent.
-2. Start only the prepared pipeline. Record its definition checksum, runtime image and live state.
-   Compare the runtime image with production; a different image limits this to rehearsal-version
-   evidence. Do not update or restart the production pipeline. Inspect both named output nodes.
-3. The user signs a 0.50 testnet-USDC Sepolia transfer before the staging watch is added. Match
-   its exact canonical source hash/log position in the unfiltered output. Record whether it is
-   absent from the watch-filter output; pipeline latency alone cannot establish that conclusion.
-4. Insert only the canary watch into staging, then have the user sign a second 0.50-USDC transfer.
-   Record watch commit time, source receipt time and both output identities. Check whether the
-   first transfer reappears after membership changes, rather than assuming retroactive replay.
-5. Restart only the rehearsal pipeline without clearing state. A third user-signed 0.50-USDC
-   transfer checks membership after restart. Record duplicate identities separately from missing
-   events. Do not change source names or reset checkpoints.
-6. Pause the rehearsal after the three cases or at the agreed observation limit. Preserve the
-   evidence; remove only this newly inserted watch and the rehearsal-owned pipeline/secret/role
-   when cleanup is approved. Compare the original staging rows and counts before/after.
+1. Record the existing pipeline's state, definition checksum and runtime image, when exposed.
+   Inspect `all_usdc_transfers` and `incoming_deposits` without changing the definition,
+   sinks, watch table, source names or checkpoints. Do not pause or restart production.
+2. Use existing indexed source receipts to compare transfer identities with deposit rows and
+   renewal evidence. Historical agreement proves those deliveries, not first-watch visibility.
+3. For a fresh delivery canary, subscribe to both existing output nodes before funding. The
+   user may sign a 0.50 testnet-USDC Sepolia transfer to the existing `farcaster.eth` deposit
+   address, `0x16CfEB29157376F55e7976562a850d04435C171d`, once capture is ready. A bounded
+   read-only ENS check confirmed the name is V1 and renewable. Ordinary production automation
+   can process this payment. Match its canonical transaction hash and log index across source,
+   filtered output, indexed deposit and eventual renewal. Funding needs the user's signature.
+4. End the inspection session after twenty minutes or after evidence is captured. Disconnecting
+   inspection must leave the production pipeline running. Missing live output or an inspection
+   timeout is inconclusive; it does not prove an event was dropped.
 
-Observe for at most twenty minutes from pipeline startup; pause on timeout and
-report an inconclusive case instead of extending the run silently. Hosted compute uses Goldsky
-billing. All three transfers total 1.50 testnet USDC; wallet gas is separate. `farcaster.eth` is
-already watched by the existing production application, so its ordinary renewal automation may
-process those payments. No new production activation or automation setting is needed or approved
-by this prepared configuration. Funding requires the user's wallet signatures.
+`farcaster.eth` is already watched in production. Funding it cannot measure the delay between a
+new watch commit and first visibility. Nor can read-only inspection prove restart recovery or
+that membership changes replay earlier filtered transfers. Those release gates remain open.
+Do not relabel existing-watch delivery as new-activation coverage.
 
-Do not enable address activation or attach an automatic webhook writer to this rehearsal. If
-visibility leaves an unrecoverable interval, propose the smallest change to the existing core
+A first-watch test needs a separately reviewed canary through the existing application's normal
+activation path, with an eligible name not already watched, capture before activation and
+source/index evidence after it. Do not insert or delete production watch rows directly. Do not
+restart the production pipeline to manufacture recovery evidence. If the current plan cannot
+observe the required boundary safely, record the limitation and keep public activation disabled.
+
+Do not enable address activation on an API preview or attach staging to the production stream.
+If evidence shows an unrecoverable interval, propose the smallest change to the existing core
 activation/recovery path in a separate review. Do not add a queue, verification worker or API
 schema to conceal a gap. Positive hosted direct/Sepolia and Base/Arbitrum status, fresh aggregate
 funding and public capacity remain separate release gates.

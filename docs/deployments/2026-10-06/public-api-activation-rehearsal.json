@@ -2,7 +2,9 @@
   "observedAt": "2026-10-06T17:31:19.232Z",
   "baseCommit": "1aebd659aaf95c06ed1939f3a89b53a223b37461",
   "productionPipeline": {
-    "observedAt": "2026-10-06T17:31:19.232Z",
+    "imageTag": "main-3f9ff4bf77383a2a2678b3eaf9edf769a7311cb7",
+    "definitionSha256": "939029d8bff043e1ce8062d7fa893a14053d315a09adc665f7459d572f5abc76",
+    "observedAt": "2026-10-06T18:15:45.002Z",
     "pipeline": "namepass-testnet-v2",
     "matches": [
       {
@@ -18,22 +20,6 @@
         "value": "namepass-testnet-v2"
       },
       {
-        "path": "definition.sources.arc_testnet_usdc_v2.version",
-        "value": "1.1.0"
-      },
-      {
-        "path": "definition.sources.arc_testnet_logs_v2.version",
-        "value": "1.1.0"
-      },
-      {
-        "path": "definition.sources.base_sepolia_logs_v2.version",
-        "value": "1.0.0"
-      },
-      {
-        "path": "definition.sources.ethereum_sepolia_usdc_v2.version",
-        "value": "1.2.0"
-      },
-      {
         "path": "definition.sources.base_sepolia_usdc_v2.version",
         "value": "1.2.0"
       },
@@ -46,12 +32,28 @@
         "value": "1.0.0"
       },
       {
-        "path": "definition.sources.ethereum_sepolia_logs_v2.version",
+        "path": "definition.sources.base_sepolia_logs_v2.version",
         "value": "1.0.0"
+      },
+      {
+        "path": "definition.sources.ethereum_sepolia_usdc_v2.version",
+        "value": "1.2.0"
       },
       {
         "path": "definition.sources.arbitrum_sepolia_usdc_v2.version",
         "value": "1.2.0"
+      },
+      {
+        "path": "definition.sources.arc_testnet_usdc_v2.version",
+        "value": "1.1.0"
+      },
+      {
+        "path": "definition.sources.arc_testnet_logs_v2.version",
+        "value": "1.1.0"
+      },
+      {
+        "path": "definition.sources.ethereum_sepolia_logs_v2.version",
+        "value": "1.0.0"
       },
       {
         "path": "definition.transforms.watched_addresses",
@@ -60,8 +62,8 @@
           "backend_type": "Postgres",
           "backend_entity_name": "watched_addresses",
           "sql": null,
-          "column": "value",
           "time_column": "updated_at",
+          "column": "value",
           "schema": "goldsky"
         }
       },
@@ -84,16 +86,17 @@
     "readOnly": true
   },
   "rehearsal": {
-    "name": "namepass-api-watch-rehearsal",
-    "definition": "public-api-watch-rehearsal.yaml",
-    "sha256": "1a7d5b2ef8a6a05f7e2cafab31337fffdc58a95b44dbcae75a6853bb2fab419f",
-    "validated": true,
-    "applied": false,
-    "signaturesOrTransfersSent": false,
+    "additionalPipelineProposal": "withdrawn: current Goldsky plan does not permit another pipeline",
+    "additionalPipelineCreated": false,
     "readerSecretCreated": false,
     "watchAdded": false,
-    "sinks": "blackhole only",
-    "observationLimitMinutesFromStartup": 20
+    "signaturesOrTransfersSent": false,
+    "existingPipeline": "namepass-testnet-v2",
+    "existingPipelineChanges": false,
+    "observationLimitMinutes": 20,
+    "nextCheck": "read-only inspection; any fresh funding requires the user signature",
+    "firstWatchPropagationVerified": false,
+    "restartRecoveryVerified": false
   },
   "localTest": {
     "file": "server/public-address.test.ts",
@@ -108,6 +111,6 @@
     "No deployed cache/refresh interval inferred from the pipeline definition.",
     "No hosted watch propagation or fresh funding evidence yet.",
     "The installed validator rejects the unchanged full production Arc transform because its local plugin lacks to_u256; the cloud production pipeline remains ACTIVE. No CLI update or production definition change was made.",
-    "The prepared one-chain rehearsal validates without that Arc transform, but does not prove all-chain ingestion or public release capacity."
+    "No additional pipeline can be provisioned under the current plan; existing-watch observation does not close first-watch or restart gates."
   ]
 }
