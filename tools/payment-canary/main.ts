@@ -40,10 +40,11 @@ app.innerHTML = `<header><span class="brand">Namepass</span><span class="badge">
 <section class="panel"><div class="row between wallet-row"><h2>Browser wallet</h2><div class="row wallet-row"><select id="wallet" aria-label="Browser wallet"></select><button id="connect">Connect Rainbow</button></div></div><div id="account" class="status">No wallet connected.</div><div id="error" class="error hidden" role="alert"></div></section>
 <div class="notice">Four route checks: <strong>2.00 testnet USDC total</strong>, plus network gas. Each click requests one payment signature. This page holds no backend key and grants no token approvals.</div>
 <div class="payment-grid" id="payments"></div>
-<section class="panel"><span class="number">First-time activation · separate check</span><h2>A newly watched name</h2><p>Check an eligible name that Namepass has never activated. Activate through the same core route used by the app, then fund it while the existing Goldsky capture is running.</p><label for="new-name">ENS name</label><input id="new-name" value="jbrannan.eth" autocomplete="off" spellcheck="false"><div class="row actions wallet-row"><button id="check-new" class="secondary">Check name</button><button id="activate" disabled>Activate monitoring</button><button id="fund-new" disabled>Sign 0.50 USDC · Sepolia</button></div><div id="new-destination" class="destination"></div><div id="new-state" class="payment-state" aria-live="polite"></div></section>
+<section class="panel"><span class="number">First-time activation · separate check</span><h2>A newly watched name</h2><p>Check an eligible name that Namepass has never activated. Activate through the same core route used by the app, then fund it while the existing Goldsky capture is running.</p><label for="new-name">ENS name</label><input id="new-name" value="stressfully.eth" autocomplete="off" spellcheck="false"><div class="row actions wallet-row"><button id="check-new" class="secondary">Check name</button><button id="activate" disabled>Activate monitoring</button><button id="fund-new" disabled>Sign 0.50 USDC · Sepolia</button></div><div id="new-destination" class="destination"></div><div id="new-state" class="payment-state" aria-live="polite"></div></section>
 <section class="panel"><h2>Payment record</h2><p class="tip">A successful transfer receipt confirms funding. The API checks must separately confirm indexing, finality and renewal. Export or copy these hashes for verification.</p><button id="export" class="secondary">Export public payment record</button><div id="journal" class="journal"></div></section>`;
 const el = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 const setText = (id: string, value: string) => { el(id).textContent = value; };
+if (journal.firstWatch) el<HTMLInputElement>("new-name").value = journal.firstWatch.name;
 function hashLink(entry: Entry) {
   const a = document.createElement("a"); a.href = `${chainById(entry.chainId)!.explorerUrl}/tx/${entry.transactionHash}`; a.target = "_blank"; a.rel = "noopener noreferrer"; a.textContent = entry.transactionHash; return a;
 }
@@ -81,13 +82,18 @@ async function quote(label: string, amount: bigint) {
 }
 async function capture() { const r = await fetch("/capture-status", { cache: "no-store" }); const state = await r.json(); if (!state.active) throw Error("The read-only stream capture is not running. Ask Codex to start it before activation or funding."); journal.capture = state; save(); }
 async function send(p: Payment) {
+  const statusId = p.id === "first-watch" ? "new-state" : "state-" + p.id;
+  const stage = (message: string) => setText(statusId, message);
+  stage("Checking the stream capture…");
   await capture();
   if (!provider || !account) throw Error("Connect your wallet first.");
   const definition = definitions.find(c => c.id === p.chainId)!;
   if (Number(await provider.request({ method: "eth_chainId" })) !== p.chainId) {
+    stage(`Waiting for the wallet to switch to ${definition.name}…`);
     try { await provider.request({ method: "wallet_switchEthereumChain", params: [{ chainId: `0x${p.chainId.toString(16)}` }] }); }
     catch (error) { if ((error as { code?: number }).code !== 4902) throw error; await provider.request({ method: "wallet_addEthereumChain", params: [{ chainId: `0x${p.chainId.toString(16)}`, chainName: definition.name, nativeCurrency: definition.nativeCurrency, rpcUrls: [...definition.rpcUrls.default.http], blockExplorerUrls: [definition.blockExplorers!.default.url] }] }); await provider.request({ method: "wallet_switchEthereumChain", params: [{ chainId: `0x${p.chainId.toString(16)}` }] }); }
   }
+  stage("Checking network, destination, monitoring and renewal quote…");
   await walletCheck(p.chainId);
   const chain = ACTIVE_CHAINS.find(c => c.chainId === p.chainId)!, destination = getAddress(depositAddress(p.label));
   const reads = createPublicClient({ chain: definition, transport: http(definition.rpcUrls.default.http[0], { timeout: 15000, retryCount: 0 }) });
@@ -101,10 +107,17 @@ async function send(p: Payment) {
   if (p.native) { const balance = await reads.getBalance({ address: account }); if (balance <= value) throw Error("Insufficient native USDC for this payment and gas."); }
   else { const balance = await reads.readContract({ address: chain.usdcAddress as Address, abi, functionName: "balanceOf", args: [account] }); if (balance < p.amount) throw Error("Insufficient testnet USDC on this network."); }
   const tx = p.native ? { account, to: destination, value } : { account, to: chain.usdcAddress as Address, data: encodeFunctionData({ abi, functionName: "transfer", args: [destination, p.amount] }), value: 0n };
-  const gas = await reads.estimateGas(tx); await walletCheck(p.chainId);
-  const transactionHash = await wallet.sendTransaction({ ...tx, gas: gas * 12n / 10n });
+  // Prepare Arc's legacy fee on its verified RPC. Do not depend on a wallet's
+  // supported-network gas estimator for this custom USDC gas-token chain.
+  stage("Simulating the payment and reading network gas pricing…");
+  const fees = p.chainId === arcTestnet.id ? { type: "legacy" as const, gasPrice: await reads.getGasPrice() } : {};
+  if ("gasPrice" in fees && (!fees.gasPrice || fees.gasPrice <= 0n)) throw Error("Arc gas pricing is unavailable.");
+  const gas = await reads.estimateGas({ ...tx, ...fees }); await walletCheck(p.chainId);
+  stage("RPC checks passed. Waiting for your wallet signature. If Rainbow's preview cannot load, reject the request and select another browser wallet. Do not reload while a signature is pending.");
+  const transactionHash = await wallet.sendTransaction({ ...tx, ...fees, gas: gas * 12n / 10n });
   const entry: Entry = { id: p.id, chainId: p.chainId, name: `${p.label}.eth`, destination, amount: p.amount.toString(), native: !!p.native, signedAt: new Date().toISOString(), transactionHash };
   journal.entries.push(entry); save(); render();
+  stage("Payment submitted. Waiting for its receipt…");
   const receipt = await reads.waitForTransactionReceipt({ hash: transactionHash, timeout: 120000 });
   entry.receipt = { status: receipt.status, blockNumber: receipt.blockNumber.toString(), logIndices: receipt.logs.map(l => l.logIndex) }; save();
   setText(p.id === "first-watch" ? "new-state" : "state-" + p.id, receipt.status === "success" ? "Payment confirmed. Codex can verify indexing and the renewal." : "Payment reverted; no renewal funding was delivered.");
