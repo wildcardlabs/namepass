@@ -1,0 +1,1026 @@
+{
+  "observedAt": "2026-10-06T20:52:00.916Z",
+  "mainBeforeChange": "aca8456d60e750fda1874371a74ac29c9663662c",
+  "currentENS": {
+    "registrar": "0xf633e7FC17e2bbE0D0965D18ec1821dcB754a3d3",
+    "renewerV1": "0xf2ece44980778966b8a0FccB3A9E339440f6e045",
+    "registry": "0xD4eBcbBdF463C9c45784603Db0dDD499BC44A8B4",
+    "baseRegistrar": "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85"
+  },
+  "helperRotation": {
+    "helper": "0x33CDD1f7Ea4dd6e2469EF0F8B9e982F5ad365f31",
+    "deployer": "0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6",
+    "deploymentTx": "0xe8b46f98610975f76d316e47c64c53de3297d498a7321af24583d7b29b05056f",
+    "scheduleTx": "0xaded99f23ad1e69b439654d12bc9ddff9fe41b28fe476566ddd8c65306405927",
+    "activationTx": "0xe3765e6eb1ce82c54f9d2cfc3c47482c937b7922928226ea70380a5c4afa3176",
+    "userSigned": true,
+    "timelockDelaySeconds": 60,
+    "factoryGatewayPointerUnchanged": true,
+    "runtimeAndConstructorInputsVerified": true
+  },
+  "rootCause": {
+    "observedAt": "2026-10-06T18:56:13.518Z",
+    "baseRegistrar": "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85",
+    "oldRenewer": "0xd06e726e9bd8ac0f33a2a45f4cc28fe10d656a36",
+    "readOnly": true,
+    "range": {
+      "from": 11754050,
+      "to": 11857751,
+      "chunkSize": 8192
+    },
+    "removals": [
+      {
+        "transactionHash": "0x8e740ce7f542538c78cb403fb4b16291ff227b2efca491a0295b2e03d0834254",
+        "logIndex": 124,
+        "blockNumber": 11821651,
+        "blockHash": "0x8bd7a8bc4d8ffdcda14650370df0457ebe33a527914451ea565dfb82f90ea0aa",
+        "blockTime": "2026-10-01T11:53:48.000Z",
+        "receiptStatus": "0x1",
+        "transitions": [
+          {
+            "event": "ControllerRemoved",
+            "args": {
+              "controller": "0xd06e726e9bD8ac0f33A2a45F4Cc28fe10d656a36"
+            },
+            "logIndex": 124
+          }
+        ]
+      }
+    ]
+  },
+  "fork": {
+    "block": 11857705,
+    "test": "HelperRotationForkTest.testFork_octoberEnsRotationPreservesFundedWalletAndRenews",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "compiler": "0.8.24",
+    "compilerEvmVersion": "shanghai",
+    "executionEvmVersion": "cancun",
+    "noLiveBroadcast": true
+  },
+  "localStatus": {
+    "observedAt": "2026-10-06T20:49:23.353Z",
+    "readOnly": true,
+    "implementationChecksums": {
+      "server/public-status.ts": "4674e067d79de5fa2b156e00b2bca22c5aa4fcf8d230fd0f23202a832c7f34de",
+      "server/source-inspection.ts": "896f4208c07a287e6e3667cf591d96b63ad8edc67227f3fc3851e5463a9b1a03",
+      "server/source-deposit-evidence.ts": "b3d12872aacdb8fbc9aa77e7bde63ec5f9c048d3670276428871d9e997ac718e",
+      "server/allocation-evidence.ts": "81c5cc8fbe313e2ca38eafd4475ec102df8918ca584d0437043e9c4f453742b5",
+      "server/processing-renewal-evidence.ts": "c27fa225dd8e67c5fecf44808c8a076f028565cf5c60d8f8fddf4ad09b0f0921",
+      "server/transaction-evidence.ts": "e73e371e67f833e79543c38df77fd627750dd38a08f0c1ef757faeda29eb79b8",
+      "src/lib/chains.ts": "8b07a9c234e4c06cd21f3b1d0ea7bdf9f76bc8c5c9caa1ae92be6ff4371115e3"
+    },
+    "baseCommit": "b619dd1",
+    "scope": "New October ENS addresses; public flags unchanged",
+    "rows": [
+      {
+        "chainId": "11155111",
+        "transactionHash": "0xd725d3431622bfc574524ca092564a319efe49e0be2b4798348b582718441533",
+        "elapsedMs": 7834,
+        "rpcCalls": 45,
+        "circleReads": 0,
+        "readOnlySessions": 2,
+        "response": {
+          "chainId": "11155111",
+          "transactionHash": "0xd725d3431622bfc574524ca092564a319efe49e0be2b4798348b582718441533",
+          "status": "complete",
+          "deposits": [
+            {
+              "name": "farcaster.eth",
+              "depositAddress": "0x16CfEB29157376F55e7976562a850d04435C171d",
+              "logIndex": 110,
+              "amount": "500000",
+              "status": "complete",
+              "reason": null,
+              "renewals": [
+                {
+                  "renewalId": "11155111:0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e:179",
+                  "chainId": "11155111",
+                  "transactionHash": "0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e",
+                  "secondsAdded": "1576795",
+                  "expiry": "2032-03-26T03:32:32.000Z"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "limits": "Actual HTTP adapter executed locally against the fresh user-signed Sepolia deposit and verified renewal. This is not hosted HTTP capacity or public enablement."
+  },
+  "localHistory": {
+    "observedAt": "2026-10-06T20:52:00.916Z",
+    "code": "Local current ENS registry change based on main aca8456d60e750fda1874371a74ac29c9663662c",
+    "readOnly": true,
+    "readOnlySessions": 1,
+    "source": "Fresh farcaster renewal, verified through the actual history HTTP adapter with a read-only production database session and read-only Sepolia RPC. Hosted flags unchanged.",
+    "rows": [
+      {
+        "name": "farcaster.eth",
+        "status": 200,
+        "elapsedMs": 1941,
+        "rpcCalls": 9,
+        "rpcMethods": [
+          "eth_chainId",
+          "eth_getBlockByNumber",
+          "eth_getTransactionReceipt",
+          "eth_getCode",
+          "eth_call"
+        ],
+        "finalized": {
+          "blockNumber": "11858253",
+          "blockHash": "0xddd1c503aea32e4aba565751f85e82a22f6175ecf81bca7aa4d51b84a1ace12c"
+        },
+        "items": [
+          {
+            "renewalId": "11155111:0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e:179",
+            "flowId": "98fc7f5f-9147-41fb-8a79-8aa8ded20fa3",
+            "sourceChainId": "11155111",
+            "chainId": "11155111",
+            "transactionHash": "0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e",
+            "secondsAdded": "1576795",
+            "amountApplied": "400000",
+            "renewalFee": "100000",
+            "expiry": "2032-03-26T03:32:32.000Z",
+            "status": "complete",
+            "renewedAt": "2026-10-06T19:18:36.000Z"
+          }
+        ],
+        "expiryUpdatedAt": null,
+        "currentExpiry": "2032-03-26T03:32:32.000Z",
+        "nextCursor": null
+      }
+    ]
+  },
+  "cleanup": {
+    "observedAt": "2026-10-06T20:47:22.237Z",
+    "branch": "br-noisy-bird-avey45an",
+    "mode": "applied",
+    "statements": [
+      {
+        "command": "DELETE",
+        "rows": 65
+      },
+      {
+        "command": "DELETE",
+        "rows": 13
+      },
+      {
+        "command": "DELETE",
+        "rows": 12
+      },
+      {
+        "command": "DELETE",
+        "rows": 7
+      },
+      {
+        "command": "DELETE",
+        "rows": 43
+      },
+      {
+        "command": "UPDATE",
+        "rows": 4
+      },
+      {
+        "command": "UPDATE",
+        "rows": 11
+      }
+    ],
+    "privateBackup": true
+  },
+  "cleanupAfter": {
+    "observedAt": "2026-10-06T20:53:45.999Z",
+    "counts": {
+      "names": 11,
+      "chain_events": 4,
+      "deposits": 1,
+      "flows": 1,
+      "flow_transitions": 5,
+      "transaction_intents": 1,
+      "balance_snapshots": 44,
+      "balance_scan_requests": 0,
+      "relayer_nonces": 2
+    },
+    "oldEvents": 0,
+    "watches": 11,
+    "flows": [
+      {
+        "id": "98fc7f5f-9147-41fb-8a79-8aa8ded20fa3",
+        "normalized_label": "farcaster",
+        "name_id": "975f3c03-725b-424f-ba4c-57d2e2f92507",
+        "status": "settled",
+        "created_at": "2026-10-06T18:46:26.184Z",
+        "deposit_event_id": "11155111:log_0xbae97e0c4f4f045b7a1d3ae144b8d78db71f89ad9432b71de637cd055d0238ec_110",
+        "renewal_event_id": "11155111:log_0x9bb1b58cb89bb0c6e6d3d494dc7233c38e14f14a8c1ae7810436475705200df7_179",
+        "origin_event_id": "11155111:log_0x9bb1b58cb89bb0c6e6d3d494dc7233c38e14f14a8c1ae7810436475705200df7_180",
+        "origin_tx_intent_id": "7ada70bb-a9ae-4529-abfb-77f3f8c9cc05",
+        "claim_tx_intent_id": null
+      }
+    ],
+    "eventCounts": [
+      {
+        "event_family": "deposit",
+        "count": 1,
+        "min": "2026-10-06T18:46:24.000Z",
+        "max": "2026-10-06T18:46:24.000Z"
+      },
+      {
+        "event_family": "namepass",
+        "count": 3,
+        "min": "2026-10-06T19:18:36.000Z",
+        "max": "2026-10-06T19:18:36.000Z"
+      }
+    ]
+  },
+  "stagingFixture": {
+    "preparedAt": "2026-10-06T20:53:50.169Z",
+    "sourceReadOnly": true,
+    "sourceBranch": "br-noisy-bird-avey45an",
+    "proposedDestination": {
+      "project": "nameless-paper-91018372",
+      "branch": "api-staging",
+      "branchId": "br-autumn-cherry-av2es7od"
+    },
+    "replaceObsoleteFixtureHistory": true,
+    "preserveExisting": [
+      "all name identities and watches",
+      "all existing balances",
+      "reader role and privileges"
+    ],
+    "counts": {
+      "names": 1,
+      "deposits": 1,
+      "flows": 1,
+      "events": 3,
+      "watches": 1
+    },
+    "labels": [
+      "farcaster.eth"
+    ],
+    "columns": {
+      "names": [
+        "id",
+        "normalized_label",
+        "display_name",
+        "label_hash",
+        "namehash",
+        "deposit_address",
+        "activated_at",
+        "current_expiry",
+        "renewable_by",
+        "ens_synced_at"
+      ],
+      "deposits": [
+        "event_id",
+        "name_id",
+        "chain_id",
+        "token_address",
+        "sender_address",
+        "amount",
+        "tx_hash",
+        "log_index",
+        "block_number",
+        "block_time",
+        "source",
+        "status"
+      ],
+      "flows": [
+        "id",
+        "name_id",
+        "origin_chain_id",
+        "trigger",
+        "status",
+        "amount_detected",
+        "amount_processed",
+        "origin_event_id",
+        "renewal_event_id",
+        "cctp_nonce"
+      ],
+      "events": [
+        "event_id",
+        "event_family",
+        "event_type",
+        "chain_id",
+        "tx_hash",
+        "log_index",
+        "block_number",
+        "block_time",
+        "gs_op",
+        "canonical",
+        "facts"
+      ],
+      "watches": [
+        "value",
+        "updated_at"
+      ]
+    },
+    "fixtureSha256": "ffeeefedc37042821b4c370931c02903de599650715fb343037e23dd98261e14",
+    "excluded": [
+      "keys",
+      "credentials",
+      "raw payloads",
+      "transaction intents",
+      "workflow IDs",
+      "CCTP messages and attestations"
+    ],
+    "readerRoleProposed": "api_status_reader",
+    "selectOnlyTables": [
+      "names",
+      "chain_events",
+      "flows",
+      "deposits",
+      "goldsky.watched_addresses"
+    ],
+    "previewBranchProposed": "codex/ens-october-api-canary",
+    "publicFlagsRemainOff": true
+  },
+  "stagingReplacement": {
+    "observedAt": "2026-10-06T20:55:44.836Z",
+    "mode": "applied",
+    "stagingBranch": "br-autumn-cherry-av2es7od",
+    "before": {
+      "names": 7,
+      "events": 15,
+      "flows": 5,
+      "deposits": 5,
+      "intents": 0,
+      "watches": 7,
+      "balances": 8
+    },
+    "after": {
+      "names": 8,
+      "events": 3,
+      "flows": 1,
+      "deposits": 1,
+      "intents": 0,
+      "watches": 8,
+      "balances": 8
+    },
+    "readerRole": "api_status_reader",
+    "readerPrivilegesChanged": false,
+    "balancesPreserved": true,
+    "transactionIntents": 0,
+    "productionWritten": false,
+    "fixtureSha256": "ffeeefedc37042821b4c370931c02903de599650715fb343037e23dd98261e14"
+  },
+  "publicAPIsEnabled": false,
+  "pipelineChanges": 0,
+  "schemaChanges": 0,
+  "remainingGates": [
+    "Fresh Base/Arbitrum/Arc payments under the new helper",
+    "First-watch activation propagation",
+    "Fresh multi-deposit/pooled/split funding",
+    "Hosted polling capacity and abuse controls"
+  ],
+  "fixtureSha256": "2245d574d0cc5be280eccb5b348d620c2a835b08e530452e746895ce68d15b12",
+  "protectedHosted": {
+    "observedAt": "2026-10-06T21:06:08.116Z",
+    "deployment": {
+      "id": "dpl_9wE7sSRU7WTTN6HhojgzfzyfWwXW",
+      "url": "namepass-v2-hojnwqejr-wildcard-labs.vercel.app",
+      "readyState": "READY",
+      "target": "preview",
+      "commit": "4da8af636af2e3cf9334b7e1c2adc499ffe81ba1",
+      "gitBranch": "codex/ens-october-api-canary"
+    },
+    "results": [
+      {
+        "path": "/api/v1/status/11155111?transactionHash=0xd725d3431622bfc574524ca092564a319efe49e0be2b4798348b582718441533",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 5126,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "chainId": "11155111",
+          "transactionHash": "0xd725d3431622bfc574524ca092564a319efe49e0be2b4798348b582718441533",
+          "status": "complete",
+          "deposits": [
+            {
+              "name": "farcaster.eth",
+              "depositAddress": "0x16CfEB29157376F55e7976562a850d04435C171d",
+              "logIndex": 110,
+              "amount": "500000",
+              "status": "complete",
+              "reason": null,
+              "renewals": [
+                {
+                  "renewalId": "11155111:0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e:179",
+                  "chainId": "11155111",
+                  "transactionHash": "0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e",
+                  "secondsAdded": "1576795",
+                  "expiry": "2032-03-26T03:32:32.000Z"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "path": "/api/v1/names/farcaster.eth/renewals?limit=1",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 2257,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "name": "farcaster.eth",
+          "currentExpiry": "2032-03-26T03:32:32.000Z",
+          "expiryUpdatedAt": null,
+          "items": [
+            {
+              "renewalId": "11155111:0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e:179",
+              "flowId": "98fc7f5f-9147-41fb-8a79-8aa8ded20fa3",
+              "sourceChainId": "11155111",
+              "chainId": "11155111",
+              "transactionHash": "0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e",
+              "secondsAdded": "1576795",
+              "amountApplied": "400000",
+              "renewalFee": "100000",
+              "expiry": "2032-03-26T03:32:32.000Z",
+              "status": "complete",
+              "renewedAt": "2026-10-06T19:18:36.000Z"
+            }
+          ],
+          "nextCursor": null
+        }
+      },
+      {
+        "path": "/api/v1/status/11155111?transactionHash=0xabababababababababababababababababababababababababababababababab",
+        "method": "GET",
+        "status": 404,
+        "cliElapsedMs": 1914,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "error": {
+            "code": "transaction_not_found",
+            "message": "No matching deposit has been indexed. Retry the same URL."
+          },
+          "requestId": "954ac97c-92d1-480c-9f71-dfc4fe7cbf0d"
+        }
+      },
+      {
+        "path": "/api/v1/status/1?transactionHash=0xabababababababababababababababababababababababababababababababab",
+        "method": "GET",
+        "status": 400,
+        "cliElapsedMs": 3345,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "error": {
+            "code": "invalid_transaction",
+            "message": "Use a supported source chain and one transactionHash."
+          },
+          "requestId": "ec8e5ce2-68ce-41d6-b448-296856785892"
+        }
+      },
+      {
+        "path": "/api/v1/status/11155111?transactionHash=bad",
+        "method": "GET",
+        "status": 400,
+        "cliElapsedMs": 2807,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "error": {
+            "code": "invalid_transaction",
+            "message": "Use a supported source chain and one transactionHash."
+          },
+          "requestId": "6e3777be-4c21-4271-a987-2b9fa0b572f5"
+        }
+      },
+      {
+        "path": "/api/v1/status/11155111?transactionHash=0xd725d3431622bfc574524ca092564a319efe49e0be2b4798348b582718441533&throughBlock=999",
+        "method": "GET",
+        "status": 400,
+        "cliElapsedMs": 3038,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "error": {
+            "code": "invalid_transaction",
+            "message": "Use a supported source chain and one transactionHash."
+          },
+          "requestId": "1abfac1a-7b10-4371-9a8f-6cb4bfc2080a"
+        }
+      },
+      {
+        "path": "/api/v1/status/11155111",
+        "method": "OPTIONS",
+        "status": 204,
+        "cliElapsedMs": 1965,
+        "headers": {
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": null
+      },
+      {
+        "path": "/api/v1/status/11155111",
+        "method": "POST",
+        "status": 405,
+        "cliElapsedMs": 2032,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "allow": "GET, OPTIONS"
+        },
+        "body": {
+          "error": {
+            "code": "method_not_allowed",
+            "message": "Use GET."
+          },
+          "requestId": "6d3f7211-ad80-4a75-ad14-59dc15edb92a"
+        }
+      },
+      {
+        "path": "/api/v1/status/11155111/unknown",
+        "method": "GET",
+        "status": 404,
+        "cliElapsedMs": 1991,
+        "headers": {
+          "content-type": "application/json",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*"
+        },
+        "body": {
+          "error": {
+            "code": "api_not_found",
+            "message": "This API endpoint is not available."
+          }
+        }
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 2033,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "name": "steve.eth",
+          "currentExpiry": null,
+          "expiryUpdatedAt": null,
+          "items": [],
+          "nextCursor": null
+        }
+      },
+      {
+        "path": "/api/v1/names/fixture-not-activated.eth/renewals",
+        "method": "GET",
+        "status": 404,
+        "cliElapsedMs": 2131,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "error": {
+            "code": "name_not_found",
+            "message": "This name has not been activated. Retrieve its deposit address first."
+          },
+          "requestId": "271a25de-95a7-4336-9dd8-03a2bf6e3f7c"
+        }
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "POST",
+        "status": 503,
+        "cliElapsedMs": 1876,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "retry-after": "5"
+        },
+        "body": {
+          "error": {
+            "code": "api_unavailable",
+            "message": "The quote API is not enabled."
+          },
+          "requestId": "a43125e7-8247-4f86-a0ae-15ae41f33018"
+        }
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "status": 503,
+        "cliElapsedMs": 2480,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "POST, OPTIONS",
+          "access-control-expose-headers": "Retry-After",
+          "retry-after": "5"
+        },
+        "body": {
+          "error": {
+            "code": "api_unavailable",
+            "message": "The address API is not enabled."
+          },
+          "requestId": "966c3fb0-0f4f-45b3-8c6c-e340f504be5c"
+        }
+      },
+      {
+        "path": "/api/activity?limit=2",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 2084,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store"
+        },
+        "body": {
+          "items": 1
+        }
+      }
+    ],
+    "scope": "Protected hosted read-only status/history verification of the fresh October Sepolia payment. Exact finalized renewal identity agrees. Existing-watch delivery and automation were verified separately on production. This does not establish first-watch propagation, other source routes, aggregate funding or distributed polling capacity."
+  },
+  "previewProtection": {
+    "observedAt": "2026-10-06T21:06:25.281Z",
+    "deployment": {
+      "id": "dpl_9wE7sSRU7WTTN6HhojgzfzyfWwXW",
+      "url": "namepass-v2-hojnwqejr-wildcard-labs.vercel.app",
+      "readyState": "READY",
+      "target": "preview",
+      "commit": "4da8af636af2e3cf9334b7e1c2adc499ffe81ba1",
+      "gitBranch": "codex/ens-october-api-canary"
+    },
+    "anonymousBlocked": true,
+    "rows": [
+      {
+        "method": "GET",
+        "status": 302,
+        "redirectHost": "vercel.com"
+      },
+      {
+        "method": "POST",
+        "status": 302,
+        "redirectHost": "vercel.com"
+      }
+    ],
+    "protectionChanged": false,
+    "settingsChanged": false
+  },
+  "previewReadOnlyAfter": {
+    "observedAt": "2026-10-06T21:06:53.909Z",
+    "stagingBranch": "br-autumn-cherry-av2es7od",
+    "readOnly": true,
+    "counts": {
+      "names": 8,
+      "events": 3,
+      "flows": 1,
+      "deposits": 1,
+      "intents": 0,
+      "watches": 8,
+      "balances": 8
+    },
+    "stagingDataAndReaderSha256": "a71d791a98090774efa4ab97c1976075f6ee0de3f08a42928815acf0d7e58c93",
+    "copiedFieldsUnchanged": true,
+    "intentsCreated": 0,
+    "flowsStarted": 0
+  },
+  "previewScope": {
+    "observedAt": "2026-10-06T21:03:40.986Z",
+    "from": "codex/public-api-status-staging",
+    "to": "codex/ens-october-api-canary",
+    "mutation": "gitBranch only; value/type/target omitted and preserved",
+    "variables": [
+      {
+        "key": "NAMEPASS_PUBLIC_HISTORY_ENABLED",
+        "type": "encrypted",
+        "target": [
+          "preview"
+        ],
+        "gitBranch": "codex/ens-october-api-canary"
+      },
+      {
+        "key": "NAMEPASS_PUBLIC_STATUS_ENABLED",
+        "type": "encrypted",
+        "target": [
+          "preview"
+        ],
+        "gitBranch": "codex/ens-october-api-canary"
+      },
+      {
+        "key": "ARC_TESTNET_RPC_URL",
+        "type": "sensitive",
+        "target": [
+          "preview"
+        ],
+        "gitBranch": "codex/ens-october-api-canary"
+      },
+      {
+        "key": "ARBITRUM_SEPOLIA_RPC_URL",
+        "type": "sensitive",
+        "target": [
+          "preview"
+        ],
+        "gitBranch": "codex/ens-october-api-canary"
+      },
+      {
+        "key": "BASE_SEPOLIA_RPC_URL",
+        "type": "sensitive",
+        "target": [
+          "preview"
+        ],
+        "gitBranch": "codex/ens-october-api-canary"
+      },
+      {
+        "key": "ETHEREUM_SEPOLIA_RPC_URL",
+        "type": "sensitive",
+        "target": [
+          "preview"
+        ],
+        "gitBranch": "codex/ens-october-api-canary"
+      },
+      {
+        "key": "DATABASE_URL",
+        "type": "sensitive",
+        "target": [
+          "preview"
+        ],
+        "gitBranch": "codex/ens-october-api-canary"
+      }
+    ],
+    "productionApiFlags": 0
+  },
+  "parallelReads": {
+    "observedAt": "2026-10-06T21:06:30.291Z",
+    "deployment": {
+      "id": "dpl_9wE7sSRU7WTTN6HhojgzfzyfWwXW",
+      "url": "namepass-v2-hojnwqejr-wildcard-labs.vercel.app",
+      "readyState": "READY",
+      "target": "preview",
+      "commit": "4da8af636af2e3cf9334b7e1c2adc499ffe81ba1",
+      "gitBranch": "codex/ens-october-api-canary"
+    },
+    "requests": 2,
+    "results": [
+      {
+        "path": "/api/v1/status/11155111?transactionHash=0xd725d3431622bfc574524ca092564a319efe49e0be2b4798348b582718441533",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 3065,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "chainId": "11155111",
+          "transactionHash": "0xd725d3431622bfc574524ca092564a319efe49e0be2b4798348b582718441533",
+          "status": "complete",
+          "deposits": [
+            {
+              "name": "farcaster.eth",
+              "depositAddress": "0x16CfEB29157376F55e7976562a850d04435C171d",
+              "logIndex": 110,
+              "amount": "500000",
+              "status": "complete",
+              "reason": null,
+              "renewals": [
+                {
+                  "renewalId": "11155111:0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e:179",
+                  "chainId": "11155111",
+                  "transactionHash": "0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e",
+                  "secondsAdded": "1576795",
+                  "expiry": "2032-03-26T03:32:32.000Z"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "path": "/api/v1/status/11155111?transactionHash=0xd725d3431622bfc574524ca092564a319efe49e0be2b4798348b582718441533",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 3795,
+        "headers": {
+          "content-type": "application/json; charset=utf-8",
+          "cache-control": "no-store",
+          "access-control-allow-origin": "*",
+          "access-control-allow-methods": "GET, OPTIONS",
+          "access-control-expose-headers": "Retry-After"
+        },
+        "body": {
+          "chainId": "11155111",
+          "transactionHash": "0xd725d3431622bfc574524ca092564a319efe49e0be2b4798348b582718441533",
+          "status": "complete",
+          "deposits": [
+            {
+              "name": "farcaster.eth",
+              "depositAddress": "0x16CfEB29157376F55e7976562a850d04435C171d",
+              "logIndex": 110,
+              "amount": "500000",
+              "status": "complete",
+              "reason": null,
+              "renewals": [
+                {
+                  "renewalId": "11155111:0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e:179",
+                  "chainId": "11155111",
+                  "transactionHash": "0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e",
+                  "secondsAdded": "1576795",
+                  "expiry": "2032-03-26T03:32:32.000Z"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "scope": "Two simultaneous existing-payment reads only. Does not prove distributed admission, sustained polling load or public capacity."
+  },
+  "previewSecurity": {
+    "observedAt": "2026-10-06T21:06:08.646Z",
+    "protection": {
+      "deploymentType": "all_except_custom_domains"
+    },
+    "previewTarget": "preview",
+    "commit": "4da8af636af2e3cf9334b7e1c2adc499ffe81ba1",
+    "branch": "codex/ens-october-api-canary",
+    "aliases": [
+      "namepass-v2-git-codex-ens-october-api-canary-wildcard-labs.vercel.app"
+    ],
+    "noCustomDomain": true
+  },
+  "productionBeforeMerge": {
+    "observedAt": "2026-10-06T21:05:21.290Z",
+    "codeChangeDeployed": false,
+    "rows": [
+      {
+        "path": "/api/activity?limit=10",
+        "method": "GET",
+        "status": 200,
+        "items": 1
+      },
+      {
+        "path": "/api/names/steve.eth/activity?limit=2",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/stats",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/config/public",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "POST",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/status/11155111?transactionHash=0x123",
+        "method": "GET",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/status/11155111",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/status/11155111",
+        "method": "POST",
+        "status": 405,
+        "errorCode": "method_not_allowed"
+      },
+      {
+        "path": "/api/v1/status/11155111/unknown",
+        "method": "GET",
+        "status": 404,
+        "errorCode": "api_not_found"
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "GET",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "POST",
+        "status": 405,
+        "errorCode": "method_not_allowed"
+      },
+      {
+        "path": "/",
+        "status": 200
+      },
+      {
+        "path": "/docs",
+        "status": 200
+      },
+      {
+        "path": "/docs/reference",
+        "status": 200
+      },
+      {
+        "path": "/terms",
+        "status": 200
+      },
+      {
+        "path": "/openapi.json",
+        "status": 200
+      },
+      {
+        "host": "demo-five-gray-37.vercel.app",
+        "path": "/api/activity?limit=2",
+        "status": 200,
+        "populated": true
+      }
+    ]
+  },
+  "ci": {
+    "commit": "4da8af636af2e3cf9334b7e1c2adc499ffe81ba1",
+    "url": "https://github.com/wildcardlabs/namepass/actions/runs/37531097352",
+    "conclusion": "success",
+    "server": {
+      "tests": 221,
+      "passed": 221,
+      "failed": 0,
+      "skipped": 0
+    },
+    "postgresVersion": 18
+  }
+}

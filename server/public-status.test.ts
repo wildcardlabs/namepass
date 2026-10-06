@@ -11,7 +11,10 @@ import { SERVER_CHAINS } from "../src/lib/chains";
 
 const recorded = JSON.parse(
 	readFileSync(
-		new URL("../test/fixtures/public-status/reads.json", import.meta.url),
+		new URL(
+			"../test/fixtures/public-status/october-reads.json",
+			import.meta.url,
+		),
 		"utf8",
 	),
 );
@@ -274,14 +277,14 @@ test("status proves the complete recorded renewal and holds a staggered second d
 	).rows;
 	const complete = await body(await route.fetch(request()));
 	assert.equal(complete.status, "complete");
-	assert.equal(complete.deposits[0].amount, "1000000");
+	assert.equal(complete.deposits[0].amount, "500000");
 	assert.deepEqual(complete.deposits[0].renewals, [
 		{
-			renewalId: `11155111:${recorded.seed.candidates[0].renewal_hash}:322`,
+			renewalId: `11155111:${recorded.seed.candidates[0].renewal_hash}:179`,
 			chainId: "11155111",
 			transactionHash: recorded.seed.candidates[0].renewal_hash,
-			secondsAdded: "3547790",
-			expiry: "2029-09-22T10:16:06.000Z",
+			secondsAdded: "1576795",
+			expiry: "2032-03-26T03:32:32.000Z",
 		},
 	]);
 	assert.ok(rpc.calls <= 96);

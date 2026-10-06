@@ -201,6 +201,11 @@ test("a V1 renewal receipt uses the registration event, ignoring later wrapper s
 });
 
 test("canonical receipt enrichment corrects both gateway and standalone V1 ENS index events", async (t) => {
+  // Replay this archived receipt under its recorded ENS deployment. The live registry
+  // accepts only the October contracts; the gateway path still discovers its helper.
+  const previousV1 = HUB_CHAIN.ensRenewerV1Address;
+  Object.assign(HUB_CHAIN, { ensRenewerV1Address: evidence.renewerV1 });
+  t.after(() => Object.assign(HUB_CHAIN, { ensRenewerV1Address: previousV1 }));
   const { indexedRenewalExpiry } = await import("./indexed-renewal");
   const { decodeEventLog, toFunctionSelector } = await import("viem");
   const previous = process.env[HUB_CHAIN.rpcEnv];

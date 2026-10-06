@@ -29,6 +29,30 @@ const stored = JSON.parse(
 		"utf8",
 	),
 );
+// Keep the archived cross-chain/correction regressions under their recorded September
+// ENS configuration. The current direct CLI case below uses the October capture and
+// executes in a separate process with the real current registry. No legacy addresses
+// are accepted by the production API.
+const currentEns = {
+	ensRegistrarAddress: HUB_CHAIN.ensRegistrarAddress,
+	ensRenewerV1Address: HUB_CHAIN.ensRenewerV1Address,
+};
+test.before(() =>
+	Object.assign(HUB_CHAIN, {
+		ensRegistrarAddress: "0xAbe76F6C8DFcEd81AA5A2bB8034202A7136b94ca",
+		ensRenewerV1Address: "0xd06e726e9bD8ac0f33A2a45F4Cc28fe10d656a36",
+	}),
+);
+test.after(() => Object.assign(HUB_CHAIN, currentEns));
+const october = JSON.parse(
+	readFileSync(
+		new URL(
+			"../test/fixtures/public-status/october-reads.json",
+			import.meta.url,
+		),
+		"utf8",
+	),
+);
 const PROCESSED = parseAbi([
 	"event DepositProcessed(bytes32 indexed labelKey,address indexed wallet,uint256 amount,uint256 remaining)",
 ]);
@@ -45,8 +69,25 @@ type Read = {
 	params: unknown[];
 	result: any;
 };
-function fixture(index = 0) {
-	const entry = structuredClone(stored.cases[index]);
+function fixture(index = 0, useOctober = false) {
+	const candidate = october.seed.candidates[0];
+	const entry = useOctober
+		? {
+				input: {
+					chainId: 11155111,
+					label: "farcaster",
+					processingTransactionHash: candidate.processing_hash,
+					processingLogIndex: candidate.processing_index,
+					renewalTransactionHash: candidate.renewal_hash,
+					renewalLogIndex: candidate.renewal_index,
+				},
+				reads: october.reads.map((r: any) => ({
+					...r,
+					chainId: 11155111,
+					result: r.result?.code ? october.codes[r.result.code] : r.result,
+				})),
+			}
+		: structuredClone(stored.cases[index]);
 	const input = entry.input as ProcessingRenewalInput;
 	const reads: Read[] = entry.reads.map((r: any) => ({
 		...r,
@@ -475,7 +516,7 @@ test("invalid positions fail before RPC and cancellation stops a hung provider w
 });
 
 test("actual direct CLI uses read-only serialized RPC and suppresses private or oversized provider errors", async () => {
-	const f = fixture(2);
+	const f = fixture(0, true);
 	let mode: "valid" | "error" | "oversized" | "wrong-id" = "valid";
 	const server = createServer(async (req, res) => {
 		let body = "";
@@ -549,7 +590,7 @@ test("actual direct CLI uses read-only serialized RPC and suppresses private or 
 		assert.equal(result.code, 0, result.stderr);
 		const report = JSON.parse(result.stdout);
 		assert.equal(report.readOnly, true);
-		assert.equal(report.evidence.expiry, "2029-09-22T10:16:06.000Z");
+		assert.equal(report.evidence.expiry, "2032-03-26T03:32:32.000Z");
 		assert.equal(report.evidence.providerFinalized, true);
 		for (const bad of ["error", "oversized", "wrong-id"] as const) {
 			mode = bad;

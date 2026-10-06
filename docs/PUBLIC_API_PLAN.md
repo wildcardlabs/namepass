@@ -23,6 +23,21 @@ finality; [policy and limitations](PUBLIC_API_DEPOSIT_EVIDENCE.md) keep these se
 History verifies event-specific ENS expiry and hub finality. Its deployment is
 described in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md); production remains disabled.
 
+## Current ENS baseline after the October reset
+
+The user rotated the helper to the October ENS deployment and directed removal of
+obsolete testnet flows and cached expiry data. Production automation completed the
+preserved `farcaster.eth` payment. The local status and history adapters now verify
+that fresh finalized renewal against the current ENS addresses. Exact proof and
+cleanup results are in the [current canary receipt](deployments/2026-10-06/ens-october-api-canary.json).
+The historical audits above belong to the previous ENS configuration. They remain
+regression evidence; obsolete hosted payment history is not a compatibility requirement.
+
+The protected hosted preview passed current-ENS status/history, schema, privacy and
+read-only checks. Keep production flags off until the remaining source-route, first-watch,
+aggregate funding and capacity gates pass. The funded Sepolia payment used an existing watch, so it does not establish
+first-watch propagation. No additional Goldsky pipeline or schema is required for this step.
+
 ## Starting point
 
 The previous API implementation and its planning, tests, generated client types, example CLI,
