@@ -318,6 +318,114 @@ test("Arc split processing closes only after all slices; a new credit joins late
 	assert.deepEqual(later.deposits[0].processingCallIds, [`5042002:${id(4)}:2`]);
 });
 
+test("extended audit covers a delayed drain across range boundaries without closing an unfinished slice", async () => {
+	const f = fixture(5042002);
+	f.add(1, 1000, 1, [f.transfer(3000000n, 0)]);
+	f.add(2, 1511, 0, f.process(1000000n, 2000000n, 0));
+	f.add(3, 1512, 0, [f.transfer(2000000n, 0)]);
+	f.setBalances(0n, 4000000n);
+	const extended = {
+		...f.input,
+		rangeMode: "extended" as const,
+		throughBlock: "18097",
+	};
+	await assert.rejects(
+		inspectAllocation({ ...f.input, throughBlock: "18097" }, f.rpc),
+		/range_budget/,
+	);
+	const ranges: { fromBlock: string; toBlock: string; topics: unknown[] }[] =
+		[];
+	const rpc: AllocationRpc = (method, params, signal) => {
+		if (method === "eth_getLogs")
+			ranges.push(params[0] as (typeof ranges)[number]);
+		return f.rpc(method, params, signal);
+	};
+	const pending = await inspectAllocation(extended, rpc);
+	assert.equal(pending.windowClosed, false);
+	assert.equal(pending.closingBalance, "4000000");
+	assert.deepEqual(pending.deposits[0].processingCallIds, [
+		`5042002:${id(2)}:2`,
+	]);
+	const incoming = ranges.filter((r) => r.topics[1] === null);
+	assert.equal(BigInt(incoming[0].fromBlock), 1000n);
+	assert.equal(BigInt(incoming[incoming.length - 1].toBlock), 18097n);
+	for (let i = 0; i < incoming.length; i++) {
+		assert.ok(
+			BigInt(incoming[i].toBlock) - BigInt(incoming[i].fromBlock) < 512n,
+		);
+		if (i)
+			assert.equal(
+				BigInt(incoming[i].fromBlock),
+				BigInt(incoming[i - 1].toBlock) + 1n,
+			);
+	}
+	assert.equal(ranges.length, incoming.length * 2);
+	f.add(4, 18097, 0, f.process(4000000n, 0n, 0));
+	f.setBalances(0n, 0n);
+	const closed = await inspectAllocation(extended, f.rpc);
+	assert.equal(closed.windowClosed, true);
+	assert.deepEqual(closed.deposits[0].processingCallIds, [
+		`5042002:${id(2)}:2`,
+		`5042002:${id(4)}:2`,
+	]);
+	assert.equal(closed.deposits[0].amount, "3000000");
+	assert.equal(closed.movements, 4);
+	assert.equal(closed.rangeMode, "extended");
+	assert.ok(closed.rpcCalls <= 192);
+	assert.equal("status" in closed, false);
+	// A later unknown debit cannot be hidden by the longer range or matching end balances.
+	f.add(5, 9000, 0, [f.transfer(1000000n, 0, wallet, other)]);
+	await assert.rejects(
+		inspectAllocation(extended, f.rpc),
+		/unproven_wallet_debit/,
+	);
+});
+
+test("extended operator limits still reject excess range, requests and a corrected boundary", async () => {
+	const f = fixture();
+	f.add(1, 1000, 1, [f.transfer(30000000n, 0)]);
+	const input = {
+		...f.input,
+		rangeMode: "extended" as const,
+		throughBlock: "33767",
+	};
+	await assert.rejects(
+		inspectAllocation({ ...input, throughBlock: "33768" }, f.rpc),
+		/range_budget/,
+	);
+	for (let i = 2; i <= 16; i++)
+		f.add(
+			i,
+			1000 + i,
+			0,
+			f.process(2000000n, 30000000n - BigInt(i - 1) * 2000000n, 0),
+		);
+	f.calls.length = 0;
+	await assert.rejects(inspectAllocation(input, f.rpc), /request_budget/);
+	assert.equal(f.calls.length, 192);
+	const changed = fixture();
+	changed.add(1, 1000, 1, [changed.transfer(3000000n, 0)]);
+	changed.add(2, 18097, 0, changed.process(3000000n, 0n, 0));
+	let terminalReads = 0;
+	const rpc: AllocationRpc = async (method, params, signal) => {
+		const result = await changed.rpc(method, params, signal);
+		if (
+			method === "eth_getBlockByNumber" &&
+			params[0] === toHex(18097) &&
+			++terminalReads > 1
+		)
+			return { ...(result as object), hash: id(99999) };
+		return result;
+	};
+	await assert.rejects(
+		inspectAllocation(
+			{ ...changed.input, rangeMode: "extended", throughBlock: "18097" },
+			rpc,
+		),
+		/boundary_changed/,
+	);
+});
+
 test("two calls in one Arc transaction retain distinct message positions and drain identities", async () => {
 	const f = fixture(5042002);
 	f.add(1, 1000, 1, [f.transfer(10000000n, 0)]);
@@ -545,7 +653,7 @@ test("operator CLI verifies serialized provider receipts, permits only reads and
 	const addr = server.address();
 	assert.ok(addr && typeof addr !== "string");
 	const port = addr.port;
-	async function run() {
+	async function run(extended = false) {
 		const child = spawn(
 			process.execPath,
 			[
@@ -555,7 +663,8 @@ test("operator CLI verifies serialized provider receipts, permits only reads and
 				"11155111",
 				"steve",
 				id(1),
-				"1005",
+				extended ? "18097" : "1005",
+				...(extended ? ["--extended"] : []),
 			],
 			{
 				cwd: new URL("../", import.meta.url),
@@ -585,6 +694,14 @@ test("operator CLI verifies serialized provider receipts, permits only reads and
 			report.evidence.processingCalls[0].processingId,
 			`11155111:${id(2)}:2`,
 		);
+		assert.equal(report.evidence.rangeMode, "short");
+		const long = await run(true);
+		assert.equal(long.code, 0, long.stderr);
+		const longReport = JSON.parse(long.stdout);
+		assert.equal(longReport.evidence.rangeMode, "extended");
+		assert.equal(longReport.evidence.throughBlock, "18097");
+		assert.equal(longReport.evidence.windowClosed, true);
+		assert.equal(longReport.evidence.limits.rpcCalls, 192);
 		mode = "error";
 		const failed = await run();
 		assert.equal(failed.code, 1);

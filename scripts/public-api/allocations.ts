@@ -1,17 +1,30 @@
 /** Read-only operator CLI; no database, activation, Workflow or transaction submission. */
 import { SERVER_CHAINS } from "../../src/lib/chains";
 import { inspectAllocation } from "../../server/allocation-evidence";
-const [chainId, label, transactionHash, throughBlock, ...extra] =
+const [chainId, label, transactionHash, throughBlock, rangeFlag, ...extra] =
 	process.argv.slice(2);
 async function inspect() {
 	const chain = SERVER_CHAINS.find((c) => String(c.chainId) === chainId);
-	if (!chain || extra.length || !label || !transactionHash || !throughBlock)
+	if (
+		!chain ||
+		extra.length ||
+		(rangeFlag !== undefined && rangeFlag !== "--extended") ||
+		!label ||
+		!transactionHash ||
+		!throughBlock
+	)
 		throw new Error("invalid_arguments");
 	const url = process.env[chain.rpcEnv];
 	if (!url) throw new Error("missing_configuration");
 	let id = 0;
 	const evidence = await inspectAllocation(
-		{ chainId, label, transactionHash, throughBlock },
+		{
+			chainId,
+			label,
+			transactionHash,
+			throughBlock,
+			rangeMode: rangeFlag ? "extended" : "short",
+		},
 		async (method, params, signal) => {
 			const requestId = ++id;
 			const response = await fetch(url, {

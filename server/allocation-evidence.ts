@@ -88,6 +88,7 @@ export async function inspectAllocation(
 		label: string;
 		transactionHash: string;
 		throughBlock: string;
+		rangeMode?: "short" | "extended";
 	},
 	rpc: AllocationRpc,
 	cancellation?: AbortSignal,
@@ -95,21 +96,30 @@ export async function inspectAllocation(
 	const chain = SERVER_CHAINS.find((c) => String(c.chainId) === input.chainId);
 	if (
 		!chain?.factoryAddress ||
+		(input.rangeMode !== undefined &&
+			input.rangeMode !== "short" &&
+			input.rangeMode !== "extended") ||
 		!/^(0|[1-9][0-9]*)$/.test(input.throughBlock) ||
 		normalizeLabel(input.label) !== input.label
 	)
 		fail("invalid_allocation_arguments");
 	const txHash = hash(input.transactionHash),
 		wallet = address(depositAddress(input.label));
+	// Extended inspection is an explicit operator audit, never a larger public polling budget.
+	const rangeMode = input.rangeMode ?? "short";
+	const limits =
+		rangeMode === "extended"
+			? { blocks: 32768, rpcCalls: 192, deadlineMs: 60000 }
+			: { blocks: 2048, rpcCalls: 64, deadlineMs: 15000 };
 	const end = BigInt(input.throughBlock),
 		emitter = address(chain.nativeUsdcTransfer?.emitter ?? chain.usdcAddress);
 	const scale = chain.nativeUsdcTransfer ? SCALE : 1n;
 	const signal = cancellation
-		? AbortSignal.any([AbortSignal.timeout(15000), cancellation])
-		: AbortSignal.timeout(15000);
+		? AbortSignal.any([AbortSignal.timeout(limits.deadlineMs), cancellation])
+		: AbortSignal.timeout(limits.deadlineMs);
 	let requests = 0;
 	async function read<T>(method: string, params: unknown[]): Promise<T> {
-		if (!METHODS.includes(method) || ++requests > 64)
+		if (!METHODS.includes(method) || ++requests > limits.rpcCalls)
 			fail("allocation_request_budget");
 		signal.throwIfAborted();
 		let abort: () => void = () => {};
@@ -178,7 +188,7 @@ export async function inspectAllocation(
 	}
 	const source = await receipt(txHash),
 		start = quantity(source.blockNumber);
-	if (start === 0n || end < start || end - start >= 2048n)
+	if (start === 0n || end < start || end - start >= BigInt(limits.blocks))
 		fail("allocation_range_budget");
 	const initial = await block(source.blockNumber),
 		terminal = await block(hex(end));
@@ -508,6 +518,8 @@ export async function inspectAllocation(
 		deposits,
 		processingCalls: usedCalls,
 		windowClosed: deposits.every((d) => d.windowClosed),
+		rangeMode,
+		limits,
 		rpcCalls: requests,
 		limitations:
 			"Not API completion: registry/index coverage, source finality, cross-chain claim and finalized ENS renewal verification remain separate gates. Call lists describe whole shared windows, not per-deposit amount allocation.",
