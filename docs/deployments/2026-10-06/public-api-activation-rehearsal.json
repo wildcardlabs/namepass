@@ -1,0 +1,113 @@
+{
+  "observedAt": "2026-10-06T17:31:19.232Z",
+  "baseCommit": "1aebd659aaf95c06ed1939f3a89b53a223b37461",
+  "productionPipeline": {
+    "observedAt": "2026-10-06T17:31:19.232Z",
+    "pipeline": "namepass-testnet-v2",
+    "matches": [
+      {
+        "path": "name",
+        "value": "namepass-testnet-v2"
+      },
+      {
+        "path": "status",
+        "value": "ACTIVE"
+      },
+      {
+        "path": "definition.name",
+        "value": "namepass-testnet-v2"
+      },
+      {
+        "path": "definition.sources.arc_testnet_usdc_v2.version",
+        "value": "1.1.0"
+      },
+      {
+        "path": "definition.sources.arc_testnet_logs_v2.version",
+        "value": "1.1.0"
+      },
+      {
+        "path": "definition.sources.base_sepolia_logs_v2.version",
+        "value": "1.0.0"
+      },
+      {
+        "path": "definition.sources.ethereum_sepolia_usdc_v2.version",
+        "value": "1.2.0"
+      },
+      {
+        "path": "definition.sources.base_sepolia_usdc_v2.version",
+        "value": "1.2.0"
+      },
+      {
+        "path": "definition.sources.arbitrum_sepolia_logs_v2.version",
+        "value": "1.0.0"
+      },
+      {
+        "path": "definition.sources.arc_testnet_native_usdc_v2.version",
+        "value": "1.0.0"
+      },
+      {
+        "path": "definition.sources.ethereum_sepolia_logs_v2.version",
+        "value": "1.0.0"
+      },
+      {
+        "path": "definition.sources.arbitrum_sepolia_usdc_v2.version",
+        "value": "1.2.0"
+      },
+      {
+        "path": "definition.transforms.watched_addresses",
+        "value": {
+          "type": "dynamic_table",
+          "backend_type": "Postgres",
+          "backend_entity_name": "watched_addresses",
+          "sql": null,
+          "column": "value",
+          "time_column": "updated_at",
+          "schema": "goldsky"
+        }
+      },
+      {
+        "path": "definition.transforms.incoming_deposits",
+        "value": {
+          "type": "sql",
+          "sql": "SELECT *\nFROM all_usdc_transfers\nWHERE dynamic_table_check('watched_addresses', recipient_address)\n"
+        }
+      }
+    ],
+    "readOnly": true
+  },
+  "proposedTarget": {
+    "observedAt": "2026-10-06T17:39:35.912Z",
+    "name": "farcaster.eth",
+    "depositAddress": "0x16CfEB29157376F55e7976562a850d04435C171d",
+    "renewableBy": "v1",
+    "expiry": "2032-03-07T21:32:37.000Z",
+    "readOnly": true
+  },
+  "rehearsal": {
+    "name": "namepass-api-watch-rehearsal",
+    "definition": "public-api-watch-rehearsal.yaml",
+    "sha256": "1a7d5b2ef8a6a05f7e2cafab31337fffdc58a95b44dbcae75a6853bb2fab419f",
+    "validated": true,
+    "applied": false,
+    "signaturesOrTransfersSent": false,
+    "readerSecretCreated": false,
+    "watchAdded": false,
+    "sinks": "blackhole only",
+    "observationLimitMinutesFromStartup": 20
+  },
+  "localTest": {
+    "file": "server/public-address.test.ts",
+    "name": "address activation does not replace source indexing; late webhook delivery is retryable and idempotent",
+    "passed": true,
+    "backend": "PGlite with actual application SQL",
+    "rpc": "activation ABI fixtures and recorded Sepolia source receipt/finality replies",
+    "scheduler": "captures flow IDs; does not execute or sign",
+    "nativePostgresConcurrency": "existing integration test remains; local focused run skips it without TEST_DATABASE_URL, required CI runs it"
+  },
+  "limits": [
+    "No deployed cache/refresh interval inferred from the pipeline definition.",
+    "No hosted watch propagation or fresh funding evidence yet.",
+    "The installed validator rejects the unchanged full production Arc transform because its local plugin lacks to_u256; the cloud production pipeline remains ACTIVE. No CLI update or production definition change was made.",
+    "The prepared one-chain rehearsal validates without that Arc transform, but does not prove all-chain ingestion or public release capacity."
+  ]
+}

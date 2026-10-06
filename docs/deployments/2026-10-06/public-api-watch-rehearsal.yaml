@@ -1,0 +1,56 @@
+# Prepared only. Requires separate approval for the reader secret, temporary watch and pipeline.
+# Both sinks discard output. No webhook, payment worker or production database connection.
+name: namepass-api-watch-rehearsal
+apiVersion: 3
+resource_size: s
+description: Observe Sepolia watch propagation for one approved Namepass canary address.
+sources:
+  sepolia_canary_usdc:
+    type: dataset
+    dataset_name: ethereum_sepolia.erc20_transfers
+    version: 1.2.0
+    start_at: latest
+    filter: >-
+      address = '0x1c7d4b196cb0c7b01d743fbc6116a902379c7238'
+transforms:
+  watched_addresses:
+    type: dynamic_table
+    backend_type: Postgres
+    backend_entity_name: watched_addresses
+    schema: goldsky
+    column: value
+    time_column: updated_at
+    secret_name: NAMEPASS_API_STAGING_WATCH_READER
+  all_usdc_transfers:
+    type: sql
+    primary_key: event_id
+    sql: |
+      SELECT
+        concat('11155111:', id) AS event_id,
+        'deposit' AS event_family,
+        'Transfer' AS event_type,
+        11155111 AS chain_id,
+        block_number,
+        block_timestamp AS block_time,
+        transaction_hash AS tx_hash,
+        log_index,
+        lower(address) AS token_address,
+        lower(sender) AS sender_address,
+        lower(recipient) AS recipient_address,
+        CAST(amount AS STRING) AS amount,
+        _gs_op
+      FROM sepolia_canary_usdc
+      WHERE lower(recipient) = '0x16cfeb29157376f55e7976562a850d04435c171d'
+  incoming_deposits:
+    type: sql
+    primary_key: event_id
+    sql: |
+      SELECT * FROM all_usdc_transfers
+      WHERE dynamic_table_check('watched_addresses', recipient_address)
+sinks:
+  observe_source:
+    type: blackhole
+    from: all_usdc_transfers
+  observe_watched:
+    type: blackhole
+    from: incoming_deposits

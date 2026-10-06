@@ -2,12 +2,15 @@ import assert from "node:assert/strict";
 import test, { type TestContext } from "node:test";
 import { readFileSync, readdirSync } from "node:fs";
 import { Pool } from "pg";
+import { PGlite } from "@electric-sql/pglite";
 import { decodeFunctionData, encodeFunctionResult, parseAbi, zeroAddress, type Hex } from "viem";
 import Ajv from "ajv/dist/2020.js";
 import route from "../routes/api/v1/address";
 import { HUB_CHAIN, SERVER_CHAINS } from "../src/lib/chains";
 import { database } from "./db/client";
 import { activateName } from "./names";
+import statusRoute from "../routes/api/v1/status/[chainId]";
+import { goldskyHandler, postgresGoldskyStore } from "./goldsky";
 
 const abi = parseAbi([
 	"function currentHelper() view returns (address)",
@@ -341,3 +344,100 @@ test(
 		assert.equal((await fixture.query("select count(*)::int as n from balance_scan_requests")).rows[0].n, 4);
 	},
 );
+
+test("address activation does not replace source indexing; late webhook delivery is retryable and idempotent", async (t) => {
+	setup(t);
+	const statusFlag = process.env.NAMEPASS_PUBLIC_STATUS_ENABLED;
+	process.env.NAMEPASS_PUBLIC_STATUS_ENABLED = "1";
+	process.env.DATABASE_URL = "postgresql://fixture:fixture@127.0.0.1:1/activation";
+	const fixture = new PGlite();
+	t.after(async () => {
+		if (statusFlag === undefined) delete process.env.NAMEPASS_PUBLIC_STATUS_ENABLED;
+		else process.env.NAMEPASS_PUBLIC_STATUS_ENABLED = statusFlag;
+		await fixture.close();
+	});
+	for (const file of readdirSync(new URL("../drizzle/", import.meta.url))
+		.filter((file) => /^000[0-8]_.*\.sql$/.test(file)).sort()) {
+		await fixture.exec(readFileSync(new URL(`../drizzle/${file}`, import.meta.url), "utf8"));
+	}
+	// Replace only PostgreSQL transport: activation and webhook transactions use the real store.
+	async function query(config: unknown, values: unknown[] = []) {
+		const q = typeof config === "string" ? { text: config } : config as { text: string; rowMode?: string };
+		const result = await fixture.query(q.text, values, { rowMode: q.rowMode === "array" ? "array" : "object" });
+		return {
+			...result,
+			rows: q.rowMode === "array" ? result.rows.map((row) => (row as unknown[]).map(
+				(value) => value instanceof Date ? value.toISOString() : value,
+			)) : result.rows,
+		};
+	}
+	t.mock.method(Pool.prototype, "query", query);
+	t.mock.method(Pool.prototype, "connect", async () => ({ query, release() {} }));
+	const recorded = JSON.parse(readFileSync(new URL("../test/fixtures/public-status/reads.json", import.meta.url), "utf8"));
+	const source = recorded.seed.indexed[0];
+	const delivery = {
+		event_id: source.event_id, event_family: "deposit", event_type: "Transfer",
+		chain_id: Number(source.chain_id), tx_hash: source.tx_hash, log_index: source.log_index,
+		block_number: Number(source.block_number), block_time: "2026-10-01T00:00:00Z",
+		token_address: source.token_address, sender_address: source.sender_address,
+		recipient_address: source.deposit_address, amount: source.amount, _gs_op: "i",
+	};
+	const scheduled: string[] = [];
+	const webhook = goldskyHandler(postgresGoldskyStore, async (id) => { scheduled.push(id); }, () => "Bearer fixture");
+	function send() {
+		return webhook.fetch(new Request("https://activation.test/api/webhooks/goldsky", {
+			method: "POST", headers: { authorization: "Bearer fixture", "content-type": "application/json" },
+			body: JSON.stringify(delivery),
+		}));
+	}
+	const early = await send();
+	assert.equal(early.status, 503);
+	assert.equal((await early.json()).error.code, "watched_address_missing");
+	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM chain_events")).rows[0].n, 0,
+		"a delivery before registration must roll back so it can be retried");
+	const activationRpc = rpcFixture(t);
+	const activated = await route.fetch(request());
+	assert.equal(activated.status, 200, await activated.clone().text());
+	assert.equal((await activated.json()).depositAddress, "0x5B7516768eD0b04E212041265BB1f11af71841d7");
+	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM goldsky.watched_addresses")).rows[0].n, 1);
+	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM balance_snapshots WHERE amount=0")).rows[0].n, 4);
+	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM balance_scan_requests")).rows[0].n, 0);
+	function poll() {
+		return statusRoute.fetch(new Request(`https://activation.test/api/v1/status/${source.chain_id}?transactionHash=${source.tx_hash}`));
+	}
+	const readsBefore = activationRpc.mock.callCount();
+	for (let i = 0; i < 2; i++) {
+		const unknown = await poll();
+		assert.equal(unknown.status, 404);
+		assert.equal((await unknown.json()).error.code, "transaction_not_found");
+	}
+	assert.equal(activationRpc.mock.callCount(), readsBefore, "polling cannot recover a filtered-out source event");
+	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM deposits")).rows[0].n, 0);
+	// This historical receipt predates today's test. Pin only its local activation boundary.
+	await fixture.query("UPDATE names SET activated_at=$1", [recorded.seed.registry.find((n: any) => n.normalized_label === "steve").activated_at]);
+	for (let i = 0; i < 2; i++) {
+		const delivered = await send();
+		assert.equal(delivered.status, 200, await delivered.clone().text());
+		assert.equal((await delivered.json()).accepted, true);
+	}
+	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM chain_events")).rows[0].n, 1);
+	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM deposits")).rows[0].n, 1);
+	const flows = await fixture.query<{ id: string; status: string; deposit_event_id: string }>("SELECT id,status,deposit_event_id FROM flows");
+	assert.equal(flows.rows.length, 1);
+	assert.equal(flows.rows[0].status, "queued");
+	assert.equal(flows.rows[0].deposit_event_id, source.event_id);
+	assert.deepEqual(scheduled, [flows.rows[0].id, flows.rows[0].id], "duplicate deliveries refer to the same durable flow");
+	activationRpc.mock.restore();
+	t.mock.method(globalThis, "fetch", async (input: string | URL | Request, init?: RequestInit) => {
+		const url = new URL(String(input)), call = JSON.parse(String(init?.body));
+		assert.equal(url.hostname, "address-rpc.test");
+		const found = recorded.reads.find((r: any) => r.chainId === SERVER_CHAINS.find((c) => String(c.chainId) === url.pathname.slice(1))?.rpcEnv
+			&& r.method === call.method && JSON.stringify(r.params) === JSON.stringify(call.params));
+		assert.ok(found, `unrecorded source read ${call.method}`);
+		return Response.json({ jsonrpc: "2.0", id: call.id, result: found.result });
+	});
+	const processing = await poll();
+	assert.equal(processing.status, 200, await processing.clone().text());
+	assert.equal((await processing.json()).status, "processing", "index delivery alone cannot prove a renewal");
+	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM transaction_intents")).rows[0].n, 0);
+});
