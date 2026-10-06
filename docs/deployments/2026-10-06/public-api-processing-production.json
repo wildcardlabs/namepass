@@ -1,0 +1,166 @@
+{
+  "smoke": {
+    "observedAt": "2026-10-06T11:29:56.350Z",
+    "deployment": {
+      "id": "dpl_4rnpbSEeuZVJrBAxUmy96Rz748Di",
+      "url": "namepass-v2-dhoefyfig-wildcard-labs.vercel.app",
+      "readyState": "READY",
+      "target": "production",
+      "commit": "ceb378a4a35323eba315344371ebf9b0c72ef68c",
+      "aliases": [
+        "beta.namepass.com",
+        "demo-five-gray-37.vercel.app",
+        "namepass-v2-wildcard-labs.vercel.app",
+        "namepass-v2-git-main-wildcard-labs.vercel.app"
+      ]
+    },
+    "rows": [
+      {
+        "path": "/api/activity?limit=10",
+        "method": "GET",
+        "status": 200,
+        "items": 10
+      },
+      {
+        "path": "/api/names/steve.eth/activity?limit=2",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/stats",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/config/public",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "POST",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/status/11155111?transactionHash=0x123",
+        "method": "GET",
+        "status": 404,
+        "errorCode": "api_not_found"
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "GET",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "POST",
+        "status": 405,
+        "errorCode": "method_not_allowed"
+      },
+      {
+        "path": "/",
+        "status": 200
+      },
+      {
+        "path": "/docs",
+        "status": 200
+      },
+      {
+        "path": "/docs/reference",
+        "status": 200
+      },
+      {
+        "path": "/terms",
+        "status": 200
+      },
+      {
+        "path": "/openapi.json",
+        "status": 200
+      },
+      {
+        "host": "demo-five-gray-37.vercel.app",
+        "path": "/api/activity?limit=2",
+        "status": 200,
+        "populated": true
+      }
+    ]
+  },
+  "aliases": {
+    "observedAt": "2026-10-06T11:29:53.597Z",
+    "commit": "ceb378a4a35323eba315344371ebf9b0c72ef68c",
+    "rows": [
+      {
+        "host": "beta.namepass.com",
+        "deploymentId": "dpl_4rnpbSEeuZVJrBAxUmy96Rz748Di"
+      },
+      {
+        "host": "demo-five-gray-37.vercel.app",
+        "deploymentId": "dpl_4rnpbSEeuZVJrBAxUmy96Rz748Di"
+      }
+    ]
+  },
+  "expiryResponses": {
+    "observedAt": "2026-10-06T11:29:52.508Z",
+    "deploymentId": "dpl_4rnpbSEeuZVJrBAxUmy96Rz748Di",
+    "commit": "ceb378a4a35323eba315344371ebf9b0c72ef68c",
+    "names": [
+      {
+        "name": "farcaster.eth",
+        "currentExpiry": "2032-03-07T21:32:37.000Z",
+        "renewableBy": "v1"
+      },
+      {
+        "name": "gregskril.eth",
+        "currentExpiry": "2028-03-22T01:02:21.000Z",
+        "renewableBy": "v1"
+      },
+      {
+        "name": "nick.eth",
+        "currentExpiry": "2026-12-30T05:30:33.000Z",
+        "renewableBy": "v1"
+      },
+      {
+        "name": "slobo.eth",
+        "currentExpiry": "2028-06-23T06:53:34.000Z",
+        "renewableBy": "v1"
+      },
+      {
+        "name": "vitalik.eth",
+        "currentExpiry": "2069-09-12T15:13:35.000Z",
+        "renewableBy": "v1"
+      }
+    ],
+    "activityItems": 10,
+    "correctedRenewalDates": 4,
+    "v2Control": {
+      "name": "steve.eth",
+      "currentExpiry": "2029-09-22T10:16:06.000Z",
+      "renewableBy": "registrar",
+      "unchanged": true
+    }
+  }
+}

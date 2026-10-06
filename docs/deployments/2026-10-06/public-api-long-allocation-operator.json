@@ -1,0 +1,66 @@
+{
+  "observedAt": "2026-10-06T11:41:40.420Z",
+  "readOnly": true,
+  "baseProductionCommit": "ceb378a4a35323eba315344371ebf9b0c72ef68c",
+  "implementationChecksums": {
+    "server/allocation-evidence.ts": "e91bd2afdbd94befd926a4e583afeba2a44d6edd9795206f541450e425319ca9",
+    "scripts/public-api/allocations.ts": "f82b017af15acd7c0cf847b21046159bde68a3ce1a3cecf3ff98a6a0105cf370"
+  },
+  "elapsedMs": 15171,
+  "previousShortWindow": {
+    "fromBlock": "63411550",
+    "throughBlock": "63413597",
+    "windowClosed": false
+  },
+  "result": {
+    "observedAt": "2026-10-06T11:41:40.400Z",
+    "readOnly": true,
+    "evidence": {
+      "scope": "one wallet source-to-processing window",
+      "chainId": "5042002",
+      "name": "paramore.eth",
+      "depositAddress": "0x690866bdde4cdca43479150aac4f2d17e2792ca1",
+      "transactionHash": "0x9531be85ef55d5e9652eeb2188f76771e110f0d441887c37f6571e62a85ae76a",
+      "fromBlock": "63411550",
+      "throughBlock": "63428646",
+      "fromBlockHash": "0xfac77455b4b1f72626d835c69ed6330e835eaff3ba75f7b7a1fad48ff45d1aa4",
+      "throughBlockHash": "0xefcf2de2b42d1a33fc0d6e1507d5466f7c894cc47dead26c7ee16fa3dc30ca7c",
+      "openingBalance": "0",
+      "closingBalance": "0",
+      "movements": 2,
+      "deposits": [
+        {
+          "movementId": "5042002:0x9531be85ef55d5e9652eeb2188f76771e110f0d441887c37f6571e62a85ae76a:10",
+          "receiptLogIndex": 10,
+          "amount": "3000000",
+          "windowClosed": true,
+          "processingCallIds": [
+            "5042002:0x6082468e2d67a05842e04fceaacbe061cbf0d4d626ee9b477f519630593bd8c0:39"
+          ]
+        }
+      ],
+      "processingCalls": [
+        {
+          "processingId": "5042002:0x6082468e2d67a05842e04fceaacbe061cbf0d4d626ee9b477f519630593bd8c0:39",
+          "transactionHash": "0x6082468e2d67a05842e04fceaacbe061cbf0d4d626ee9b477f519630593bd8c0",
+          "logIndex": 39,
+          "blockNumber": "63428646",
+          "amount": "3000000",
+          "remaining": "0",
+          "directRenewalId": null,
+          "cctpMessageIndex": 0
+        }
+      ],
+      "windowClosed": true,
+      "rangeMode": "extended",
+      "limits": {
+        "blocks": 32768,
+        "rpcCalls": 192,
+        "deadlineMs": 60000
+      },
+      "rpcCalls": 80,
+      "limitations": "Not API completion: registry/index coverage, source finality, cross-chain claim and finalized ENS renewal verification remain separate gates. Call lists describe whole shared windows, not per-deposit amount allocation."
+    }
+  },
+  "limits": "One existing delayed Arc deposit, full source-to-processing range. No funding, hosted mutation, aggregate API completion or public polling capacity claim."
+}

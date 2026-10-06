@@ -332,6 +332,23 @@ the inspected implementation. No wallet funding, database write or hosted config
 full source-payment completion. Coverage, long allocation windows, source-route finality and
 hosted integration/capacity remain release gates. There is still no transaction-status endpoint.
 
+PR #130 merged as `ceb378a4a35323eba315344371ebf9b0c72ef68c`. Its exact production
+deployment `dpl_4rnpbSEeuZVJrBAxUmy96Rz748Di` is READY. Both site and ingestion aliases
+resolve to it. All 206 server tests passed without skips; the protected preview passed eight
+API and four page checks. Eighteen production HTTP checks passed with populated activity,
+correct V1 dates and an unchanged V2 control. Public API flags remain off. See the
+[production evidence](deployments/2026-10-06/public-api-processing-production.json).
+
+## Delayed allocation operator audit — 2026-10-06
+
+The optional extended read-only allocation mode verified the existing `paramore.eth` payment
+through its full 17,097-block source-to-processing span. One three-USDC source credit matches
+one exact processing call and a zero closing wallet balance. Eighty RPC reads took about
+15.2 seconds, including CLI startup. The default short inspection budget is unchanged.
+[Operator evidence](deployments/2026-10-06/public-api-long-allocation-operator.json) pins the
+implementation; [bounds and remaining gates](PUBLIC_API_ALLOCATION.md) define its limited scope.
+No database, funding, ingestion, contract, API flag or production deployment changed for this audit.
+
 ## ENS V1 expiry correction — 2026-10-06
 
 The deployed helper reads the V2 registry for both renewal routes. Unmigrated V1 reservations

@@ -1,6 +1,6 @@
 # Deposit-to-renewal allocation review
 
-Date: 2026-10-05. Updated 2026-10-06 with a bounded operator verifier.
+Date: 2026-10-05. Updated 2026-10-06 with short and extended operator limits.
 No status endpoint, migration, worker or public API enable setting is introduced.
 
 ## Result
@@ -164,6 +164,41 @@ Solidity or substitute for live pooled/split funding.
 The actual CLI inspected all seven existing indexed payments: six simple windows closed with
 14 RPC reads each. The long-delay payment stayed open after 17 reads at the window boundary.
 [Operator evidence](deployments/2026-10-06/public-api-allocation-operator.json) records the exact
-implementation checksums. This fixed-window tool cannot verify that long payment through its
-later processing block. A bounded coverage/resumption strategy remains a status-release decision;
-no worker or schema was added to bypass it.
+implementation checksums. The original short mode cannot verify that long payment through its
+later processing block. The extended audit below now covers it. A public polling budget or
+coverage/resumption strategy remains a status-release decision; no worker or schema was added.
+
+## Extended delayed-payment audit — 2026-10-06
+
+The same read-only CLI accepts an explicit `--extended` flag for operator audits:
+
+```bash
+node --import tsx scripts/public-api/allocations.ts 5042002 paramore '<source-hash>' '<decimal-end-block>' --extended
+```
+
+The default stays at 2,048 blocks, 64 RPC calls and 15 seconds. Extended mode permits at most
+32,768 blocks, 192 RPC calls and one 60-second deadline. Both modes keep the same 512-block
+queries, 256 movements, 16 receipts, one-MiB HTTP responses and read-only method whitelist.
+Invalid flags and excess evidence fail inspection. There is no saved cursor or trusted client
+checkpoint: each audit verifies the whole selected range from the source receipt. Returned
+`rangeMode` and `limits` identify the actual budget.
+
+The delayed `paramore.eth` payment now passes from block `63411550` through `63428646`, a
+17,097-block inclusive range. Its one three-USDC source credit reaches one exact three-USDC
+processing call with a zero remainder. Both boundary balances are zero. The real CLI used
+80 RPC calls in approximately 15.2 seconds, including process startup. See the
+[extended operator evidence](deployments/2026-10-06/public-api-long-allocation-operator.json).
+That processing identifier matches the already reviewed
+[processing-to-renewal evidence](deployments/2026-10-06/public-api-processing-renewal-operator.json).
+This audit does not refresh that separate proof's provider finality anchors.
+
+The delayed-drain regression fails against the previous short-only implementation. Eleven
+allocation tests now cover the extended CLI, pending slices, credits across range boundaries,
+unknown debits, changed boundary hashes and hard request/range caps alongside the existing
+pooling, split and receipt checks. The longer scan adds no API route, database access, job,
+payment work, funding or hosted setting.
+
+This closes the known sample's source-to-processing range gap. It does not prove arbitrary
+waiting periods fit a bounded public poll. Public transaction status still needs full source
+and indexed membership, watch coverage, reviewed finality, all renewal joins and hosted capacity.
+Keep it absent until those gates pass; operator `windowClosed` is not API `complete`.
