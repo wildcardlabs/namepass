@@ -1,3 +1,4 @@
+import { admitPublicRequest } from "./public-admission";
 import { PUBLIC_CHAINS } from "../src/lib/chains";
 import { InvalidLabelError, normalizeLabel } from "../src/lib/namepass";
 import { minimumTriggerAmount } from "./config";
@@ -22,7 +23,7 @@ export const publicAddress = {
 		const error = (status: number, code: string, message: string, details?: Record<string, unknown>) =>
 			json({ error: { code, message, ...(details ? { details } : {}) }, requestId }, status, {
 				...HEADERS,
-				...(status === 429 || status === 503 ? { "retry-after": "5" } : {}),
+				...(status === 429 || status === 503 ? { "retry-after": code === "rate_limited" ? "60" : "5" } : {}),
 			});
 		if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: HEADERS });
 		if (request.method !== "POST")
@@ -40,6 +41,7 @@ export const publicAddress = {
 			return error(429, "address_capacity", "Address capacity is busy. Retry after the indicated delay.");
 		activeRequests++;
 		try {
+			await admitPublicRequest("address", request);
 			const input = await readPublicObject(
 				request,
 				["name"],

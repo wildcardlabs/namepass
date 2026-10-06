@@ -1,3 +1,4 @@
+import { admitPublicRequest } from "./public-admission";
 import { BaseError, ContractFunctionRevertedError, createPublicClient, http, parseAbi, zeroAddress, type Address } from "viem";
 import { HUB_CHAIN, SERVER_CHAINS } from "../src/lib/chains";
 import { assertEnsV2Adapter } from "../src/lib/helperAdapter";
@@ -158,7 +159,7 @@ export const publicQuote = {
 		const requestId = crypto.randomUUID();
 		const error = (status: number, code: string, message: string, details?: Record<string, unknown>) => json(
 			{ error: { code, message, ...(details ? { details } : {}) }, requestId }, status,
-			{ ...HEADERS, ...(status === 429 || status === 503 ? { "retry-after": "5" } : {}) },
+			{ ...HEADERS, ...(status === 429 || status === 503 ? { "retry-after": code === "rate_limited" ? "60" : "5" } : {}) },
 		);
 		if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: HEADERS });
 		if (request.method !== "POST") return json({ error: { code: "method_not_allowed", message: "Use POST." }, requestId }, 405, { ...HEADERS, allow: "POST, OPTIONS" });
@@ -168,6 +169,7 @@ export const publicQuote = {
 		activeRequests++;
 		const controller = new AbortController();
 		try {
+			await admitPublicRequest("quote", request);
 			const signal = AbortSignal.any([request.signal, controller.signal, AbortSignal.timeout(10_000)]);
 			const result = await quote(request, signal);
 			logOperation("public_quote.response", { requestId, step: "quote" });

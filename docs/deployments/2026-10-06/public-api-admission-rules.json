@@ -1,0 +1,246 @@
+{
+  "status": "proposed_not_applied",
+  "projectId": "prj_CoorV6FFHJktolSYkOEtTEFrnb1X",
+  "rules": [
+    {
+      "name": "namepass-v1-address-ip",
+      "active": true,
+      "description": "Fresh public API address per-client limit. Does not match core UI, ingestion or workflow routes.",
+      "conditionGroup": [
+        {
+          "conditions": [
+            {
+              "type": "rate_limit_api_id",
+              "op": "eq",
+              "value": "namepass-v1-address-ip"
+            }
+          ]
+        }
+      ],
+      "action": {
+        "mitigate": {
+          "action": "rate_limit",
+          "rateLimit": {
+            "limit": 6,
+            "action": "rate_limit",
+            "window": 60,
+            "algo": "fixed_window",
+            "keys": [
+              "header:x-vercel-rate-limit-key"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "namepass-v1-address-budget",
+      "active": true,
+      "description": "Fresh public API address shared regional budget. Does not match core UI, ingestion or workflow routes.",
+      "conditionGroup": [
+        {
+          "conditions": [
+            {
+              "type": "rate_limit_api_id",
+              "op": "eq",
+              "value": "namepass-v1-address-budget"
+            }
+          ]
+        }
+      ],
+      "action": {
+        "mitigate": {
+          "action": "rate_limit",
+          "rateLimit": {
+            "limit": 12,
+            "action": "rate_limit",
+            "window": 60,
+            "algo": "fixed_window",
+            "keys": [
+              "header:x-vercel-rate-limit-key"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "namepass-v1-quote-ip",
+      "active": true,
+      "description": "Fresh public API quote per-client limit. Does not match core UI, ingestion or workflow routes.",
+      "conditionGroup": [
+        {
+          "conditions": [
+            {
+              "type": "rate_limit_api_id",
+              "op": "eq",
+              "value": "namepass-v1-quote-ip"
+            }
+          ]
+        }
+      ],
+      "action": {
+        "mitigate": {
+          "action": "rate_limit",
+          "rateLimit": {
+            "limit": 30,
+            "action": "rate_limit",
+            "window": 60,
+            "algo": "fixed_window",
+            "keys": [
+              "header:x-vercel-rate-limit-key"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "namepass-v1-quote-budget",
+      "active": true,
+      "description": "Fresh public API quote shared regional budget. Does not match core UI, ingestion or workflow routes.",
+      "conditionGroup": [
+        {
+          "conditions": [
+            {
+              "type": "rate_limit_api_id",
+              "op": "eq",
+              "value": "namepass-v1-quote-budget"
+            }
+          ]
+        }
+      ],
+      "action": {
+        "mitigate": {
+          "action": "rate_limit",
+          "rateLimit": {
+            "limit": 60,
+            "action": "rate_limit",
+            "window": 60,
+            "algo": "fixed_window",
+            "keys": [
+              "header:x-vercel-rate-limit-key"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "namepass-v1-status-ip",
+      "active": true,
+      "description": "Fresh public API status per-client limit. Does not match core UI, ingestion or workflow routes.",
+      "conditionGroup": [
+        {
+          "conditions": [
+            {
+              "type": "rate_limit_api_id",
+              "op": "eq",
+              "value": "namepass-v1-status-ip"
+            }
+          ]
+        }
+      ],
+      "action": {
+        "mitigate": {
+          "action": "rate_limit",
+          "rateLimit": {
+            "limit": 12,
+            "action": "rate_limit",
+            "window": 60,
+            "algo": "fixed_window",
+            "keys": [
+              "header:x-vercel-rate-limit-key"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "namepass-v1-status-budget",
+      "active": true,
+      "description": "Fresh public API status shared regional budget. Does not match core UI, ingestion or workflow routes.",
+      "conditionGroup": [
+        {
+          "conditions": [
+            {
+              "type": "rate_limit_api_id",
+              "op": "eq",
+              "value": "namepass-v1-status-budget"
+            }
+          ]
+        }
+      ],
+      "action": {
+        "mitigate": {
+          "action": "rate_limit",
+          "rateLimit": {
+            "limit": 24,
+            "action": "rate_limit",
+            "window": 60,
+            "algo": "fixed_window",
+            "keys": [
+              "header:x-vercel-rate-limit-key"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "namepass-v1-history-ip",
+      "active": true,
+      "description": "Fresh public API history per-client limit. Does not match core UI, ingestion or workflow routes.",
+      "conditionGroup": [
+        {
+          "conditions": [
+            {
+              "type": "rate_limit_api_id",
+              "op": "eq",
+              "value": "namepass-v1-history-ip"
+            }
+          ]
+        }
+      ],
+      "action": {
+        "mitigate": {
+          "action": "rate_limit",
+          "rateLimit": {
+            "limit": 6,
+            "action": "rate_limit",
+            "window": 60,
+            "algo": "fixed_window",
+            "keys": [
+              "header:x-vercel-rate-limit-key"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "namepass-v1-history-budget",
+      "active": true,
+      "description": "Fresh public API history shared regional budget. Does not match core UI, ingestion or workflow routes.",
+      "conditionGroup": [
+        {
+          "conditions": [
+            {
+              "type": "rate_limit_api_id",
+              "op": "eq",
+              "value": "namepass-v1-history-budget"
+            }
+          ]
+        }
+      ],
+      "action": {
+        "mitigate": {
+          "action": "rate_limit",
+          "rateLimit": {
+            "limit": 12,
+            "action": "rate_limit",
+            "window": 60,
+            "algo": "fixed_window",
+            "keys": [
+              "header:x-vercel-rate-limit-key"
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

@@ -228,6 +228,9 @@ routes after each deployment; CI databases created from all repository migration
 a deployed database that has not received those migrations.
 
 Endpoint availability must be independently controllable and separate from renewal processing.
+The prepared [admission guard](PUBLIC_API_ADMISSION.md) uses fresh Vercel SDK counters.
+Its proposed firewall rules and protected-preview checks require separate hosted approval;
+no production endpoint is enabled by that code change.
 Document how a control change affects active deployments and requests; do not assume it stops
 existing Workflow runs. Establish the last compatible deployment and practice rollback on
 staging while retaining payment history. Prefer keeping a compatible additive schema during
