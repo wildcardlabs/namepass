@@ -482,6 +482,16 @@ runtime fingerprint, plan limit and renewable canary target.
 boundary from stream propagation, payment completion and public capacity. No hosted setting,
 schema, production pipeline, wallet transaction or API flag changed for this rehearsal.
 
+PR #137 merged as `aca8456d60e750fda1874371a74ac29c9663662c` after required CI passed
+with 221 server tests, zero failures and zero skips. Its production deployment
+`dpl_Ds2DQB2uzoc181Wm1VEfUwgLP38s` is READY. Both site and ingestion aliases resolve to it;
+all twenty-one production HTTP checks passed with populated activity and disabled public APIs.
+A fifteen-second read-only inspection probe left the existing pipeline ACTIVE with unchanged
+runtime and definition. The original staging rows and counts are unchanged. No additional
+pipeline, reader, secret, watch or payment was created. This probe does not establish new-watch
+visibility or restart recovery. See the
+[release and observation receipt](deployments/2026-10-06/public-api-activation-production.json).
+
 ## ENS V1 expiry correction — 2026-10-06
 
 The deployed helper reads the V2 registry for both renewal routes. Unmigrated V1 reservations
