@@ -350,11 +350,21 @@ No helper, pointer, pricing, migration, signer, or funding change is needed.
 
 The [SELECT-only audit](deployments/2026-10-06/ens-expiry-audit.json) checked eleven names,
 ten canonical renewal events and ten linked flows. Five name dates, four event expiry facts,
-and four flow expiry dates need correction. The
+and four flow expiry dates required correction. The
 [bounded repair](deployments/2026-10-06/ens-expiry-repair.sql) changes only these date fields
 and the paired name read timestamps. It compares the audited values, accepts already corrected
-rows, and aborts the entire transaction if evidence is stale. This repair is prepared but has
-not been applied to the hosted database. Deployment and data repair need separate authorization.
+rows, and aborts the entire transaction if evidence is stale. After separate user authorization,
+the repair was applied at 11:20 UTC. Before/after assertions verified all thirteen corrections
+and unchanged unrelated names, event facts, flow statuses, amounts and durations. See the
+[applied repair record](deployments/2026-10-06/ens-expiry-repair-applied.json).
+
+PR #131 was merged as `ce235c5f858398247537b7c96c82476fe7e287fb`. Production deployment
+`dpl_FVVwwYsfWSZEqGZaZYHGtdT4hAqh` is READY for that commit. Both the site and ingestion
+aliases resolve to it. Eighteen HTTP checks passed with populated activity and unchanged API
+gates. Live name responses show all five corrected V1 dates; four historical renewal dates
+match the repair. The V2 control name retains its prior expiry. See the
+[production verification](deployments/2026-10-06/ens-expiry-production.json).
+Required CI passed all 197 server tests without skips. No contracts or hosted settings changed.
 
 Earlier history and PR #130 operator evidence used V2 reservation expiry for V1 results.
 Those expiry values are superseded by this audit. Renewal identity, amount and duration evidence
