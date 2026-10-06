@@ -39,6 +39,7 @@ const helperAbi = parseAbi([
 	"function ethRegistrar() view returns (address)",
 	"function ethRenewerV1() view returns (address)",
 	"function referrer() view returns (bytes32)",
+	"function BASE_REGISTRAR() view returns (address)",
 ]);
 const ensAbi = parseAbi([
 	"event NameRenewed(uint256 indexed tokenId, string label, uint64 duration, uint64 newExpiry, address paymentToken, bytes32 indexed referrer, uint256 amount)",
@@ -152,11 +153,12 @@ function ensLog(
 		wrongReferrer?: boolean;
 		wrongToken?: boolean;
 		fakeEns?: boolean;
+		v1?: boolean;
 	} = {},
 ) {
 	return {
 		...log(label, index, false),
-		address: options.fakeEns ? executor : HUB_CHAIN.ensRegistrarAddress!,
+		address: options.fakeEns ? executor : options.v1 ? HUB_CHAIN.ensRenewerV1Address! : HUB_CHAIN.ensRegistrarAddress!,
 		topics: encodeEventTopics({
 			abi: ensAbi,
 			eventName: "NameRenewed",
@@ -194,6 +196,7 @@ function rpc(
 		wrongReferrer?: boolean;
 		wrongToken?: boolean;
 		fakeEns?: boolean;
+		v1?: boolean;
 		missingEns?: boolean;
 		duplicateEns?: boolean;
 		wrongHelperWallet?: boolean;
@@ -236,9 +239,10 @@ function rpc(
 								logs: [
 									...(options.duplicateEns ? [ensLog("alice", 1, 1900000000n)] : []),
 									claim(),
-									...(options.missingEns ? [] : [ensLog("alice", 3, 1900000000n, options)]),
+									...(options.missingEns ? [] : [ensLog("alice", 3, 1900000000n, {...options, v1: false})]),
 									helperLog("alice", 4, options.wrongHelperWallet),
 									log("alice", 5, true),
+									...(options.v1 ? [{...log("alice", 6, false), address: executor, topics: encodeEventTopics({abi: parseAbi(["event NameRenewed(uint256 indexed id,uint256 expires)"]), eventName: "NameRenewed", args: {id: BigInt(keccak256(stringToHex("alice")))} }), data: encodeAbiParameters(parseAbiParameters("uint256"), [1894643300n])}] : []),
 									ensLog("alice", 7, 1900000100n, options),
 									helperLog("alice", 8, options.wrongHelperWallet),
 									log("alice", 9, false),
@@ -295,16 +299,16 @@ function rpc(
 					if (options.archiveFailure) throw new Error("private provider credential");
 					assert.equal(
 						call.params[0].to.toLowerCase(),
-						helper.toLowerCase(),
-						"read the helper selected in this receipt",
+						(call.params[0].data === toFunctionSelector("BASE_REGISTRAR()") ? HUB_CHAIN.ensRenewerV1Address! : helper).toLowerCase(),
+						"read the helper or V1 renewer selected in this receipt",
 					);
 					assert.equal(call.params[1], "0x64", "metadata reads use the renewal block, not latest");
-					const name = ["ethRegistrar", "ethRenewerV1", "referrer"].find(
+					const name = ["ethRegistrar", "ethRenewerV1", "referrer", "BASE_REGISTRAR"].find(
 						(name) => toFunctionSelector(name + "()") === call.params[0].data,
 					)!;
 					assert.ok(name, "only known metadata reads are allowed");
 					const value =
-						name === "ethRegistrar"
+						name === "BASE_REGISTRAR" ? executor : name === "ethRegistrar"
 							? options.unsupportedMetadata
 								? executor
 								: HUB_CHAIN.ensRegistrarAddress!
@@ -313,7 +317,7 @@ function rpc(
 								: HUB_CHAIN.ensReferrer!;
 					result = encodeFunctionResult({
 						abi: helperAbi,
-						functionName: name as "ethRegistrar" | "ethRenewerV1" | "referrer",
+						functionName: name as "ethRegistrar" | "ethRenewerV1" | "referrer" | "BASE_REGISTRAR",
 						result: value as `0x${string}`,
 					});
 				} else throw new Error("unexpected RPC method");
@@ -641,4 +645,16 @@ test("failed database reads discard the connection and sanitize retryable errors
 	assert.equal((await response.json()).error.code, "history_unavailable");
 	assert.equal(response.headers.get("retry-after"), "5");
 	assert.deepEqual(released, [true]);
+});
+
+
+test("history returns V1 registration expiry and preserves V2 expiry in the same transaction", async t => {
+ setup(t); await fixture(t); rpc(t,{v1:true});
+ const response=await route.fetch(request("alice", "?limit=2"));
+ assert.equal(response.status,200,await response.clone().text());
+ const page=await response.json();
+ assert.equal(page.items[0].renewalId,`11155111:${hash}:9`);
+ assert.equal(page.items[0].expiry,"2030-01-14T17:48:20.000Z");
+ assert.equal(page.items[1].renewalId,`11155111:${hash}:5`);
+ assert.equal(page.items[1].expiry,"2030-03-17T17:46:40.000Z");
 });

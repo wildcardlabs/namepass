@@ -5,13 +5,15 @@ import { HUB_CHAIN } from "../src/lib/chains";
 const NAME_RENEWED = parseAbi([
 	"event NameRenewed(uint256 indexed tokenId, string label, uint64 duration, uint64 newExpiry, address paymentToken, bytes32 indexed referrer, uint256 amount)",
 ]);
+const V1_NAME_RENEWED = parseAbi(["event NameRenewed(uint256 indexed id, uint256 expires)"]);
+const V1_METADATA = parseAbi(["function BASE_REGISTRAR() view returns (address)"]);
 
 type ReceiptLog = { address: Address; data: Hex; topics: readonly Hex[] };
 
 /** Read the authoritative ENS expiry from the same receipt as a Namepass renewal. */
 export function parseEnsRenewalExpiry(
 	logs: readonly ReceiptLog[],
-	expected: { label: string; registrar: string; renewerV1: string; referrer: string },
+	expected: { label: string; registrar: string; renewerV1: string; referrer: string; baseRegistrarV1?: string; paymentToken?: string },
 ): Date {
 	const renewers = [expected.registrar, expected.renewerV1]
 		.filter((address): address is string => Boolean(address))
@@ -25,7 +27,7 @@ export function parseEnsRenewalExpiry(
 				topics: log.topics as [Hex, ...Hex[]],
 				strict: true,
 			});
-			return event.eventName === "NameRenewed" ? [event] : [];
+			return event.eventName === "NameRenewed" ? [{ event, log }] : [];
 		} catch {
 			return [];
 		}
@@ -33,7 +35,7 @@ export function parseEnsRenewalExpiry(
 	if (events.length !== 1) {
 		throw new Error("The receipt does not contain exactly one expected ENS renewal event.");
 	}
-	const args = events[0].args as {
+	const args = events[0].event.args as {
 		tokenId: bigint;
 		label: string;
 		newExpiry: bigint;
@@ -42,12 +44,34 @@ export function parseEnsRenewalExpiry(
 	};
 	if (
 		args.label !== expected.label
-		|| getAddress(args.paymentToken) !== getAddress(HUB_CHAIN.usdcAddress)
+		|| getAddress(args.paymentToken) !== getAddress(expected.paymentToken ?? HUB_CHAIN.usdcAddress)
 		|| args.referrer.toLowerCase() !== expected.referrer.toLowerCase()
 	) {
 		throw new Error("The ENS renewal event does not match the expected Namepass renewal.");
 	}
-	const milliseconds = args.newExpiry * 1_000n;
+	let expiry = args.newExpiry;
+	if (getAddress(events[0].log.address) === getAddress(expected.renewerV1)) {
+		if (!expected.baseRegistrarV1 || /^0x0+$/.test(expected.baseRegistrarV1)) {
+			throw new Error("The ENS V1 registrar is not configured for receipt verification.");
+		}
+		const id = BigInt(keccak256(stringToHex(expected.label)));
+		const renewedAt = logs.indexOf(events[0].log);
+		const renewals = logs.flatMap((log, index) => {
+			// syncWrapper can emit a later zero-duration V1 renewal. The
+			// registration extension occurs before the V2 renewer event.
+			if (index >= renewedAt) return [];
+			if (getAddress(log.address) !== getAddress(expected.baseRegistrarV1!)) return [];
+			try {
+				const event = decodeEventLog({ abi: V1_NAME_RENEWED, ...log, topics: log.topics as [Hex, ...Hex[]], strict: true });
+				return event.args.id === id ? [{ expiry: event.args.expires, index }] : [];
+			} catch { return []; }
+		});
+		if (renewals.length !== 1) {
+			throw new Error("The receipt does not contain exactly one preceding ENS V1 registration renewal.");
+		}
+		expiry = renewals[0].expiry;
+	}
+	const milliseconds = expiry * 1_000n;
 	if (milliseconds > 8_640_000_000_000_000n) throw new Error("The ENS expiry is outside the date range.");
 	return new Date(Number(milliseconds));
 }
@@ -83,5 +107,8 @@ export async function readReceiptEnsExpiry(logs: readonly ReceiptLog[], label: s
 		client.readContract({ address: helper, abi: METADATA, functionName: "ethRenewerV1", blockNumber }),
 		client.readContract({ address: helper, abi: METADATA, functionName: "referrer", blockNumber }),
 	]);
-	return parseEnsRenewalExpiry(logs, { label, registrar, renewerV1, referrer });
+	const baseRegistrarV1 = logs.some(log => getAddress(log.address) === getAddress(renewerV1))
+		? await client.readContract({ address: renewerV1, abi: V1_METADATA, functionName: "BASE_REGISTRAR", blockNumber })
+		: undefined;
+	return parseEnsRenewalExpiry(logs, { label, registrar, renewerV1, referrer, baseRegistrarV1 });
 }

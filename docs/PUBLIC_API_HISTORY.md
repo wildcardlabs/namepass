@@ -89,8 +89,10 @@ candidate rows and releases the database connection before RPC work.
 
 Each process admits two history requests. Each request has at most two verification workers
 and four logical RPC calls in flight. Only chain ID, receipt, block, helper runtime and helper
-metadata reads are used. The worst-case budget is 602 logical calls for the maximum 100-item page: two page
-reads plus six reads per distinct renewal block/helper. Receipts, blocks and helper/block
+or V1 renewer metadata reads are used. V1 expiry comes from the preceding BaseRegistrar
+registration event; the V2 renewer event describes a reservation. The worst-case budget is
+702 logical calls for the maximum 100-item page: two page reads, six reads per distinct
+renewal block/helper, and one V1 registrar discovery per V1 item. Receipts, blocks and helper/block
 metadata are shared within a request. Metadata reads are sequential within each worker.
 Retries are disabled, individual RPC transport timeout is 10000 ms, and
 RPC reads use a 15000 ms deadline measured from request start plus caller cancellation.

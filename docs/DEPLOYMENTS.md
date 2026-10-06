@@ -312,6 +312,34 @@ actual CLI transport boundary; no new wallet funding or hosted mutation occurred
 See [allocation review](PUBLIC_API_ALLOCATION.md#bounded-source-to-processing-verifier--2026-10-06)
 for the remaining long-window, claim/finality and coverage gates. There is no public status route.
 
+## ENS V1 expiry correction — 2026-10-06
+
+The deployed helper reads the V2 registry for both renewal routes. Unmigrated V1 reservations
+have a later reservation expiry; that date must not be presented as V1 registration expiry.
+Read-only Sepolia discovery confirmed a 90-day V1 grace period, a 28-day V2 grace period, and
+an exact 62-day reservation offset in the current deployment. See the
+[public RPC fixture](../test/fixtures/ens-expiry/sepolia.json) and
+[official ENS migration documentation](https://docs.ens.domains/ensv2/migration/).
+
+The backend correction discovers the V1 BaseRegistrar through `ETHRenewerV1.BASE_REGISTRAR()`
+at the read or receipt block. Current state uses `nameExpires(labelHash)` for V1. Receipt
+expiry uses the preceding V1 registration event. V2 registration expiry stays unchanged.
+Gateway and standalone ENS webhook events are enriched before their expiry projections are
+stored. The proposed history reader also uses the corrected receipt semantics.
+No helper, pointer, pricing, migration, signer, or funding change is needed.
+
+The [SELECT-only audit](deployments/2026-10-06/ens-expiry-audit.json) checked eleven names,
+ten canonical renewal events and ten linked flows. Five name dates, four event expiry facts,
+and four flow expiry dates need correction. The
+[bounded repair](deployments/2026-10-06/ens-expiry-repair.sql) changes only these date fields
+and the paired name read timestamps. It compares the audited values, accepts already corrected
+rows, and aborts the entire transaction if evidence is stale. This repair is prepared but has
+not been applied to the hosted database. Deployment and data repair need separate authorization.
+
+Earlier history and PR #130 operator evidence used V2 reservation expiry for V1 results.
+Those expiry values are superseded by this audit. Renewal identity, amount and duration evidence
+is unchanged. PR #130 must use the corrected parser before merging.
+
 ## Historical evidence
 
 The [September 18 manifest](deployments/2026-09-18/manifest.json) and accompanying receipts are
