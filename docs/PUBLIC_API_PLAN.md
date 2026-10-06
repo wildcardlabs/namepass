@@ -15,9 +15,8 @@ An extended read-only audit now covers the known delayed payment. A private comb
 renewals for all seven existing samples; see [combined evidence](PUBLIC_API_TRANSACTION_EVIDENCE.md).
 Protected hosted status/history replay passed for five existing Arc-to-Sepolia payments, including
 the delayed sample; exact renewal identifiers, durations and expiry agree. See the
-[staging receipt](deployments/2026-10-06/public-api-status-staging.json). This proves the bounded
-read path for those payments only. Public polling capacity, positive hosted direct-Sepolia and
-Base/Arbitrum payments, new-payment propagation and aggregate funding canaries remain release gates.
+[staging receipt](deployments/2026-10-06/public-api-status-staging.json). This records the bounded read path for those historical payments. Current route evidence and
+remaining gates are recorded below and in [DEPLOYMENTS.md](DEPLOYMENTS.md).
 The source inspector now reports conservative receipt-set closure and rechecked configured-provider
 finality; [policy and limitations](PUBLIC_API_DEPOSIT_EVIDENCE.md) keep these separate from API completion.
 History verifies event-specific ENS expiry and hub finality. Its deployment is
@@ -33,10 +32,13 @@ cleanup results are in the [current canary receipt](deployments/2026-10-06/ens-o
 The historical audits above belong to the previous ENS configuration. They remain
 regression evidence; obsolete hosted payment history is not a compatibility requirement.
 
-The protected hosted preview passed current-ENS status/history, schema, privacy and
-read-only checks. Keep production flags off until the remaining source-route, first-watch,
-aggregate funding and capacity gates pass. The funded Sepolia payment used an existing watch, so it does not establish
-first-watch propagation. No additional Goldsky pipeline or schema is required for this step.
+The protected hosted preview now verifies fresh payments on all four source routes,
+including native and ERC-20 Arc pooled into one renewal, plus one positive newly
+registered Sepolia watch. See the [fresh-route verification](DEPLOYMENTS.md#fresh-browser-signed-route-checks-and-native-arc-indexing--2026-10-06).
+Keep production flags off while public exposure/capacity, activation-boundary and
+restart recovery, and live same-transaction multi-deposit/split gates remain open.
+The positive watch case does not establish zero-delay ingestion or recover earlier
+filtered transfers. No additional Goldsky pipeline or schema is required.
 
 ## Starting point
 
