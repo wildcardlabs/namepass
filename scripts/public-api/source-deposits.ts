@@ -3,6 +3,7 @@ import { Pool } from "pg";
 import { SERVER_CHAINS } from "../../src/lib/chains";
 import {
 	sourceDepositEvidence,
+	sourceFinalityEvidence,
 	type IndexedSourceDeposit,
 	type RegisteredDepositAddress,
 	type SourceBlock,
@@ -102,7 +103,7 @@ async function inspect() {
 	let operations = 0;
 	async function rpc<T>(method: string, params: unknown[]): Promise<T> {
 		if (
-			++operations > 4 ||
+			++operations > 7 ||
 			![
 				"eth_chainId",
 				"eth_getTransactionReceipt",
@@ -118,7 +119,20 @@ async function inspect() {
 			signal,
 		});
 		if (!response.ok) throw new Error("source_rpc_unavailable");
-		const payload = await response.json();
+		const reader = response.body?.getReader();
+		if (!reader) throw new Error("source_rpc_unavailable");
+		let size = 0;
+		const parts: Uint8Array[] = [];
+		try {
+			while (true) {
+				const { done, value } = await reader.read();
+				if (done) break;
+				size += value.length;
+				if (size > 1024 * 1024) throw new Error("source_response_limit");
+				parts.push(value);
+			}
+		} finally { await reader.cancel(); }
+		const payload = JSON.parse(Buffer.concat(parts).toString("utf8"));
 		if (payload.error || !payload.result || payload.id !== operations || payload.jsonrpc !== "2.0")
 			throw new Error("source_rpc_unavailable");
 		return payload.result;
@@ -138,6 +152,10 @@ async function inspect() {
 		watchedAddresses,
 		indexed,
 	});
+	const finalized = await rpc<SourceBlock>("eth_getBlockByNumber", ["finalized", false]);
+	const canonicalSource = await rpc<SourceBlock>("eth_getBlockByNumber", [block.number, false]);
+	const canonicalFinalized = await rpc<SourceBlock>("eth_getBlockByNumber", [finalized.number, false]);
+	const sourceFinality = sourceFinalityEvidence({ source: block, finalized, canonicalSource, canonicalFinalized });
 	console.log(
 		JSON.stringify(
 			{
@@ -147,6 +165,7 @@ async function inspect() {
 				registryCount: registry.length,
 				indexedCount: indexed.length,
 				rpcCalls: operations,
+				sourceFinality,
 				evidence,
 			},
 			null,

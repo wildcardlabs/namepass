@@ -3,6 +3,7 @@ import test from "node:test";
 import { encodeAbiParameters, encodeEventTopics, parseAbi, parseAbiParameters, toHex } from "viem";
 import {
 	sourceDepositEvidence,
+	sourceFinalityEvidence,
 	type IndexedSourceDeposit,
 	type SourceBlock,
 	type SourceReceipt,
@@ -22,6 +23,35 @@ const registry = [
 	{ label: "steve", address: steve, activatedAt: "2026-01-01T00:00:00.000Z" },
 	{ label: "vitalik", address: vitalik, activatedAt: "2026-01-01T00:00:00.000Z" },
 ];
+test("source finality stays separate from indexed membership and waits for a numbered provider anchor", () => {
+	const source = { number: "0x64", hash: blockHash, timestamp: "0x64" };
+	const earlier = { number: "0x63", hash, timestamp: "0x63" };
+	const pending = sourceFinalityEvidence({ source, finalized: earlier, canonicalSource: source, canonicalFinalized: earlier });
+	assert.equal(pending.providerFinalized, false);
+	assert.deepEqual(pending.sourceBlock, { number: "100", hash: blockHash });
+	const final = sourceFinalityEvidence({ source, finalized: source, canonicalSource: source, canonicalFinalized: source });
+	assert.equal(final.providerFinalized, true);
+	assert.equal("status" in final, false);
+	const missing = fixture();
+	missing.receipt.logs = [transfer(ethToken, 9, steve, 1000000n)];
+	assert.equal(sourceDepositEvidence(missing).representationComplete, false,
+		"Finality of the source block does not supply missing indexed membership");
+});
+
+test("changed, malformed or contradictory source/finality blocks cannot produce finality evidence", () => {
+	const source = { number: "0x64", hash: blockHash, timestamp: "0x64" };
+	const finalized = { number: "0x65", hash, timestamp: "0x65" };
+	const input = { source, finalized, canonicalSource: source, canonicalFinalized: finalized };
+	for (const field of ["canonicalSource", "canonicalFinalized"] as const)
+		assert.throws(() => sourceFinalityEvidence({ ...input, [field]: { ...input[field], hash: `0x${"cc".repeat(32)}` } }), /boundary_changed/);
+	assert.throws(() => sourceFinalityEvidence({ ...input, canonicalFinalized: { ...finalized, number: "0x66" } }), /boundary_changed/);
+	assert.throws(() => sourceFinalityEvidence({ ...input, finalized: { ...finalized, hash: "0x12" } }), /invalid_source_hash/);
+	assert.throws(() => sourceFinalityEvidence({ ...input, finalized: { ...finalized, number: "latest" } }), /invalid_source_quantity/);
+	const contradictory = { ...finalized, timestamp: "0x63" };
+	assert.throws(() => sourceFinalityEvidence({ ...input, finalized: contradictory, canonicalFinalized: contradictory }), /inconsistent_source_finality/);
+	const sameHeight = { ...source, hash };
+	assert.throws(() => sourceFinalityEvidence({ ...input, finalized: sameHeight, canonicalFinalized: sameHeight }), /inconsistent_source_finality/);
+});
 function transfer(emitter: string, index: number, to: string, value: bigint, from = sender) {
 	return {
 		address: emitter,
@@ -122,6 +152,21 @@ test("staggered indexing cannot hide a second deposit, even when delivered rows 
 	);
 	f.indexed[2].amount = "3";
 	assert.throws(() => sourceDepositEvidence(f), /conflicting_index_delivery/);
+});
+
+test("an unregistered second recipient blocks receipt-set closure before its late activation and delivery", () => {
+	const f = fixture();
+	f.receipt.logs = [transfer(ethToken, 9, steve, 1000000n), transfer(ethToken, 10, vitalik, 2000000n)];
+	f.registry = [registry[0]];
+	f.indexed = [indexed("11155111", "steve", "1000000", 9)];
+	const unknown = sourceDepositEvidence(f);
+	assert.equal(unknown.representationComplete, true);
+	assert.deepEqual(unknown.unregisteredRecipients, [vitalik]);
+	assert.equal(unknown.receiptSetClosed, false);
+	f.registry = [...registry];
+	assert.equal(sourceDepositEvidence(f).receiptSetClosed, false, "Activation alone does not supply the missing indexed member");
+	f.indexed.push(indexed("11155111", "vitalik", "2000000", 10));
+	assert.equal(sourceDepositEvidence(f).receiptSetClosed, true);
 });
 test("Arc native receipt identity is separate from its stored top-level transaction position", () => {
 	const f = fixture("5042002");
@@ -303,6 +348,8 @@ test(
 			transfer(ethToken, 10, vitalik, 2000000n),
 		];
 		let providerFailure = false;
+		let oversized = false;
+		let finalityMode: "final" | "pending" | "changed" | "unavailable" = "final";
 		const methods: string[] = [];
 		const server = createServer(async (req, res) => {
 			let raw = "";
@@ -315,7 +362,18 @@ test(
 				eth_getTransactionByHash: f.transaction,
 				eth_getBlockByNumber: f.block,
 			};
+			if (p.method === "eth_getBlockByNumber") {
+				if (p.params[0] === "finalized" && finalityMode === "unavailable") values[p.method] = null;
+				else if (finalityMode === "pending" && ["finalized", "0x63"].includes(p.params[0]))
+					values[p.method] = { ...f.block, number: "0x63", hash, timestamp: toHex(1789999999) };
+				else if (finalityMode === "changed" && p.id === 7)
+					values[p.method] = { ...f.block, hash };
+			}
 			res.setHeader("Content-Type", "application/json");
+			if (oversized) {
+				res.end(JSON.stringify({ jsonrpc: "2.0", id: p.id, result: "x".repeat(2 * 1024 * 1024) }));
+				return;
+			}
 			res.end(
 				JSON.stringify({
 					jsonrpc: "2.0",
@@ -403,13 +461,30 @@ test(
 		assert.equal(first.code, 0, first.err);
 		const a = JSON.parse(first.out);
 		assert.equal(a.readOnly, true);
+		assert.equal(a.rpcCalls, 7);
+		assert.equal(a.sourceFinality.providerFinalized, true);
 		assert.equal(a.evidence.representationComplete, false);
+		assert.equal(a.evidence.receiptSetClosed, false);
 		assert.deepEqual(a.evidence.missingIndexedMembers, [`11155111:${hash}:10`]);
 		assert.equal(a.evidence.members.length, 2);
 		await deliver(1);
 		const second = await run();
 		assert.equal(second.code, 0, second.err);
 		assert.equal(JSON.parse(second.out).evidence.representationComplete, true);
+		assert.equal(JSON.parse(second.out).evidence.receiptSetClosed, true);
+		finalityMode = "pending";
+		const pending = await run();
+		assert.equal(pending.code, 0, pending.err);
+		assert.equal(JSON.parse(pending.out).evidence.representationComplete, true);
+		assert.equal(JSON.parse(pending.out).sourceFinality.providerFinalized, false);
+		for (const mode of ["changed", "unavailable"] as const) {
+			finalityMode = mode;
+			const invalid = await run();
+			assert.equal(invalid.code, 1);
+			assert.equal(invalid.out, "");
+			assert.match(invalid.err, /source_inspection_unavailable/);
+		}
+		finalityMode = "final";
 		assert.equal((await db.query("SELECT count(*)::int n FROM deposits")).rows[0].n, 2);
 		await db.query("UPDATE chain_events SET chain_id=421614 WHERE log_index=9");
 		const calls = methods.length;
@@ -424,6 +499,12 @@ test(
 		assert.equal(outage.code, 1);
 		assert.ok(!outage.err.includes("private-provider-secret"));
 		assert.equal(outage.out, "");
+		providerFailure = false;
+		oversized = true;
+		const excess = await run();
+		assert.equal(excess.code, 1);
+		assert.equal(excess.out, "");
+		assert.match(excess.err, /source_inspection_unavailable/);
 		assert.ok(
 			methods.every((m) =>
 				[

@@ -79,7 +79,9 @@ numbered anchors are rechecked after all receipt, Circle and metadata reads. A c
 inconsistent anchor or malformed receipt fails the proof.
 
 These are provider assertions, not an independently verified source-chain finality policy.
-Base/Arbitrum policy and capability checks remain release gates. This output has no API
+The source inspector now documents the configured-provider policy and verifies tag capability
+for all four testnets; see [source finality](PUBLIC_API_DEPOSIT_EVIDENCE.md#source-finality-policy--2026-10-06).
+Fresh Base/Arbitrum hosted payment canaries remain release gates. This output has no API
 `status` or aggregate `complete` field.
 
 ## Verification and remaining gates
@@ -106,6 +108,7 @@ history test.
 Transaction status still requires a closed full source-deposit set, indexed representation,
 watch/activation coverage, an unambiguous native Arc identity join, complete allocation windows,
 all corresponding renewal joins and reviewed source-route finality. The long-delay payment's
-processing-to-renewal join passes; its bounded source-allocation window remains open.
+processing-to-renewal join passes, and the explicit extended allocation audit now closes its
+source-to-processing window. The default short polling window still cannot cover that delay.
 Do not infer API completion from this individual join. Public status is absent and other public
 API enable flags remain off. Hosted integration/capacity verification remains a separate stage.

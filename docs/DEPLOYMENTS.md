@@ -349,6 +349,28 @@ one exact processing call and a zero closing wallet balance. Eighty RPC reads to
 implementation; [bounds and remaining gates](PUBLIC_API_ALLOCATION.md) define its limited scope.
 No database, funding, ingestion, contract, API flag or production deployment changed for this audit.
 
+PR #132 merged as `95be3319e9cbe1d48d3b6563bf88855a2a95bcea`. Its exact production
+deployment `dpl_8tJbA55sfHgAj1wR5Fesc9grQy95` is READY. Both site and ingestion aliases
+resolve to it. All 208 server tests passed without skips. Eighteen post-merge HTTP checks
+passed with populated activity and unchanged public API gates. See the
+[production verification](deployments/2026-10-06/public-api-long-allocation-production.json).
+
+## Source receipt closure and finality — 2026-10-06
+
+The read-only source inspector now distinguishes current-registry representation from a
+conservatively closed receipt set. An unregistered USDC recipient prevents closure. Source
+finality separately uses the configured provider's numbered `finalized` anchor and rechecks
+both block identities. No source/API completion is inferred from indexed status alone.
+
+All four configured testnet providers passed the bounded
+[finality capability audit](deployments/2026-10-06/public-api-source-finality-capabilities.json).
+The actual updated CLI verified seven existing deposits with read-only database sessions and
+49 RPC reads: each receipt set is closed and each source block is provider-finalized. The
+[operator evidence](deployments/2026-10-06/public-api-source-finality-operator.json) pins the
+implementation. [Policy and limits](PUBLIC_API_DEPOSIT_EVIDENCE.md) preserve unknown-recipient,
+historical propagation, hosted canary and aggregate completion gates. No hosted writes,
+funding, contract changes or public API flags were involved.
+
 ## ENS V1 expiry correction — 2026-10-06
 
 The deployed helper reads the V2 registry for both renewal routes. Unmigrated V1 reservations

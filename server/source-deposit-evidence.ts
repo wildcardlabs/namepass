@@ -82,6 +82,39 @@ function hash(value: string) {
 const address = (value: string) => getAddress(value).toLowerCase();
 const movementKey = (m: Movement) => `${m.from}:${m.to}:${m.value}`;
 
+/** Provider finality for one source block. Independent of indexed membership and payment completion. */
+export function sourceFinalityEvidence(input: {
+	source: SourceBlock;
+	finalized: SourceBlock;
+	canonicalSource: SourceBlock;
+	canonicalFinalized: SourceBlock;
+}) {
+	const observation = (block: SourceBlock) => ({
+		number: quantity(block.number),
+		hash: hash(block.hash),
+		timestamp: quantity(block.timestamp),
+	});
+	const source = observation(input.source), finalized = observation(input.finalized);
+	for (const [before, after] of [
+		[source, observation(input.canonicalSource)],
+		[finalized, observation(input.canonicalFinalized)],
+	]) {
+		if (before.number !== after.number || before.hash !== after.hash || before.timestamp !== after.timestamp)
+			throw new Error("source_finality_boundary_changed");
+	}
+	if (
+		(source.number === finalized.number && (source.hash !== finalized.hash || source.timestamp !== finalized.timestamp)) ||
+		(source.number < finalized.number && source.timestamp > finalized.timestamp) ||
+		(source.number > finalized.number && source.timestamp < finalized.timestamp)
+	) throw new Error("inconsistent_source_finality");
+	return {
+		policy: "configured RPC finalized tag" as const,
+		sourceBlock: { number: source.number.toString(), hash: source.hash },
+		finalizedBlock: { number: finalized.number.toString(), hash: finalized.hash },
+		providerFinalized: source.number <= finalized.number,
+	};
+}
+
 /** Discovery evidence only. A represented receipt set is not payment completion or historical watch coverage. */
 export function sourceDepositEvidence(input: {
 	chainId: string;
@@ -294,6 +327,7 @@ export function sourceDepositEvidence(input: {
 	const unregisteredRecipients = [
 		...new Set((nativeEmitter ? native : erc20).filter((m) => !names.has(m.to)).map((m) => m.to)),
 	];
+	const representationComplete = members.length > 0 && !missing.length && !extra.length && !unwatched.length && !issues.length;
 	return {
 		chainId: input.chainId,
 		transactionHash: txHash,
@@ -307,8 +341,9 @@ export function sourceDepositEvidence(input: {
 		unwatchedAddresses: [...new Set(unwatched)],
 		activatedAfterSource: [...new Set(activatedAfterSource)],
 		issues: [...new Set(issues)],
-		representationComplete:
-			members.length > 0 && !missing.length && !extra.length && !unwatched.length && !issues.length,
+		representationComplete,
+		// Without a label, an unknown recipient cannot be excluded as a counterfactual ENS wallet.
+		receiptSetClosed: representationComplete && !unregisteredRecipients.length,
 		coverage:
 			"Current watch membership only; historical propagation and unregistered deterministic addresses are not proven.",
 	};
