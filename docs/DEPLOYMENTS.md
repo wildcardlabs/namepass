@@ -98,18 +98,52 @@ accepts only trailing decimal zeros on native Arc deposit amounts and normalizes
 stored facts to integer units. Fractional units and other event amounts remain
 strict. No hosted pipeline change is part of this fix.
 
-The [one-event repair](deployments/2026-10-06/arc-native-deposit-repair.sql) is
-prepared, not applied. Its [receipt and rehearsal](deployments/2026-10-06/arc-native-deposit-repair.json)
-verify the finalized native source transaction and successful rollback/replay
-against a disposable migrated database. It inserts one canonical event and one
-deposit, with guards on the existing 1-USDC drain. It does not alter names, flows,
-intents, balances, watches or on-chain payments. Hosted application needs approval.
+PR #139 merged after CI run `37535414836` passed, including 222 server tests
+with no failures or skips. Production deployment `dpl_ACVh2dHpH93rRBKbaU9D8K86Ysu6`
+is READY at commit `a7fe4b39f864d712dfa4a36378575b4cf2200037`.
+Twenty-one production smoke checks passed with populated activity, JSON API
+disabled responses and working documentation.
 
-Arbitrum renewed successfully. Base's prepared claim was rejected for insufficient
-relayer gas; Arc's claim waits behind that nonce. The user confirmed a
-0.01-Sepolia-ETH refill in transaction
+The user approved the [one-event repair](deployments/2026-10-06/arc-native-deposit-repair.sql).
+It was applied after deployment at 21:44:20 UTC. The
+[receipt and rehearsal](deployments/2026-10-06/arc-native-deposit-repair.json)
+record the finalized native transaction, disposable rollback/replay, guarded
+hosted application and verification. Exactly one canonical event and one deposit
+were added. Names, flows, intents, balances and watches were unchanged. No payment
+was resubmitted. The Arc indexed balance now returns `0`; Explorer no longer shows
+its unavailable-balance warning. Explorer shows one pooled renewal for $1 received
+and $0.90 applied. Its transaction trail still links only the triggering ERC-20
+deposit; that trail does not enumerate all pooled funding transactions.
+
+Base's prepared claim was rejected for insufficient relayer gas. Arc's claim
+waited behind that nonce. The user supplied 0.01 Sepolia ETH in transaction
 `0x90e5434f8e196c1c09d4598dff35d6a1f038578762f044bfb733970dd1115edb`.
-Recovery and finalized API verification remain in progress. Public API flags stay off.
+Ordinary recovery confirmed Base and Arc claims at 21:37:36 and 21:37:48 UTC.
+All five fresh funding transactions now have settled processing flows: the two
+Arc payments share one renewal.
+
+Protected preview `dpl_7wxjL3YBP6GMyvU6MLVHkUwvtRER` returned `complete` for all
+five fresh payments after provider finality. Nineteen hosted HTTP checks passed.
+Both Arc status responses reference renewal
+`11155111:0x1bfa297b38976164a993d2348a70e8eec9993bd8101a34578c3b5fcda75ba488:153`.
+History counts that event once and agrees on its whole duration and expiry.
+The copied staging projections contain nine names, sixteen events, five flows
+and six deposits. Balance snapshots, unrelated names and the SELECT-only reader
+were preserved. The staging data and reader fingerprint remained unchanged after
+the HTTP checks. Anonymous requests still receive the Vercel SSO redirect.
+The [fresh-route receipt](deployments/2026-10-06/public-api-fresh-routes.json)
+records exact inputs, responses, deployment and limits.
+
+A bounded two-client polling probe completed twelve `complete` responses in six
+waves. An initial probe stopped after an unclassified failed call; its HTTP status
+was not recorded. A four-read follow-up and the full repeated probe passed.
+This is not a sustained public capacity guarantee. Firewall discovery found no
+enforced rule for the new `/api/v1` routes. The three legacy integration staging
+rules apply only to the retired staging host and rate-limit caller IDs; they do
+not protect these endpoints. No firewall setting changed or old rule was reused.
+Public exposure controls, activation-boundary/restart recovery and live
+same-transaction multi-deposit/split cases remain release gates. Existing local
+regressions cover those aggregate cases. Production public API flags remain off.
 
 ## Current release — 2026-09-22
 

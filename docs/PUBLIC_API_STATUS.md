@@ -6,10 +6,9 @@ Production boundaries are verified in [DEPLOYMENTS.md](DEPLOYMENTS.md#private-tr
 `GET /api/v1/status/{chainId}?transactionHash={hash}` runs the existing source, allocation and
 renewal verifiers inside a bounded request. No client manifest, processing boundary, caller fee,
 background job or saved completion record is accepted. `NAMEPASS_PUBLIC_STATUS_ENABLED=1` is
-required. Production flags remain off. Status is enabled only on the protected
-`codex/public-api-status-staging` preview branch. That branch also enables history against isolated
-`api-staging` through a SELECT-only reader.
-Quote and address remain disabled on that branch. Disabled status URLs return JSON 503 rather
+required. Production flags remain off. Status and history are enabled only on the protected previews recorded in
+[DEPLOYMENTS.md](DEPLOYMENTS.md), against isolated `api-staging` through a SELECT-only reader.
+Quote and address remain disabled on those read-only previews. Disabled status URLs return JSON 503 rather
 than the earlier absent-route 404. OPTIONS returns 204 and unsupported methods return 405.
 The preview read proxy leaves this route to its own adapter.
 
@@ -106,13 +105,17 @@ seconds including CLI authentication/startup. Existing staging rows and the appr
 remained unchanged after these probes. See the
 [protected staging receipt](deployments/2026-10-06/public-api-status-staging.json).
 
-These are existing-payment reads and local regressions. They do not establish sustained hosted
-capacity, distributed abuse controls, fresh multi-deposit/pool/split funding, positive hosted direct
-Sepolia or Base/Arbitrum payments, restart recovery or activation/watch propagation. The local
-delayed sample was close to the 15-second provider deadline; larger or slower cases may truthfully
-return 503. Further hosted source-route verification, public polling cost and the end-to-end
-quickstart gates in the
-[rollout plan](PUBLIC_API_PLAN.md) must pass before public enablement. Provider receipt/range
+Fresh current-ENS hosted route verification now includes all four source routes,
+one newly registered Sepolia watch, and native/ERC-20 Arc pooled funding with the
+same renewal identifier. Exact evidence and remaining gates are in
+[DEPLOYMENTS.md](DEPLOYMENTS.md#fresh-browser-signed-route-checks-and-native-arc-indexing--2026-10-06).
+The bounded polling probe does not establish sustained hosted capacity or distributed
+abuse controls. Activation-boundary and restart recovery, live same-transaction
+multi-deposit funding and split processing remain unproven. The earlier local delayed
+sample was close to the 15-second provider deadline; larger or slower cases may
+truthfully return 503. Public exposure controls, polling cost and the remaining
+end-to-end gates in the [rollout plan](PUBLIC_API_PLAN.md) must pass before enablement.
+Provider receipt/range
 completeness and configured-provider finality remain explicit trust boundaries. The adapter
 introduces no new storage, worker, schema, ingestion, Workflow, contract or signer.
 The approved hosted staging settings are limited to the branch and SELECT-only database role

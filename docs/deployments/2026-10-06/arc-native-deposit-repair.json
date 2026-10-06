@@ -1,7 +1,7 @@
 {
-  "status": "prepared_not_applied",
+  "status": "applied",
   "sourceReceipt": {
-    "observedAt": "2026-10-06T21:36:06.987Z",
+    "observedAt": "2026-10-06T21:44:06.803Z",
     "readOnly": true,
     "chainId": 5042002,
     "transactionHash": "0x83be711fb69f2bd185a5a418177438a43827d99c5f53b8df6bfc2a9936f2d562",
@@ -15,7 +15,7 @@
     "sender": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
     "recipient": "0x16cfeb29157376f55e7976562a850d04435c171d",
     "receiptStatus": "success",
-    "finalizedBlock": "65859932",
+    "finalizedBlock": "65860878",
     "capturedEventId": "5042002:native:enriched_transaction_v2_0x1c1fdc1c78c0be77dfc10f354963030bc82deb63c9b7fd461e75ee904083ee24_1",
     "configurationWrites": 0
   },
@@ -40,7 +40,53 @@
     ],
     "paymentsSubmitted": 0
   },
-  "hostedWrites": 0,
-  "futureReceiverFix": "Normalize trailing decimal zeros only for native Arc deposit amounts",
-  "repair": "arc-native-deposit-repair.sql"
+  "hostedWrites": 2,
+  "futureReceiverFix": "Deployed receiver normalizes trailing decimal zeros only for native Arc deposit amounts",
+  "repair": "arc-native-deposit-repair.sql",
+  "application": {
+    "appliedAt": "2026-10-06T21:44:20.234Z",
+    "deployment": {
+      "id": "dpl_ACVh2dHpH93rRBKbaU9D8K86Ysu6",
+      "url": "namepass-v2-3cvk8lp2q-wildcard-labs.vercel.app",
+      "readyState": "READY",
+      "target": "production",
+      "commit": "a7fe4b39f864d712dfa4a36378575b4cf2200037",
+      "aliases": [
+        "beta.namepass.com",
+        "demo-five-gray-37.vercel.app",
+        "namepass-v2-wildcard-labs.vercel.app",
+        "namepass-v2-git-main-wildcard-labs.vercel.app"
+      ]
+    },
+    "sqlSha256": "23fa4212dad2f3d2e15ed44074b4ae0d96d6b2d68a8883577d76c463a9697537",
+    "before": {
+      "events": 23,
+      "deposits": 5
+    },
+    "after": {
+      "events": 24,
+      "deposits": 6
+    },
+    "rowsAdded": {
+      "chain_events": 1,
+      "deposits": 1
+    },
+    "protectedTablesUnchanged": true,
+    "flowsCreated": 0,
+    "intentsCreated": 0,
+    "paymentsSubmitted": 0
+  },
+  "verification": {
+    "ciRunId": "37535414836",
+    "serverTests": 222,
+    "failed": 0,
+    "skipped": 0,
+    "productionSmokeChecks": 21,
+    "arcIndexedBalance": "0",
+    "activeFlows": 0,
+    "explorerRenewalReceived": "1000000",
+    "explorerRenewalApplied": "900000",
+    "explorerPendingBalanceWarning": false,
+    "explorerTrailLimitation": "The renewal trail links the triggering ERC20 deposit only. It is not a complete pooled-funding list."
+  }
 }
