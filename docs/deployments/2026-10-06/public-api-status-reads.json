@@ -1,0 +1,241 @@
+{
+  "observedAt": "2026-10-06T16:08:17.757Z",
+  "readOnly": true,
+  "implementationChecksums": {
+    "server/public-status.ts": "4674e067d79de5fa2b156e00b2bca22c5aa4fcf8d230fd0f23202a832c7f34de",
+    "server/source-inspection.ts": "896f4208c07a287e6e3667cf591d96b63ad8edc67227f3fc3851e5463a9b1a03",
+    "server/source-deposit-evidence.ts": "b3d12872aacdb8fbc9aa77e7bde63ec5f9c048d3670276428871d9e997ac718e",
+    "server/allocation-evidence.ts": "81c5cc8fbe313e2ca38eafd4475ec102df8918ca584d0437043e9c4f453742b5",
+    "server/processing-renewal-evidence.ts": "c27fa225dd8e67c5fecf44808c8a076f028565cf5c60d8f8fddf4ad09b0f0921",
+    "server/transaction-evidence.ts": "e73e371e67f833e79543c38df77fd627750dd38a08f0c1ef757faeda29eb79b8",
+    "src/lib/chains.ts": "a303ffba9b049157d0446e89e993b5610b01003e8c5330a32d763979ea3ec43f"
+  },
+  "baseCommit": "72f91231e9d35781aa992988ee50e722b2a3b13c",
+  "rows": [
+    {
+      "chainId": "5042002",
+      "transactionHash": "0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db",
+      "elapsedMs": 8874,
+      "rpcCalls": 53,
+      "circleReads": 1,
+      "readOnlySessions": 2,
+      "response": {
+        "chainId": "5042002",
+        "transactionHash": "0x2b1124ecc984e4288df6ffe9fe28f0d73cf8e76e365f4b245f304c6bd10869db",
+        "status": "complete",
+        "deposits": [
+          {
+            "name": "chrismg.eth",
+            "depositAddress": "0x0A2a97e83E879215530fBde1088D08Cc2dFAf993",
+            "logIndex": null,
+            "amount": "3210000",
+            "status": "complete",
+            "reason": null,
+            "renewals": [
+              {
+                "renewalId": "11155111:0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555:304",
+                "chainId": "11155111",
+                "transactionHash": "0x66e1fab045c7bb4188f98abc1403ac0b9d7077768f3e495130f4ed6a7ead3555",
+                "secondsAdded": "12259587",
+                "expiry": "2033-02-19T22:45:39.000Z"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "5042002",
+      "transactionHash": "0x34c874da52586754724202301eed932702d9363cc64843c99c267b92b4435f95",
+      "elapsedMs": 11840,
+      "rpcCalls": 54,
+      "circleReads": 1,
+      "readOnlySessions": 2,
+      "response": {
+        "chainId": "5042002",
+        "transactionHash": "0x34c874da52586754724202301eed932702d9363cc64843c99c267b92b4435f95",
+        "status": "complete",
+        "deposits": [
+          {
+            "name": "nick.eth",
+            "depositAddress": "0xC25EeEBBf6450b83e16cAE8421B6e143Ae24e450",
+            "logIndex": null,
+            "amount": "11000000",
+            "status": "complete",
+            "reason": null,
+            "renewals": [
+              {
+                "renewalId": "11155111:0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36:181",
+                "chainId": "11155111",
+                "transactionHash": "0xc3d5098291eecdfdbaf2c2fc115a7ecaac0b9fe0bf0bc43aa4db3abff892cd36",
+                "secondsAdded": "2148389",
+                "expiry": "2026-12-30T05:30:33.000Z"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "5042002",
+      "transactionHash": "0x8a22364859ea60cdc23cbff078efd6afdf46525f106e87a9b606676727579433",
+      "elapsedMs": 10043,
+      "rpcCalls": 54,
+      "circleReads": 1,
+      "readOnlySessions": 2,
+      "response": {
+        "chainId": "5042002",
+        "transactionHash": "0x8a22364859ea60cdc23cbff078efd6afdf46525f106e87a9b606676727579433",
+        "status": "complete",
+        "deposits": [
+          {
+            "name": "vitalik.eth",
+            "depositAddress": "0xa61656CA2D2952a46a9d4DA0AAE01d8D7fe988E0",
+            "logIndex": null,
+            "amount": "10000000",
+            "status": "complete",
+            "reason": null,
+            "renewals": [
+              {
+                "renewalId": "11155111:0x9055fe091741e3edf419b1f83ab7acd0781d63e510e180713aff9c7565033551:164",
+                "chainId": "11155111",
+                "transactionHash": "0x9055fe091741e3edf419b1f83ab7acd0781d63e510e180713aff9c7565033551",
+                "secondsAdded": "39025697",
+                "expiry": "2069-09-12T15:13:35.000Z"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "5042002",
+      "transactionHash": "0x9531be85ef55d5e9652eeb2188f76771e110f0d441887c37f6571e62a85ae76a",
+      "elapsedMs": 14015,
+      "rpcCalls": 61,
+      "circleReads": 1,
+      "readOnlySessions": 2,
+      "response": {
+        "chainId": "5042002",
+        "transactionHash": "0x9531be85ef55d5e9652eeb2188f76771e110f0d441887c37f6571e62a85ae76a",
+        "status": "complete",
+        "deposits": [
+          {
+            "name": "paramore.eth",
+            "depositAddress": "0x690866Bdde4cdCA43479150AAc4f2D17E2792ca1",
+            "logIndex": null,
+            "amount": "3000000",
+            "status": "complete",
+            "reason": null,
+            "renewals": [
+              {
+                "renewalId": "11155111:0x92b2284a2ccec2058921f34c3b7a68785c10e1de38398d9444ee9fdc6175f89f:225",
+                "chainId": "11155111",
+                "transactionHash": "0x92b2284a2ccec2058921f34c3b7a68785c10e1de38398d9444ee9fdc6175f89f",
+                "secondsAdded": "11431770",
+                "expiry": "2028-02-02T03:05:30.000Z"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "5042002",
+      "transactionHash": "0xc96b1e8cd633b4780973d1841011ae8a7c0b5f838b5b894b6662b9c218bf055e",
+      "elapsedMs": 9523,
+      "rpcCalls": 54,
+      "circleReads": 1,
+      "readOnlySessions": 2,
+      "response": {
+        "chainId": "5042002",
+        "transactionHash": "0xc96b1e8cd633b4780973d1841011ae8a7c0b5f838b5b894b6662b9c218bf055e",
+        "status": "complete",
+        "deposits": [
+          {
+            "name": "slobo.eth",
+            "depositAddress": "0x7706018b4e0Eedb99e5BF5B38446461B2b8Ad8e9",
+            "logIndex": null,
+            "amount": "13000000",
+            "status": "complete",
+            "reason": null,
+            "renewals": [
+              {
+                "renewalId": "11155111:0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8:225",
+                "chainId": "11155111",
+                "transactionHash": "0x24b337d6b5fb2aef862341b36620b7f2083076b0dc881bbf31f15569ed6423c8",
+                "secondsAdded": "50851666",
+                "expiry": "2028-06-23T06:53:34.000Z"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "5042002",
+      "transactionHash": "0xf789eb1cedf3a36ece88aaed2215b4956f66c77c26e669dba7a2659585842882",
+      "elapsedMs": 10345,
+      "rpcCalls": 54,
+      "circleReads": 1,
+      "readOnlySessions": 2,
+      "response": {
+        "chainId": "5042002",
+        "transactionHash": "0xf789eb1cedf3a36ece88aaed2215b4956f66c77c26e669dba7a2659585842882",
+        "status": "complete",
+        "deposits": [
+          {
+            "name": "gregskril.eth",
+            "depositAddress": "0xf0feaeB652489CF635043A5eBD7416C6e328D2FE",
+            "logIndex": null,
+            "amount": "12000000",
+            "status": "complete",
+            "reason": null,
+            "renewals": [
+              {
+                "renewalId": "11155111:0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7:234",
+                "chainId": "11155111",
+                "transactionHash": "0x5dbed0687ebd330067677fe501bb4119292823926739600b503bc7cb01dd91b7",
+                "secondsAdded": "46909677",
+                "expiry": "2028-03-22T01:02:21.000Z"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "chainId": "11155111",
+      "transactionHash": "0x2d0353ea98ae0debd85bd7854fb2f7daef03d4479c07d516c5cad90e1b594958",
+      "elapsedMs": 5018,
+      "rpcCalls": 44,
+      "circleReads": 0,
+      "readOnlySessions": 2,
+      "response": {
+        "chainId": "11155111",
+        "transactionHash": "0x2d0353ea98ae0debd85bd7854fb2f7daef03d4479c07d516c5cad90e1b594958",
+        "status": "complete",
+        "deposits": [
+          {
+            "name": "steve.eth",
+            "depositAddress": "0x5B7516768eD0b04E212041265BB1f11af71841d7",
+            "logIndex": 98,
+            "amount": "1000000",
+            "status": "complete",
+            "reason": null,
+            "renewals": [
+              {
+                "renewalId": "11155111:0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409:322",
+                "chainId": "11155111",
+                "transactionHash": "0xd74aefa074c58a218117dd77730b3f75b0915edc8ee1738e46db3f3d7cb35409",
+                "secondsAdded": "3547790",
+                "expiry": "2029-09-22T10:16:06.000Z"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "limits": "Local execution of actual HTTP adapter on existing single-deposit Arc/Sepolia payments. Not hosted capacity, distributed abuse controls, fresh funding or public enablement."
+}

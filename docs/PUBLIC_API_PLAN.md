@@ -3,7 +3,8 @@
 Date: 2026-10-05. Status: baseline review merged; quotes and address activation verified on protected previews.
 Production APIs remain disabled. A private read-only history adapter has passed protected staging;
 its verification limits are in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md).
-Transaction status is not implemented. Source-receipt enumeration and indexed membership
+A bounded read-only transaction status adapter is implemented behind an off-by-default flag;
+see [status verification and release gates](PUBLIC_API_STATUS.md). Source-receipt enumeration and indexed membership
 are being reviewed in [PUBLIC_API_DEPOSIT_EVIDENCE.md](PUBLIC_API_DEPOSIT_EVIDENCE.md); this
 is not a payment-completion model.
 Deposit-to-processing discovery is recorded in [PUBLIC_API_ALLOCATION.md](PUBLIC_API_ALLOCATION.md).

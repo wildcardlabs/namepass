@@ -394,6 +394,29 @@ private operator evidence; it does not establish a public polling budget or host
 [Interface and remaining gates](PUBLIC_API_TRANSACTION_EVIDENCE.md) keep status disabled.
 No hosted writes, new funding, schema, pipeline, Workflow, contract or API setting changed.
 
+PR #134 merged as `72f91231e9d35781aa992988ee50e722b2a3b13c`. Production deployment
+`dpl_7ok556BSJ92k6LSpy5ZUZ6NFWzG5` is READY; both site and ingestion aliases resolve to it.
+Required CI passed all 215 server tests without skips. Eighteen post-merge HTTP checks passed
+with populated activity and unchanged API gates. See the
+[production verification](deployments/2026-10-06/public-api-transaction-production.json).
+
+## Private transaction status adapter — 2026-10-06
+
+A bounded HTTP adapter now discovers candidate identities from existing indexed events and runs
+the approved source/allocation/renewal proof. Its flag is off by default. Canonical finalized
+reverted source receipts can return failed; index or provider failure cannot. Second snapshots
+and final block rechecks protect completion from corrections. No hosted setting, schema,
+ingestion, Workflow or contract changes are included.
+
+The actual local HTTP adapter verified seven existing payments with two read-only database
+snapshots per request, 44–61 RPC reads, 0–1 Circle responses and approximately 5–14 seconds.
+The delayed payment passed with 61 reads using larger gap-free allocation chunks. See the
+[HTTP evidence](deployments/2026-10-06/public-api-status-reads.json) and
+[adapter limits and remaining gates](PUBLIC_API_STATUS.md).
+This does not establish hosted enabled-route capacity or new-payment canaries. Public APIs
+remain disabled. Known status URLs now have an off-by-default JSON 503 route, replacing their
+previous absent-route 404; OPTIONS and method handling execute locally in preview as well.
+
 ## ENS V1 expiry correction — 2026-10-06
 
 The deployed helper reads the V2 registry for both renewal routes. Unmigrated V1 reservations

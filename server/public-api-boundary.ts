@@ -3,7 +3,7 @@ import type { H3Event } from "nitro/h3";
 const IMPLEMENTED_PATHS = new Set(["/api/v1/address", "/api/v1/quote"]);
 
 export function isImplementedPublicApiPath(path: string): boolean {
-	return IMPLEMENTED_PATHS.has(path) || /^\/api\/v1\/names\/[^/]+\/renewals$/.test(path);
+	return IMPLEMENTED_PATHS.has(path) || /^\/api\/v1\/names\/[^/]+\/renewals$/.test(path) || /^\/api\/v1\/status\/[^/]+$/.test(path);
 }
 
 /** Keep unavailable API URLs out of the SPA fallback, without changing UI routes. */

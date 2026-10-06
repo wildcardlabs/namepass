@@ -50,7 +50,7 @@ test("preview never forwards writes, operational APIs or encoded path escapes", 
 		["GET", "/api/cron/recover", 403],
 		["GET", "/api/auth/github", 403],
 		["GET", "/api/monitoring", 403],
-		["GET", "/api/v1/status/11155111", 403],
+		["GET", "/api/v1/status/11155111/unknown", 403],
 		["GET", "/api/names/alice%2Fmonitoring", 403],
 		["GET", "/api/names/alice%252Fmonitoring", 403],
 	] as const) {
@@ -83,6 +83,8 @@ test("public adapter requests execute the preview's own route without forwarding
 	for (const method of ["GET", "OPTIONS", "POST"]) {
 		const response = await app().request(new Request("https://preview.test/api/v1/names/steve.eth/renewals", { method }));
 		assert.equal(response.status, 201);
+		const status = await app().request(new Request("https://preview.test/api/v1/status/11155111", { method }));
+		assert.equal(status.status, 201);
 	}
 	assert.equal(fetchMock.mock.callCount(), 0);
 });

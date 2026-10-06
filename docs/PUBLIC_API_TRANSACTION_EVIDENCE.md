@@ -1,6 +1,7 @@
 # Combined transaction evidence
 
-Date: 2026-10-06. Private read-only operator. No transaction-status route or API enable flag is added.
+Date: 2026-10-06. Private read-only operator. The later [status adapter](PUBLIC_API_STATUS.md)
+uses the same join checks with a separate HTTP budget; public status remains disabled.
 
 ## Interface
 
@@ -101,11 +102,11 @@ The real PostgreSQL/serialized-HTTP fixture runs the combined CLI from outside t
 keeps staggered indexing incomplete, and changes canonical index evidence between snapshots.
 The changed evidence must fail without successful output.
 
-This is an operator audit of existing payments, not hosted HTTP capacity evidence. Public status
-still needs bounded candidate discovery and a measured public request/polling strategy, including
+This is an operator audit of existing payments, not hosted HTTP capacity evidence. The later off-by-default HTTP adapter adds bounded candidate discovery. Public release
+still needs a measured hosted request/polling strategy, including
 long waits, corrections, shared request load and unsupported evidence. Fresh multi-deposit,
 pooled/split, activation-propagation and Base/Arbitrum hosted canaries remain release gates and
 require user-signed funding where needed. No storage worker or schema is introduced speculatively.
 Provider receipt/range completeness and configured-provider finality remain trust boundaries.
-The published full-source-set and shared-renewal contracts remain unchanged. Status stays absent;
+The published full-source-set and shared-renewal contracts remain unchanged. Status remains disabled;
 quote, address and history public flags remain off.

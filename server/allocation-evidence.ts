@@ -88,7 +88,7 @@ export async function inspectAllocation(
 		label: string;
 		transactionHash: string;
 		throughBlock: string;
-		rangeMode?: "short" | "extended";
+		rangeMode?: "short" | "extended" | "request";
 	},
 	rpc: AllocationRpc,
 	cancellation?: AbortSignal,
@@ -98,7 +98,7 @@ export async function inspectAllocation(
 		!chain?.factoryAddress ||
 		(input.rangeMode !== undefined &&
 			input.rangeMode !== "short" &&
-			input.rangeMode !== "extended") ||
+			input.rangeMode !== "extended" && input.rangeMode !== "request") ||
 		!/^(0|[1-9][0-9]*)$/.test(input.throughBlock) ||
 		normalizeLabel(input.label) !== input.label
 	)
@@ -107,7 +107,7 @@ export async function inspectAllocation(
 		wallet = address(depositAddress(input.label));
 	// Extended inspection is an explicit operator audit, never a larger public polling budget.
 	const rangeMode = input.rangeMode ?? "short";
-	const limits =
+	const limits = rangeMode === "request" ? { blocks: 32768, rpcCalls: 64, deadlineMs: 15000 } :
 		rangeMode === "extended"
 			? { blocks: 32768, rpcCalls: 192, deadlineMs: 60000 }
 			: { blocks: 2048, rpcCalls: 64, deadlineMs: 15000 };
@@ -235,8 +235,9 @@ export async function inspectAllocation(
 	}
 	const topic = `0x${"0".repeat(24)}${wallet.slice(2)}`,
 		logs = new Map<string, Log>();
-	for (let from = start; from <= end; from += 512n) {
-		const to = from + 511n < end ? from + 511n : end;
+	const chunkBlocks = rangeMode === "request" ? 4096n : 512n;
+	for (let from = start; from <= end; from += chunkBlocks) {
+		const to = from + chunkBlocks - 1n < end ? from + chunkBlocks - 1n : end;
 		for (const outgoing of [false, true]) {
 			const found = await read<Log[]>("eth_getLogs", [
 				{
