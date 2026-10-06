@@ -36,6 +36,7 @@ const HELPER = parseAbi([
 const ENS = parseAbi([
 	"event NameRenewed(uint256 indexed tokenId,string label,uint64 duration,uint64 newExpiry,address paymentToken,bytes32 indexed referrer,uint256 amount)",
 ]);
+const V1_METADATA = parseAbi(["function BASE_REGISTRAR() view returns (address)"]);
 const MESSAGE = toEventSelector("MessageSent(bytes)");
 // Reviewed runtime hashes in docs/deployments/2026-09-22/verification.json.
 const FACTORY_HASH =
@@ -449,11 +450,21 @@ export async function inspectProcessingRenewal(
 		referrer.toLowerCase() !== HUB_CHAIN.ensReferrer!.toLowerCase()
 	)
 		fail("unsupported_renewal_ens_metadata");
+	const baseRegistrarV1 = logs.some(log => address(log.address) === address(renewerV1))
+		? decodeFunctionResult({
+			abi: V1_METADATA, functionName: "BASE_REGISTRAR",
+			data: await read<Hex>(HUB_CHAIN.chainId, "eth_call", [
+				{ to: renewerV1, data: encodeFunctionData({ abi: V1_METADATA, functionName: "BASE_REGISTRAR" }) },
+				hub.blockNumber,
+			]),
+		})
+		: undefined;
 	const expiry = parseEnsRenewalExpiry(logs, {
 		label: input.label,
 		registrar,
 		renewerV1,
 		referrer,
+		baseRegistrarV1,
 	});
 	const ensLogs = segment.filter(
 		(l) =>

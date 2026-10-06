@@ -40,7 +40,10 @@ the helper selected in that renewal segment, verifies its reviewed adapter runti
 its immutable ENS configuration at the renewal block. Those addresses and the referrer must
 match the supported deployment. It never selects the current pointer to interpret an older call.
 
-The ENS event supplies that renewal's expiry. It does not claim the current name expiry or an
+V2 renewals use the V2 registrar event expiry. V1 renewals discover `BASE_REGISTRAR()`
+from the selected ENS V1 renewer at the receipt block and use the preceding V1 registration
+event, excluding later wrapper synchronization. The V2 reservation's premigration bonus
+is not registration time for an unmigrated name. This supplies that renewal's expiry. It does not claim the current name expiry or an
 expiry read timestamp. ENS v2 token IDs are not raw label hashes; this verifier uses the event's
 label and supported emitter, with the matching payment and renewal fields.
 
@@ -89,13 +92,16 @@ sanitization/limits. The combined-call case is synthetic and retains distinct ev
 The fixtures do not execute Solidity or prove hosted pooling/split behavior.
 
 The actual CLI verified nine existing processing calls: eight Arc-to-Sepolia claims and one
-direct Sepolia call. Cross-chain inspection used 19 RPC reads plus one public Circle request;
+direct Sepolia call. Cross-chain inspection used 19 RPC reads for V2 names or 20 for V1 names, plus one public Circle request;
 direct inspection used 13 RPC reads. All nine were below the observed provider anchors.
 [Live operator evidence](deployments/2026-10-06/public-api-processing-renewal-operator.json)
 pins the implementation checksums. No new funding or hosted state change was performed.
-All nine identifiers, amounts, durations and expiries also match the dated
+All nine identifiers, amounts and durations also match the dated
 [private history read](deployments/2026-10-05/public-api-history-completion.json).
-That comparison reuses the October 5 snapshot; it is not a new hosted history test.
+Four V1 expiry values in that snapshot were reservation dates and are superseded by the
+[registration expiry audit](deployments/2026-10-06/ens-expiry-audit.json). The re-run operator
+returns the V1 BaseRegistrar dates for these four results. That comparison is not a new hosted
+history test.
 
 Transaction status still requires a closed full source-deposit set, indexed representation,
 watch/activation coverage, an unambiguous native Arc identity join, complete allocation windows,

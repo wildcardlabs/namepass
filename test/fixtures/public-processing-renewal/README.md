@@ -1,7 +1,8 @@
 # Public processing/renewal receipt fixtures
 
-`receipts.json` contains three read-only RPC/Circle captures from 2026-10-06: two equal
-one-USDC Arc processing calls for `steve.eth` and one direct Sepolia processing call.
+`receipts.json` contains four read-only RPC/Circle captures from 2026-10-06: two equal
+one-USDC Arc processing calls for `steve.eth` one direct Sepolia processing call, and a V1 renewal for `vitalik.eth`.
+The V1 case retains the BaseRegistrar discovery read and both extension/synchronization events.
 Each case records its exact transaction hashes and log positions. Receipt identities/logs
 are retained; unrelated block fields and Circle convenience fields are omitted. Identical
 runtime responses are deduplicated by Keccak-256 in `codes`.

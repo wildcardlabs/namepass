@@ -323,7 +323,8 @@ for the remaining long-window, claim/finality and coverage gates. There is no pu
 The new read-only operator verified nine existing processing calls against exact gateway/ENS
 receipt segments and provider finality anchors. Eight Arc claims use the exact Circle message
 index/nonce; one direct Sepolia call shares its processing receipt with the renewal. Cross-chain
-inspection used 19 RPC reads and one public Circle request; direct inspection used 13 RPC reads.
+inspection used 19 RPC reads for V2 names or 20 for V1 names and one public Circle request;
+direct inspection used 13 RPC reads.
 [Operator evidence](deployments/2026-10-06/public-api-processing-renewal-operator.json) pins
 the inspected implementation. No wallet funding, database write or hosted configuration changed.
 
@@ -357,7 +358,8 @@ not been applied to the hosted database. Deployment and data repair need separat
 
 Earlier history and PR #130 operator evidence used V2 reservation expiry for V1 results.
 Those expiry values are superseded by this audit. Renewal identity, amount and duration evidence
-is unchanged. PR #130 must use the corrected parser before merging.
+is unchanged. PR #130 now discovers the V1 BaseRegistrar at the receipt block and its
+read-only operator re-run returns the correct registration dates for all four V1 renewals.
 
 ## Historical evidence
 

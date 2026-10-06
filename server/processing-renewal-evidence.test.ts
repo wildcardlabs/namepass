@@ -122,8 +122,9 @@ test("historical Arc and direct Sepolia receipts bind each call to its exact ENS
 		["2029-07-02T07:16:26.000Z", 184, 19],
 		["2029-08-12T08:46:16.000Z", 158, 19],
 		["2029-09-22T10:16:06.000Z", 316, 13],
+		["2069-09-12T15:13:35.000Z", 154, 20],
 	] as const;
-	for (let i = 0; i < 3; i++) {
+	for (let i = 0; i < 4; i++) {
 		const f = fixture(i),
 			r = await inspectProcessingRenewal(f.input, f.transport);
 		assert.equal(
@@ -134,8 +135,8 @@ test("historical Arc and direct Sepolia receipts bind each call to its exact ENS
 			r.processingId,
 			`${f.input.chainId}:${f.input.processingTransactionHash}:${f.input.processingLogIndex}`,
 		);
-		assert.equal(r.secondsAdded, "3547790");
-		assert.equal(r.amountApplied, "900000");
+		assert.equal(r.secondsAdded, i === 3 ? "39025697" : "3547790");
+		assert.equal(r.amountApplied, i === 3 ? "9900000" : "900000");
 		assert.equal(r.renewalFee, "100000");
 		assert.equal(r.expiry, expected[i][0]);
 		assert.equal(r.ensLogIndex, expected[i][1]);
