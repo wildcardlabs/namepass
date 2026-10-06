@@ -62,6 +62,7 @@ type Member = {
 	amount: string | null;
 	nativeAmount: string | null;
 	receiptLogIndex: number;
+	allocationLogIndex: number | null;
 	publicLogIndex: number | null;
 	kind: "erc20" | "native_top_level" | "native_internal" | "ambiguous";
 	indexedEventId: string | null;
@@ -205,7 +206,7 @@ export function sourceDepositEvidence(input: {
 	}
 	const members: Member[] = [],
 		issues: string[] = [];
-	const add = (m: Movement, kind: Member["kind"], isNative: boolean) => {
+	const add = (m: Movement, kind: Member["kind"], isNative: boolean, allocationLogIndex: number | null = m.logIndex) => {
 		const n = names.get(m.to);
 		if (!n) return;
 		const exact = !isNative || m.value % NATIVE_SCALE === 0n;
@@ -218,6 +219,7 @@ export function sourceDepositEvidence(input: {
 			amount: exact ? (isNative ? m.value / NATIVE_SCALE : m.value).toString() : null,
 			nativeAmount: isNative ? m.value.toString() : null,
 			receiptLogIndex: m.logIndex,
+			allocationLogIndex,
 			publicLogIndex: isNative ? null : m.logIndex,
 			kind,
 			indexedEventId: null,
@@ -246,7 +248,8 @@ export function sourceDepositEvidence(input: {
 				if (g.native.some((m) => names.has(m.to))) issues.push("ambiguous_arc_mirror_mapping");
 				for (const m of g.native) add(m, "ambiguous", true);
 			} else if (g.erc20.length) {
-				for (const m of g.erc20) add(m, "erc20", false);
+				// Equal movements with several mirrors have no unique per-credit system-log join.
+				for (const m of g.erc20) add(m, "erc20", false, g.native.length === 1 ? g.native[0].logIndex : null);
 			} else {
 				const top = g.native.filter(
 					(m) =>

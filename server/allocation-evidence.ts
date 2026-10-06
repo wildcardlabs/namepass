@@ -512,6 +512,7 @@ export async function inspectAllocation(
 		throughBlock: end.toString(),
 		fromBlockHash: hash(initial.hash),
 		throughBlockHash: hash(terminal.hash),
+		blocks: [...blockCache.values()].map((b) => ({ number: quantity(b.number).toString(), hash: hash(b.hash) })),
 		openingBalance: opening.toString(),
 		closingBalance: closing.toString(),
 		movements: movements.length,

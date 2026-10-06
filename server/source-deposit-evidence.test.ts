@@ -242,6 +242,7 @@ test("Arc ERC-20 mirrors count once and identical mixed native/erc20 movements s
 	const e = sourceDepositEvidence(f);
 	assert.equal(e.members.length, 1);
 	assert.equal(e.members[0].publicLogIndex, 10);
+	assert.equal(e.members[0].allocationLogIndex, 9, "join the mirror to its unique authoritative system credit");
 	assert.equal(e.members[0].sender, sender, "use the log sender, not the relayer");
 	assert.equal(e.representationComplete, true);
 	f.receipt.logs = [transfer(system, 8, steve, 1000000000000000000n), ...f.receipt.logs];
@@ -249,6 +250,11 @@ test("Arc ERC-20 mirrors count once and identical mixed native/erc20 movements s
 	assert.equal(ambiguous.members.length, 2);
 	assert.equal(ambiguous.representationComplete, false);
 	assert.deepEqual(ambiguous.issues, ["ambiguous_arc_mirror_mapping"]);
+	f.receipt.logs.push(transfer(arcToken, 11, steve, 1000000n));
+	f.indexed.push(indexed(f.chainId, "steve", "1000000", 11));
+	const equalMirrors = sourceDepositEvidence(f);
+	assert.equal(equalMirrors.receiptSetClosed, true, "public source identities can close without a unique allocation join");
+	assert.ok(equalMirrors.members.every(m => m.allocationLogIndex === null), "equal mirrors have no guessed positional join");
 	f.receipt.logs = [transfer(arcToken, 10, steve, 1000000n)];
 	assert.throws(() => sourceDepositEvidence(f), /missing_arc_system_transfer/);
 });
@@ -322,11 +328,12 @@ test(
 	async (t) => {
 		const { Client, Pool } = await import("pg");
 		const { randomBytes } = await import("node:crypto");
-		const { readFileSync } = await import("node:fs");
+		const { readFileSync, writeFileSync, unlinkSync } = await import("node:fs");
 		const { createServer } = await import("node:http");
 		const { spawn } = await import("node:child_process");
 		const { createRequire } = await import("node:module");
 		const { fileURLToPath } = await import("node:url");
+		const { tmpdir } = await import("node:os");
 		const base = new URL(process.env.TEST_DATABASE_URL!);
 		assert.ok(
 			["localhost", "127.0.0.1", "[::1]"].includes(base.hostname),
@@ -350,12 +357,17 @@ test(
 		let providerFailure = false;
 		let oversized = false;
 		let finalityMode: "final" | "pending" | "changed" | "unavailable" = "final";
+		let correctDuringSourceRead = false;
 		const methods: string[] = [];
 		const server = createServer(async (req, res) => {
 			let raw = "";
 			for await (const chunk of req) raw += chunk;
 			const p = JSON.parse(raw);
 			methods.push(p.method);
+			if (correctDuringSourceRead && p.method === "eth_getBlockByNumber" && p.id === 7) {
+				correctDuringSourceRead = false;
+				await db.query("UPDATE chain_events SET canonical=false WHERE log_index=9");
+			}
 			const values: Record<string, unknown> = {
 				eth_chainId: "0xaa36a7",
 				eth_getTransactionReceipt: f.receipt,
@@ -427,17 +439,20 @@ test(
 			);
 		}
 		const require = createRequire(new URL("../package.json", import.meta.url));
-		async function run() {
+		const manifest = new URL(`../.transaction-fixture-${name}.json`, import.meta.url);
+		writeFileSync(manifest, JSON.stringify({ chainId: "11155111", transactionHash: hash, throughBlock: "100", renewals: [] }));
+		t.after(() => unlinkSync(manifest));
+		async function run(transaction = false) {
 			const c = spawn(
 				process.execPath,
 				[
 					"--import",
 					require.resolve("tsx"),
-					fileURLToPath(new URL("../scripts/public-api/source-deposits.ts", import.meta.url)),
-					"11155111",
-					hash,
+					fileURLToPath(new URL(transaction ? "../scripts/public-api/transaction-evidence.ts" : "../scripts/public-api/source-deposits.ts", import.meta.url)),
+					...(transaction ? [fileURLToPath(manifest)] : ["11155111", hash]),
 				],
 				{
+					cwd: transaction ? tmpdir() : undefined,
 					env: {
 						PATH: process.env.PATH,
 						DATABASE_URL: base.toString(),
@@ -467,6 +482,16 @@ test(
 		assert.equal(a.evidence.receiptSetClosed, false);
 		assert.deepEqual(a.evidence.missingIndexedMembers, [`11155111:${hash}:10`]);
 		assert.equal(a.evidence.members.length, 2);
+		const combinedPending = await run(true);
+		assert.equal(combinedPending.code, 0, combinedPending.err);
+		assert.equal(JSON.parse(combinedPending.out).evidence.evidenceComplete, false);
+		assert.ok(JSON.parse(combinedPending.out).evidence.reasons.includes("source_set_open"));
+		correctDuringSourceRead = true;
+		const corrected = await run(true);
+		assert.equal(corrected.code, 1);
+		assert.equal(corrected.out, "");
+		assert.match(corrected.err, /transaction_inspection_unavailable/);
+		await db.query("UPDATE chain_events SET canonical=true WHERE log_index=9");
 		await deliver(1);
 		const second = await run();
 		assert.equal(second.code, 0, second.err);
