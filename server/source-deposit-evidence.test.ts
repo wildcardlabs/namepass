@@ -471,6 +471,23 @@ test(
 			});
 			return { code, out, err };
 		}
+
+		async function runStatus() {
+			const code = `import assert from 'node:assert/strict';import pg from 'pg';
+const {Pool}=pg;const connect=Pool.prototype.connect;let pool,reads=0;
+Pool.prototype.connect=async function(...args){pool=this;assert.equal(this.options.max,2);const c=await connect.call(this,...args);assert.equal((await c.query("SELECT current_setting('transaction_read_only') AS value")).rows[0].value,'on');reads++;return c;};
+const {default:route}=await import(${JSON.stringify(new URL('../routes/api/v1/status/[chainId].ts', import.meta.url).href)});
+try {const response=await route.fetch(new Request('https://status.test/api/v1/status/11155111?transactionHash=${hash}'));console.log(JSON.stringify({httpStatus:response.status,body:await response.json(),reads}));}finally{await pool?.end();}`;
+			const c = spawn(process.execPath, ["--import", require.resolve("tsx"), "--input-type=module", "-e", code], {
+				env: { PATH: process.env.PATH, DATABASE_URL: base.toString(), NAMEPASS_PUBLIC_STATUS_ENABLED: "1", ETHEREUM_SEPOLIA_RPC_URL: `http://127.0.0.1:${port}` },
+				stdio: ["ignore", "pipe", "pipe"],
+			});
+			let out = "", err = "";
+			c.stdout.on("data", s => out += s);c.stderr.on("data", s => err += s);
+			const exit = await new Promise((resolve,reject)=>{c.on("error",reject);c.on("close",resolve);});
+			assert.equal(exit, 0, err);
+			const lines=out.trim().split("\n");return JSON.parse(lines[lines.length-1]);
+		}
 		await deliver(0);
 		const first = await run();
 		assert.equal(first.code, 0, first.err);
@@ -486,6 +503,16 @@ test(
 		assert.equal(combinedPending.code, 0, combinedPending.err);
 		assert.equal(JSON.parse(combinedPending.out).evidence.evidenceComplete, false);
 		assert.ok(JSON.parse(combinedPending.out).evidence.reasons.includes("source_set_open"));
+		const httpPending = await runStatus();
+		assert.equal(httpPending.httpStatus, 200);
+		assert.equal(httpPending.reads, 2, "the actual HTTP adapter overrides writable URL options for both PostgreSQL snapshots");
+		assert.equal(httpPending.body.status, "pending");
+		assert.equal(httpPending.body.deposits.length, 2);
+		correctDuringSourceRead = true;
+		const httpCorrected = await runStatus();
+		assert.equal(httpCorrected.httpStatus, 503);
+		assert.equal(httpCorrected.body.error.code, "status_unavailable");
+		await db.query("UPDATE chain_events SET canonical=true WHERE log_index=9");
 		correctDuringSourceRead = true;
 		const corrected = await run(true);
 		assert.equal(corrected.code, 1);

@@ -2,23 +2,23 @@
 import { Pool } from "pg";
 import { SERVER_CHAINS } from "../../src/lib/chains";
 import {
-	sourceDepositEvidence,
-	sourceFinalityEvidence,
-	type IndexedSourceDeposit,
-	type RegisteredDepositAddress,
-	type SourceBlock,
-	type SourceReceipt,
-	type SourceTransaction,
-} from "../../server/source-deposit-evidence";
+	inspectSource,
+	readSourceSnapshot,
+} from "../../server/source-inspection";
 
 const [chainId, transactionHash, ...extra] = process.argv.slice(2);
 const chain = SERVER_CHAINS.find((c) => String(c.chainId) === chainId);
 async function inspect() {
-	if (!chain || !/^0x[0-9a-f]{64}$/i.test(transactionHash ?? "") || extra.length)
+	if (
+		!chain ||
+		!/^0x[0-9a-f]{64}$/i.test(transactionHash ?? "") ||
+		extra.length
+	)
 		throw new Error("invalid_inspection_arguments");
 	const databaseUrl = process.env.DATABASE_URL,
 		rpcUrl = process.env[chain.rpcEnv];
-	if (!databaseUrl || !rpcUrl) throw new Error("missing_inspection_configuration");
+	if (!databaseUrl || !rpcUrl)
+		throw new Error("missing_inspection_configuration");
 	const connection = new URL(databaseUrl);
 	connection.searchParams.set(
 		"options",
@@ -30,68 +30,12 @@ async function inspect() {
 		connectionTimeoutMillis: 5000,
 		query_timeout: 7000,
 	});
-	let registry: RegisteredDepositAddress[],
-		watchedAddresses: string[],
-		indexed: IndexedSourceDeposit[],
-		snapshotAt: string;
+	let snapshot: Awaited<ReturnType<typeof readSourceSnapshot>>;
 	try {
 		const client = await pool.connect();
 		try {
 			await client.query("BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY");
-			const state = (
-				await client.query(
-					"SELECT current_setting('transaction_read_only') AS read_only,transaction_timestamp() AS snapshot_at",
-				)
-			).rows[0];
-			if (state.read_only !== "on") throw new Error("inspection_not_read_only");
-			snapshotAt = state.snapshot_at.toISOString();
-			const names = (
-				await client.query(
-					`SELECT n.normalized_label,n.deposit_address,n.activated_at,w.value AS watch FROM names n LEFT JOIN goldsky.watched_addresses w ON lower(w.value)=lower(n.deposit_address) ORDER BY n.normalized_label LIMIT 1001`,
-				)
-			).rows;
-			if (names.length > 1000) throw new Error("source_evidence_limit");
-			registry = names.map((n) => ({
-				label: n.normalized_label,
-				address: n.deposit_address,
-				activatedAt: n.activated_at.toISOString(),
-			}));
-			watchedAddresses = names.flatMap((n) => (n.watch ? [n.watch] : []));
-			const rows = (
-				await client.query(
-					`SELECT d.event_id,d.chain_id,d.tx_hash,d.log_index,d.block_number,d.sender_address,d.amount,d.token_address,d.source,d.status,e.canonical,e.facts,e.event_family,e.event_type,e.log_index AS event_log_index,e.chain_id AS event_chain_id,e.tx_hash AS event_tx_hash,e.block_number AS event_block_number,n.normalized_label,n.deposit_address FROM deposits d JOIN names n ON n.id=d.name_id JOIN chain_events e ON e.event_id=d.event_id WHERE d.chain_id=$1 AND lower(d.tx_hash)=$2 ORDER BY d.log_index,d.event_id LIMIT 1001`,
-					[chainId, transactionHash.toLowerCase()],
-				)
-			).rows;
-			if (rows.length > 1000) throw new Error("source_evidence_limit");
-			if (
-				rows.some(
-					(r) =>
-						r.event_family !== "deposit" ||
-						r.event_type !== "Transfer" ||
-						r.event_log_index !== r.log_index ||
-						r.event_chain_id !== r.chain_id ||
-						r.event_tx_hash.toLowerCase() !== r.tx_hash.toLowerCase() ||
-						r.event_block_number !== r.block_number,
-				)
-			)
-				throw new Error("inconsistent_index_event");
-			indexed = rows.map((r) => ({
-				eventId: r.event_id,
-				label: r.normalized_label,
-				address: r.deposit_address,
-				chainId: r.chain_id,
-				transactionHash: r.tx_hash,
-				logIndex: r.log_index,
-				blockNumber: r.block_number,
-				sender: r.sender_address,
-				amount: r.amount,
-				tokenAddress: r.token_address,
-				canonical: r.canonical,
-				source: r.source,
-				status: r.status,
-				facts: r.facts,
-			}));
+			snapshot = await readSourceSnapshot(client, chainId, transactionHash);
 			await client.query("ROLLBACK");
 		} finally {
 			client.release();
@@ -131,39 +75,36 @@ async function inspect() {
 				if (size > 1024 * 1024) throw new Error("source_response_limit");
 				parts.push(value);
 			}
-		} finally { await reader.cancel(); }
+		} finally {
+			await reader.cancel();
+		}
 		const payload = JSON.parse(Buffer.concat(parts).toString("utf8"));
-		if (payload.error || !payload.result || payload.id !== operations || payload.jsonrpc !== "2.0")
+		if (
+			payload.error ||
+			!payload.result ||
+			payload.id !== operations ||
+			payload.jsonrpc !== "2.0"
+		)
 			throw new Error("source_rpc_unavailable");
 		return payload.result;
 	}
-	if (BigInt(await rpc<string>("eth_chainId", [])).toString() !== chainId)
-		throw new Error("wrong_source_chain");
-	const receipt = await rpc<SourceReceipt>("eth_getTransactionReceipt", [transactionHash]);
-	const transaction = await rpc<SourceTransaction>("eth_getTransactionByHash", [transactionHash]);
-	const block = await rpc<SourceBlock>("eth_getBlockByNumber", [receipt.blockNumber, false]);
-	const evidence = sourceDepositEvidence({
+	const inspected = await inspectSource(
 		chainId,
 		transactionHash,
-		receipt,
-		transaction,
-		block,
-		registry,
-		watchedAddresses,
-		indexed,
-	});
-	const finalized = await rpc<SourceBlock>("eth_getBlockByNumber", ["finalized", false]);
-	const canonicalSource = await rpc<SourceBlock>("eth_getBlockByNumber", [block.number, false]);
-	const canonicalFinalized = await rpc<SourceBlock>("eth_getBlockByNumber", [finalized.number, false]);
-	const sourceFinality = sourceFinalityEvidence({ source: block, finalized, canonicalSource, canonicalFinalized });
+		snapshot,
+		(method, params) => rpc(method, params),
+		signal,
+	);
+	if (!inspected.evidence) throw new Error("reverted_source");
+	const { evidence, sourceFinality } = inspected;
 	console.log(
 		JSON.stringify(
 			{
 				observedAt: new Date().toISOString(),
-				databaseSnapshotAt: snapshotAt,
+				databaseSnapshotAt: snapshot.snapshotAt,
 				readOnly: true,
-				registryCount: registry.length,
-				indexedCount: indexed.length,
+				registryCount: snapshot.registry.length,
+				indexedCount: snapshot.indexed.length,
 				rpcCalls: operations,
 				sourceFinality,
 				evidence,

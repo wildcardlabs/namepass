@@ -373,10 +373,33 @@ test("extended audit covers a delayed drain across range boundaries without clos
 	assert.equal(closed.rangeMode, "extended");
 	assert.ok(closed.rpcCalls <= 192);
 	assert.equal("status" in closed, false);
+	// HTTP mode must cover the same delayed ledger with larger, gap-free chunks.
+	ranges.length = 0;
+	const request = { ...extended, rangeMode: "request" as const };
+	const bounded = await inspectAllocation(request, rpc);
+	assert.equal(bounded.windowClosed, true);
+	assert.deepEqual(bounded.deposits, closed.deposits);
+	assert.ok(bounded.rpcCalls <= 64);
+	const chunks = ranges.filter((r) => r.topics[1] === null);
+	assert.equal(BigInt(chunks[0].fromBlock), 1000n);
+	assert.equal(BigInt(chunks[chunks.length - 1].toBlock), 18097n);
+	for (let i = 0; i < chunks.length; i++) {
+		assert.ok(BigInt(chunks[i].toBlock) - BigInt(chunks[i].fromBlock) < 4096n);
+		if (i)
+			assert.equal(
+				BigInt(chunks[i].fromBlock),
+				BigInt(chunks[i - 1].toBlock) + 1n,
+			);
+	}
+	assert.equal(ranges.length, chunks.length * 2);
 	// A later unknown debit cannot be hidden by the longer range or matching end balances.
 	f.add(5, 9000, 0, [f.transfer(1000000n, 0, wallet, other)]);
 	await assert.rejects(
 		inspectAllocation(extended, f.rpc),
+		/unproven_wallet_debit/,
+	);
+	await assert.rejects(
+		inspectAllocation(request, f.rpc),
 		/unproven_wallet_debit/,
 	);
 });

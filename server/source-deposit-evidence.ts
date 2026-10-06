@@ -83,6 +83,19 @@ function hash(value: string) {
 const address = (value: string) => getAddress(value).toLowerCase();
 const movementKey = (m: Movement) => `${m.from}:${m.to}:${m.value}`;
 
+/** Transaction/receipt identity, independent of whether the transaction succeeded. */
+export function sourceReceiptIdentity(input: { transactionHash: string; receipt: SourceReceipt; transaction: SourceTransaction; block: SourceBlock }) {
+	const { receipt, transaction: tx, block } = input, txHash = hash(input.transactionHash);
+	const status = quantity(receipt.status);
+	if (hash(receipt.transactionHash) !== txHash || hash(tx.hash) !== txHash || (status !== 0n && status !== 1n) ||
+		hash(receipt.blockHash) !== hash(block.hash) || hash(tx.blockHash) !== hash(block.hash) ||
+		quantity(receipt.blockNumber) !== quantity(block.number) || quantity(tx.blockNumber) !== quantity(block.number) ||
+		position(receipt.transactionIndex) !== position(tx.transactionIndex) || !Array.isArray(receipt.logs) || receipt.logs.length > 10000)
+		throw new Error("inconsistent_source_receipt");
+	quantity(block.timestamp);
+	return { transactionHash: txHash, blockNumber: quantity(block.number).toString(), blockHash: hash(block.hash), reverted: status === 0n };
+}
+
 /** Provider finality for one source block. Independent of indexed membership and payment completion. */
 export function sourceFinalityEvidence(input: {
 	source: SourceBlock;
@@ -133,6 +146,7 @@ export function sourceDepositEvidence(input: {
 		receipt = input.receipt,
 		tx = input.transaction,
 		block = input.block;
+	sourceReceiptIdentity(input);
 	if (
 		hash(receipt.transactionHash) !== txHash ||
 		hash(tx.hash) !== txHash ||
