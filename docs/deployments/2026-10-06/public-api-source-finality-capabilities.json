@@ -1,0 +1,116 @@
+{
+  "observedAt": "2026-10-06T11:59:59.130Z",
+  "readOnly": true,
+  "baseProductionCommit": "95be3319e9cbe1d48d3b6563bf88855a2a95bcea",
+  "rows": [
+    {
+      "chainId": "84532",
+      "network": "Base Sepolia",
+      "rpcEnv": "BASE_SEPOLIA_RPC_URL",
+      "supported": true,
+      "rpcCalls": 6,
+      "blocks": [
+        {
+          "tag": "latest",
+          "number": "47759854",
+          "hash": "0x3477066516711569563049786afd5c2fcb9d51f15d321f5645953cb34359d683",
+          "timestamp": "1791287996"
+        },
+        {
+          "tag": "safe",
+          "number": "47759793",
+          "hash": "0xcd07616787201baa1d615ba53f437a26d4d2ef389952fa0c7bec21fc9863e4e3",
+          "timestamp": "1791287874"
+        },
+        {
+          "tag": "finalized",
+          "number": "47759346",
+          "hash": "0xfced08154b4249455ee8d78ca52a8ca7d1ffb479ccfbf5391927a9e66f79acd0",
+          "timestamp": "1791286980"
+        }
+      ]
+    },
+    {
+      "chainId": "421614",
+      "network": "Arbitrum Sepolia",
+      "rpcEnv": "ARBITRUM_SEPOLIA_RPC_URL",
+      "supported": true,
+      "rpcCalls": 6,
+      "blocks": [
+        {
+          "tag": "latest",
+          "number": "316357566",
+          "hash": "0xe5ed883c109bb4fd126c77cc76b6c009597680303286ecd4d78c45260b5b826f",
+          "timestamp": "1791287996"
+        },
+        {
+          "tag": "safe",
+          "number": "316355327",
+          "hash": "0xb2b05272466ef1c18d70a6c0e18ad165e3f1ddc955df80cfa3adbf1e4adc5f71",
+          "timestamp": "1791287436"
+        },
+        {
+          "tag": "finalized",
+          "number": "316353872",
+          "hash": "0xc547aa8df8fb56c38afd38a83cd1f421394381c408876f5ff9308224f9dd2f54",
+          "timestamp": "1791287073"
+        }
+      ]
+    },
+    {
+      "chainId": "11155111",
+      "network": "Sepolia",
+      "rpcEnv": "ETHEREUM_SEPOLIA_RPC_URL",
+      "supported": true,
+      "rpcCalls": 6,
+      "blocks": [
+        {
+          "tag": "latest",
+          "number": "11855770",
+          "hash": "0x727ddd2ddb2ee096a6717e6e6283d91c62975b721dcee3dfb26f5f2fa1e3e90f",
+          "timestamp": "1791287988"
+        },
+        {
+          "tag": "safe",
+          "number": "11855731",
+          "hash": "0x315ce37849a16f2d7965891e379def236f273683136b74a14da1a1b57430d808",
+          "timestamp": "1791287520"
+        },
+        {
+          "tag": "finalized",
+          "number": "11855700",
+          "hash": "0xa1c3ce8d4acee725fd6e0deef54d53734cfe95895e1a62508dbe41bbb720e6cb",
+          "timestamp": "1791287136"
+        }
+      ]
+    },
+    {
+      "chainId": "5042002",
+      "network": "Arc Testnet",
+      "rpcEnv": "ARC_TESTNET_RPC_URL",
+      "supported": true,
+      "rpcCalls": 6,
+      "blocks": [
+        {
+          "tag": "latest",
+          "number": "65791752",
+          "hash": "0x164acce94aeef61656faa074945168dbf706d52eb35928f456bfd7ad39ab8e22",
+          "timestamp": "1791287997"
+        },
+        {
+          "tag": "safe",
+          "number": "65791751",
+          "hash": "0xc7277dd8d59d4ca2904cbb124a3a825601af89c4adc298ba22a23c6a863459ad",
+          "timestamp": "1791287997"
+        },
+        {
+          "tag": "finalized",
+          "number": "65791753",
+          "hash": "0xde172a9e6663c7c2aac372507371ae8679d1ff85a2377baf9485d1779a63bb7a",
+          "timestamp": "1791287998"
+        }
+      ]
+    }
+  ],
+  "limits": "Configured provider capability only: no new payments, independent L1/consensus verification or hosted mutation."
+}

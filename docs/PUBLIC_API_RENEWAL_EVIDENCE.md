@@ -79,7 +79,9 @@ numbered anchors are rechecked after all receipt, Circle and metadata reads. A c
 inconsistent anchor or malformed receipt fails the proof.
 
 These are provider assertions, not an independently verified source-chain finality policy.
-Base/Arbitrum policy and capability checks remain release gates. This output has no API
+The source inspector now documents the configured-provider policy and verifies tag capability
+for all four testnets; see [source finality](PUBLIC_API_DEPOSIT_EVIDENCE.md#source-finality-policy--2026-10-06).
+Fresh Base/Arbitrum hosted payment canaries remain release gates. This output has no API
 `status` or aggregate `complete` field.
 
 ## Verification and remaining gates

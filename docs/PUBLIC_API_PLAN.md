@@ -11,7 +11,9 @@ The bounded operator now verifies source-to-processing windows, with pooled/spli
 Processing-to-renewal joins are being verified by the bounded operator in
 [PUBLIC_API_RENEWAL_EVIDENCE.md](PUBLIC_API_RENEWAL_EVIDENCE.md).
 An extended read-only audit now covers the known delayed payment. Public long-window polling
-cost, source-route finality and aggregate completion remain implementation gates.
+cost, hosted source-route canaries and aggregate completion remain implementation gates.
+The source inspector now reports conservative receipt-set closure and rechecked configured-provider
+finality; [policy and limitations](PUBLIC_API_DEPOSIT_EVIDENCE.md) keep these separate from API completion.
 History verifies event-specific ENS expiry and hub finality. Its deployment is
 described in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md); production remains disabled.
 

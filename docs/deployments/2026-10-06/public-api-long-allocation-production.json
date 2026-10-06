@@ -1,0 +1,126 @@
+{
+  "smoke": {
+    "observedAt": "2026-10-06T11:55:45.049Z",
+    "deployment": {
+      "id": "dpl_8tJbA55sfHgAj1wR5Fesc9grQy95",
+      "url": "namepass-v2-3c6i5r0ur-wildcard-labs.vercel.app",
+      "readyState": "READY",
+      "target": "production",
+      "commit": "95be3319e9cbe1d48d3b6563bf88855a2a95bcea",
+      "aliases": [
+        "beta.namepass.com",
+        "demo-five-gray-37.vercel.app",
+        "namepass-v2-wildcard-labs.vercel.app",
+        "namepass-v2-git-main-wildcard-labs.vercel.app"
+      ]
+    },
+    "rows": [
+      {
+        "path": "/api/activity?limit=10",
+        "method": "GET",
+        "status": 200,
+        "items": 10
+      },
+      {
+        "path": "/api/names/steve.eth/activity?limit=2",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/stats",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/config/public",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "POST",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/status/11155111?transactionHash=0x123",
+        "method": "GET",
+        "status": 404,
+        "errorCode": "api_not_found"
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "GET",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "POST",
+        "status": 405,
+        "errorCode": "method_not_allowed"
+      },
+      {
+        "path": "/",
+        "status": 200
+      },
+      {
+        "path": "/docs",
+        "status": 200
+      },
+      {
+        "path": "/docs/reference",
+        "status": 200
+      },
+      {
+        "path": "/terms",
+        "status": 200
+      },
+      {
+        "path": "/openapi.json",
+        "status": 200
+      },
+      {
+        "host": "demo-five-gray-37.vercel.app",
+        "path": "/api/activity?limit=2",
+        "status": 200,
+        "populated": true
+      }
+    ]
+  },
+  "aliases": {
+    "observedAt": "2026-10-06T11:55:46.577Z",
+    "commit": "95be3319e9cbe1d48d3b6563bf88855a2a95bcea",
+    "rows": [
+      {
+        "host": "beta.namepass.com",
+        "deploymentId": "dpl_8tJbA55sfHgAj1wR5Fesc9grQy95"
+      },
+      {
+        "host": "demo-five-gray-37.vercel.app",
+        "deploymentId": "dpl_8tJbA55sfHgAj1wR5Fesc9grQy95"
+      }
+    ]
+  }
+}

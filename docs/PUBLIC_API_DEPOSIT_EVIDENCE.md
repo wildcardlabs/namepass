@@ -1,6 +1,6 @@
 # Source-deposit evidence
 
-Date: 2026-10-05. Discovery and regression tests for the transaction-status stage.
+Date: 2026-10-05. Updated 2026-10-06 with conservative receipt-set closure and source finality.
 No status endpoint or public API enable setting is introduced.
 
 ## Result and scope
@@ -71,7 +71,9 @@ and selects names, watches and deposit/event candidates in one repeatable-read t
 It rolls back and releases the database before RPC reads. It has no write query, activation,
 Workflow, signing, ingestion or broadcast path.
 
-Each invocation permits four raw RPC reads: chain ID, receipt, transaction and canonical block.
+Each invocation permits seven raw RPC reads: chain ID, receipt, transaction, source block,
+`finalized` anchor, and numbered rechecks of both block identities. Each response is capped at
+one MiB; the CLI aborts rather than decoding excess data.
 They are sequential, with no retries and one 15-second RPC deadline. Raw reads avoid the
 previous Arc receipt formatter failure observed during baseline discovery. Provider credentials
 and database/provider errors are never printed. The output contains public evidence only.
@@ -83,7 +85,7 @@ Exceeding a limit fails inspection rather than silently narrowing the deposit se
 Seven existing source transactions passed the actual CLI against the live testnet database:
 one Sepolia ERC-20 deposit and six native Arc deposits. Each source receipt matched its
 canonical block and exact indexed amount/identity. All seven independently checked database
-sessions were read-only. Each invocation used four RPC calls. The dated receipt is in
+sessions were read-only. The original inspector used four RPC calls. The dated receipt is in
 [DEPLOYMENTS.md](DEPLOYMENTS.md#source-deposit-evidence--2026-10-05).
 
 Regression fixtures cover staggered delivery of two deposits, duplicates and corrections,
@@ -97,3 +99,68 @@ was proven. Source receipt membership is one gate. The next proof must bind ever
 all applicable `DepositProcessed` segments, CCTP messages/claims and exact finalized renewal
 identities. A `settled` flow, a quiet index or an empty remainder inference alone is insufficient.
 The [public API plan](PUBLIC_API_PLAN.md) retains those requirements.
+
+## Conservative receipt-set closure — 2026-10-06
+
+`representationComplete` retains its current-registry meaning. A new private
+`receiptSetClosed` result additionally requires that every positive, non-self USDC recipient
+from the authoritative receipt stream belongs to that registry. An unregistered recipient
+prevents closure, even if every known deposit is already indexed and finalized. No recipient
+is presumed unrelated merely because Namepass does not currently know its ENS label.
+
+This is deliberately conservative. A mixed transaction paying an ordinary unregistered USDC
+recipient cannot close under this rule without separate exclusion evidence. It does not change
+which addresses the protocol can accept or narrow the published API contract. Unknown addresses
+and unsupported internal native representations stay unresolved; this inspector does not
+activate names or fill missing index rows.
+
+The late-registration regression enumerates two source transfers when only the first name is
+registered. Current-registry membership passes, but receipt closure remains false. Registering
+the second name still leaves closure false until its exact indexed deposit arrives. Replacing
+the new guard with current-registry membership alone makes this regression fail.
+
+When the full receipt has no unclassified recipient and all members have exact canonical indexed
+representations, this closes that inspected receipt set at the database snapshot. Current watch
+presence is also required. It does not prove dynamic-table propagation intervals for other
+transactions, processing, allocation, or renewal completion. Neither private boolean is API
+`complete`. The published requirement to prove the full relevant set remains unchanged.
+
+## Source finality policy — 2026-10-06
+
+The read-only inspector reports `sourceFinality` separately from indexed membership. It uses
+the configured source provider's `finalized` tag, retains the numbered anchor and hash, and
+rechecks both the source block and anchor by number after inspection. A source block above
+the anchor yields `providerFinalized: false`. A missing/malformed anchor, changed identity or
+contradictory timestamp/hash fails inspection. There is no fallback to `safe`, `latest`, a
+stored deposit status, a fixed confirmation count or Circle's attestation threshold.
+
+| Source route | Meaning required from the configured provider | Primary reference |
+| --- | --- | --- |
+| Sepolia | Consensus-finalized execution block | [Ethereum finality](https://ethereum.org/developers/docs/consensus-mechanisms/pos/#finality), [RPC tags](https://ethereum.org/developers/docs/apis/json-rpc/) |
+| Base Sepolia | L2 block derived from finalized L1 data | [Base derivation](https://docs.base.org/base-chain/specs/protocol/consensus/derivation) |
+| Arbitrum Sepolia | L2 messages mapped from the finalized parent-chain block | [Pinned Nitro reader](https://github.com/OffchainLabs/nitro/blob/60a48d346fccc11a0e1637f4ddd31d3df188144e/arbnode/inbox_reader.go), [finality forwarding](https://github.com/OffchainLabs/nitro/pull/2936) |
+| Arc Testnet | Committed block under Arc BFT finality | [Arc consensus](https://docs.arc.io/arc/concepts/consensus-layer) |
+
+This is a provider trust policy, consistent with the existing history/renewal proof boundary.
+The inspector does not verify Ethereum consensus, L1 batch inclusion, Nitro validation settings
+or Arc validator signatures independently. Finality does not repair missing receipt membership.
+It is not a claim about CCTP withdrawal/challenge delays or fee pricing.
+
+The configured providers for all four testnets returned usable tags and numbered anchor
+rechecks. The [capability audit](deployments/2026-10-06/public-api-source-finality-capabilities.json)
+used six reads per chain. Tags are separate observations: Arc can advance between requests,
+so an earlier `latest` response need not be higher than a later `finalized` response. The actual
+source inspector compares a specific source block with its numbered finality anchor.
+
+The updated real CLI verified all seven existing deposits against enforced read-only database
+snapshots. Each has a closed receipt set and a source block below its rechecked provider anchor.
+Each used seven RPC reads, 49 total. See the
+[operator evidence](deployments/2026-10-06/public-api-source-finality-operator.json), which pins
+the inspected implementation. One earlier whole-audit attempt exited with sanitized
+unavailability; a fresh audit passed. The CLI never retries or accepts incomplete evidence.
+Base/Arbitrum tag capability is verified; new live payments on those routes are still untested.
+
+The next adapter must combine these separate source facts with complete allocation windows
+and every finalized renewal join, then prove its hosted budget and correction behavior. Fresh
+multi-deposit, activation-propagation and pooled/split hosted canaries remain release gates.
+No API route, schema, ingestion change, wallet funding or public enable setting was added.
