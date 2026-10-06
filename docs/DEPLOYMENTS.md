@@ -15,6 +15,47 @@ Alpha uses the [read-only branch preview proxy](FRONTEND.md#read-only-branch-pre
 Anonymous verification returned HTTP 200 for the homepage and populated activity,
 HTTP 405 for activation writes, and HTTP 403 for the private monitoring route.
 
+## October ENS helper rotation and API canary — 2026-10-06
+
+The active Sepolia helper is `0x33CDD1f7Ea4dd6e2469EF0F8B9e982F5ad365f31`.
+The user deployed it, scheduled the existing timelock and signed activation. It uses
+ETHRegistrar `0xf633e7FC17e2bbE0D0965D18ec1821dcB754a3d3` and ETHRenewerV1
+`0xf2ece44980778966b8a0FccB3A9E339440f6e045`. Factory, gateway, pointer, deposit
+addresses, allowance and compiler settings did not change. The initial helper below
+is a historical deployment address.
+
+The old V1 renewer lost BaseRegistrar controller permission on October 1 at
+11:53:48 UTC. Its read-only quote and `isRenewable` still worked, but execution
+reverted. A disposable fork at the funded payment's block reproduced that failure,
+rotated the helper through the real timelock and successfully renewed the same wallet.
+The [rotation and canary receipt](deployments/2026-10-06/ens-october-api-canary.json)
+records the exact user-signed transactions and checks.
+
+Production automation resumed the preserved `farcaster.eth` flow. Its $0.50 deposit
+produced renewal transaction `0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e`,
+with 1,576,795 seconds added, a $0.10 allowance and $0.40 applied. Current expiry is
+March 26, 2032 at 03:32:32 UTC. Local execution of the actual status and history HTTP
+adapters verified finalized receipts and the same event-specific renewal identifier.
+Status used 45 RPC reads in 7.834 seconds; history used nine in 1.941 seconds. These
+are local adapter measurements, not hosted capacity evidence.
+
+The user directed deletion of obsolete testnet history. The guarded
+[cleanup SQL](deployments/2026-10-06/obsolete-testnet-history-cleanup.sql) passed a
+rollback rehearsal, then removed 12 terminal flows, 13 confirmed old intents,
+65 transitions, seven deposits and 43 old events. Four unchanged cached expiry
+observations were cleared; fresher observations were preserved. Aggregates were
+recomputed from remaining canonical renewals. Verification found one settled
+`farcaster` flow and no pre-canary events. Names, watched addresses, balance snapshots,
+nonce counters and pipeline checkpoints were preserved. A private local backup was
+saved; raw transaction data is not committed.
+
+Isolated `api-staging` now contains the minimal fresh `farcaster` projection instead
+of the five copied obsolete payments. The existing SELECT-only reader and eight
+balance snapshots are unchanged. Public production APIs remain disabled. The older
+seven-payment and five-payment reports are historical checks of the previous ENS
+configuration; they do not verify the current helper. First-watch propagation,
+other source routes, aggregate funding and public polling capacity remain gates.
+
 ## Current release — 2026-09-22
 
 The replacement contracts and hosted testnet services are deployed. The application uses the

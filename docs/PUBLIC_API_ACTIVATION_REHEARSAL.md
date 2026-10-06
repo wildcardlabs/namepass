@@ -82,3 +82,17 @@ If evidence shows an unrecoverable interval, propose the smallest change to the 
 activation/recovery path in a separate review. Do not add a queue, verification worker or API
 schema to conceal a gap. Positive hosted direct/Sepolia and Base/Arbitrum status, fresh aggregate
 funding and public capacity remain separate release gates.
+
+## Fresh existing-watch canary — October ENS helper
+
+The user sent the proposed $0.50 Sepolia payment. Read-only inspection observed its
+Transfer at the source node, then the watched output, and the database recorded it
+from Goldsky. Processing exposed the old ENS renewer's revoked controller permission.
+After the user rotated the helper through the existing timelock, ordinary automation
+completed the same funded flow. Local status/history then verified the finalized
+renewal under the October ENS addresses. See the
+[exact canary and recovery receipt](deployments/2026-10-06/ens-october-api-canary.json).
+
+This closes this existing-watch delivery and application-processing canary. It does
+not close first-watch propagation, other source routes, aggregate funding or hosted
+public API capacity. No pipeline, source, sink, reader, secret or checkpoint changed.

@@ -1,0 +1,378 @@
+{
+  "observedAt": "2026-10-06T20:52:00.916Z",
+  "mainBeforeChange": "aca8456d60e750fda1874371a74ac29c9663662c",
+  "currentENS": {
+    "registrar": "0xf633e7FC17e2bbE0D0965D18ec1821dcB754a3d3",
+    "renewerV1": "0xf2ece44980778966b8a0FccB3A9E339440f6e045",
+    "registry": "0xD4eBcbBdF463C9c45784603Db0dDD499BC44A8B4",
+    "baseRegistrar": "0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85"
+  },
+  "helperRotation": {
+    "helper": "0x33CDD1f7Ea4dd6e2469EF0F8B9e982F5ad365f31",
+    "deployer": "0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6",
+    "deploymentTx": "0xe8b46f98610975f76d316e47c64c53de3297d498a7321af24583d7b29b05056f",
+    "scheduleTx": "0xaded99f23ad1e69b439654d12bc9ddff9fe41b28fe476566ddd8c65306405927",
+    "activationTx": "0xe3765e6eb1ce82c54f9d2cfc3c47482c937b7922928226ea70380a5c4afa3176",
+    "userSigned": true,
+    "timelockDelaySeconds": 60,
+    "factoryGatewayPointerUnchanged": true,
+    "runtimeAndConstructorInputsVerified": true
+  },
+  "rootCause": {
+    "observedAt": "2026-10-06T18:56:13.518Z",
+    "baseRegistrar": "0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85",
+    "oldRenewer": "0xd06e726e9bd8ac0f33a2a45f4cc28fe10d656a36",
+    "readOnly": true,
+    "range": {
+      "from": 11754050,
+      "to": 11857751,
+      "chunkSize": 8192
+    },
+    "removals": [
+      {
+        "transactionHash": "0x8e740ce7f542538c78cb403fb4b16291ff227b2efca491a0295b2e03d0834254",
+        "logIndex": 124,
+        "blockNumber": 11821651,
+        "blockHash": "0x8bd7a8bc4d8ffdcda14650370df0457ebe33a527914451ea565dfb82f90ea0aa",
+        "blockTime": "2026-10-01T11:53:48.000Z",
+        "receiptStatus": "0x1",
+        "transitions": [
+          {
+            "event": "ControllerRemoved",
+            "args": {
+              "controller": "0xd06e726e9bD8ac0f33A2a45F4Cc28fe10d656a36"
+            },
+            "logIndex": 124
+          }
+        ]
+      }
+    ]
+  },
+  "fork": {
+    "block": 11857705,
+    "test": "HelperRotationForkTest.testFork_octoberEnsRotationPreservesFundedWalletAndRenews",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "compiler": "0.8.24",
+    "compilerEvmVersion": "shanghai",
+    "executionEvmVersion": "cancun",
+    "noLiveBroadcast": true
+  },
+  "localStatus": {
+    "observedAt": "2026-10-06T20:49:23.353Z",
+    "readOnly": true,
+    "implementationChecksums": {
+      "server/public-status.ts": "4674e067d79de5fa2b156e00b2bca22c5aa4fcf8d230fd0f23202a832c7f34de",
+      "server/source-inspection.ts": "896f4208c07a287e6e3667cf591d96b63ad8edc67227f3fc3851e5463a9b1a03",
+      "server/source-deposit-evidence.ts": "b3d12872aacdb8fbc9aa77e7bde63ec5f9c048d3670276428871d9e997ac718e",
+      "server/allocation-evidence.ts": "81c5cc8fbe313e2ca38eafd4475ec102df8918ca584d0437043e9c4f453742b5",
+      "server/processing-renewal-evidence.ts": "c27fa225dd8e67c5fecf44808c8a076f028565cf5c60d8f8fddf4ad09b0f0921",
+      "server/transaction-evidence.ts": "e73e371e67f833e79543c38df77fd627750dd38a08f0c1ef757faeda29eb79b8",
+      "src/lib/chains.ts": "8b07a9c234e4c06cd21f3b1d0ea7bdf9f76bc8c5c9caa1ae92be6ff4371115e3"
+    },
+    "baseCommit": "b619dd1",
+    "scope": "New October ENS addresses; public flags unchanged",
+    "rows": [
+      {
+        "chainId": "11155111",
+        "transactionHash": "0xd725d3431622bfc574524ca092564a319efe49e0be2b4798348b582718441533",
+        "elapsedMs": 7834,
+        "rpcCalls": 45,
+        "circleReads": 0,
+        "readOnlySessions": 2,
+        "response": {
+          "chainId": "11155111",
+          "transactionHash": "0xd725d3431622bfc574524ca092564a319efe49e0be2b4798348b582718441533",
+          "status": "complete",
+          "deposits": [
+            {
+              "name": "farcaster.eth",
+              "depositAddress": "0x16CfEB29157376F55e7976562a850d04435C171d",
+              "logIndex": 110,
+              "amount": "500000",
+              "status": "complete",
+              "reason": null,
+              "renewals": [
+                {
+                  "renewalId": "11155111:0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e:179",
+                  "chainId": "11155111",
+                  "transactionHash": "0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e",
+                  "secondsAdded": "1576795",
+                  "expiry": "2032-03-26T03:32:32.000Z"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "limits": "Actual HTTP adapter executed locally against the fresh user-signed Sepolia deposit and verified renewal. This is not hosted HTTP capacity or public enablement."
+  },
+  "localHistory": {
+    "observedAt": "2026-10-06T20:52:00.916Z",
+    "code": "Local current ENS registry change based on main aca8456d60e750fda1874371a74ac29c9663662c",
+    "readOnly": true,
+    "readOnlySessions": 1,
+    "source": "Fresh farcaster renewal, verified through the actual history HTTP adapter with a read-only production database session and read-only Sepolia RPC. Hosted flags unchanged.",
+    "rows": [
+      {
+        "name": "farcaster.eth",
+        "status": 200,
+        "elapsedMs": 1941,
+        "rpcCalls": 9,
+        "rpcMethods": [
+          "eth_chainId",
+          "eth_getBlockByNumber",
+          "eth_getTransactionReceipt",
+          "eth_getCode",
+          "eth_call"
+        ],
+        "finalized": {
+          "blockNumber": "11858253",
+          "blockHash": "0xddd1c503aea32e4aba565751f85e82a22f6175ecf81bca7aa4d51b84a1ace12c"
+        },
+        "items": [
+          {
+            "renewalId": "11155111:0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e:179",
+            "flowId": "98fc7f5f-9147-41fb-8a79-8aa8ded20fa3",
+            "sourceChainId": "11155111",
+            "chainId": "11155111",
+            "transactionHash": "0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e",
+            "secondsAdded": "1576795",
+            "amountApplied": "400000",
+            "renewalFee": "100000",
+            "expiry": "2032-03-26T03:32:32.000Z",
+            "status": "complete",
+            "renewedAt": "2026-10-06T19:18:36.000Z"
+          }
+        ],
+        "expiryUpdatedAt": null,
+        "currentExpiry": "2032-03-26T03:32:32.000Z",
+        "nextCursor": null
+      }
+    ]
+  },
+  "cleanup": {
+    "observedAt": "2026-10-06T20:47:22.237Z",
+    "branch": "br-noisy-bird-avey45an",
+    "mode": "applied",
+    "statements": [
+      {
+        "command": "DELETE",
+        "rows": 65
+      },
+      {
+        "command": "DELETE",
+        "rows": 13
+      },
+      {
+        "command": "DELETE",
+        "rows": 12
+      },
+      {
+        "command": "DELETE",
+        "rows": 7
+      },
+      {
+        "command": "DELETE",
+        "rows": 43
+      },
+      {
+        "command": "UPDATE",
+        "rows": 4
+      },
+      {
+        "command": "UPDATE",
+        "rows": 11
+      }
+    ],
+    "privateBackup": true
+  },
+  "cleanupAfter": {
+    "observedAt": "2026-10-06T20:53:45.999Z",
+    "counts": {
+      "names": 11,
+      "chain_events": 4,
+      "deposits": 1,
+      "flows": 1,
+      "flow_transitions": 5,
+      "transaction_intents": 1,
+      "balance_snapshots": 44,
+      "balance_scan_requests": 0,
+      "relayer_nonces": 2
+    },
+    "oldEvents": 0,
+    "watches": 11,
+    "flows": [
+      {
+        "id": "98fc7f5f-9147-41fb-8a79-8aa8ded20fa3",
+        "normalized_label": "farcaster",
+        "name_id": "975f3c03-725b-424f-ba4c-57d2e2f92507",
+        "status": "settled",
+        "created_at": "2026-10-06T18:46:26.184Z",
+        "deposit_event_id": "11155111:log_0xbae97e0c4f4f045b7a1d3ae144b8d78db71f89ad9432b71de637cd055d0238ec_110",
+        "renewal_event_id": "11155111:log_0x9bb1b58cb89bb0c6e6d3d494dc7233c38e14f14a8c1ae7810436475705200df7_179",
+        "origin_event_id": "11155111:log_0x9bb1b58cb89bb0c6e6d3d494dc7233c38e14f14a8c1ae7810436475705200df7_180",
+        "origin_tx_intent_id": "7ada70bb-a9ae-4529-abfb-77f3f8c9cc05",
+        "claim_tx_intent_id": null
+      }
+    ],
+    "eventCounts": [
+      {
+        "event_family": "deposit",
+        "count": 1,
+        "min": "2026-10-06T18:46:24.000Z",
+        "max": "2026-10-06T18:46:24.000Z"
+      },
+      {
+        "event_family": "namepass",
+        "count": 3,
+        "min": "2026-10-06T19:18:36.000Z",
+        "max": "2026-10-06T19:18:36.000Z"
+      }
+    ]
+  },
+  "stagingFixture": {
+    "preparedAt": "2026-10-06T20:53:50.169Z",
+    "sourceReadOnly": true,
+    "sourceBranch": "br-noisy-bird-avey45an",
+    "proposedDestination": {
+      "project": "nameless-paper-91018372",
+      "branch": "api-staging",
+      "branchId": "br-autumn-cherry-av2es7od"
+    },
+    "replaceObsoleteFixtureHistory": true,
+    "preserveExisting": [
+      "all name identities and watches",
+      "all existing balances",
+      "reader role and privileges"
+    ],
+    "counts": {
+      "names": 1,
+      "deposits": 1,
+      "flows": 1,
+      "events": 3,
+      "watches": 1
+    },
+    "labels": [
+      "farcaster.eth"
+    ],
+    "columns": {
+      "names": [
+        "id",
+        "normalized_label",
+        "display_name",
+        "label_hash",
+        "namehash",
+        "deposit_address",
+        "activated_at",
+        "current_expiry",
+        "renewable_by",
+        "ens_synced_at"
+      ],
+      "deposits": [
+        "event_id",
+        "name_id",
+        "chain_id",
+        "token_address",
+        "sender_address",
+        "amount",
+        "tx_hash",
+        "log_index",
+        "block_number",
+        "block_time",
+        "source",
+        "status"
+      ],
+      "flows": [
+        "id",
+        "name_id",
+        "origin_chain_id",
+        "trigger",
+        "status",
+        "amount_detected",
+        "amount_processed",
+        "origin_event_id",
+        "renewal_event_id",
+        "cctp_nonce"
+      ],
+      "events": [
+        "event_id",
+        "event_family",
+        "event_type",
+        "chain_id",
+        "tx_hash",
+        "log_index",
+        "block_number",
+        "block_time",
+        "gs_op",
+        "canonical",
+        "facts"
+      ],
+      "watches": [
+        "value",
+        "updated_at"
+      ]
+    },
+    "fixtureSha256": "ffeeefedc37042821b4c370931c02903de599650715fb343037e23dd98261e14",
+    "excluded": [
+      "keys",
+      "credentials",
+      "raw payloads",
+      "transaction intents",
+      "workflow IDs",
+      "CCTP messages and attestations"
+    ],
+    "readerRoleProposed": "api_status_reader",
+    "selectOnlyTables": [
+      "names",
+      "chain_events",
+      "flows",
+      "deposits",
+      "goldsky.watched_addresses"
+    ],
+    "previewBranchProposed": "codex/public-api-status-staging",
+    "publicFlagsRemainOff": true
+  },
+  "stagingReplacement": {
+    "observedAt": "2026-10-06T20:55:44.836Z",
+    "mode": "applied",
+    "stagingBranch": "br-autumn-cherry-av2es7od",
+    "before": {
+      "names": 7,
+      "events": 15,
+      "flows": 5,
+      "deposits": 5,
+      "intents": 0,
+      "watches": 7,
+      "balances": 8
+    },
+    "after": {
+      "names": 8,
+      "events": 3,
+      "flows": 1,
+      "deposits": 1,
+      "intents": 0,
+      "watches": 8,
+      "balances": 8
+    },
+    "readerRole": "api_status_reader",
+    "readerPrivilegesChanged": false,
+    "balancesPreserved": true,
+    "transactionIntents": 0,
+    "productionWritten": false,
+    "fixtureSha256": "ffeeefedc37042821b4c370931c02903de599650715fb343037e23dd98261e14"
+  },
+  "publicAPIsEnabled": false,
+  "pipelineChanges": 0,
+  "schemaChanges": 0,
+  "remainingGates": [
+    "Protected hosted current-ENS status/history verification",
+    "Fresh Base/Arbitrum/Arc payments under the new helper",
+    "First-watch activation propagation",
+    "Fresh multi-deposit/pooled/split funding",
+    "Hosted polling capacity and abuse controls"
+  ],
+  "fixtureSha256": "2245d574d0cc5be280eccb5b348d620c2a835b08e530452e746895ce68d15b12"
+}
