@@ -1,0 +1,167 @@
+{
+  "observedAt": "2026-10-07T16:13:17.898Z",
+  "verificationState": "awaiting-attestation-and-finality",
+  "name": "brantly.eth",
+  "chainId": 84532,
+  "destination": "0xbb23c9991e390722533b41137A8A91Ae055383Df",
+  "sender": "0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6",
+  "amountUnits": "500000",
+  "activationRequestedAt": "2026-10-07T16:01:40.758Z",
+  "watchCommittedAt": "2026-10-07T16:01:41.193Z",
+  "activationReturnedAt": "2026-10-07T16:01:41.653Z",
+  "fundingRequestedAt": "2026-10-07T16:01:41.664Z",
+  "signatureRequestAfterActivationReturnMs": 11,
+  "signatureRequestAfterWatchCommitMs": 471,
+  "sourceReceipt": {
+    "transactionHash": "0x19547d7c473359902e13475df6b2a7f88df965d6b2ff914d7e73d6a9927f5629",
+    "blockNumber": "47810310",
+    "blockTime": "2026-10-07T16:01:48.000Z",
+    "logIndex": 92
+  },
+  "sourceBlockAfterWatchCommitMs": 6807,
+  "stream": {
+    "pipeline": "namepass-testnet-v2",
+    "startedAt": "2026-10-07T16:01:03.406Z",
+    "nodes": [
+      "all_usdc_transfers",
+      "incoming_deposits"
+    ],
+    "records": [
+      {
+        "observedAt": "2026-10-07T16:01:52.042Z",
+        "node": "all_usdc_transfers",
+        "fields": {
+          "event_id": "84532:log_0x7d30f6405a17266570844a115a5ff9f959389ec8306db6470d2c4dd67f0e5779_92",
+          "event_family": "deposit",
+          "event_type": "Transfer",
+          "chain_id": 84532,
+          "block_number": 47810310,
+          "block_time": 1791388908,
+          "tx_hash": "0x19547d7c473359902e13475df6b2a7f88df965d6b2ff914d7e73d6a9927f5629",
+          "log_index": 92,
+          "token_address": "0x036cbd53842c5426634e7929541ec2318f3dcf7e",
+          "sender_address": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+          "recipient_address": "0xbb23c9991e390722533b41137a8a91ae055383df",
+          "amount": "500000",
+          "_gs_op": "i"
+        }
+      },
+      {
+        "observedAt": "2026-10-07T16:01:52.164Z",
+        "node": "incoming_deposits",
+        "fields": {
+          "event_id": "84532:log_0x7d30f6405a17266570844a115a5ff9f959389ec8306db6470d2c4dd67f0e5779_92",
+          "event_family": "deposit",
+          "event_type": "Transfer",
+          "chain_id": 84532,
+          "block_number": 47810310,
+          "block_time": 1791388908,
+          "tx_hash": "0x19547d7c473359902e13475df6b2a7f88df965d6b2ff914d7e73d6a9927f5629",
+          "log_index": 92,
+          "token_address": "0x036cbd53842c5426634e7929541ec2318f3dcf7e",
+          "sender_address": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+          "recipient_address": "0xbb23c9991e390722533b41137a8a91ae055383df",
+          "amount": "500000",
+          "_gs_op": "i"
+        }
+      }
+    ]
+  },
+  "indexed": {
+    "deposit": {
+      "event_id": "84532:log_0x7d30f6405a17266570844a115a5ff9f959389ec8306db6470d2c4dd67f0e5779_92",
+      "name_id": "92bfbc3b-66e7-4462-8d84-af6e10490a12",
+      "chain_id": "84532",
+      "token_address": "0x036cbd53842c5426634e7929541ec2318f3dcf7e",
+      "sender_address": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+      "amount": "500000",
+      "tx_hash": "0x19547d7c473359902e13475df6b2a7f88df965d6b2ff914d7e73d6a9927f5629",
+      "log_index": 92,
+      "block_number": "47810310",
+      "block_time": "2026-10-07T16:01:48.000Z",
+      "source": "goldsky",
+      "status": "detected"
+    },
+    "flow": {
+      "id": "2a0d8bfd-e345-451f-ab3d-6467e172bd6d",
+      "name_id": "92bfbc3b-66e7-4462-8d84-af6e10490a12",
+      "origin_chain_id": "84532",
+      "trigger": "automatic",
+      "status": "waiting_attestation",
+      "hold_reason": null,
+      "deposit_event_id": "84532:log_0x7d30f6405a17266570844a115a5ff9f959389ec8306db6470d2c4dd67f0e5779_92",
+      "origin_event_id": "84532:log_0xb248a9de61ae7f2b795cd4606c62acdf73f3a31522fffd643783ace74051e44b_217",
+      "renewal_event_id": null,
+      "amount_detected": "500000",
+      "amount_processed": "500000",
+      "gas_allowance": null,
+      "amount_applied": null,
+      "duration_seconds": null,
+      "cctp_nonce": null,
+      "created_at": "2026-10-07T16:01:52.455Z",
+      "queued_at": "2026-10-07T16:01:52.455Z",
+      "settled_at": null,
+      "failed_at": null,
+      "last_error_code": "iris_incomplete",
+      "last_error_detail": null
+    },
+    "processingEvent": {
+      "event_id": "84532:log_0xb248a9de61ae7f2b795cd4606c62acdf73f3a31522fffd643783ace74051e44b_217",
+      "event_family": "namepass",
+      "event_type": "DepositProcessed",
+      "chain_id": "84532",
+      "tx_hash": "0x3a402f1e7d14838f3f3d1f0562bed697db002840d3b7baf00ab3d1cacc7fe0fc",
+      "log_index": 217,
+      "block_number": "47810315",
+      "block_time": "2026-10-07T16:01:58.000Z",
+      "gs_op": "c",
+      "canonical": true,
+      "facts": {
+        "amount": "500000",
+        "label_key": "0x68562fc74af4dcfac633a803c2f57c2b826827b47f797b6ab4e468dc8607b5d0",
+        "wallet_address": "0xbb23c9991e390722533b41137a8a91ae055383df",
+        "contract_address": "0x2dcb5ca6b21372b43e37c35da8d5d15160423150",
+        "remaining_amount": "0"
+      }
+    }
+  },
+  "localHttpAudit": {
+    "hosted": false,
+    "latest": {
+      "observedAt": "2026-10-07T16:13:17.898Z",
+      "elapsedMs": 3312,
+      "httpStatus": 200,
+      "body": {
+        "chainId": "84532",
+        "transactionHash": "0x19547d7c473359902e13475df6b2a7f88df965d6b2ff914d7e73d6a9927f5629",
+        "status": "pending",
+        "deposits": [
+          {
+            "name": "brantly.eth",
+            "depositAddress": "0xbb23c9991e390722533b41137A8A91Ae055383Df",
+            "logIndex": 92,
+            "amount": "500000",
+            "status": "pending",
+            "reason": "source_set_unproven",
+            "renewals": []
+          }
+        ]
+      }
+    }
+  },
+  "ci": {
+    "commit": "2e542ec",
+    "runId": 37648937815,
+    "result": "success",
+    "transactionTestsPassed": 27,
+    "recoveryTestUsedRealPostgresql18": true
+  },
+  "signedByAgent": false,
+  "productionApiFlagsEnabled": false,
+  "pipelineConfigurationChanged": false,
+  "limits": [
+    "Positive Base activation sample; not proof of zero-delay visibility on every route or recovery of earlier filtered transfers.",
+    "Attestation and finalized status/history completion are still pending.",
+    "Forced hosted restart and live split settlement are not established by the local tests."
+  ]
+}

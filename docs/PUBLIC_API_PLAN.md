@@ -37,13 +37,24 @@ including native and ERC-20 Arc pooled into one renewal, plus one positive newly
 registered Sepolia watch. See the [fresh-route verification](DEPLOYMENTS.md#fresh-browser-signed-route-checks-and-native-arc-indexing--2026-10-06).
 The [protected admission checks](PUBLIC_API_ADMISSION.md) now verify the eight
 approved regional/IP counters without enabling production endpoints.
-Keep production flags off while the public capacity/enablement decision, activation-boundary and
-restart recovery, and live split-processing gates remain open. A user-signed Sepolia
+Keep production flags off until the final protected pilot checks and separate
+public-enable decision below are complete. A user-signed Sepolia
 transaction with two transfer logs passed local read-only status/history verification
 and protected hosted replay. See the [same-transaction canary](deployments/2026-10-07/public-api-multideposit-canary.json)
 and [hosted replay receipt](deployments/2026-10-07/public-api-same-transaction-hosted.json).
 The positive watch case does not establish zero-delay ingestion or recover earlier
 filtered transfers. No additional Goldsky pipeline or schema is required.
+
+On October 7 the user accepted deployed-contract split-fork and real-PostgreSQL
+recovery results as evidence for a limited testnet pilot. Live split settlement
+and forced hosted restart remain untested; they are not claimed as passed.
+The new Base activation sample has reached source/filtered ingestion and factory
+processing; its attestation and finalized API result are still pending. Twenty
+bounded protected polling checks passed without changing staging data. See
+[current verification](DEPLOYMENTS.md#recovery-and-activation-boundary-verification--2026-10-07).
+The remaining pilot sequence is the [final protected four-endpoint check](deployments/2026-10-07/public-api-pilot-protected-plan.json),
+then a separate production-enable decision. The protected copy/configuration and
+production enablement each require their own recorded authorization.
 
 ## Starting point
 

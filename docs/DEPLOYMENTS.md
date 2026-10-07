@@ -243,6 +243,67 @@ and SELECT-only reader privileges remained unchanged. The [hosted replay receipt
 records the responses and preserved staging fingerprint. Address/quote stay off;
 production settings stay unchanged. No new payment was needed.
 
+PR #144 merged as `651125b4f5361b99e9893c32ac20797908a0fe7e`.
+Production deployment `dpl_7A53FMAEXGcibVSBDxo7boo8p4wK` is READY at that
+commit. Required CI and 23 production smoke checks passed. Activity still exposes
+both source deposits. The four public API flags remain off. The
+[release receipt](deployments/2026-10-07/public-api-same-transaction-release.json)
+records the deployed commit and checks.
+
+## Recovery and activation-boundary verification — 2026-10-07
+
+The local PostgreSQL 18 transaction suite passed 27 tests without skips. The new
+recovery case uses actual SQL claims and advisory leases. Concurrent recovery is
+excluded, failed scheduling can retry the same flow, stale start markers and
+completed owners can be reclaimed, and active owners remain intact. Only the
+external Workflow control API is stubbed. This does not prove a hosted Workflow
+restart. No transaction intent or network/signing call was created by this test.
+
+A fixed Base Sepolia fork at block `47803956` exercised the deployed factory and
+Circle contracts. The current per-message burn limit is 10,000,000 USDC. A locally
+seeded balance above that limit produced two exact processing events, preserved
+the remainder after the first burn, then drained it on the second. Supply and
+allowance checks passed. No transaction was broadcast. This is deployed-contract
+split evidence, not live CCTP settlement or API completion evidence.
+
+The temporary localhost wallet page prepares one 0.50-testnet-USDC Base Sepolia
+payment for a newly watched `brantly.eth`. Read-only browser checks confirmed
+renewability, the current ENS helper and factory address prediction. The page
+journals activation before requesting the user's transfer signature. A bounded
+read-only inspection of the existing pipeline must be active before funding.
+Activation and funding await the user. Tool type checks, two receipt-guard tests
+and the local build passed. The
+[local verification receipt](deployments/2026-10-07/public-api-recovery-local.json)
+records the scope and limits. Live activation/recovery, live split completion and
+the public capacity/enablement decision remain open.
+
+The user then activated and funded `brantly.eth`. The watch committed at
+16:01:41.193 UTC. The wallet signature request followed the activation response
+by 11 ms, and the source transfer entered Base block `47810310` at 16:01:48 UTC.
+The existing source and filtered streams both delivered the exact 500000-unit
+credit, log 92. Production indexed it and created one automatic flow; the
+factory processed all funds with zero remainder. Attestation and finalized API
+completion remain pending. The
+[activation receipt](deployments/2026-10-07/public-api-activation-boundary.json)
+records the timing, canonical identities and current verification state.
+
+Five protected polling rounds, 45 seconds apart, passed twenty HTTP checks:
+ten status reads in concurrent pairs, five history reads and five populated
+activity reads. Exact two-deposit and shared-renewal results remained stable.
+API CLI latency was 2.5–5.1 seconds. Anonymous access stayed protected; the
+staging fingerprint and SELECT-only privileges were unchanged before and after.
+The [polling receipt](deployments/2026-10-07/public-api-protected-polling.json)
+records each check. This is bounded polling from one CLI source, not multi-IP
+or globally sustained capacity evidence. Required CI for verification commit
+`2e542ec` passed, including all 27 PostgreSQL-backed transaction tests.
+
+The user accepted the deployed split-fork and SQL recovery evidence for the
+testnet pilot. Live split settlement and forced hosted restart remain untested.
+The [final protected plan](deployments/2026-10-07/public-api-pilot-protected-plan.json)
+limits the remaining verification to the four existing adapters and isolated
+staging. Its merge, data copy and preview settings await separate authorization;
+it does not authorize production enablement.
+
 ## Current release — 2026-09-22
 
 The replacement contracts and hosted testnet services are deployed. The application uses the
