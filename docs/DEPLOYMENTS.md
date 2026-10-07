@@ -145,6 +145,47 @@ Public exposure controls, activation-boundary/restart recovery and live
 same-transaction multi-deposit/split cases remain release gates. Existing local
 regressions cover those aggregate cases. Production public API flags remain off.
 
+## Public API admission verification — 2026-10-07
+
+The user merged PR #140 as `f8d22bf07d56d93a811fa9c50b32eefdbf56ba22`
+and PR #141 as `1b422fc51895dffb28616a512a99f7b9bb2ba80c`.
+Production deployment `dpl_4w1dhusNEfZjUEqdS95MEeFurErq` is READY at
+the latter commit. Twenty-one production smoke checks passed after firewall
+publication: core activity is populated and all four public APIs remain disabled.
+
+The user separately approved publication and protected enforcement tests for the
+eight fresh `namepass-v1-*` rules. Firewall version 7 adds those rules and preserves
+the six existing rules, protection, bypass and other settings. No unrelated draft
+was published. The [admission policy](PUBLIC_API_ADMISSION.md) records the initial
+fixed-window per-IP and shared regional limits. These are not a globally exact cap.
+
+GitHub deleted the merged PR #141 branch. Protected verification therefore used
+`codex/public-api-enforcement-verification` from main, with no application code
+changes. Its existing read-only settings moved from the completed October canary
+branch with values/types preserved, plus the new admission enable flag. It has no
+signing credentials or public custom domain. Status/history use the same isolated
+SELECT-only staging reader; address/quote remain off.
+
+Preview `dpl_mzxKqsJ18X4pSEE8QKzDJG3Bits1`, commit
+`f323acad77058774cacae5ee862b08ca3b995f50`, passed 46 protected HTTP checks.
+Missing rules returned `503 rate_limit_unavailable`. Status/history admitted
+12/6 invalid-input requests and then returned `429 rate_limited` with retry/CORS
+headers. Forged client IP and rate-limit headers did not reset either bucket.
+Both endpoints recovered after the window. All five fresh funding transactions
+still returned `complete`, with exact renewal identity/duration/expiry agreement
+between status and history. Both Arc payments retained their shared renewal ID.
+Anonymous GET/POST requests still redirected to Vercel authentication. All staging
+records, balances, watches and reader privileges retained their prior fingerprint.
+
+The actual SDK also verified all eight live rule limits, including the shared
+regional budgets, from a local runner. This does not establish shared-budget
+exhaustion through hosted adapters from multiple client IPs or sustained public
+capacity. The primary HTTP regression covers adapters stopping on shared-budget
+exhaustion. Existing payment/watch recovery gates remain open. There were no
+production API enablement, database, schema, pipeline or payment changes.
+The [verification receipt](deployments/2026-10-07/public-api-admission-verification.json)
+contains the exact deployment, settings scope, rule IDs and check results.
+
 ## Current release — 2026-09-22
 
 The replacement contracts and hosted testnet services are deployed. The application uses the

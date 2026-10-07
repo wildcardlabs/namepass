@@ -63,6 +63,9 @@ response. There is no completed-result cache; a correction can revoke prior comp
 | Provider cancellation | One 15-second signal from request admission, combined with caller cancellation |
 | Provider response | One MiB per response; redirect rejection, sequential reads, no retries |
 
+Hosted requests also use the [per-IP and shared regional admission counters](PUBLIC_API_ADMISSION.md).
+Missing hosted rules fail closed. These regional counters are not a globally exact spending cap.
+
 The cancellation signal bounds chain/HTTP work. Database operations retain their own finite
 connection/query timeouts; database reads are not interruptible by that signal. A response cannot
 succeed after cancellation. The per-process admission bound is not a distributed rate limit.
@@ -76,7 +79,8 @@ Invalid input returns 400 before database/RPC work. Unknown indexed transactions
 404 before RPC. Admission saturation returns 429. Maintenance, disabled flags, missing or malformed
 receipts, provider failure, unsupported evidence, changed evidence and exhausted bounds return
 503. All responses use no-store, JSON and browser CORS. Pending/processing, 429 and 503 carry
-`Retry-After: 5`. Provider credentials, error strings and stack traces are not returned or logged.
+`Retry-After: 5`, except distributed quota exhaustion, which returns `429 rate_limited`
+with `Retry-After: 60`. Provider credentials, error strings and stack traces are not returned or logged.
 
 ## Verification and remaining release gates
 
@@ -109,8 +113,9 @@ Fresh current-ENS hosted route verification now includes all four source routes,
 one newly registered Sepolia watch, and native/ERC-20 Arc pooled funding with the
 same renewal identifier. Exact evidence and remaining gates are in
 [DEPLOYMENTS.md](DEPLOYMENTS.md#fresh-browser-signed-route-checks-and-native-arc-indexing--2026-10-06).
-The bounded polling probe does not establish sustained hosted capacity or distributed
-abuse controls. Activation-boundary and restart recovery, live same-transaction
+The bounded polling probe does not establish sustained hosted capacity. The
+[protected admission checks](PUBLIC_API_ADMISSION.md) now verify per-IP and shared
+regional counters; production public flags remain off. Activation-boundary and restart recovery, live same-transaction
 multi-deposit funding and split processing remain unproven. The earlier local delayed
 sample was close to the 15-second provider deadline; larger or slower cases may
 truthfully return 503. Public exposure controls, polling cost and the remaining

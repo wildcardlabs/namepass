@@ -1,6 +1,7 @@
 # Public API admission
 
-Status: prepared for review; hosted rules are not applied. Production API flags remain off.
+Status: merged in PR #141. Eight approved hosted rules were published on October 7,
+2026 and passed protected verification. Production API flags remain off.
 
 The four `/api/v1` adapters use the official `@vercel/firewall` SDK before database,
 activation or chain work. Existing core UI, Goldsky, Workflow, cron and payment
@@ -20,7 +21,7 @@ JSON `429 rate_limited` with `Retry-After: 60`. Both preserve CORS and no-store.
 Each SDK check has a two-second timeout. Existing local concurrency and provider
 budgets remain. Disabled endpoints and OPTIONS do not consume these counters.
 
-## Proposed testnet pilot limits
+## Testnet pilot limits
 
 Each counter uses a fixed 60-second window. These are initial pilot limits, not a
 measured public capacity promise.
@@ -32,7 +33,7 @@ measured public capacity promise.
 | Status | 12 | 24 |
 | History | 6 | 12 |
 
-The [eight proposed rules](deployments/2026-10-06/public-api-admission-rules.json)
+The [eight published rules](deployments/2026-10-06/public-api-admission-rules.json)
 use fresh `namepass-v1-*` IDs and the SDK's generated key. They do not reuse the
 abandoned integration rules. The shared key is chosen by the server, not callers.
 Vercel counts rate limits per region. These counters are not a globally exact
@@ -42,7 +43,22 @@ and [platform request headers](https://vercel.com/docs/headers/request-headers).
 
 ## Hosted verification before release
 
-Publishing firewall rules requires separate approval. Review the current firewall
+The [October 7 receipt](deployments/2026-10-07/public-api-admission-verification.json)
+records firewall version 7, preserved existing rules, 46 protected HTTP checks,
+eight live SDK counter checks and 21 production smoke checks. Hosted status/history
+throttled after 12/6 requests, resisted forged IP headers, preserved JSON/CORS/retry
+headers and recovered after the window. All five fresh payments remained complete;
+history agreed on exact renewal identity, duration and expiry. Anonymous requests
+remained blocked and staging data/reader permissions stayed unchanged.
+
+Shared-budget exhaustion was tested through the actual SDK against the live
+provider from a local runner. The primary HTTP regression covers adapters stopping
+on that result; this is not a multi-IP hosted traffic test. Address and quote stayed
+disabled during this read-only preview check. Measured positive CLI elapsed times
+were 2.8–10.5 seconds including CLI startup. These checks do not establish sustained
+capacity or close the remaining payment/watch recovery release gates.
+
+Future firewall changes require separate approval. Review the current firewall
 version and any pending draft first. Preserve existing rules and avoid publishing
 unrelated draft changes. Configure the new guard only on a protected API preview
 with the isolated SELECT-only database, existing RPC settings and automation

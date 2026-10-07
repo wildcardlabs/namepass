@@ -1,9 +1,707 @@
 {
-  "status": "verification_in_progress",
+  "status": "passed_protected_verification_production_apis_disabled",
+  "observedAt": "2026-10-07T10:15:48.962Z",
   "gitBranch": "codex/public-api-enforcement-verification",
   "baseCommit": "1b422fc51895dffb28616a512a99f7b9bb2ba80c",
-  "scope": "Protected preview enforcement tests authorized by the user; production public API flags stay off.",
-  "database": "Existing isolated api-staging SELECT-only reader",
-  "signingCredentials": false,
-  "productionEnablementAuthorized": false
+  "authorization": "User approved eight fresh rules and protected enforcement tests. User merged PRs #140/#141 separately.",
+  "deployment": {
+    "id": "dpl_mzxKqsJ18X4pSEE8QKzDJG3Bits1",
+    "url": "namepass-v2-j7m4xvltl-wildcard-labs.vercel.app",
+    "readyState": "READY",
+    "target": "preview",
+    "commit": "f323acad77058774cacae5ee862b08ca3b995f50",
+    "gitBranch": "codex/public-api-enforcement-verification"
+  },
+  "scopeChange": "GitHub deleted the merged PR #141 branch. A fresh branch from main holds only this evidence. Existing read-only environment entries moved from the completed canary branch; values and types preserved.",
+  "configuration": {
+    "observedAt": "2026-10-07T10:07:47.017Z",
+    "from": "codex/ens-october-api-canary",
+    "to": "codex/public-api-enforcement-verification",
+    "variables": [
+      "NAMEPASS_PUBLIC_LIMITS_ENABLED",
+      "NAMEPASS_PUBLIC_HISTORY_ENABLED",
+      "NAMEPASS_PUBLIC_STATUS_ENABLED",
+      "ARC_TESTNET_RPC_URL",
+      "ARBITRUM_SEPOLIA_RPC_URL",
+      "BASE_SEPOLIA_RPC_URL",
+      "ETHEREUM_SEPOLIA_RPC_URL",
+      "DATABASE_URL"
+    ],
+    "secretValuesAndTypesPreserved": true,
+    "branchOnlyPreview": true,
+    "signingCredentials": false,
+    "productionApiFlags": 0
+  },
+  "firewall": {
+    "observedAt": "2026-10-07T10:11:05.337Z",
+    "projectId": "prj_CoorV6FFHJktolSYkOEtTEFrnb1X",
+    "previousVersion": 6,
+    "publishedVersion": 7,
+    "totalRules": 14,
+    "manifestBeforeApplicationSha256": "070b5cc547be151417d5cb7bc4c6b980a3ea6527b010e1472ec99320e7dea797",
+    "newRules": [
+      {
+        "id": "rule_namepass_v1_address_ip_USCCAT",
+        "name": "namepass-v1-address-ip",
+        "requestsPer60Seconds": 6,
+        "active": true
+      },
+      {
+        "id": "rule_namepass_v1_address_budget_sJAMYq",
+        "name": "namepass-v1-address-budget",
+        "requestsPer60Seconds": 12,
+        "active": true
+      },
+      {
+        "id": "rule_namepass_v1_quote_ip_PI0lVc",
+        "name": "namepass-v1-quote-ip",
+        "requestsPer60Seconds": 30,
+        "active": true
+      },
+      {
+        "id": "rule_namepass_v1_quote_budget_rynVnK",
+        "name": "namepass-v1-quote-budget",
+        "requestsPer60Seconds": 60,
+        "active": true
+      },
+      {
+        "id": "rule_namepass_v1_status_ip_Qo8tIF",
+        "name": "namepass-v1-status-ip",
+        "requestsPer60Seconds": 12,
+        "active": true
+      },
+      {
+        "id": "rule_namepass_v1_status_budget_1aaFZL",
+        "name": "namepass-v1-status-budget",
+        "requestsPer60Seconds": 24,
+        "active": true
+      },
+      {
+        "id": "rule_namepass_v1_history_ip_bQ52i8",
+        "name": "namepass-v1-history-ip",
+        "requestsPer60Seconds": 6,
+        "active": true
+      },
+      {
+        "id": "rule_namepass_v1_history_budget_SLlYQ4",
+        "name": "namepass-v1-history-budget",
+        "requestsPer60Seconds": 12,
+        "active": true
+      }
+    ],
+    "algorithm": "fixed_window",
+    "key": "header:x-vercel-rate-limit-key",
+    "existingRulesPreserved": true,
+    "protectionAndOtherSettingsPreserved": true,
+    "noUnrelatedDraftPublished": true
+  },
+  "missingRuleFailure": {
+    "observedAt": "2026-10-07T10:10:12.777Z",
+    "firewallVersion": 6,
+    "expectedIdsPresent": 0,
+    "results": [
+      {
+        "path": "/api/v1/quote",
+        "method": "POST",
+        "status": 503,
+        "cliElapsedMs": 2581,
+        "error": "api_unavailable",
+        "bodySha256": "85d4a13ffa8f90351b34cd0ba988b13ca778c169a9e621656b905312a8c74ff4"
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "status": 503,
+        "cliElapsedMs": 2474,
+        "error": "api_unavailable",
+        "bodySha256": "d928f74fa3e2b73337f4f74b40082caada0b7d2aaeb8a09e50a887aec2e726c6"
+      },
+      {
+        "path": "/api/v1/status/11155111?transactionHash=0x123",
+        "method": "GET",
+        "status": 503,
+        "cliElapsedMs": 1944,
+        "error": "rate_limit_unavailable",
+        "bodySha256": "32193fe00351332194255bafd74b5e13a74362238263fe1ba4972668b6562a5e"
+      },
+      {
+        "path": "/api/v1/names/farcaster.eth/renewals",
+        "method": "GET",
+        "status": 503,
+        "cliElapsedMs": 1818,
+        "error": "rate_limit_unavailable",
+        "bodySha256": "af4fa0d422c25089731e66d685fbd1e7033ab9d5137988d52aff91ba73f142c1"
+      },
+      {
+        "path": "/api/v1/status/11155111",
+        "method": "OPTIONS",
+        "status": 204,
+        "cliElapsedMs": 1740,
+        "error": null
+      },
+      {
+        "path": "/api/activity?limit=2",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 2154,
+        "error": null,
+        "bodySha256": "7e41e327a785a5d5eee1ccc086b2eea145feeaa864e67d4fed22eee25eea9512",
+        "historyCount": 2
+      }
+    ]
+  },
+  "hostedPerIpLimits": {
+    "observedAt": "2026-10-07T10:12:06.509Z",
+    "claims": [
+      "Status admitted 12 invalid-input requests; request 13 returned 429.",
+      "History admitted 6 invalid-input requests; request 7 returned 429.",
+      "Forged x-real-ip, x-forwarded-for and caller rate-limit keys did not reset either bucket.",
+      "Invalid inputs exercise admission without database/RPC reads. OPTIONS and disabled endpoints bypass counters."
+    ],
+    "status": {
+      "requestPath": "/api/v1/status/11155111?transactionHash=bad",
+      "outcomes": [
+        400,
+        400,
+        400,
+        400,
+        400,
+        400,
+        400,
+        400,
+        400,
+        400,
+        400,
+        400,
+        429,
+        429,
+        204
+      ],
+      "errorCodes": [
+        "invalid_transaction",
+        "invalid_transaction",
+        "invalid_transaction",
+        "invalid_transaction",
+        "invalid_transaction",
+        "invalid_transaction",
+        "invalid_transaction",
+        "invalid_transaction",
+        "invalid_transaction",
+        "invalid_transaction",
+        "invalid_transaction",
+        "invalid_transaction",
+        "rate_limited",
+        "rate_limited",
+        null
+      ],
+      "lastRequestAttemptedSpoofHeaders": [
+        "x-real-ip",
+        "x-forwarded-for",
+        "x-vercel-rate-limit-key"
+      ],
+      "quotaResponseHeaders": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "Retry-After",
+        "retry-after": "60",
+        "x-vercel-id": "lhr1::iad1::mww4g-1791367923871-464d085614ea"
+      },
+      "elapsedRangeMs": [
+        133,
+        433
+      ]
+    },
+    "history": {
+      "requestPath": "/api/v1/names/farcaster.eth/renewals?limit=0",
+      "outcomes": [
+        400,
+        400,
+        400,
+        400,
+        400,
+        400,
+        429,
+        429
+      ],
+      "errorCodes": [
+        "invalid_pagination",
+        "invalid_pagination",
+        "invalid_pagination",
+        "invalid_pagination",
+        "invalid_pagination",
+        "invalid_pagination",
+        "rate_limited",
+        "rate_limited"
+      ],
+      "lastRequestAttemptedSpoofHeaders": [
+        "x-real-ip",
+        "x-forwarded-for",
+        "x-vercel-rate-limit-key"
+      ],
+      "quotaResponseHeaders": {
+        "cache-control": "no-store",
+        "content-type": "application/json; charset=utf-8",
+        "access-control-allow-origin": "*",
+        "access-control-expose-headers": "Retry-After",
+        "retry-after": "60",
+        "x-vercel-id": "lhr1::iad1::8gdzr-1791367925609-bc4f31d6a4ad"
+      },
+      "elapsedRangeMs": [
+        145,
+        588
+      ]
+    },
+    "nonCountedRoutes": [
+      {
+        "path": "/api/v1/status/11155111",
+        "method": "OPTIONS",
+        "status": 204,
+        "elapsedMs": 133,
+        "error": null
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "status": 503,
+        "elapsedMs": 128,
+        "error": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "POST",
+        "status": 503,
+        "elapsedMs": 132,
+        "error": "api_unavailable"
+      },
+      {
+        "path": "/api/activity?limit=2",
+        "method": "GET",
+        "status": 200,
+        "elapsedMs": 221,
+        "error": null,
+        "items": 2
+      }
+    ]
+  },
+  "recovery": {
+    "observedAt": "2026-10-07T10:13:37.734Z",
+    "results": [
+      {
+        "path": "/api/v1/status/11155111?transactionHash=bad",
+        "method": "GET",
+        "status": 400,
+        "elapsedMs": 304,
+        "error": "invalid_transaction"
+      },
+      {
+        "path": "/api/v1/names/farcaster.eth/renewals?limit=0",
+        "method": "GET",
+        "status": 400,
+        "elapsedMs": 201,
+        "error": "invalid_pagination"
+      }
+    ]
+  },
+  "liveSdkCounterChecks": {
+    "observedAt": "2026-10-07T10:13:05.619Z",
+    "scope": "Eight live rule counters, including shared regional budgets. Local runner region may differ from hosted adapters. Address/quote adapters stay disabled.",
+    "results": [
+      {
+        "rule": "namepass-v1-history-ip",
+        "limit": 6,
+        "allowed": 6,
+        "nextRequestLimited": true,
+        "elapsedMs": 419,
+        "keyKind": "isolated verification key"
+      },
+      {
+        "rule": "namepass-v1-address-budget",
+        "limit": 12,
+        "allowed": 12,
+        "nextRequestLimited": true,
+        "elapsedMs": 811,
+        "keyKind": "server-selected all-callers"
+      },
+      {
+        "rule": "namepass-v1-status-ip",
+        "limit": 12,
+        "allowed": 12,
+        "nextRequestLimited": true,
+        "elapsedMs": 875,
+        "keyKind": "isolated verification key"
+      },
+      {
+        "rule": "namepass-v1-address-ip",
+        "limit": 6,
+        "allowed": 6,
+        "nextRequestLimited": true,
+        "elapsedMs": 1149,
+        "keyKind": "isolated verification key"
+      },
+      {
+        "rule": "namepass-v1-status-budget",
+        "limit": 24,
+        "allowed": 24,
+        "nextRequestLimited": true,
+        "elapsedMs": 1202,
+        "keyKind": "server-selected all-callers"
+      },
+      {
+        "rule": "namepass-v1-history-budget",
+        "limit": 12,
+        "allowed": 12,
+        "nextRequestLimited": true,
+        "elapsedMs": 1550,
+        "keyKind": "server-selected all-callers"
+      },
+      {
+        "rule": "namepass-v1-quote-ip",
+        "limit": 30,
+        "allowed": 30,
+        "nextRequestLimited": true,
+        "elapsedMs": 1809,
+        "keyKind": "isolated verification key"
+      },
+      {
+        "rule": "namepass-v1-quote-budget",
+        "limit": 60,
+        "allowed": 60,
+        "nextRequestLimited": true,
+        "elapsedMs": 6667,
+        "keyKind": "server-selected all-callers"
+      }
+    ],
+    "failures": []
+  },
+  "positiveReads": {
+    "observedAt": "2026-10-07T10:14:23.539Z",
+    "results": [
+      {
+        "path": "/api/v1/status/421614?transactionHash=0x619941b8f5e5f16f8aef54da5e51c40b6c787b833376730516a3d0c5ffc08fa4",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 7163,
+        "error": null,
+        "state": "complete",
+        "bodySha256": "6b7e0dcc7cbc585fe39640b047d8badfb5a882be8b7db5771187af71514baaee",
+        "deposits": [
+          {
+            "name": "farcaster.eth",
+            "amount": "500000",
+            "logIndex": 2,
+            "renewalIds": [
+              "11155111:0xc1f57ee3c12aa0f1f79871d45e8ec33b778bf6bd93132a2ae7cec9d9725db848:153"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/api/v1/status/11155111?transactionHash=0x6f6f6cdece762801f47ce372477cef9aa93c1c65da3105bf39266b42a84b6caa",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 3069,
+        "error": null,
+        "state": "complete",
+        "bodySha256": "333cb3540ef6fc6a0ccf9e23d53ca91e940aed2bd1429262b31f53ab764713d8",
+        "deposits": [
+          {
+            "name": "stressfully.eth",
+            "amount": "500000",
+            "logIndex": 128,
+            "renewalIds": [
+              "11155111:0xc3190a0f4762f2a51ebe3842fdfb3ae8664a06d04f66bb8a9b65d8a7eca30941:211"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/api/v1/status/84532?transactionHash=0x2d9912686f8e34879f2431e4cd5f7abf39069c2d4ae52397a34eb2f0a9e8e2da",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 4810,
+        "error": null,
+        "state": "complete",
+        "bodySha256": "c67f7912158f797b2c685c95d1f59b2cdb1731cef7c3ee4d2b4b279f95ecced8",
+        "deposits": [
+          {
+            "name": "farcaster.eth",
+            "amount": "500000",
+            "logIndex": 82,
+            "renewalIds": [
+              "11155111:0xaec2a7a4263b8916152373c32bd62570725383b9b7f732dbc847d5457076a165:210"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/api/v1/status/5042002?transactionHash=0x83be711fb69f2bd185a5a418177438a43827d99c5f53b8df6bfc2a9936f2d562",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 10459,
+        "error": null,
+        "state": "complete",
+        "bodySha256": "73aff6e4ae3d70e52d4f81e9b99ddaebb869f878dc48854233c439d7d8cd9513",
+        "deposits": [
+          {
+            "name": "farcaster.eth",
+            "amount": "500000",
+            "logIndex": null,
+            "renewalIds": [
+              "11155111:0x1bfa297b38976164a993d2348a70e8eec9993bd8101a34578c3b5fcda75ba488:153"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/api/v1/status/5042002?transactionHash=0xda879b0c016ae06986c5d3833d8b931ea0f80a2b4037f5ff329345be201a1203",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 5324,
+        "error": null,
+        "state": "complete",
+        "bodySha256": "eda12873d4dadbbe77d9ab7bcbe7a10b8757ff0c9a4520dcf069b399bcbab84f",
+        "deposits": [
+          {
+            "name": "farcaster.eth",
+            "amount": "500000",
+            "logIndex": 1,
+            "renewalIds": [
+              "11155111:0x1bfa297b38976164a993d2348a70e8eec9993bd8101a34578c3b5fcda75ba488:153"
+            ]
+          }
+        ]
+      },
+      {
+        "path": "/api/v1/names/farcaster.eth/renewals?limit=10",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 5891,
+        "error": null,
+        "bodySha256": "0b58e8180aa4414373e78a08778a539014f477f76668482852e073e4e257f7a4",
+        "historyCount": 4,
+        "expiryUpdatedAt": null
+      },
+      {
+        "path": "/api/v1/names/stressfully.eth/renewals?limit=10",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 2810,
+        "error": null,
+        "bodySha256": "e04e5fd03bb60ba00f770dade891ddab9be45a3f54b9edd13fe2ff9413e94815",
+        "historyCount": 1,
+        "expiryUpdatedAt": null
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "POST",
+        "status": 503,
+        "cliElapsedMs": 1956,
+        "error": "api_unavailable",
+        "bodySha256": "a4884163b9890a9083e69504703ac62659a919e8d654e23525a698c7a9f41c2b"
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "status": 503,
+        "cliElapsedMs": 1920,
+        "error": "api_unavailable",
+        "bodySha256": "a21ee05fe8e4ad01d291e7dde21b68d125d8372536db4649cb3a88cbc0222cef"
+      },
+      {
+        "path": "/api/activity?limit=2",
+        "method": "GET",
+        "status": 200,
+        "cliElapsedMs": 2294,
+        "error": null,
+        "bodySha256": "7e41e327a785a5d5eee1ccc086b2eea145feeaa864e67d4fed22eee25eea9512",
+        "historyCount": 2
+      }
+    ],
+    "sharedArcRenewalId": "11155111:0x1bfa297b38976164a993d2348a70e8eec9993bd8101a34578c3b5fcda75ba488:153",
+    "openApiValidationPassed": true,
+    "exactRenewalIdsDurationsExpiriesAgreeWithHistory": true
+  },
+  "protection": {
+    "observedAt": "2026-10-07T10:12:04.970Z",
+    "anonymousBlocked": true,
+    "rows": [
+      {
+        "method": "GET",
+        "status": 302,
+        "redirectHost": "vercel.com"
+      },
+      {
+        "method": "POST",
+        "status": 302,
+        "redirectHost": "vercel.com"
+      }
+    ],
+    "protectionChanged": false,
+    "settingsChanged": false
+  },
+  "staging": {
+    "observedAt": "2026-10-07T10:14:46.996Z",
+    "stagingBranch": "br-autumn-cherry-av2es7od",
+    "readOnly": true,
+    "counts": {
+      "names": 9,
+      "events": 16,
+      "flows": 5,
+      "deposits": 6,
+      "intents": 0,
+      "watches": 9,
+      "balances": 8
+    },
+    "stagingDataAndReaderSha256": "5c10daedf3ddec12c0d460d476f1a41a7c5e65ec7c03209e819676fa06b5573a",
+    "copiedFieldsUnchanged": true,
+    "intentsCreated": 0,
+    "flowsStarted": 0
+  },
+  "production": {
+    "deployment": {
+      "id": "dpl_4w1dhusNEfZjUEqdS95MEeFurErq",
+      "url": "namepass-v2-lbusolfqh-wildcard-labs.vercel.app",
+      "readyState": "READY",
+      "target": "production",
+      "commit": "1b422fc51895dffb28616a512a99f7b9bb2ba80c",
+      "aliases": [
+        "beta.namepass.com",
+        "demo-five-gray-37.vercel.app",
+        "namepass-v2-wildcard-labs.vercel.app",
+        "namepass-v2-git-main-wildcard-labs.vercel.app"
+      ]
+    },
+    "smoke": {
+      "observedAt": "2026-10-07T10:13:28.250Z",
+      "rows": [
+        {
+          "path": "/api/activity?limit=10",
+          "method": "GET",
+          "status": 200,
+          "items": 5
+        },
+        {
+          "path": "/api/names/steve.eth/activity?limit=2",
+          "method": "GET",
+          "status": 200
+        },
+        {
+          "path": "/api/stats",
+          "method": "GET",
+          "status": 200
+        },
+        {
+          "path": "/api/config/public",
+          "method": "GET",
+          "status": 200
+        },
+        {
+          "path": "/api/v1/quote",
+          "method": "POST",
+          "status": 503,
+          "errorCode": "api_unavailable"
+        },
+        {
+          "path": "/api/v1/address",
+          "method": "POST",
+          "status": 503,
+          "errorCode": "api_unavailable"
+        },
+        {
+          "path": "/api/v1/address",
+          "method": "OPTIONS",
+          "status": 204
+        },
+        {
+          "path": "/api/v1/quote",
+          "method": "OPTIONS",
+          "status": 204
+        },
+        {
+          "path": "/api/v1/status/11155111?transactionHash=0x123",
+          "method": "GET",
+          "status": 503,
+          "errorCode": "api_unavailable"
+        },
+        {
+          "path": "/api/v1/status/11155111",
+          "method": "OPTIONS",
+          "status": 204
+        },
+        {
+          "path": "/api/v1/status/11155111",
+          "method": "POST",
+          "status": 405,
+          "errorCode": "method_not_allowed"
+        },
+        {
+          "path": "/api/v1/status/11155111/unknown",
+          "method": "GET",
+          "status": 404,
+          "errorCode": "api_not_found"
+        },
+        {
+          "path": "/api/v1/names/steve.eth/renewals",
+          "method": "GET",
+          "status": 503,
+          "errorCode": "api_unavailable"
+        },
+        {
+          "path": "/api/v1/names/steve.eth/renewals",
+          "method": "OPTIONS",
+          "status": 204
+        },
+        {
+          "path": "/api/v1/names/steve.eth/renewals",
+          "method": "POST",
+          "status": 405,
+          "errorCode": "method_not_allowed"
+        },
+        {
+          "path": "/",
+          "status": 200
+        },
+        {
+          "path": "/docs",
+          "status": 200
+        },
+        {
+          "path": "/docs/reference",
+          "status": 200
+        },
+        {
+          "path": "/terms",
+          "status": 200
+        },
+        {
+          "path": "/openapi.json",
+          "status": 200
+        },
+        {
+          "host": "demo-five-gray-37.vercel.app",
+          "path": "/api/activity?limit=2",
+          "status": 200,
+          "populated": true
+        }
+      ]
+    },
+    "publicApiFlagsPresent": 0,
+    "settingsUnchanged": true
+  },
+  "limitations": [
+    "Fixed 60-second windows and regional counters are not a globally exact spending or request cap.",
+    "The SDK counter checks run locally against the live protected provider; shared-budget exhaustion at hosted adapter boundaries is covered by the existing HTTP regression, not multi-IP hosted traffic.",
+    "Address and quote adapters remained disabled during this read-only preview test. Their counters were exercised directly through the SDK.",
+    "Positive canary CLI elapsed times include CLI startup and do not establish sustained public provider capacity.",
+    "Activation-boundary/restart recovery and live same-transaction multi-deposit/split cases remain release gates.",
+    "No production enablement, hosted data writes, schema, pipeline, workflow or signing changes."
+  ],
+  "responseAssertions": {
+    "allApiResponses": "JSON when nonempty; no-store; CORS *",
+    "quotaResponses": "rate_limited; Retry-After 60; exposed Retry-After header",
+    "missingRules": "rate_limit_unavailable; Retry-After 5",
+    "methods": "OPTIONS 204; disabled address/quote 503 api_unavailable",
+    "bodySha256Encoding": "JSON.stringify parsed body with insertion order, UTF-8"
+  }
 }
