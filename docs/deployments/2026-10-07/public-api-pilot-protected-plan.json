@@ -1,0 +1,90 @@
+{
+  "date": "2026-10-07",
+  "authorization": "Pending separate approval for the merge and hosted staging/configuration changes.",
+  "pullRequest": "https://github.com/wildcardlabs/namepass/pull/145",
+  "operation": "Final protected four-endpoint testnet-pilot verification; production endpoints stay disabled.",
+  "merge": {
+    "after": "Current PR checks pass; release receipts and pilot evidence limits are committed."
+  },
+  "staging": {
+    "project": "nameless-paper-91018372",
+    "branch": "br-autumn-cherry-av2es7od",
+    "name": "brantly.eth",
+    "transactionHash": "0x19547d7c473359902e13475df6b2a7f88df965d6b2ff914d7e73d6a9927f5629",
+    "depositAddress": "0xbb23c9991e390722533b41137A8A91Ae055383Df",
+    "sourceAmountUnits": "500000",
+    "insertOnlyProjectionCounts": {
+      "names": 1,
+      "watches": 1,
+      "deposits": 1,
+      "events": 3,
+      "flows": 1
+    },
+    "copyPrerequisites": [
+      "The read-only current status/history audit returns verified complete with exact matching event identity, duration and expiry.",
+      "The production flow is settled and the three event projections are canonical.",
+      "Prepare a checksum-pinned fixture; rehearse and roll back the exact inserts before applying.",
+      "Existing staging records and SELECT-only reader privileges remain intact."
+    ],
+    "excluded": [
+      "Raw payloads",
+      "Workflow ownership",
+      "Transaction intents",
+      "Signing credentials",
+      "CCTP message/attestation bodies"
+    ],
+    "addressWriteScope": "Repeated activation of the copied brantly name only; normal name/expiry/watch, four chain balance snapshots and scan metadata may update in this isolated database. No other name is activated.",
+    "paymentWork": "Verify all four wallet balances are below the trigger minimum before address probes; no funding, signer or recovery/workflow execution is authorized."
+  },
+  "preview": {
+    "gitBranch": "codex/api-recovery-verification",
+    "protection": "Existing Vercel deployment protection; no public custom domain or new bypass credential.",
+    "moveExistingScopeFrom": "codex/api-same-transaction-replay",
+    "preserveExistingValuesExceptDatabaseRole": true,
+    "existingVariables": [
+      "DATABASE_URL",
+      "ETHEREUM_SEPOLIA_RPC_URL",
+      "BASE_SEPOLIA_RPC_URL",
+      "ARBITRUM_SEPOLIA_RPC_URL",
+      "ARC_TESTNET_RPC_URL",
+      "NAMEPASS_PUBLIC_STATUS_ENABLED",
+      "NAMEPASS_PUBLIC_HISTORY_ENABLED",
+      "NAMEPASS_PUBLIC_LIMITS_ENABLED"
+    ],
+    "database": "Existing api-staging writer role for address activation. Status/history adapters still enforce read-only connection options and transactions. This changes only the protected preview database setting.",
+    "additionalFlags": {
+      "NAMEPASS_PUBLIC_ADDRESS_ENABLED": "1",
+      "NAMEPASS_PUBLIC_QUOTE_ENABLED": "1"
+    },
+    "noSigningCredentials": true,
+    "noCronOrGoldskyChanges": true,
+    "noFirewallRuleChanges": true
+  },
+  "boundedHostedChecks": {
+    "maximumRequests": 60,
+    "maximumDurationMinutes": 10,
+    "maximumConcurrentPositiveReads": 2,
+    "cases": [
+      "Quote on the current ENS helper with exact allowance and zero Standard bridge fee.",
+      "Address identity and supported funding chains; two repeated/concurrent activations remain one name with no payment work.",
+      "New Base activation payment returns complete; history agrees on exact renewal identity, duration and expiry.",
+      "Previously verified same-transaction and native/ERC20 Arc pooled canaries remain complete.",
+      "JSON/OpenAPI, CORS, no-store, retry headers, validation, methods and admission checks.",
+      "Anonymous preview access stays blocked.",
+      "Existing staging rows/reader privileges are preserved except the declared brantly activation metadata.",
+      "Core activity remains populated and all production public API flags remain disabled."
+    ],
+    "reuse": "Existing eight hosted quota checks and twenty bounded polling checks are retained; no multi-IP stress test or global capacity claim."
+  },
+  "pilotEvidenceDecision": {
+    "approvedByUser": true,
+    "decision": "Use deployed-contract split fork and real-PostgreSQL recovery evidence for the testnet pilot.",
+    "limits": [
+      "Live split CCTP/API settlement remains untested.",
+      "Forced hosted restart remains untested.",
+      "Regional limits and a bounded polling sample do not establish global sustained capacity."
+    ]
+  },
+  "publicEnablement": "Not authorized by this plan. A separate reviewed production flag change and post-deploy smoke check remain required.",
+  "applyAuthorized": false
+}

@@ -277,6 +277,33 @@ and the local build passed. The
 records the scope and limits. Live activation/recovery, live split completion and
 the public capacity/enablement decision remain open.
 
+The user then activated and funded `brantly.eth`. The watch committed at
+16:01:41.193 UTC. The wallet signature request followed the activation response
+by 11 ms, and the source transfer entered Base block `47810310` at 16:01:48 UTC.
+The existing source and filtered streams both delivered the exact 500000-unit
+credit, log 92. Production indexed it and created one automatic flow; the
+factory processed all funds with zero remainder. Attestation and finalized API
+completion remain pending. The
+[activation receipt](deployments/2026-10-07/public-api-activation-boundary.json)
+records the timing, canonical identities and current verification state.
+
+Five protected polling rounds, 45 seconds apart, passed twenty HTTP checks:
+ten status reads in concurrent pairs, five history reads and five populated
+activity reads. Exact two-deposit and shared-renewal results remained stable.
+API CLI latency was 2.5–5.1 seconds. Anonymous access stayed protected; the
+staging fingerprint and SELECT-only privileges were unchanged before and after.
+The [polling receipt](deployments/2026-10-07/public-api-protected-polling.json)
+records each check. This is bounded polling from one CLI source, not multi-IP
+or globally sustained capacity evidence. Required CI for verification commit
+`2e542ec` passed, including all 27 PostgreSQL-backed transaction tests.
+
+The user accepted the deployed split-fork and SQL recovery evidence for the
+testnet pilot. Live split settlement and forced hosted restart remain untested.
+The [final protected plan](deployments/2026-10-07/public-api-pilot-protected-plan.json)
+limits the remaining verification to the four existing adapters and isolated
+staging. Its merge, data copy and preview settings await separate authorization;
+it does not authorize production enablement.
+
 ## Current release — 2026-09-22
 
 The replacement contracts and hosted testnet services are deployed. The application uses the

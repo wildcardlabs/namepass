@@ -115,8 +115,14 @@ same renewal identifier. Exact evidence and remaining gates are in
 [DEPLOYMENTS.md](DEPLOYMENTS.md#fresh-browser-signed-route-checks-and-native-arc-indexing--2026-10-06).
 The bounded polling probe does not establish sustained hosted capacity. The
 [protected admission checks](PUBLIC_API_ADMISSION.md) now verify per-IP and shared
-regional counters; production public flags remain off. Activation-boundary and restart recovery, live same-transaction
-multi-deposit funding and split processing remain unproven. The earlier local delayed
+regional counters; production public flags remain off. The user-signed same-transaction
+two-deposit payment also passed protected hosted replay with one shared renewal identifier;
+see the [October 7 receipt](deployments/2026-10-07/public-api-same-transaction-hosted.json).
+The user accepted deployed split-fork and real-PostgreSQL recovery evidence for a
+limited testnet pilot, with live split settlement and forced hosted restart explicitly
+untested. Final protected pilot verification and the public-enable decision remain;
+see the [current plan](PUBLIC_API_PLAN.md#current-ens-baseline-after-the-october-reset).
+The earlier local delayed
 sample was close to the 15-second provider deadline; larger or slower cases may
 truthfully return 503. Public exposure controls, polling cost and the remaining
 end-to-end gates in the [rollout plan](PUBLIC_API_PLAN.md) must pass before enablement.
