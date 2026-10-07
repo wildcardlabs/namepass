@@ -243,6 +243,40 @@ and SELECT-only reader privileges remained unchanged. The [hosted replay receipt
 records the responses and preserved staging fingerprint. Address/quote stay off;
 production settings stay unchanged. No new payment was needed.
 
+PR #144 merged as `651125b4f5361b99e9893c32ac20797908a0fe7e`.
+Production deployment `dpl_7A53FMAEXGcibVSBDxo7boo8p4wK` is READY at that
+commit. Required CI and 23 production smoke checks passed. Activity still exposes
+both source deposits. The four public API flags remain off. The
+[release receipt](deployments/2026-10-07/public-api-same-transaction-release.json)
+records the deployed commit and checks.
+
+## Recovery and activation-boundary verification — 2026-10-07
+
+The local PostgreSQL 18 transaction suite passed 27 tests without skips. The new
+recovery case uses actual SQL claims and advisory leases. Concurrent recovery is
+excluded, failed scheduling can retry the same flow, stale start markers and
+completed owners can be reclaimed, and active owners remain intact. Only the
+external Workflow control API is stubbed. This does not prove a hosted Workflow
+restart. No transaction intent or network/signing call was created by this test.
+
+A fixed Base Sepolia fork at block `47803956` exercised the deployed factory and
+Circle contracts. The current per-message burn limit is 10,000,000 USDC. A locally
+seeded balance above that limit produced two exact processing events, preserved
+the remainder after the first burn, then drained it on the second. Supply and
+allowance checks passed. No transaction was broadcast. This is deployed-contract
+split evidence, not live CCTP settlement or API completion evidence.
+
+The temporary localhost wallet page prepares one 0.50-testnet-USDC Base Sepolia
+payment for a newly watched `brantly.eth`. Read-only browser checks confirmed
+renewability, the current ENS helper and factory address prediction. The page
+journals activation before requesting the user's transfer signature. A bounded
+read-only inspection of the existing pipeline must be active before funding.
+Activation and funding await the user. Tool type checks, two receipt-guard tests
+and the local build passed. The
+[local verification receipt](deployments/2026-10-07/public-api-recovery-local.json)
+records the scope and limits. Live activation/recovery, live split completion and
+the public capacity/enablement decision remain open.
+
 ## Current release — 2026-09-22
 
 The replacement contracts and hosted testnet services are deployed. The application uses the

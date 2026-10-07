@@ -66,6 +66,8 @@ jobs:
         run: |
           npx tsc --noEmit -p tools/payment-canary/tsconfig.json
           node --import tsx --test tools/payment-canary/batch.test.ts
+          npx tsc --noEmit -p tools/activation-canary/tsconfig.json
+          node --import tsx --test tools/activation-canary/receipt.test.ts
 
       - name: Test the server
         run: npm run test:server
@@ -77,6 +79,8 @@ jobs:
 
       - name: Test transaction polling and workflow composition
         run: npm run test:transactions
+        env:
+          TEST_DATABASE_URL: postgresql://postgres:integration-test@127.0.0.1:5432/namepass_test
 
       - name: Test the Workflow runtime
         run: npm run test:workflow

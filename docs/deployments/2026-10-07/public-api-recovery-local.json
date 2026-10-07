@@ -1,0 +1,63 @@
+{
+  "date": "2026-10-07",
+  "baselineCommit": "651125b4f5361b99e9893c32ac20797908a0fe7e",
+  "recovery": {
+    "command": "TEST_DATABASE_URL=<local PostgreSQL 18> npm run test:transactions",
+    "passed": 27,
+    "testFiles": 4,
+    "skipped": 0,
+    "boundary": "Real PostgreSQL claims, ownership, advisory lease and recovery orchestration; external Workflow start/getRun control is stubbed.",
+    "cases": [
+      "unowned queued flow",
+      "stale start marker",
+      "failed scheduling retry",
+      "completed prior owner",
+      "active prior owner",
+      "fresh start marker",
+      "cancelled flow",
+      "concurrent recovery lease"
+    ],
+    "flowIdentityPreserved": true,
+    "unexpectedFetchCalls": 0,
+    "transactionIntentsCreated": 0,
+    "hostedRestartRecoveryVerified": false
+  },
+  "splitProcessing": {
+    "command": "NAMEPASS_BASE_FORK_RPC=https://sepolia.base.org forge test --match-contract SplitProcessingForkTest -vv",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "chainId": 84532,
+    "forkBlock": 47803956,
+    "factory": "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150",
+    "token": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "burnLimitUnits": "10000000000000",
+    "seededForkBalanceUnits": "10000000500000",
+    "firstProcessedUnits": "10000000000000",
+    "firstRemainingUnits": "500000",
+    "secondProcessedUnits": "500000",
+    "secondRemainingUnits": "0",
+    "actualDeployedCircleContracts": true,
+    "broadcastTransactions": 0,
+    "localBalanceSeeded": true,
+    "allowanceAfterEachBurn": "0",
+    "totalSupplyBurnVerified": true,
+    "liveCctpAndApiSplitCompletionVerified": false
+  },
+  "activationCheck": {
+    "name": "brantly.eth",
+    "chainId": 84532,
+    "amountUnits": "500000",
+    "destination": "0xbb23c9991e390722533b41137A8A91Ae055383Df",
+    "walletPage": "tools/activation-canary/",
+    "readonlyBrowserReadinessPassed": true,
+    "userActivationAndSignaturePending": true,
+    "toolTypecheckPassed": true,
+    "receiptGuardTestsPassed": 2,
+    "localBuildPassed": true,
+    "capture": "Bounded read-only inspect of the existing Goldsky pipeline; no new pipeline or sink.",
+    "positiveSampleDoesNotProve": "Zero-delay visibility on all routes, earlier filtered-event recovery or hosted restart recovery."
+  },
+  "productionApiFlagsEnabled": false,
+  "hostedDataOrSchemaChanged": false
+}
