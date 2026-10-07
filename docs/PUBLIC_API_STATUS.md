@@ -1,7 +1,7 @@
 # Transaction status adapter
 
-Date: 2026-10-06. Read-only HTTP adapter merged in PR #135, disabled by default.
-Production boundaries are verified in [DEPLOYMENTS.md](DEPLOYMENTS.md#private-transaction-status-adapter--2026-10-06). Public release gates remain open.
+Date: 2026-10-07. Public testnet pilot enabled; pooled production connection fix in verification.
+Production boundaries are verified in [DEPLOYMENTS.md](DEPLOYMENTS.md#private-transaction-status-adapter--2026-10-06). Current release status is recorded there.
 
 `GET /api/v1/status/{chainId}?transactionHash={hash}` runs the existing source, allocation and
 renewal verifiers inside a bounded request. No client manifest, processing boundary, caller fee,
@@ -54,7 +54,7 @@ response. There is no completed-result cache; a correction can revoke prior comp
 | Bound | Request limit |
 | --- | --- |
 | Database concurrency | Separate attached pool, two connections; two admitted requests per process |
-| Database access | Read-only URL options and explicit repeatable-read READ ONLY transactions, released before RPC |
+| Database access | Read-only startup default and explicit repeatable-read READ ONLY transactions with local timeouts, released before RPC |
 | Database timeouts | Connection 5 seconds, statement 5 seconds, client query 7 seconds, lock 1.5 seconds, idle transaction 10 seconds |
 | Current registry / indexed members | 1,000 registered names, 16 indexed members; overflow fails rather than truncates proof |
 | Source members / wallets | 16 / 8 |

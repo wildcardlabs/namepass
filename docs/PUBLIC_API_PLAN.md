@@ -1,7 +1,7 @@
 # Public API: fresh implementation plan
 
-Date: 2026-10-07. Status: final protected four-endpoint verification passed.
-The user approved completion of the testnet pilot release. Production enablement awaits the reviewed deployment. A private read-only history adapter has passed protected staging;
+Date: 2026-10-07. Status: public testnet pilot enabled; production pooler fix in verification.
+The user approved completion of the testnet pilot release. Production smoke found a pooled-connection incompatibility; its correction and verification are recorded in [DEPLOYMENTS.md](DEPLOYMENTS.md). A private read-only history adapter has passed protected staging;
 its verification limits are in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md).
 A bounded read-only transaction status adapter is implemented behind an off-by-default flag;
 see [status verification and release gates](PUBLIC_API_STATUS.md). Source-receipt enumeration and indexed membership
@@ -20,7 +20,7 @@ remaining gates are recorded below and in [DEPLOYMENTS.md](DEPLOYMENTS.md).
 The source inspector now reports conservative receipt-set closure and rechecked configured-provider
 finality; [policy and limitations](PUBLIC_API_DEPOSIT_EVIDENCE.md) keep these separate from API completion.
 History verifies event-specific ENS expiry from the confirmed canonical receipt. Its deployment is
-described in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md); production remains disabled.
+described in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md); current release status is in [DEPLOYMENTS.md](DEPLOYMENTS.md).
 
 ## Current ENS baseline after the October reset
 
@@ -54,7 +54,7 @@ bounded protected polling checks passed without changing staging data. See
 [current verification](DEPLOYMENTS.md#recovery-and-activation-boundary-verification--2026-10-07).
 The [final protected four-endpoint checks](deployments/2026-10-07/public-api-pilot-protected-hosted.json) passed.
 The user approved all remaining work through release, including production enablement.
-Merge the reviewed change after CI, deploy the five production API/admission flags and verify the live endpoints.
+PR #146 merged and all five production API/admission flags are enabled. Finish the pooled-connection correction after CI and verify the live endpoints.
 
 ## Starting point
 

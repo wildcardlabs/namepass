@@ -1,6 +1,6 @@
 # Private history adapter
 
-Date: 2026-10-05. Event-completion enhancement merged; production remains disabled.
+Date: 2026-10-07. Public testnet pilot enabled; pooled production connection fix in verification.
 
 `GET /api/v1/names/{name}/renewals` reads the existing schema. It never activates a name,
 refreshes ENS state, starts a Workflow or writes payment records. No migration, contract
@@ -81,7 +81,8 @@ return 404; activated names with no candidates return an empty page without RPC.
 This adapter owns a separate two-connection PostgreSQL pool. Connection acquisition has a
 5000 ms timeout, statements 5000 ms, driver queries 7000 ms, locks 1500 ms and idle transactions
 10000 ms. The connection requests read-only defaults and every query group explicitly starts
-a repeatable-read, read-only transaction. It selects existing columns, fetches at most 101
+a repeatable-read, read-only transaction. Statement, lock and idle timeouts are set locally
+after BEGIN so pooled connections accept the startup package. It selects existing columns, fetches at most 101
 candidate rows and releases the database connection before RPC work.
 
 Each process admits two history requests. Each request has at most two verification workers
