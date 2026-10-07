@@ -1,0 +1,96 @@
+{
+  "observedAt": "2026-10-07T16:44:07.947Z",
+  "from": "codex/api-same-transaction-replay",
+  "to": "codex/api-recovery-verification",
+  "mutation": "Existing scope moved; database uses existing api_staging writer; address/quote enabled only on protected preview",
+  "variables": [
+    {
+      "key": "NAMEPASS_PUBLIC_QUOTE_ENABLED",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-recovery-verification"
+    },
+    {
+      "key": "NAMEPASS_PUBLIC_ADDRESS_ENABLED",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-recovery-verification"
+    },
+    {
+      "key": "NAMEPASS_PUBLIC_LIMITS_ENABLED",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-recovery-verification"
+    },
+    {
+      "key": "NAMEPASS_PUBLIC_HISTORY_ENABLED",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-recovery-verification"
+    },
+    {
+      "key": "NAMEPASS_PUBLIC_STATUS_ENABLED",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-recovery-verification"
+    },
+    {
+      "key": "ARC_TESTNET_RPC_URL",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-recovery-verification"
+    },
+    {
+      "key": "ARBITRUM_SEPOLIA_RPC_URL",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-recovery-verification"
+    },
+    {
+      "key": "BASE_SEPOLIA_RPC_URL",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-recovery-verification"
+    },
+    {
+      "key": "ETHEREUM_SEPOLIA_RPC_URL",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-recovery-verification"
+    },
+    {
+      "key": "DATABASE_URL",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-recovery-verification"
+    }
+  ],
+  "productionApiFlags": 0,
+  "databaseRole": "api_staging",
+  "selectOnlyReaderPreserved": true,
+  "signingCredentials": false,
+  "protectionChanged": false,
+  "firewallChanged": false,
+  "productionSettingsChanged": false,
+  "publicCustomDomain": false
+}

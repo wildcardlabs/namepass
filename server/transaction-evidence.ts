@@ -28,6 +28,7 @@ export function joinTransactionEvidence(
 	source: SourceInspection,
 	allocations: AllocationInspection[],
 	renewals: RenewalInspection[],
+	completion: "finalized" | "confirmed" = "finalized",
 ) {
 	const e = source.evidence;
 	if (
@@ -49,7 +50,7 @@ export function joinTransactionEvidence(
 		e.issues.length
 	)
 		reasons.add("source_set_open");
-	if (!source.sourceFinality.providerFinalized)
+	if (completion === "finalized" && !source.sourceFinality.providerFinalized)
 		reasons.add("source_not_finalized");
 	if (e.members.some((m) => m.allocationLogIndex === null))
 		reasons.add("ambiguous_source_allocation_identity");
@@ -184,7 +185,8 @@ export function joinTransactionEvidence(
 						r.cctp?.messageIndex !== c.cctpMessageIndex)
 				)
 					fail();
-				if (!r.providerFinalized) reasons.add("renewal_not_finalized");
+				if (completion === "finalized" && !r.providerFinalized)
+					reasons.add("renewal_not_finalized");
 				addBlock(e.chainId, r.processingBlockNumber, r.processingBlockHash);
 				addBlock(r.chainId, r.renewalBlockNumber, r.renewalBlockHash);
 				for (const b of r.anchors) addBlock(b.chainId, b.number, b.hash);

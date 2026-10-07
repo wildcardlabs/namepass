@@ -366,14 +366,6 @@ async function history(request: Request, signal: AbortSignal) {
 			}),
 		});
 		if ((await client.getChainId()) !== HUB_CHAIN.chainId) throw new Error("Wrong receipt chain.");
-		const finalized = await client.getBlock({ blockTag: "finalized" });
-		if (
-			finalized.number === null ||
-			finalized.number < 0n ||
-			!finalized.hash ||
-			!/^0x[0-9a-fA-F]{64}$/.test(finalized.hash)
-		)
-			throw new Error("Finality evidence is unavailable.");
 		const receipts = new Map<string, Promise<TransactionReceipt>>();
 		const blocks = new Map<string, ReturnType<typeof client.getBlock>>();
 		const receiptFor = (hash: string) => {
@@ -453,14 +445,7 @@ async function history(request: Request, signal: AbortSignal) {
 							row,
 							{ ...ensMetadata, baseRegistrarV1 },
 						);
-						const isFinal = receipt.blockNumber <= finalized.number!;
-						if (
-							isFinal &&
-							(finalized.timestamp < block.timestamp ||
-								(finalized.number === receipt.blockNumber && finalized.hash !== receipt.blockHash))
-						)
-							throw new Error("Finality evidence disagrees with the renewal block.");
-						items[index] = { ...item, expiry, status: isFinal ? "complete" : "processing" };
+						items[index] = { ...item, expiry, status: "complete" };
 					} catch (error) {
 						failed = error;
 					}

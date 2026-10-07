@@ -1,5 +1,14 @@
 # Testnet deployments
 
+## Confirmed renewal completion — 2026-10-07
+
+The user directed removal of the extra API finality wait after ENS renewal. The pending change
+returns `complete` after verifying the confirmed canonical ENS receipt, the full relevant source
+deposit set and every deposit-to-processing relationship. It adds no finality response field.
+History uses the same confirmed-event completion meaning. Private finalized operator evidence
+and Circle bridge processing remain separate. Production public API flags remain disabled.
+The change is not yet merged or deployed.
+
 ## Public design preview — 2026-10-05
 
 `https://alpha.namepass.com` is the stable Preview domain for
@@ -282,8 +291,9 @@ The user then activated and funded `brantly.eth`. The watch committed at
 by 11 ms, and the source transfer entered Base block `47810310` at 16:01:48 UTC.
 The existing source and filtered streams both delivered the exact 500000-unit
 credit, log 92. Production indexed it and created one automatic flow; the
-factory processed all funds with zero remainder. Attestation and finalized API
-completion remain pending. The
+factory processed all funds with zero remainder. The ENS renewal confirmed at
+16:22:36 UTC and added 1,576,795 seconds. The updated local status/history adapters
+verify the same exact renewal ID and expiry, February 7, 2027 at 09:45:55 UTC. The
 [activation receipt](deployments/2026-10-07/public-api-activation-boundary.json)
 records the timing, canonical identities and current verification state.
 
@@ -301,8 +311,24 @@ The user accepted the deployed split-fork and SQL recovery evidence for the
 testnet pilot. Live split settlement and forced hosted restart remain untested.
 The [final protected plan](deployments/2026-10-07/public-api-pilot-protected-plan.json)
 limits the remaining verification to the four existing adapters and isolated
-staging. Its merge, data copy and preview settings await separate authorization;
-it does not authorize production enablement.
+staging. The user approved merging PR #145 and this exact isolated copy/preview scope.
+PR #145 merged as `4cf65fad2abcd27dc163b9d126d631e19c59b082`. Production deployment
+`dpl_61iaPKJBhhKE8arSG26MynUJVmci` is READY at that commit; required CI and all
+23 production smoke checks passed. The [release receipt](deployments/2026-10-07/public-api-recovery-release.json)
+records the checks. The four production public API flags remain disabled. The protected
+checks do not authorize production enablement.
+
+The approved brantly-only staging copy passed rollback rehearsal, then inserted one
+name/watch, one deposit, three canonical events and one settled flow. All prior rows
+and SELECT-only reader permissions were preserved. No payment work or intent was
+created. The [staging copy receipt](deployments/2026-10-07/public-api-pilot-staging-copy.json)
+records the exact fixture checksum and counts.
+
+The ten settings in the [preview scope receipt](deployments/2026-10-07/public-api-pilot-preview-scope.json)
+are scoped only to `codex/api-recovery-verification`. Its database uses the existing
+`api_staging` writer for address checks; status/history still enforce read-only
+connections and transactions. Protection, firewall, signing credentials and production
+settings are unchanged. The new protected deployment and four-endpoint checks are pending.
 
 ## Current release — 2026-09-22
 

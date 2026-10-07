@@ -238,7 +238,7 @@ test("status gate, validation and unknown transaction do not consume provider re
 	assert.equal(rpc.mock.callCount(), 0);
 });
 
-test("status proves the complete recorded renewal and holds a staggered second deposit", async (t) => {
+test("status completes a verified renewal before finality and holds a staggered second deposit", async (t) => {
 	setup(t);
 	const f = await database(t);
 	let additional = false;
@@ -265,11 +265,22 @@ test("status proves the complete recorded renewal and holds a staggered second d
 		],
 		data: toHex(2000000n, { size: 32 }),
 	};
-	const rpc = provider(t, (m, p, v) =>
-		m === "eth_getTransactionReceipt" && p[0] === row.tx_hash && additional
+	// Both source and renewal receipts are ahead of this canonical finality anchor.
+	const sourceBlock = recorded.reads.find(
+		(r: any) => r.method === "eth_getBlockByNumber" && r.params[0] === originalBlock(),
+	).result;
+	const earlier = {
+		number: toHex(BigInt(sourceBlock.number) - 1n),
+		hash: "0x" + "cd".repeat(32),
+		timestamp: toHex(BigInt(sourceBlock.timestamp) - 12n),
+	};
+	const rpc = provider(t, (m, p, v) => {
+		if (m === "eth_getBlockByNumber" && ["finalized", earlier.number].includes(p[0]))
+			return structuredClone(earlier);
+		return m === "eth_getTransactionReceipt" && p[0] === row.tx_hash && additional
 			? { ...v, logs: [...v.logs, second] }
-			: v,
-	);
+			: v;
+	});
 	const before = (
 		await f.db.query(
 			"SELECT event_id,canonical,facts FROM chain_events ORDER BY event_id",

@@ -41,6 +41,6 @@ async function waitForRenewal(baseUrl, chainId, transactionHash, signal) {
 
 Poll every five seconds, or after the delay specified by `Retry-After`. A `404` means no matching deposit has been indexed; retry the same URL. Cancel polling when the user leaves the flow.
 
-When `status` is `complete`, the full relevant deposit set is proven and every member has a verified, finalized renewal. `deposits[].renewals` contains event-specific `renewalId` values, transaction hashes, duration added and resulting expiry. Count shared renewal duration once per `renewalId`. See [status responses](/docs/status) for other states and retry behavior.
+When `status` is `complete`, the full relevant deposit set is proven and every member has a verified, confirmed ENS renewal. `deposits[].renewals` contains event-specific `renewalId` values, transaction hashes, duration added and resulting expiry. Count shared renewal duration once per `renewalId`. See [status responses](/docs/status) for other states and retry behavior.
 
 Use [name history](/docs/history) to retrieve past renewals and the recorded expiry.

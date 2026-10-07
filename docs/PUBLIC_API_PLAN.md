@@ -19,7 +19,7 @@ the delayed sample; exact renewal identifiers, durations and expiry agree. See t
 remaining gates are recorded below and in [DEPLOYMENTS.md](DEPLOYMENTS.md).
 The source inspector now reports conservative receipt-set closure and rechecked configured-provider
 finality; [policy and limitations](PUBLIC_API_DEPOSIT_EVIDENCE.md) keep these separate from API completion.
-History verifies event-specific ENS expiry and hub finality. Its deployment is
+History verifies event-specific ENS expiry from the confirmed canonical receipt. Its deployment is
 described in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md); production remains disabled.
 
 ## Current ENS baseline after the October reset
@@ -48,13 +48,13 @@ filtered transfers. No additional Goldsky pipeline or schema is required.
 On October 7 the user accepted deployed-contract split-fork and real-PostgreSQL
 recovery results as evidence for a limited testnet pilot. Live split settlement
 and forced hosted restart remain untested; they are not claimed as passed.
-The new Base activation sample has reached source/filtered ingestion and factory
-processing; its attestation and finalized API result are still pending. Twenty
+The new Base activation sample completed ENS renewal. The updated local adapters
+verify its exact confirmed renewal and expiry without an additional finality wait. Twenty
 bounded protected polling checks passed without changing staging data. See
 [current verification](DEPLOYMENTS.md#recovery-and-activation-boundary-verification--2026-10-07).
 The remaining pilot sequence is the [final protected four-endpoint check](deployments/2026-10-07/public-api-pilot-protected-plan.json),
-then a separate production-enable decision. The protected copy/configuration and
-production enablement each require their own recorded authorization.
+then a separate production-enable decision. The user approved the isolated copy and protected configuration. Production enablement
+still requires separate authorization.
 
 ## Starting point
 
@@ -73,7 +73,7 @@ to make a broken UI release work. Never delete payment records to make a migrati
 
 | Documentation | Required capability | Observable acceptance |
 | --- | --- | --- |
-| [Introduction](content/introduction.md), [Quickstart](content/quickstart.md) | Address → caller sends USDC → poll by source hash and chain | One end-to-end testnet payment reaches a verified, finalized renewal |
+| [Introduction](content/introduction.md), [Quickstart](content/quickstart.md) | Address → caller sends USDC → poll by source hash and chain | One end-to-end testnet payment reaches a verified, confirmed ENS renewal |
 | [Addresses](content/addresses.md) | `POST /api/v1/address` | Normalized name, full deterministic address, subname, verification boolean and funding chains; repeat activation is idempotent |
 | [Quotes](content/quotes.md) | `POST /api/v1/quote` | Exact integer amounts, estimated duration, allowance, bridge fee, rounding remainder, pricing block and 60-second expiry |
 | [Status](content/status.md) | `GET /api/v1/status/{chainId}?transactionHash={hash}` | The full relevant deposit set is proven before transaction completion; renewals have exact event identifiers |
@@ -118,7 +118,7 @@ column name or a recent update alone does not establish provenance for the retur
 
 The hard requirement is truthful completion. A stored `settled` flag or an expiry increase alone
 does not establish that a particular source payment completed. The proposed status mapping must
-prove the deposit-to-processing-to-renewal relationship, source validity and renewal finality.
+prove the deposit-to-processing-to-renewal relationship, source validity and the confirmed ENS renewal.
 Show the complete relationship for every deposit and every applicable processing flow. Shared
 renewal duration is reported as a shared result, never divided among deposits without evidence.
 
@@ -132,14 +132,14 @@ watch/address-registry coverage and activation propagation in that proof.
 Use enumeration from a canonical source receipt, or equivalent ingestion-completeness evidence
 that accounts for every relevant transfer. Native Arc transfers require equivalent complete
 source evidence; ERC-20 log enumeration alone is not sufficient for that route. Record the
-source block/hash, deposit identities, coverage and applicable finality checks. An indexed count,
+source block/hash, deposit identities, coverage and canonical block checks. An indexed count,
 quiet period or first completed renewal does not establish completeness. Pending enumeration or
 missing indexed members must prevent aggregate `complete`, even if every currently returned
 deposit is individually complete. Provider failures follow the documented retryable error policy.
 
 Change the published status wording from "all indexed deposits" to the proven full relevant set
 in the contract review. Test two deposits in one transaction with staggered index delivery: the
-first is finalized and renewed before the second arrives. The quickstart must keep polling until
+first is confirmed and renewed before the second arrives. The quickstart must keep polling until
 both members are represented and complete. Also test a missing member, duplicate delivery,
 coverage gaps and receipt corrections. No transaction-status release without this evidence.
 
@@ -181,10 +181,10 @@ read-only. Any new RPC-read strategy also needs a capacity and timeout review.
 
 Specify aggregate status for mixed deposits and define how corrections revoke previously reported
 completion. An RPC outage must not become `failed`; insufficient funds remain pending. Archive
-and finality capabilities are provider prerequisites, not assumptions based on local fixtures.
+and canonical receipt capabilities are provider prerequisites, not assumptions based on local fixtures.
 Until this source-payment model is proven, transaction status cannot report completion.
 Name history has a different completion unit: one canonical gateway renewal and its matching
-authoritative ENS event in a finalized hub block. It can prove that renewal happened without
+authoritative ENS event in a confirmed canonical hub block. It can prove that renewal happened without
 claiming that every deposit in a source transaction was processed. This distinction follows the
 published history contract and must be retained in status/history mapping. Public history still
 requires its own hosted verification, capacity and exposure gates.
@@ -212,7 +212,7 @@ requires its own hosted verification, capacity and exposure gates.
    cursor bound to the requested name. Test equal timestamps, late events, pagination changes,
    unknown names, paired expiry freshness and correction handling. Confirm renewal identifiers
    agree with status and distinct events in one transaction remain distinct. Verification status
-   must verify the exact gateway/ENS receipt segment and hub finality. Source-deposit set and
+   must verify the exact confirmed gateway/ENS receipt segment. Source-deposit set and
    allocation proofs belong to transaction status; do not use a completed history item to infer
    source-transaction completion. Do not label ordinary indexed history finalized without evidence.
 5. **Status endpoint.** Implement the proven deposit mapping with read-only polling. Test unknown

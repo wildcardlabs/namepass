@@ -127,6 +127,16 @@ test("a renewed first member cannot complete an open source set, missing allocat
 	assert.equal(join(staggered).evidenceComplete, false);
 });
 
+test("confirmed completion keeps full payment proof without finality gates", () => {
+	const f = fixture();
+	f.source.sourceFinality.providerFinalized = false;
+	f.renewals[0].providerFinalized = false;
+	assert.equal(join(f).evidenceComplete, false, "private operator retains finalized policy");
+	assert.equal(joinTransactionEvidence(f.source, f.allocations, f.renewals, "confirmed").evidenceComplete, true);
+	f.source.evidence.receiptSetClosed = false;
+	assert.equal(joinTransactionEvidence(f.source, f.allocations, f.renewals, "confirmed").evidenceComplete, false);
+});
+
 test("pooled credits reference one whole renewal and split credits retain both exact events", () => {
 	const f = fixture(),
 		member = f.source.evidence.members[0],

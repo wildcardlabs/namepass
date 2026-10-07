@@ -1,0 +1,99 @@
+{
+  "authorization": "User approved the isolated brantly-only copy and protected four-endpoint checks.",
+  "rollbackRehearsal": {
+    "observedAt": "2026-10-07T16:41:43.070Z",
+    "mode": "rollback-rehearsal",
+    "stagingBranch": "br-autumn-cherry-av2es7od",
+    "before": {
+      "names": 9,
+      "chain_events": 20,
+      "flows": 6,
+      "deposits": 8,
+      "transaction_intents": 0,
+      "balance_snapshots": 8,
+      "balance_scan_requests": 0,
+      "goldsky.watched_addresses": 9
+    },
+    "after": {
+      "names": 10,
+      "chain_events": 23,
+      "flows": 7,
+      "deposits": 9,
+      "transaction_intents": 0,
+      "balance_snapshots": 8,
+      "balance_scan_requests": 0,
+      "goldsky.watched_addresses": 10
+    },
+    "inserted": {
+      "names": 1,
+      "goldsky.watched_addresses": 1,
+      "chain_events": 3,
+      "deposits": 1,
+      "flows": 1
+    },
+    "existingRowsPreserved": true,
+    "readerPrivilegesChanged": false,
+    "productionWritten": false,
+    "schemaChanged": false,
+    "flowsStarted": 0,
+    "intentsCreated": 0,
+    "fixtureSha256": "0b3554e6ab5df3dba574e54614a012b5281058fde9629b8abfaf7de221c5dd75",
+    "preservedBeforeSha256": "aea1cca4eac22234e6c41fa716f9bf6d2aaed76f7cb08214851adc509159ee35"
+  },
+  "applied": {
+    "observedAt": "2026-10-07T16:42:24.104Z",
+    "mode": "applied",
+    "stagingBranch": "br-autumn-cherry-av2es7od",
+    "before": {
+      "names": 9,
+      "chain_events": 20,
+      "flows": 6,
+      "deposits": 8,
+      "transaction_intents": 0,
+      "balance_snapshots": 8,
+      "balance_scan_requests": 0,
+      "goldsky.watched_addresses": 9
+    },
+    "after": {
+      "names": 10,
+      "chain_events": 23,
+      "flows": 7,
+      "deposits": 9,
+      "transaction_intents": 0,
+      "balance_snapshots": 8,
+      "balance_scan_requests": 0,
+      "goldsky.watched_addresses": 10
+    },
+    "inserted": {
+      "names": 1,
+      "goldsky.watched_addresses": 1,
+      "chain_events": 3,
+      "deposits": 1,
+      "flows": 1
+    },
+    "existingRowsPreserved": true,
+    "readerPrivilegesChanged": false,
+    "productionWritten": false,
+    "schemaChanged": false,
+    "flowsStarted": 0,
+    "intentsCreated": 0,
+    "fixtureSha256": "0b3554e6ab5df3dba574e54614a012b5281058fde9629b8abfaf7de221c5dd75",
+    "preservedBeforeSha256": "aea1cca4eac22234e6c41fa716f9bf6d2aaed76f7cb08214851adc509159ee35"
+  },
+  "manifest": {
+    "preparedAt": "2026-10-07T16:40:30.896Z",
+    "stagingBranch": "br-autumn-cherry-av2es7od",
+    "name": "brantly.eth",
+    "sourceHash": "0x19547d7c473359902e13475df6b2a7f88df965d6b2ff914d7e73d6a9927f5629",
+    "renewalId": "11155111:0xc6074d5b4111e4fd95b73fb1b01462dcfa2d6a1c0ee97123edd383d632e5cc6c:211",
+    "counts": {
+      "names": 1,
+      "watches": 1,
+      "events": 3,
+      "deposits": 1,
+      "flows": 1
+    },
+    "fixtureSha256": "0b3554e6ab5df3dba574e54614a012b5281058fde9629b8abfaf7de221c5dd75",
+    "approved": true
+  }
+}

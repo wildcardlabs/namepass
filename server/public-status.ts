@@ -202,7 +202,6 @@ async function status(request: Request, signal: AbortSignal) {
 		renewals: RenewalInspection[] = [];
 	if (
 		source.evidence?.receiptSetClosed &&
-		source.sourceFinality.providerFinalized &&
 		source.evidence.members.every((m) => m.allocationLogIndex !== null)
 	) {
 		const names = [...new Set(source.evidence.members.map((m) => m.name))];
@@ -282,6 +281,7 @@ async function status(request: Request, signal: AbortSignal) {
 				{ ...source, evidence: source.evidence },
 				allocations,
 				renewals,
+				"confirmed",
 			)
 		: null;
 	const final = await snapshot(chainId, transactionHash);
@@ -374,7 +374,6 @@ async function status(request: Request, signal: AbortSignal) {
 				reason: string | null = "awaiting_processing";
 			if (
 				!e.receiptSetClosed ||
-				!source.sourceFinality.providerFinalized ||
 				!m.indexedEventId ||
 				m.allocationLogIndex === null
 			) {
@@ -383,8 +382,7 @@ async function status(request: Request, signal: AbortSignal) {
 			} else if (
 				credit?.windowClosed &&
 				credit.processingCallIds.length > 0 &&
-				results.length === credit.processingCallIds.length &&
-				results.every((r) => r.providerFinalized)
+				results.length === credit.processingCallIds.length
 			) {
 				state = "complete";
 				reason = null;
@@ -397,9 +395,7 @@ async function status(request: Request, signal: AbortSignal) {
 			} else if (credit?.processingCallIds.length) reason = "awaiting_renewal";
 			const events = [
 				...new Map(
-					results
-						.filter((r) => r.providerFinalized)
-						.map((r) => [r.renewalId, r]),
+					results.map((r) => [r.renewalId, r]),
 				).values(),
 			];
 			return {
@@ -421,7 +417,6 @@ async function status(request: Request, signal: AbortSignal) {
 	if (!deposits.length) throw new Error("status_source_unrepresented");
 	const aggregate =
 		!e.receiptSetClosed ||
-		!source.sourceFinality.providerFinalized ||
 		deposits.some((d) => d.status === "pending")
 			? "pending"
 			: combined?.evidenceComplete &&

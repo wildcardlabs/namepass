@@ -2,7 +2,7 @@
 
 `GET /api/v1/names/{name}/renewals`
 
-Read-only renewal history and recorded expiry for an ENS name. Newest first, with a cursor bound to the requested name. Complete requires verification and finality; processing indicates pending verification. Each item has an event-specific renewalId shared with status. Expiry read timestamps are null without paired provenance.
+Read-only renewal history and recorded expiry for an ENS name. Newest first, with a cursor bound to the requested name. Complete requires verification of the confirmed ENS renewal; processing indicates pending verification. Each item has an event-specific renewalId shared with status. Expiry read timestamps are null without paired provenance.
 
 ## Parameters
 

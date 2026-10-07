@@ -188,9 +188,7 @@ function rpc(
 		forged?: boolean;
 		claimMismatch?: boolean;
 		timestampMismatch?: boolean;
-		finalityLag?: boolean;
 		missingFinality?: boolean;
-		badFinalityHash?: boolean;
 		wrongDuration?: boolean;
 		wrongAmount?: boolean;
 		wrongReferrer?: boolean;
@@ -277,9 +275,9 @@ function rpc(
 						call.params[0] === "finalized" && options.missingFinality
 							? null
 							: {
-									number: call.params[0] === "finalized" && options.finalityLag ? "0x63" : "0x64",
+									number: "0x64",
 									hash:
-										options.reorg || (call.params[0] === "finalized" && options.badFinalityHash)
+										options.reorg
 											? `0x${"56".repeat(32)}`
 											: blockHash,
 									timestamp: `0x${(BigInt(blockTime.getTime() / 1000) + (options.timestampMismatch ? 1n : 0n)).toString(16)}`,
@@ -456,23 +454,24 @@ test("history reads established schema, proves exact event/provenance, and pagin
 	assert.equal((await db.query<{ n: number }>("SELECT count(*)::int n FROM flows")).rows[0].n, 3);
 	assert.equal((await db.query<{ n: number }>("SELECT count(*)::int n FROM names")).rows[0].n, 2);
 });
-test("a canonical renewal awaits finality without hiding its proven event-specific expiry", async (t) => {
+test("a verified canonical renewal completes without a finality checkpoint", async (t) => {
 	setup(t);
 	await fixture(t);
-	rpc(t, { finalityLag: true });
+	const network = rpc(t, { missingFinality: true });
 	const response = await route.fetch(request());
 	assert.equal(response.status, 200, await response.clone().text());
 	const body = await response.json();
 	assert.ok(valid(body), JSON.stringify(valid.errors));
 	assert.deepEqual(
 		body.items.map((item: any) => item.status),
-		["processing", "processing"],
+		["complete", "complete"],
 	);
 	assert.deepEqual(
 		body.items.map((item: any) => item.expiry),
 		["2030-03-17T17:48:20.000Z", "2030-03-17T17:46:40.000Z"],
 	);
-	assert.equal(response.headers.get("retry-after"), "5");
+	assert.equal(response.headers.get("retry-after"), null);
+	assert.equal(network.calls.filter((method) => method === "eth_getBlockByNumber").length, 1);
 });
 test("late indexing, corrected events and changing expiry do not cause cursor skips or false freshness", async (t) => {
 	setup(t);
@@ -505,8 +504,6 @@ test("receipt/provider failures and inconsistent provenance return retryable 503
 		"forged",
 		"claimMismatch",
 		"timestampMismatch",
-		"missingFinality",
-		"badFinalityHash",
 		"wrongDuration",
 		"wrongAmount",
 		"wrongReferrer",
