@@ -51,7 +51,7 @@ function historyPool() {
 		const connection = new URL(process.env.DATABASE_URL);
 		connection.searchParams.set(
 			"options",
-			"-c default_transaction_read_only=on -c statement_timeout=5000 -c lock_timeout=1500 -c idle_in_transaction_session_timeout=10000",
+			"-c default_transaction_read_only=on",
 		);
 		pool = new Pool({
 			connectionString: connection.toString(),
@@ -130,6 +130,14 @@ async function candidates(label: string, limit: number, cursor?: Cursor) {
 	let discard = false;
 	try {
 		await client.query("BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY");
+		// Poolers reject startup timeout options; keep them local to this read.
+		await client.query(
+			"SET LOCAL statement_timeout = '5000ms'",
+		);
+		await client.query("SET LOCAL lock_timeout = '1500ms'");
+		await client.query(
+			"SET LOCAL idle_in_transaction_session_timeout = '10000ms'",
+		);
 		const name = (
 			await client.query<{ id: string; current_expiry: Date | null }>(
 				"SELECT id,current_expiry FROM names WHERE normalized_label=$1",

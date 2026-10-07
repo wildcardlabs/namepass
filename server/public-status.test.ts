@@ -306,7 +306,7 @@ test("status completes a verified renewal before finality and holds a staggered 
 		).length,
 		2,
 	);
-	assert.ok(f.queries.every((q) => /^(SELECT|BEGIN|COMMIT|ROLLBACK)/.test(q)));
+	assert.ok(f.queries.every((q) => /^(SELECT|BEGIN|COMMIT|ROLLBACK|SET LOCAL)/.test(q)));
 	assert.deepEqual(
 		(
 			await f.db.query(

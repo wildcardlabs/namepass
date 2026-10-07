@@ -2,21 +2,22 @@
 
 ## Confirmed renewal completion — 2026-10-07
 
-The user directed removal of the extra API finality wait after ENS renewal. The pending change
-returns `complete` after verifying the confirmed canonical ENS receipt, the full relevant source
-deposit set and every deposit-to-processing relationship. It adds no finality response field.
-History uses the same confirmed-event completion meaning. Private finalized operator evidence
-and Circle bridge processing remain separate. Production public API flags remain disabled.
-All 225 local server tests passed without skips. Protected preview
-`dpl_hpEJpqaf4muqQs7grto7QALM8j2W`, commit `902231a5558bdeeedd593e2c48e0917aff2d88d4`,
-passed 28 HTTP checks across all four adapters. The [protected receipt](deployments/2026-10-07/public-api-pilot-protected-hosted.json)
-records exact positive responses, validation/CORS/method checks, anonymous protection,
-and unchanged prior staging rows/reader privileges. Only approved brantly activation metadata
-changed; no new flow or intent was created. CI run `37654567571` passed.
+PR #146 merged as `56bf736608d3351cf50af5a297c6276390813189`. Its production deployment
+`dpl_8z4VFF3SKPgjFDjrGW7SV78GMQzM` enabled all four public testnet APIs and admission limits.
+Status and history use confirmed canonical ENS renewal evidence, with the full source deposit
+set and every processing relationship verified. No extra finality wait or response field is added.
+Private finalized operator evidence and Circle bridge processing remain unchanged.
 
-The user then approved all remaining work through release, including merge and production
-enablement. PR #146 and the production deployment remain pending. Production flags will be
-set only after the updated reviewed candidate passes CI.
+The initial production smoke found a pooler compatibility failure in status/history. Quotes,
+address activation and the existing activity feed remained working. Protected staging had used
+an unpooled URL and did not catch this difference. Neon pooling rejects startup `statement_timeout`
+options. The corrective change keeps read-only startup protection, applies statement/lock/idle
+timeouts inside each read-only transaction, and preserves existing pool and client limits.
+All 225 server tests passed against real PostgreSQL with no skips. The actual status/history
+adapters also passed through the isolated Neon pooler. The
+[pooler diagnostic receipt](deployments/2026-10-07/public-api-pooler-diagnostic.json) records the
+failure and the verified settings. Protected pooled deployment and production rechecks are pending.
+The user approved all remaining release work; no further approval is required for this fix.
 
 ## Public design preview — 2026-10-05
 

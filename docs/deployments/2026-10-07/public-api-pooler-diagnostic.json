@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-07",
+  "initialProductionCommit": "56bf736608d3351cf50af5a297c6276390813189",
+  "initialProductionDeployment": "dpl_8z4VFF3SKPgjFDjrGW7SV78GMQzM",
+  "initialLiveResult": "Quote/address/activity passed; status reads returned 503 before SQL due to pooled startup options.",
+  "diagnostic": {
+    "observedAt": "2026-10-07T17:13:11.996Z",
+    "readOnly": true,
+    "rows": [
+      {
+        "pooled": false,
+        "connected": true,
+        "readOnly": "on"
+      },
+      {
+        "pooled": true,
+        "connected": false,
+        "code": "08P01",
+        "message": "unsupported startup parameter in options: statement_timeout. Please use unpooled connection or remove this parameter from the startup package. More details: [URL omitted]"
+      }
+    ]
+  },
+  "correctedSettings": {
+    "observedAt": "2026-10-07T17:15:18.027Z",
+    "readOnly": true,
+    "rows": [
+      {
+        "pooled": true,
+        "connected": true,
+        "settings": {
+          "read_only": "on",
+          "statement_timeout": "5s",
+          "lock_timeout": "1500ms",
+          "idle_timeout": "10s"
+        }
+      }
+    ]
+  },
+  "localServerTests": {
+    "passed": 225,
+    "skipped": 0,
+    "realPostgreSQL": true
+  },
+  "pooledLocalAdapters": {
+    "status": "complete",
+    "historyMatches": true,
+    "renewalId": "11155111:0xc6074d5b4111e4fd95b73fb1b01462dcfa2d6a1c0ee97123edd383d632e5cc6c:211"
+  },
+  "hostedFixVerification": "pending"
+}

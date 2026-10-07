@@ -448,7 +448,7 @@ test("history reads established schema, proves exact event/provenance, and pagin
 	);
 	assert.ok(queries.some((q) => q === "BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY"));
 	assert.ok(
-		queries.every((q) => /^(SELECT|BEGIN|COMMIT|ROLLBACK)/.test(q.trim())),
+		queries.every((q) => /^(SELECT|BEGIN|COMMIT|ROLLBACK|SET LOCAL)/.test(q.trim())),
 		"history must not write any records",
 	);
 	assert.equal((await db.query<{ n: number }>("SELECT count(*)::int n FROM flows")).rows[0].n, 3);
@@ -590,10 +590,10 @@ test(
 		const require = createRequire(import.meta.url);
 		const script = `
  import assert from 'node:assert/strict';import {Pool} from 'pg';import route from './routes/api/v1/names/[name]/renewals.ts';
- const connect=Pool.prototype.connect;let pool;let reads=0;
- Pool.prototype.connect=async function(...args){assert.equal(args.length,0);pool=this;const client=await connect.call(this);assert.equal((await client.query("SELECT current_setting('transaction_read_only') AS value")).rows[0].value,'on');reads++;return client;};
+ const connect=Pool.prototype.connect;let pool;let reads=0;let boundedReads=0;const wrapped=new WeakSet();
+ Pool.prototype.connect=async function(...args){assert.equal(args.length,0);pool=this;const client=await connect.call(this);assert.equal((await client.query("SELECT current_setting('transaction_read_only') AS value")).rows[0].value,'on');assert.equal((await client.query("SELECT current_setting('statement_timeout') AS value")).rows[0].value,'0');reads++;if(wrapped.has(client))return client;wrapped.add(client);const query=client.query.bind(client);client.query=async function(sql,...values){const result=await query(sql,...values);if(typeof sql==='string'&&sql.startsWith('SET LOCAL idle_in_transaction_session_timeout')){const settings=(await query("SELECT current_setting('transaction_read_only') AS read_only,current_setting('statement_timeout') AS statement_timeout,current_setting('lock_timeout') AS lock_timeout,current_setting('idle_in_transaction_session_timeout') AS idle_timeout")).rows[0];assert.deepEqual(settings,{read_only:'on',statement_timeout:'5s',lock_timeout:'1500ms',idle_timeout:'10s'});boundedReads++;}return result;};return client;};
  globalThis.fetch=async()=>{throw new Error('empty history must not call RPC');};
- try {const response=await route.fetch(new Request('https://history.test/api/v1/names/ALICE.eth/renewals'));assert.equal(response.status,200,await response.clone().text());assert.deepEqual(await response.json(),{name:'alice.eth',currentExpiry:null,expiryUpdatedAt:null,items:[],nextCursor:null});assert.equal((await route.fetch(new Request('https://history.test/api/v1/names/unknown.eth/renewals'))).status,404);assert.equal(reads,2);console.log(JSON.stringify({readOnly:true,emptyHistory:true,unknownName:404}));}finally{if(pool)await pool.end();}
+ try {const response=await route.fetch(new Request('https://history.test/api/v1/names/ALICE.eth/renewals'));assert.equal(response.status,200,await response.clone().text());assert.deepEqual(await response.json(),{name:'alice.eth',currentExpiry:null,expiryUpdatedAt:null,items:[],nextCursor:null});assert.equal((await route.fetch(new Request('https://history.test/api/v1/names/unknown.eth/renewals'))).status,404);assert.equal(reads,2);assert.equal(boundedReads,2);console.log(JSON.stringify({readOnly:true,emptyHistory:true,unknownName:404}));}finally{if(pool)await pool.end();}
  `;
 		const child = spawn(
 			process.execPath,
