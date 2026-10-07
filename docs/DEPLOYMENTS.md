@@ -226,8 +226,12 @@ Its insert-only copy of two deposits, four events and one settled flow passed a
 rollback rehearsal and was applied to the existing isolated `api-staging` database.
 Names, expiry metadata, prior records and reader privileges are unchanged. The
 [copy receipt](deployments/2026-10-07/public-api-same-transaction-staging-copy.json)
-records both checks. Only `codex/api-same-transaction-replay` will receive the
-existing SELECT-only database/RPC settings and status/history/admission flags.
+records both checks. Only `codex/api-same-transaction-replay` received the
+existing SELECT-only database/RPC settings and status/history/admission flags,
+with values/types preserved from the completed enforcement verification branch.
+The [preview scope receipt](deployments/2026-10-07/public-api-same-transaction-preview-scope.json)
+records the eight branch-only settings. Deployment protection is unchanged; this
+branch has no public custom domain or signing credentials.
 Protected hosted replay is pending. Address/quote stay off; production settings
 stay unchanged. No new payment is needed.
 

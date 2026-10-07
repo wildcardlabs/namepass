@@ -1,0 +1,73 @@
+{
+  "observedAt": "2026-10-07T12:21:26.726Z",
+  "from": "codex/public-api-enforcement-verification",
+  "to": "codex/api-same-transaction-replay",
+  "mutation": "gitBranch only; value/type/target omitted and preserved",
+  "variables": [
+    {
+      "key": "NAMEPASS_PUBLIC_LIMITS_ENABLED",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-same-transaction-replay"
+    },
+    {
+      "key": "NAMEPASS_PUBLIC_HISTORY_ENABLED",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-same-transaction-replay"
+    },
+    {
+      "key": "NAMEPASS_PUBLIC_STATUS_ENABLED",
+      "type": "encrypted",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-same-transaction-replay"
+    },
+    {
+      "key": "ARC_TESTNET_RPC_URL",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-same-transaction-replay"
+    },
+    {
+      "key": "ARBITRUM_SEPOLIA_RPC_URL",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-same-transaction-replay"
+    },
+    {
+      "key": "BASE_SEPOLIA_RPC_URL",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-same-transaction-replay"
+    },
+    {
+      "key": "ETHEREUM_SEPOLIA_RPC_URL",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-same-transaction-replay"
+    },
+    {
+      "key": "DATABASE_URL",
+      "type": "sensitive",
+      "target": [
+        "preview"
+      ],
+      "gitBranch": "codex/api-same-transaction-replay"
+    }
+  ],
+  "productionApiFlags": 0
+}
