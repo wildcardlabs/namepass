@@ -1,6 +1,37 @@
 # Testnet deployments
 
-## Confirmed renewal completion — 2026-10-07
+## Public testnet API pilot — 2026-10-07
+
+All four documented APIs are live anonymously at `https://beta.namepass.com`:
+address activation, renewal quotes, transaction status and name history. The five production
+API/admission flags are enabled. The API code release is PR #147, merge
+`8dcd0eb19c212982dc9403088cf037e66ca3a3b5`, deployment
+`dpl_BaN4C8gUhduiYoQM6csb9Bavw8u3`. Required CI run `37658908852` passed.
+All 225 server tests passed against real PostgreSQL with no skips.
+
+The pooled protected preview passed 28 HTTP checks. The production release passed
+34 anonymous HTTP checks, including schema-valid quote/address/status/history,
+concurrent status, completed payments across Ethereum Sepolia, Base Sepolia, Arbitrum Sepolia
+and Arc Testnet, native and ERC-20 Arc deposits, and two deposits sharing one renewal.
+Status and history agree on the exact renewal identifier, duration and expiry. Existing
+activity remains populated; homepage, docs, legal and network pages return 200.
+The [live release receipt](deployments/2026-10-07/public-api-pilot-release.json) records the exact
+responses and deployed commit. The [pooled protected receipt](deployments/2026-10-07/public-api-pooler-protected.json)
+records preserved prior staging rows and reader privileges, zero new flows/intents and protection.
+
+Completion means the confirmed canonical ENS renewal is verified for every member of the
+closed source deposit set. It has no extra finality wait or finality response field. Receipt
+corrections and missing evidence can still revoke completion or return a retryable response.
+Private operator finality and Circle bridge processing remain unchanged.
+
+This is a limited testnet pilot. The user accepted deployed-contract split-fork and real-SQL
+recovery evidence. Live split CCTP settlement and forced hosted restart remain untested.
+Regional limits and these bounded checks do not prove global sustained capacity or zero-delay
+watch propagation. `subnameVerified` stays false; clients must use the returned full address.
+`expiryUpdatedAt` stays null when paired read provenance is unavailable.
+No new contract, migration, Goldsky pipeline, worker or signing service was added for the API release.
+
+## Confirmed renewal completion and pooler correction — 2026-10-07
 
 PR #146 merged as `56bf736608d3351cf50af5a297c6276390813189`. Its production deployment
 `dpl_8z4VFF3SKPgjFDjrGW7SV78GMQzM` enabled all four public testnet APIs and admission limits.
@@ -16,7 +47,8 @@ timeouts inside each read-only transaction, and preserves existing pool and clie
 All 225 server tests passed against real PostgreSQL with no skips. The actual status/history
 adapters also passed through the isolated Neon pooler. The
 [pooler diagnostic receipt](deployments/2026-10-07/public-api-pooler-diagnostic.json) records the
-failure and the verified settings. Protected pooled deployment and production rechecks are pending.
+failure and the verified settings. PR #147 merged and both the protected pooled deployment and
+production checks passed, as recorded above.
 The user approved all remaining release work; no further approval is required for this fix.
 
 ## Public design preview — 2026-10-05

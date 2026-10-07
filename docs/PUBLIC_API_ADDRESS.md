@@ -1,6 +1,7 @@
 # Public address adapter
 
-Date: 2026-10-05. Protected hosted activation verified; production activation remains disabled.
+Date: 2026-10-07. Production testnet activation released and live checks passed.
+Current release evidence and limitations are in [DEPLOYMENTS.md](DEPLOYMENTS.md#public-testnet-api-pilot--2026-10-07).
 
 ## Field sources
 
@@ -22,7 +23,8 @@ Activation writes the existing name and watch rows, requests balance scans, stor
 balance snapshots and uses the existing recovery path. Unknown balances remain requested;
 they are not zero snapshots. A failed request can have committed registration, so retries
 must stay idempotent. Returning an address does not prove Goldsky has consumed the new watch
-row; that propagation gap remains a release gate.
+row. The recorded activation-boundary canary validates the observed current route, but does
+not promise zero-delay watch propagation.
 
 ## HTTP and resource limits
 
@@ -42,7 +44,7 @@ beta. The approved protected preview uses its own schema-only Neon branch and de
 four read RPC settings and its address flag. It has no signing credential or attached indexer.
 Production configuration is unchanged.
 
-## Acceptance and remaining release gates
+## Acceptance and historical release gates
 
 The HTTP regression verifies disabled/method/CORS behavior, invalid input, unrenewable names,
 ENS failure, cancelled reads and capacity cleanup. The PostgreSQL integration test creates
@@ -66,7 +68,11 @@ zero balance snapshots; flows, events, deposits and transaction intents remained
 An unrenewable name returned 422 and did not create a row. Anonymous POST returned 401.
 The receipt is `deployments/2026-10-05/public-api-address-staging.json`.
 
-Before opening public activation:
+The original activation release checklist below predates the completed October 7 pilot.
+Current evidence and accepted limits are in DEPLOYMENTS.md; resolver verification remains
+required before changing `subnameVerified` to true.
+
+Original checklist:
 
 - Preserve successful CI and isolated hosted activation checks. Controlled indexer and watch
   propagation tests still remain. Do not give an API preview the live database or signing key.

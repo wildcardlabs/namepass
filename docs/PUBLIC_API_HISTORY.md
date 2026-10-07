@@ -1,6 +1,7 @@
-# Private history adapter
+# Public history adapter
 
-Date: 2026-10-07. Public testnet pilot enabled; pooled production connection fix in verification.
+Date: 2026-10-07. Public testnet pilot released and live checks passed.
+Current release evidence is in [DEPLOYMENTS.md](DEPLOYMENTS.md#public-testnet-api-pilot--2026-10-07).
 
 `GET /api/v1/names/{name}/renewals` reads the existing schema. It never activates a name,
 refreshes ENS state, starts a Workflow or writes payment records. No migration, contract
