@@ -60,6 +60,7 @@ import {
 	truncTx,
 } from "../lib/format";
 import { completedFlowTransactions } from "../lib/flowTransactions";
+import DepositTransactions from "./DepositTransactions";
 import PassCard from "./PassCard";
 import { Card } from "./ui/card";
 import PendingBalance from "./PendingBalance";
@@ -84,11 +85,13 @@ function AmountCell({
 	applied,
 	showApplied,
 	dense,
+	depositCount,
 }: {
 	deposited: bigint;
 	applied: bigint;
 	showApplied: boolean;
 	dense?: boolean;
+	depositCount?: number;
 }) {
 	return (
 		<>
@@ -102,6 +105,7 @@ function AmountCell({
 					{fmtUsdc(applied)} applied
 				</span>
 			)}
+			{depositCount !== undefined && depositCount > 1 && <span className="block text-[11px] text-ink-secondary">{depositCount} deposits</span>}
 		</>
 	);
 }
@@ -293,7 +297,7 @@ function FeedRowContent({
 			<MobileFlowSummary
 				title={nameTitle}
 				chain={<ChainTag chain={row.chain} />}
-				received={<AmountCell deposited={row.amountDeposited} applied={row.amountApplied} showApplied={row.gasAllowance > 0n} dense />}
+				received={<AmountCell deposited={row.amountDeposited} applied={row.amountApplied} showApplied={row.gasAllowance > 0n} depositCount={row.pending ? undefined : row.event.deposits?.length} dense />}
 				rate={row.off === null ? "—" : row.off ? `${row.off} off` : "Standard"}
 				time={timeAdded}
 				footer={<StatusCell row={row} reduced={reduced} />}
@@ -310,7 +314,7 @@ function FeedRowContent({
 			>
 				{nameTitle}
 				<span className="text-[13.5px]"><ChainTag chain={row.chain} /></span>
-				<span className="text-right"><AmountCell deposited={row.amountDeposited} applied={row.amountApplied} showApplied={row.gasAllowance > 0n} /></span>
+				<span className="text-right"><AmountCell deposited={row.amountDeposited} applied={row.amountApplied} showApplied={row.gasAllowance > 0n} depositCount={row.pending ? undefined : row.event.deposits?.length} /></span>
 				<span className="flex justify-center text-[13px]"><DiscountTag off={row.off} /></span>
 				{/* Pending time uses ~ because it has not been added yet. */}
 				<span className={`text-[13.5px] text-right tabular-nums transition-colors duration-500 ${pending ? "text-ink-secondary" : "text-ink-primary"}`}>
@@ -681,6 +685,9 @@ function RenewalBreakdown({ event }: { event: ActivityEvent }) {
 	const effectiveRate = event.seconds > 0n
 		? (event.amountApplied * YEAR_SECONDS + event.seconds / 2n) / event.seconds
 		: 0n;
+	const funders = event.deposits?.length ? [...new Set(event.deposits.map(d => d.senderAddress))] : null;
+	const hasUnknownFunder = funders?.includes(null);
+	const steps = event.deposits !== undefined ? event.steps.filter(s => s.kind !== "deposit") : event.steps;
 	return (
 		<div className="site-renewal-breakdown">
 			<section className="site-renewal-payment" aria-label="Payment breakdown">
@@ -729,7 +736,9 @@ function RenewalBreakdown({ event }: { event: ActivityEvent }) {
 					<div>
 						<dt>Funded by</dt>
 						<dd>
-							<CopyableAddress address={event.funder} label="funded by" />
+								{hasUnknownFunder ? <span className="text-ink-secondary">Sender information incomplete · see deposits</span>
+								: funders && funders.length > 1 ? <span className="text-ink-secondary">{funders.length} wallets · see deposits</span>
+								: <CopyableAddress address={funders?.[0] ?? event.funder} label="funded by" />}
 						</dd>
 					</div>
 					<div>
@@ -744,8 +753,9 @@ function RenewalBreakdown({ event }: { event: ActivityEvent }) {
 			<section className="site-renewal-transactions" aria-label="Transaction trail">
 				<div className="site-evidence-heading"><h4>Transaction trail</h4></div>
 				<ol className="site-transaction-trail">
-					{event.steps.map((s, i) => (
-						<TransactionRow key={s.tx} index={i} label={stepLabel(s, bridged)} chain={s.chain} tx={s.tx} />
+					{event.deposits !== undefined && <DepositTransactions deposits={event.deposits} />}
+					{steps.map((s, i) => (
+						<TransactionRow key={s.tx} index={i + (event.deposits !== undefined ? 1 : 0)} label={stepLabel(s, bridged)} chain={s.chain} tx={s.tx} />
 					))}
 				</ol>
 			</section>
@@ -1191,7 +1201,7 @@ function NameDetail({
 								<MobileFlowSummary
 									title={<span className="min-w-0 flex-1 truncate text-[15px] text-ink-primary">{eventTitle}</span>}
 									chain={e.kind === "activated" ? "-" : <ChainTag chain={e.chain} />}
-									received={e.kind === "activated" ? "-" : <AmountCell deposited={e.amountDeposited} applied={e.amountApplied} showApplied={e.kind === "renewal" && e.gasAllowance > 0n} dense />}
+									received={e.kind === "activated" ? "-" : <AmountCell deposited={e.amountDeposited} applied={e.amountApplied} showApplied={e.kind === "renewal" && e.gasAllowance > 0n} depositCount={e.deposits?.length} dense />}
 									rate={eventRate}
 									time={eventTime}
 									footer={fmtDate(e.at)}
@@ -1212,7 +1222,7 @@ function NameDetail({
 									<span className="text-[13px] text-ink-secondary tabular-nums">{fmtDate(e.at)}</span>
 									<span className="text-[14.5px] text-ink-primary">{eventTitle}</span>
 									<span className="text-[13.5px]">{e.kind !== "activated" ? <ChainTag chain={e.chain} /> : <span className="text-ink-secondary">-</span>}</span>
-									<span className="text-[13.5px] text-ink-secondary text-right tabular-nums">{e.kind !== "activated" ? <AmountCell deposited={e.amountDeposited} applied={e.amountApplied} showApplied={e.kind === "renewal" && e.gasAllowance > 0n} /> : "-"}</span>
+									<span className="text-[13.5px] text-ink-secondary text-right tabular-nums">{e.kind !== "activated" ? <AmountCell deposited={e.amountDeposited} applied={e.amountApplied} showApplied={e.kind === "renewal" && e.gasAllowance > 0n} depositCount={e.deposits?.length} /> : "-"}</span>
 									<span className="flex justify-center">{e.kind === "renewal" ? <DiscountTag off={e.off} /> : <span className="text-ink-secondary">-</span>}</span>
 									<span className="text-[13.5px] text-ink-primary text-right tabular-nums">{eventTime}</span>
 									<span className="flex justify-end">{expandable && <>

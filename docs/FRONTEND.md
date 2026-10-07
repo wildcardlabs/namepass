@@ -36,6 +36,14 @@ completed totals; a deposit is not a renewal. Sender and executor are distinct e
 The browser renders server flow identity without merging rows by name, amount or transaction hash.
 After a source-chain burn, an unclaimed payment is not a spendable source-wallet balance.
 
+Completed activity includes `sourceDeposits` when canonical indexed credits exactly match
+the flow's zero-remainder processing window. The feed and name view keep one renewal row.
+Multiple credits appear in an expandable Payments received stage with individual amounts,
+senders, transaction links and log positions. Shared transaction hashes do not merge deposits.
+Native Arc transfers show Native transfer instead of an ERC-20 log index. Missing credits,
+partial processing or ambiguous native ordering return `null` and display unavailable evidence.
+This indexed display evidence does not establish public API completion or chain finality.
+
 ## Read-only branch previews
 
 Vercel preview deployments use `server/previewReadProxy.ts` as Nitro API middleware.

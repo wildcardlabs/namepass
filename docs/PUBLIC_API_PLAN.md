@@ -38,7 +38,9 @@ registered Sepolia watch. See the [fresh-route verification](DEPLOYMENTS.md#fres
 The [protected admission checks](PUBLIC_API_ADMISSION.md) now verify the eight
 approved regional/IP counters without enabling production endpoints.
 Keep production flags off while the public capacity/enablement decision, activation-boundary and
-restart recovery, and live same-transaction multi-deposit/split gates remain open.
+restart recovery, and live split-processing gates remain open. A user-signed Sepolia
+transaction with two transfer logs passed local read-only status/history verification;
+its protected hosted replay remains open. See the [same-transaction receipt](deployments/2026-10-07/public-api-multideposit-canary.json).
 The positive watch case does not establish zero-delay ingestion or recover earlier
 filtered transfers. No additional Goldsky pipeline or schema is required.
 

@@ -3,7 +3,7 @@ import { chainById, HUB_CHAIN } from "./chains";
 import { GAS_ALLOWANCE } from "./fees";
 import { isActiveFlowStatus, type ActiveFlowStatus } from "./flowPresentation";
 import { normalizeLabel } from "./namepass";
-import { micro, milliseconds, safeInteger, type ActivityRead, type LeaderboardRead, type NameActivityRead, type PublicChainBalance, type PublicFlow, type PublicName, type PublicRenewal } from "./publicApi";
+import { micro, milliseconds, safeInteger, type ActivityRead, type LeaderboardRead, type NameActivityRead, type PublicChainBalance, type PublicFlow, type PublicActivityDeposit, type PublicName, type PublicRenewal } from "./publicApi";
 import { minTrigger } from "./triggerConfig";
 
 export { minTrigger, setPublicConfig } from "./triggerConfig";
@@ -17,7 +17,7 @@ export interface FlowStep { kind: "deposit" | "burn" | "renewal"; chain: string;
 export interface ActivityEvent {
 	id: string; kind: EventKind; at: number; chain: string; amountDeposited: bigint;
 	gasAllowance: bigint; amountApplied: bigint; seconds: bigint; off: string | null;
-	nameExpiryAfter: number | null; funder: string; executor: string; executorIsRelayer: boolean; steps: FlowStep[];
+	nameExpiryAfter: number | null; funder: string; executor: string; executorIsRelayer: boolean; steps: FlowStep[]; deposits?: PublicActivityDeposit[] | null;
 }
 export interface ChainBalance { chainId: string; chain: string; amount: bigint | null; holdReason: HoldReason; flowErrorCode?: string | null; }
 export interface ChainFlow { chain: string; originChainId: string; amount: bigint; status: FlowStatus; startedAt: number; id: string; api: PublicFlow; }
@@ -58,6 +58,7 @@ export function renewalEvent(renewal: PublicRenewal, label: string): ActivityEve
 		executor: renewal.executorAddress,
 		executorIsRelayer: renewal.executorIsRelayer,
 		steps,
+		deposits: renewal.sourceDeposits,
 	};
 }
 

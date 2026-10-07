@@ -72,7 +72,18 @@ export interface PublicFlow {
 	evidence?: FlowEvidence;
 }
 
+export interface PublicActivityDeposit {
+	eventId: string;
+	chainId: string;
+	amount: string;
+	senderAddress: string | null;
+	transactionHash: string;
+	logIndex: number | null;
+}
+
 export interface PublicRenewal {
+	/** Null means indexed amounts/boundaries cannot establish an exact breakdown. */
+	sourceDeposits?: PublicActivityDeposit[] | null;
 	eventId: string;
 	flowId: string;
 	originChainId: string;

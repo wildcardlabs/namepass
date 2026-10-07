@@ -1875,3 +1875,12 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   }
 
 }
+
+/* Multiple source deposits remain one stage in the renewal's transaction trail. */
+.site-deposit-stage { display:flex; align-items:flex-start; gap:12px; min-width:0; padding:12px 0; }
+.site-deposit-toggle { display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; min-height:44px; text-align:left; }
+.site-deposit-toggle:focus-visible { outline:2px solid var(--site-accent); outline-offset:4px; border-radius:4px; }
+.site-deposit-list { list-style:none; margin:8px 0 0; padding:0; }
+.site-deposit-list > li { padding:10px 0; }
+.site-deposit-list > li + li { border-top:1px solid var(--site-line); }
+.site-deposit-list .site-transaction-hash { text-decoration:none; }

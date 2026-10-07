@@ -1,26 +1,14 @@
-import { decodeEventLog, getAddress, parseAbi, toEventSelector, type Address, type Hex, type TransactionReceipt } from "viem";
+import { decodeEventLog, encodeFunctionData, getAddress, parseAbi, toEventSelector, type Address,  type TransactionReceipt } from "viem";
 
 const transfer = parseAbi(["event Transfer(address indexed from,address indexed to,uint256 value)"]);
 export const batchDepositAmount = 500000n;
-
-export function batchCapability(result: unknown, chainId: number): string {
-  if (!result || typeof result !== "object") return "unsupported";
-  const entries = Object.entries(result);
-  const value = entries.find(([key]) => Number(key) === chainId)?.[1]
-    ?? entries.find(([key]) => key === "0x0")?.[1];
-  const status = (value as { atomic?: { status?: unknown } } | undefined)?.atomic?.status;
-  return typeof status === "string" ? status : "unsupported";
-}
-
-export function confirmedBatchHash(value: unknown, chainId: number, id: string): Hex | null {
-  const result = value as { id?: string; chainId?: string; status?: number; atomic?: boolean; receipts?: { transactionHash?: string; status?: string }[] };
-  if (!result || result.id !== id || Number(result.chainId) !== chainId || !Number.isInteger(result.status))
-    throw Error("Wallet returned a different or invalid batch identity.");
-  if (result.status! >= 100 && result.status! < 200) return null;
-  if (result.status !== 200 || result.atomic !== true || result.receipts?.length !== 1
-    || result.receipts[0].status !== "0x1" || !/^0x[0-9a-f]{64}$/i.test(result.receipts[0].transactionHash ?? ""))
-    throw Error("This test requires two successful transfers in one atomic transaction.");
-  return result.receipts[0].transactionHash as Hex;
+export const multicallAddress = getAddress("0xcA11bde05977b3631167028862bE2a173976CA11");
+export const multicallCodeHash = "0xd5c15df687b16f2ff992fc8d767b4216323184a2bbc6ee2f9c398c318e770891";
+export const multicallAbi = parseAbi(["function aggregate3((address target,bool allowFailure,bytes callData)[] calls) payable returns ((bool success,bytes returnData)[])"]);
+const tokenAbi = parseAbi(["function transferFrom(address,address,uint256) returns (bool)"]);
+export function batchData(token: Address, sender: Address, destination: Address) {
+  return encodeFunctionData({ abi: multicallAbi, functionName: "aggregate3", args: [[0, 1].map(() => ({ target: token, allowFailure: false,
+    callData: encodeFunctionData({ abi: tokenAbi, functionName: "transferFrom", args: [sender, destination, batchDepositAmount] }) }))] });
 }
 
 /** Check the full public-RPC receipt, independently of the wallet's filtered logs. */
