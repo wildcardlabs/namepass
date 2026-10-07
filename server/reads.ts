@@ -1,6 +1,7 @@
 import { and, count, desc, eq, gt, gte, inArray, isNotNull, lt, lte, or, sql } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
+import { activityDeposits } from "./activity-deposits";
 import { database } from "./db/client";
 import { balanceSnapshots, chainEvents, deposits, flows, names, transactionIntents } from "./db/schema";
 import { ApiError } from "./http";
@@ -188,19 +189,21 @@ export async function renewalActivity(
 			)),
 	]);
 	const pageRows = rows.slice(0, limit);
-	const recoveredDeposits = await recoveredActivityDeposits(pageRows);
+	const [recoveredDeposits, sourceDeposits] = await Promise.all([
+		recoveredActivityDeposits(pageRows), activityDeposits(pageRows.map(row => row.flow.id)),
+	]);
 	const last = pageRows[pageRows.length - 1]?.event;
 	const totalItems = Number(totals[0]?.total ?? 0);
 	return {
 		items: pageRows.map(({ event, name, flow, deposit, ensFacts, originTxHash, claimTxHash }) => ({
-			renewal: publicRenewalView(
+			renewal: { ...publicRenewalView(
 				event,
 				flow,
 				deposit ?? recoveredDeposits.get(flow.id) ?? null,
 				ensFacts,
 				originTxHash,
 				claimTxHash,
-			),
+			), sourceDeposits: sourceDeposits.get(flow.id) ?? null },
 			name: publicNameView(name),
 		})),
 		nextCursor:

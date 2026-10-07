@@ -186,6 +186,34 @@ production API enablement, database, schema, pipeline or payment changes.
 The [verification receipt](deployments/2026-10-07/public-api-admission-verification.json)
 contains the exact deployment, settings scope, rule IDs and check results.
 
+## Same-transaction deposits and activity display — 2026-10-07
+
+The user signed a capped 1.00-testnet-USDC approval and one Sepolia Multicall3
+transaction with two 0.50-USDC transfers to `farcaster.eth`. Both logs, 257 and
+258, were indexed and pooled into one 1.00-USDC renewal. The allowance is zero.
+This temporary, user-approved testnet tool is not a production funding pattern.
+
+Local HTTP status/history adapters used read-only production projections and
+public RPCs. Both deposits returned `complete` with the same event-specific renewal
+ID. History returned that renewal once, with matching duration and expiry.
+Core automation renewed at 10:57:24 UTC; the bounded API audit first observed
+completion at 11:14:31 UTC after its source-evidence finality gate cleared.
+The [canary receipt](deployments/2026-10-07/public-api-multideposit-canary.json)
+records the exact inputs and responses. This is not protected hosted replay.
+
+The branch activity read now returns individual source deposits when indexed
+credits exactly match a zero-remainder processing window. Local visual checks
+confirmed the funding wallet and both deposits in the feed and name view, including
+native/ERC-20 Arc and a 390px mobile viewport. Large-list layout checks used twenty
+explicitly synthetic deposits and funding wallets: both lists scroll within 240px.
+More than three funding sources use a dropdown. Deposit counts stay inside expanded
+details, and raw log positions remain internal. Activity totals still count renewals
+once. Uncertain breakdowns remain unavailable. The branch preview's production
+read proxy cannot expose this new field until the backend change is deployed.
+No schema, hosted database, pipeline or public API enablement changed. Protected
+hosted replay, live split processing, activation-boundary/restart recovery and the
+public capacity/enablement decision remain open.
+
 ## Current release — 2026-09-22
 
 The replacement contracts and hosted testnet services are deployed. The application uses the

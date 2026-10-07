@@ -1830,9 +1830,19 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   font-family: ui-monospace, SFMono-Regular, monospace;
   font-size: 12px;
   line-height: 20px;
+  color: var(--site-accent);
+  text-decoration: none;
+  font-weight: 400;
 }
+a.site-transaction-hash:hover,
 .site-transaction-link:hover .site-transaction-hash {
   color: var(--site-ink);
+}
+a.site-transaction-hash:focus-visible,
+.site-transaction-link:focus-visible {
+  outline: 2px solid var(--site-accent);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 @media (max-width: 899px) {
   .site-renewal-breakdown {
@@ -1875,3 +1885,21 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   }
 
 }
+
+/* Multiple source deposits remain one stage in the renewal's transaction trail. */
+.site-deposit-stage { display:flex; align-items:flex-start; gap:12px; min-width:0; padding:12px 0; }
+.site-deposit-toggle { display:flex; align-items:center; justify-content:space-between; gap:16px; width:100%; min-height:44px; text-align:left; }
+.site-deposit-toggle:focus-visible { outline:2px solid var(--site-accent); outline-offset:4px; border-radius:4px; }
+.site-deposit-list { list-style:none; margin:8px 0 0; padding:0; }
+.site-deposit-list > li { padding:10px 0; }
+.site-deposit-list > li + li { border-top:1px solid var(--site-line); }
+.site-deposit-list .site-transaction-hash { text-decoration:none; }
+.site-funding-sources { margin:0; padding:0; list-style:none; }
+.site-funding-sources > li { display:grid; grid-template-columns:minmax(0, 1fr) auto; align-items:start; gap:12px; padding:8px 0; }
+.site-funding-sources > li + li { border-top:1px solid var(--site-line); }
+.site-funding-sources .site-evidence-address-value { padding-top:0; }
+.site-funding-amount { padding-top:0; color:var(--site-ink); font-size:12px; line-height:20px; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.site-funding-unknown, .site-evidence-unavailable { color:var(--site-muted); font-size:12px; line-height:20px; }
+.site-evidence-unavailable { padding-top:8px; }
+.site-scrollable-evidence { max-height:240px; overflow-y:auto; overscroll-behavior-y:contain; scrollbar-width:thin; scrollbar-gutter:stable; }
+.site-scrollable-evidence:focus-visible { outline:2px solid var(--site-accent); outline-offset:3px; border-radius:4px; }

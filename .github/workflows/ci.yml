@@ -62,6 +62,11 @@ jobs:
       - name: Test the frontend
         run: npm run test:frontend
 
+      - name: Check temporary payment canary
+        run: |
+          npx tsc --noEmit -p tools/payment-canary/tsconfig.json
+          node --import tsx --test tools/payment-canary/batch.test.ts
+
       - name: Test the server
         run: npm run test:server
         env:

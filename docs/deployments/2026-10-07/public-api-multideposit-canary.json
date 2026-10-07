@@ -1,0 +1,108 @@
+{
+  "verifiedAt": "2026-10-07T11:14:32.910Z",
+  "verificationScope": "Local HTTP adapters with read-only production projections and configured public RPCs; not protected hosted verification",
+  "productionPublicApisEnabled": false,
+  "schemaOrPipelineChanged": false,
+  "funding": {
+    "chainId": "11155111",
+    "transactionHash": "0xe3be1ecd354c9c1e2a542b34c5e247bb11aed16b3b64919a24c9f6bada2fb19f",
+    "name": "farcaster.eth",
+    "depositAddress": "0x16CfEB29157376F55e7976562a850d04435C171d",
+    "amountEach": "500000",
+    "logIndices": [
+      257,
+      258
+    ],
+    "depositCount": 2
+  },
+  "approval": {
+    "transactionHash": "0x32078077b522205777cdfba51edd575edee3583357d2e45f957c7bf4b4cd2279",
+    "spender": "0xcA11bde05977b3631167028862bE2a173976CA11",
+    "amount": "1000000",
+    "remainingAllowance": "0",
+    "scope": "User-approved capped testnet canary only"
+  },
+  "status": {
+    "observedAt": "2026-10-07T11:14:31.195Z",
+    "elapsedMs": 3535,
+    "httpStatus": 200,
+    "body": {
+      "chainId": "11155111",
+      "transactionHash": "0xe3be1ecd354c9c1e2a542b34c5e247bb11aed16b3b64919a24c9f6bada2fb19f",
+      "status": "complete",
+      "deposits": [
+        {
+          "name": "farcaster.eth",
+          "depositAddress": "0x16CfEB29157376F55e7976562a850d04435C171d",
+          "logIndex": 257,
+          "amount": "500000",
+          "status": "complete",
+          "reason": null,
+          "renewals": [
+            {
+              "renewalId": "11155111:0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c:252",
+              "chainId": "11155111",
+              "transactionHash": "0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c",
+              "secondsAdded": "3547790",
+              "expiry": "2032-07-22T18:32:02.000Z"
+            }
+          ]
+        },
+        {
+          "name": "farcaster.eth",
+          "depositAddress": "0x16CfEB29157376F55e7976562a850d04435C171d",
+          "logIndex": 258,
+          "amount": "500000",
+          "status": "complete",
+          "reason": null,
+          "renewals": [
+            {
+              "renewalId": "11155111:0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c:252",
+              "chainId": "11155111",
+              "transactionHash": "0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c",
+              "secondsAdded": "3547790",
+              "expiry": "2032-07-22T18:32:02.000Z"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "sharedRenewal": {
+    "renewalId": "11155111:0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c:252",
+    "chainId": "11155111",
+    "transactionHash": "0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c",
+    "secondsAdded": "3547790",
+    "expiry": "2032-07-22T18:32:02.000Z"
+  },
+  "history": {
+    "httpStatus": 200,
+    "matchingItems": [
+      {
+        "renewalId": "11155111:0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c:252",
+        "flowId": "ceb3361a-67be-4937-afac-1d33d831956a",
+        "sourceChainId": "11155111",
+        "chainId": "11155111",
+        "transactionHash": "0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c",
+        "secondsAdded": "3547790",
+        "amountApplied": "900000",
+        "renewalFee": "100000",
+        "expiry": "2032-07-22T18:32:02.000Z",
+        "status": "complete",
+        "renewedAt": "2026-10-07T10:57:24.000Z"
+      }
+    ]
+  },
+  "finalityObservation": {
+    "firstPendingAt": "2026-10-07T10:59:56.380Z",
+    "firstCompleteAt": "2026-10-07T11:14:31.195Z",
+    "pendingReason": "source_set_unproven",
+    "note": "Core automation renewed before configured-provider finality permitted API completion."
+  },
+  "remainingGates": [
+    "Protected hosted replay of this same-transaction case",
+    "Live split-processing case",
+    "Activation-boundary and restart recovery",
+    "Public capacity and enablement decision"
+  ]
+}
