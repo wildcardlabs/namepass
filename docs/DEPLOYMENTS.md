@@ -201,18 +201,47 @@ completion at 11:14:31 UTC after its source-evidence finality gate cleared.
 The [canary receipt](deployments/2026-10-07/public-api-multideposit-canary.json)
 records the exact inputs and responses. This is not protected hosted replay.
 
-The branch activity read now returns individual source deposits when indexed
+PR #143 merged as `09052d9fa2050287597799be9b3a62dccfd6c356`. Production
+deployment `dpl_HDvoUjJhSNjm7nwo2LSz4mn91JuH` is READY at that commit. All required
+CI checks and 23 production smoke checks passed. Live feed and name activity return
+both deposits; a browser check confirmed the funding wallet and both deposit links.
+The [release receipt](deployments/2026-10-07/public-api-multideposit-ui-release.json)
+records the deployed commit and checks.
+
+The activity read now returns individual source deposits when indexed
 credits exactly match a zero-remainder processing window. Local visual checks
 confirmed the funding wallet and both deposits in the feed and name view, including
 native/ERC-20 Arc and a 390px mobile viewport. Large-list layout checks used twenty
 explicitly synthetic deposits and funding wallets: both lists scroll within 240px.
 More than three funding sources use a dropdown. Deposit counts stay inside expanded
 details, and raw log positions remain internal. Activity totals still count renewals
-once. Uncertain breakdowns remain unavailable. The branch preview's production
-read proxy cannot expose this new field until the backend change is deployed.
-No schema, hosted database, pipeline or public API enablement changed. Protected
-hosted replay, live split processing, activation-boundary/restart recovery and the
-public capacity/enablement decision remain open.
+once. Uncertain breakdowns remain unavailable. Production reads now expose the new
+deposit field, including through the branch preview's read proxy.
+The UI release changed no schema, hosted database, pipeline or public API flag.
+The separately approved replay below closes the hosted same-transaction check.
+Live split processing, activation-boundary/restart recovery and the public
+capacity/enablement decision remain open.
+
+The user approved the [protected replay plan](deployments/2026-10-07/public-api-same-transaction-staging-plan.json).
+Its insert-only copy of two deposits, four events and one settled flow passed a
+rollback rehearsal and was applied to the existing isolated `api-staging` database.
+Names, expiry metadata, prior records and reader privileges are unchanged. The
+[copy receipt](deployments/2026-10-07/public-api-same-transaction-staging-copy.json)
+records both checks. Only `codex/api-same-transaction-replay` received the
+existing SELECT-only database/RPC settings and status/history/admission flags,
+with values/types preserved from the completed enforcement verification branch.
+The [preview scope receipt](deployments/2026-10-07/public-api-same-transaction-preview-scope.json)
+records the eight branch-only settings. Deployment protection is unchanged; this
+branch has no public custom domain or signing credentials.
+Protected preview `dpl_FVCvUQWdxmmYJ1ZkQzvaw2AK1gGb`, commit
+`99ee52726a3ecd93ae18ef57c7846bdb39c4a040`, passed eleven HTTP checks and
+anonymous-access protection. Both 500000-unit deposits return `complete` with the
+same exact renewal ID across three polls. History returns that renewal once with
+matching duration/expiry, and pagination does not duplicate it. OpenAPI, CORS,
+no-store and method checks pass. All prior staging rows, the copied projections
+and SELECT-only reader privileges remained unchanged. The [hosted replay receipt](deployments/2026-10-07/public-api-same-transaction-hosted.json)
+records the responses and preserved staging fingerprint. Address/quote stay off;
+production settings stay unchanged. No new payment was needed.
 
 ## Current release — 2026-09-22
 

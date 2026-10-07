@@ -1,0 +1,63 @@
+{
+  "preparedAt": "2026-10-07T11:46:42.851Z",
+  "operation": "Insert only the missing same-transaction canary projections into isolated api-staging; no production writes",
+  "targetBranch": "br-autumn-cherry-av2es7od",
+  "counts": {
+    "events": 4,
+    "deposits": 2,
+    "flows": 1
+  },
+  "nameIdentity": {
+    "id": "975f3c03-725b-424f-ba4c-57d2e2f92507",
+    "label": "farcaster",
+    "depositAddress": "0x16cfeb29157376f55e7976562a850d04435c171d"
+  },
+  "transactionHash": "0xe3be1ecd354c9c1e2a542b34c5e247bb11aed16b3b64919a24c9f6bada2fb19f",
+  "fixtureSha256": "ca386844cc77f6d1a2704d677dbe00e25ef34fe100c8b863431d64bbd5f23fb1",
+  "preserve": [
+    "Existing names and expiry metadata",
+    "Existing events, flows and deposits",
+    "Balances and watched addresses",
+    "SELECT-only api_status_reader privileges"
+  ],
+  "exclude": [
+    "Keys and credentials",
+    "Raw payloads",
+    "Transaction intents",
+    "Workflow ownership",
+    "CCTP messages and attestations"
+  ],
+  "preconditions": [
+    "Verify the existing farcaster name identity and opening-window processing evidence",
+    "Existing event IDs and flow IDs must either be absent or exactly match",
+    "Rollback rehearsal must preserve all prior rows and reader privileges"
+  ],
+  "applyAuthorized": true,
+  "preview": {
+    "gitBranch": "codex/api-same-transaction-replay",
+    "protection": "Existing Vercel deployment protection; no custom domain",
+    "databaseRole": "api_status_reader",
+    "variables": [
+      "DATABASE_URL",
+      "ETHEREUM_SEPOLIA_RPC_URL",
+      "BASE_SEPOLIA_RPC_URL",
+      "ARBITRUM_SEPOLIA_RPC_URL",
+      "ARC_TESTNET_RPC_URL",
+      "NAMEPASS_PUBLIC_HISTORY_ENABLED",
+      "NAMEPASS_PUBLIC_STATUS_ENABLED",
+      "NAMEPASS_PUBLIC_LIMITS_ENABLED"
+    ],
+    "addressAndQuoteEnabled": false,
+    "productionSettingsChanged": false,
+    "signingCredentials": false
+  },
+  "acceptance": [
+    "Status proves both 500000-unit deposits and returns complete",
+    "Both deposits reference the same event-specific renewalId",
+    "History includes that renewal exactly once with matching duration and expiry",
+    "OpenAPI validation, no-store and CORS checks pass",
+    "Existing staging rows and SELECT-only reader privileges remain unchanged",
+    "Production activity remains populated and public API flags remain off"
+  ],
+  "authorization": "User approved the prepared staging copy and branch-only protected preview configuration on 2026-10-07."
+}
