@@ -1,7 +1,8 @@
 # Public API admission
 
 Status: merged in PR #141. Eight approved hosted rules were published on October 7,
-2026 and passed protected verification. Production API flags remain off.
+2026 and passed protected verification. The production testnet pilot now enables all four APIs
+and admission. Current evidence is in [DEPLOYMENTS.md](DEPLOYMENTS.md#public-testnet-api-pilot--2026-10-07).
 
 The four `/api/v1` adapters use the official `@vercel/firewall` SDK before database,
 activation or chain work. Existing core UI, Goldsky, Workflow, cron and payment
@@ -58,7 +59,7 @@ disabled during this read-only preview check. Measured positive CLI elapsed time
 were 2.8–10.5 seconds including CLI startup. These checks do not establish sustained
 capacity or close the remaining payment/watch recovery release gates.
 
-Future firewall changes require separate approval. Review the current firewall
+Future firewall changes outside an authorized release require separate approval. Review the current firewall
 version and any pending draft first. Preserve existing rules and avoid publishing
 unrelated draft changes. Configure the new guard only on a protected API preview
 with the isolated SELECT-only database, existing RPC settings and automation

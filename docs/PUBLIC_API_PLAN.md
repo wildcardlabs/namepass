@@ -1,7 +1,8 @@
 # Public API: fresh implementation plan
 
-Date: 2026-10-07. Status: public testnet pilot enabled; production pooler fix in verification.
-The user approved completion of the testnet pilot release. Production smoke found a pooled-connection incompatibility; its correction and verification are recorded in [DEPLOYMENTS.md](DEPLOYMENTS.md). A private read-only history adapter has passed protected staging;
+Date: 2026-10-07. Status: all six implementation stages completed for the approved testnet pilot.
+The user approved completion of the testnet pilot release. The production pooler incompatibility is corrected. Protected pooled and live checks passed;
+release evidence and accepted limits are in [DEPLOYMENTS.md](DEPLOYMENTS.md#public-testnet-api-pilot--2026-10-07). A private read-only history adapter has passed protected staging;
 its verification limits are in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md).
 A bounded read-only transaction status adapter is implemented behind an off-by-default flag;
 see [status verification and release gates](PUBLIC_API_STATUS.md). Source-receipt enumeration and indexed membership
@@ -54,7 +55,8 @@ bounded protected polling checks passed without changing staging data. See
 [current verification](DEPLOYMENTS.md#recovery-and-activation-boundary-verification--2026-10-07).
 The [final protected four-endpoint checks](deployments/2026-10-07/public-api-pilot-protected-hosted.json) passed.
 The user approved all remaining work through release, including production enablement.
-PR #146 merged and all five production API/admission flags are enabled. Finish the pooled-connection correction after CI and verify the live endpoints.
+PR #146 enabled all five production API/admission flags. PR #147 corrected pooled reads;
+required CI, protected pooled checks and the anonymous four-network live checks passed.
 
 ## Starting point
 
@@ -258,7 +260,11 @@ duplicate payment work, incorrect amounts or unsupported completion claims. Remo
 docs' unavailable notices only after hosted evidence for the documented flow is recorded in
 [DEPLOYMENTS.md](DEPLOYMENTS.md).
 
-## Decisions still required
+## Historical discovery questions
+
+These were the original discovery questions. The approved pilot has resolved them through the
+implementation and dated evidence above; live split settlement, forced hosted restart and
+global sustained capacity retain their explicit limits.
 
 Stage 1 findings and proposed interface decisions are in
 [PUBLIC_API_BASELINE.md](PUBLIC_API_BASELINE.md). The hosted schema and migration ledger are

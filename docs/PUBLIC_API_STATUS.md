@@ -1,15 +1,15 @@
 # Transaction status adapter
 
-Date: 2026-10-07. Public testnet pilot enabled; pooled production connection fix in verification.
+Date: 2026-10-07. Public testnet pilot released and live checks passed.
 Production boundaries are verified in [DEPLOYMENTS.md](DEPLOYMENTS.md#private-transaction-status-adapter--2026-10-06). Current release status is recorded there.
 
 `GET /api/v1/status/{chainId}?transactionHash={hash}` runs the existing source, allocation and
 renewal verifiers inside a bounded request. No client manifest, processing boundary, caller fee,
 background job or saved completion record is accepted. `NAMEPASS_PUBLIC_STATUS_ENABLED=1` is
-required. Production flags remain off. Status and history are enabled only on the protected previews recorded in
-[DEPLOYMENTS.md](DEPLOYMENTS.md), against isolated `api-staging` through a SELECT-only reader.
-Quote and address remain disabled on those read-only previews. Disabled status URLs return JSON 503 rather
-than the earlier absent-route 404. OPTIONS returns 204 and unsupported methods return 405.
+required. Production enables all four APIs with admission limits. Current release evidence is in
+[DEPLOYMENTS.md](DEPLOYMENTS.md#public-testnet-api-pilot--2026-10-07). Protected API previews
+use isolated staging data without signing credentials. Disabled status URLs return JSON 503.
+OPTIONS returns 204 and unsupported methods return 405.
 The preview read proxy leaves this route to its own adapter.
 
 ## Field and state sources
@@ -117,19 +117,21 @@ same renewal identifier. Exact evidence and remaining gates are in
 [DEPLOYMENTS.md](DEPLOYMENTS.md#fresh-browser-signed-route-checks-and-native-arc-indexing--2026-10-06).
 The bounded polling probe does not establish sustained hosted capacity. The
 [protected admission checks](PUBLIC_API_ADMISSION.md) now verify per-IP and shared
-regional counters; production public flags remain off. The user-signed same-transaction
+regional counters. The later public release and live checks are recorded in DEPLOYMENTS.md. The user-signed same-transaction
 two-deposit payment also passed protected hosted replay with one shared renewal identifier;
 see the [October 7 receipt](deployments/2026-10-07/public-api-same-transaction-hosted.json).
 The user accepted deployed split-fork and real-PostgreSQL recovery evidence for a
 limited testnet pilot, with live split settlement and forced hosted restart explicitly
-untested. Final protected pilot verification and the public-enable decision remain;
+untested. Final protected verification and the authorized public release passed;
 see the [current plan](PUBLIC_API_PLAN.md#current-ens-baseline-after-the-october-reset).
 The earlier local delayed
 sample was close to the 15-second provider deadline; larger or slower cases may
-truthfully return 503. Public exposure controls, polling cost and the remaining
-end-to-end gates in the [rollout plan](PUBLIC_API_PLAN.md) must pass before enablement.
+truthfully return 503. The approved limits and bounded polling evidence support the testnet
+pilot; they do not establish global sustained capacity.
 Provider receipt/range
-completeness and configured-provider finality remain explicit trust boundaries. The adapter
+completeness and canonical receipt evidence remain explicit trust boundaries. Source finality
+is required to report a reverted source transaction as failed, not to complete a verified renewal. The adapter
 introduces no new storage, worker, schema, ingestion, Workflow, contract or signer.
-The approved hosted staging settings are limited to the branch and SELECT-only database role
-recorded in the receipt; production settings are unchanged.
+The protected staging scope uses the existing isolated writer for repeated address activation;
+status/history still enforce read-only defaults and transactions. Production API/admission flags
+are enabled; production database and signing configuration are unchanged.
