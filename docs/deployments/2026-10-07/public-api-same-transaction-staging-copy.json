@@ -1,0 +1,79 @@
+{
+  "authorization": "Approved by the user on 2026-10-07",
+  "rehearsal": {
+    "observedAt": "2026-10-07T12:19:05.653Z",
+    "mode": "rollback-rehearsal",
+    "stagingBranch": "br-autumn-cherry-av2es7od",
+    "before": {
+      "names": 9,
+      "chain_events": 16,
+      "flows": 5,
+      "deposits": 6,
+      "transaction_intents": 0,
+      "balance_snapshots": 8,
+      "balance_scan_requests": 0,
+      "goldsky.watched_addresses": 9
+    },
+    "after": {
+      "names": 9,
+      "chain_events": 20,
+      "flows": 6,
+      "deposits": 8,
+      "transaction_intents": 0,
+      "balance_snapshots": 8,
+      "balance_scan_requests": 0,
+      "goldsky.watched_addresses": 9
+    },
+    "inserted": {
+      "chain_events": 4,
+      "deposits": 2,
+      "flows": 1
+    },
+    "existingRowsPreserved": true,
+    "readerPrivilegesChanged": false,
+    "productionWritten": false,
+    "schemaChanged": false,
+    "flowsStarted": 0,
+    "intentsCreated": 0,
+    "fixtureSha256": "ca386844cc77f6d1a2704d677dbe00e25ef34fe100c8b863431d64bbd5f23fb1",
+    "preservedBeforeSha256": "29b0867bb5d03425fc9c8736fb6f8cfff641c11d22eeea762674dc6d3390bd46"
+  },
+  "apply": {
+    "observedAt": "2026-10-07T12:19:37.744Z",
+    "mode": "applied",
+    "stagingBranch": "br-autumn-cherry-av2es7od",
+    "before": {
+      "names": 9,
+      "chain_events": 16,
+      "flows": 5,
+      "deposits": 6,
+      "transaction_intents": 0,
+      "balance_snapshots": 8,
+      "balance_scan_requests": 0,
+      "goldsky.watched_addresses": 9
+    },
+    "after": {
+      "names": 9,
+      "chain_events": 20,
+      "flows": 6,
+      "deposits": 8,
+      "transaction_intents": 0,
+      "balance_snapshots": 8,
+      "balance_scan_requests": 0,
+      "goldsky.watched_addresses": 9
+    },
+    "inserted": {
+      "chain_events": 4,
+      "deposits": 2,
+      "flows": 1
+    },
+    "existingRowsPreserved": true,
+    "readerPrivilegesChanged": false,
+    "productionWritten": false,
+    "schemaChanged": false,
+    "flowsStarted": 0,
+    "intentsCreated": 0,
+    "fixtureSha256": "ca386844cc77f6d1a2704d677dbe00e25ef34fe100c8b863431d64bbd5f23fb1",
+    "preservedBeforeSha256": "29b0867bb5d03425fc9c8736fb6f8cfff641c11d22eeea762674dc6d3390bd46"
+  }
+}

@@ -1,0 +1,160 @@
+{
+  "observedAt": "2026-10-07T11:48:52.071Z",
+  "pullRequest": "https://github.com/wildcardlabs/namepass/pull/143",
+  "mergeCommit": "09052d9fa2050287597799be9b3a62dccfd6c356",
+  "deployment": {
+    "id": "dpl_HDvoUjJhSNjm7nwo2LSz4mn91JuH",
+    "url": "namepass-v2-5s080fssf-wildcard-labs.vercel.app",
+    "readyState": "READY",
+    "target": "production",
+    "commit": "09052d9fa2050287597799be9b3a62dccfd6c356",
+    "aliases": [
+      "beta.namepass.com",
+      "demo-five-gray-37.vercel.app",
+      "namepass-v2-wildcard-labs.vercel.app",
+      "namepass-v2-git-main-wildcard-labs.vercel.app"
+    ]
+  },
+  "ci": {
+    "runId": 37615808560,
+    "result": "success"
+  },
+  "productionSmoke": {
+    "passed": 23,
+    "checks": [
+      {
+        "path": "/api/activity?limit=10",
+        "method": "GET",
+        "status": 200,
+        "items": 6
+      },
+      {
+        "path": "/api/names/steve.eth/activity?limit=2",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/stats",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/config/public",
+        "method": "GET",
+        "status": 200
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "POST",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "POST",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/address",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/quote",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/status/11155111?transactionHash=0x123",
+        "method": "GET",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/status/11155111",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/status/11155111",
+        "method": "POST",
+        "status": 405,
+        "errorCode": "method_not_allowed"
+      },
+      {
+        "path": "/api/v1/status/11155111/unknown",
+        "method": "GET",
+        "status": 404,
+        "errorCode": "api_not_found"
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "GET",
+        "status": 503,
+        "errorCode": "api_unavailable"
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "OPTIONS",
+        "status": 204
+      },
+      {
+        "path": "/api/v1/names/steve.eth/renewals",
+        "method": "POST",
+        "status": 405,
+        "errorCode": "method_not_allowed"
+      },
+      {
+        "path": "/",
+        "status": 200
+      },
+      {
+        "path": "/docs",
+        "status": 200
+      },
+      {
+        "path": "/docs/reference",
+        "status": 200
+      },
+      {
+        "path": "/terms",
+        "status": 200
+      },
+      {
+        "path": "/openapi.json",
+        "status": 200
+      },
+      {
+        "host": "demo-five-gray-37.vercel.app",
+        "path": "/api/activity?limit=2",
+        "status": 200,
+        "populated": true
+      },
+      {
+        "path": "/api/activity?limit=10",
+        "status": 200,
+        "sourceDeposits": 2,
+        "sharedHash": true,
+        "fundingWallet": "0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6"
+      },
+      {
+        "path": "/api/names/farcaster.eth/activity?limit=10",
+        "status": 200,
+        "sourceDeposits": 2,
+        "sharedHash": true,
+        "fundingWallet": "0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6"
+      }
+    ]
+  },
+  "visualVerification": {
+    "host": "beta.namepass.com",
+    "fundingWalletVisible": true,
+    "individualSourceDepositsVisible": 2,
+    "transactionLinksConsistent": true,
+    "closedRowsHaveNoDepositCounts": true,
+    "rawLogPositionsHidden": true
+  },
+  "productionApiFlagsEnabled": false,
+  "hostedDataOrSchemaChanged": false
+}

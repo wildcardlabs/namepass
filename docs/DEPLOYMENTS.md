@@ -201,18 +201,35 @@ completion at 11:14:31 UTC after its source-evidence finality gate cleared.
 The [canary receipt](deployments/2026-10-07/public-api-multideposit-canary.json)
 records the exact inputs and responses. This is not protected hosted replay.
 
-The branch activity read now returns individual source deposits when indexed
+PR #143 merged as `09052d9fa2050287597799be9b3a62dccfd6c356`. Production
+deployment `dpl_HDvoUjJhSNjm7nwo2LSz4mn91JuH` is READY at that commit. All required
+CI checks and 23 production smoke checks passed. Live feed and name activity return
+both deposits; a browser check confirmed the funding wallet and both deposit links.
+The [release receipt](deployments/2026-10-07/public-api-multideposit-ui-release.json)
+records the deployed commit and checks.
+
+The activity read now returns individual source deposits when indexed
 credits exactly match a zero-remainder processing window. Local visual checks
 confirmed the funding wallet and both deposits in the feed and name view, including
 native/ERC-20 Arc and a 390px mobile viewport. Large-list layout checks used twenty
 explicitly synthetic deposits and funding wallets: both lists scroll within 240px.
 More than three funding sources use a dropdown. Deposit counts stay inside expanded
 details, and raw log positions remain internal. Activity totals still count renewals
-once. Uncertain breakdowns remain unavailable. The branch preview's production
-read proxy cannot expose this new field until the backend change is deployed.
+once. Uncertain breakdowns remain unavailable. Production reads now expose the new
+deposit field, including through the branch preview's read proxy.
 No schema, hosted database, pipeline or public API enablement changed. Protected
 hosted replay, live split processing, activation-boundary/restart recovery and the
 public capacity/enablement decision remain open.
+
+The user approved the [protected replay plan](deployments/2026-10-07/public-api-same-transaction-staging-plan.json).
+Its insert-only copy of two deposits, four events and one settled flow passed a
+rollback rehearsal and was applied to the existing isolated `api-staging` database.
+Names, expiry metadata, prior records and reader privileges are unchanged. The
+[copy receipt](deployments/2026-10-07/public-api-same-transaction-staging-copy.json)
+records both checks. Only `codex/api-same-transaction-replay` will receive the
+existing SELECT-only database/RPC settings and status/history/admission flags.
+Protected hosted replay is pending. Address/quote stay off; production settings
+stay unchanged. No new payment is needed.
 
 ## Current release — 2026-09-22
 
