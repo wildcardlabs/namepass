@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Namepass public API",
-    "version": "2026-10-05",
-    "description": "Planned public API; endpoints are not yet available. Deposit addresses, renewal estimates, transaction status and ENS renewal history."
+    "version": "2026-10-07",
+    "description": "Public testnet API pilot. Deposit addresses, renewal estimates, transaction status and ENS renewal history."
   },
   "servers": [
     {
@@ -295,7 +295,7 @@
       "post": {
         "operationId": "post_quote",
         "summary": "Estimate a renewal",
-        "description": "Estimate renewal duration, the protocol allowance and rounding remainder for an ENS name, funding chain and USDC amount. Uses Namepass automation’s current Standard transfer policy with zero bridge fee, without Circle fee queries. Quotes expire after 60 seconds and assume one processing flow with no existing balance at the deposit address.",
+        "description": "Estimate renewal duration, the protocol allowance and rounding remainder for an ENS name, funding chain and USDC amount. Uses Namepass automation\u2019s current Standard transfer policy with zero bridge fee, without Circle fee queries. Quotes expire after 60 seconds and assume one processing flow with no existing balance at the deposit address.",
         "requestBody": {
           "required": true,
           "content": {

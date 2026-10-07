@@ -1,6 +1,6 @@
 # API reference
 
-> **API not yet available.** The following contract describes planned endpoints, not a deployed service.
+> **Testnet API pilot.** The public endpoints support the testnets listed in the address response.
 
 Base URL: `https://beta.namepass.com/api/v1`
 

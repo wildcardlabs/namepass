@@ -1,7 +1,7 @@
 # Public API: fresh implementation plan
 
-Date: 2026-10-05. Status: baseline review merged; quotes and address activation verified on protected previews.
-Production APIs remain disabled. A private read-only history adapter has passed protected staging;
+Date: 2026-10-07. Status: final protected four-endpoint verification passed.
+The user approved completion of the testnet pilot release. Production enablement awaits the reviewed deployment. A private read-only history adapter has passed protected staging;
 its verification limits are in [PUBLIC_API_HISTORY.md](PUBLIC_API_HISTORY.md).
 A bounded read-only transaction status adapter is implemented behind an off-by-default flag;
 see [status verification and release gates](PUBLIC_API_STATUS.md). Source-receipt enumeration and indexed membership
@@ -52,9 +52,9 @@ The new Base activation sample completed ENS renewal. The updated local adapters
 verify its exact confirmed renewal and expiry without an additional finality wait. Twenty
 bounded protected polling checks passed without changing staging data. See
 [current verification](DEPLOYMENTS.md#recovery-and-activation-boundary-verification--2026-10-07).
-The remaining pilot sequence is the [final protected four-endpoint check](deployments/2026-10-07/public-api-pilot-protected-plan.json),
-then a separate production-enable decision. The user approved the isolated copy and protected configuration. Production enablement
-still requires separate authorization.
+The [final protected four-endpoint checks](deployments/2026-10-07/public-api-pilot-protected-hosted.json) passed.
+The user approved all remaining work through release, including production enablement.
+Merge the reviewed change after CI, deploy the five production API/admission flags and verify the live endpoints.
 
 ## Starting point
 

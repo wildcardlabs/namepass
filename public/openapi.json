@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Namepass public API",
-    "version": "2026-10-05",
-    "description": "Planned public API; endpoints are not yet available. Deposit addresses, renewal estimates, transaction status and ENS renewal history."
+    "version": "2026-10-07",
+    "description": "Public testnet API pilot. Deposit addresses, renewal estimates, transaction status and ENS renewal history."
   },
   "servers": [
     {

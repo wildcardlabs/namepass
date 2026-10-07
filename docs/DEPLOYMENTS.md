@@ -7,7 +7,16 @@ returns `complete` after verifying the confirmed canonical ENS receipt, the full
 deposit set and every deposit-to-processing relationship. It adds no finality response field.
 History uses the same confirmed-event completion meaning. Private finalized operator evidence
 and Circle bridge processing remain separate. Production public API flags remain disabled.
-The change is not yet merged or deployed.
+All 225 local server tests passed without skips. Protected preview
+`dpl_hpEJpqaf4muqQs7grto7QALM8j2W`, commit `902231a5558bdeeedd593e2c48e0917aff2d88d4`,
+passed 28 HTTP checks across all four adapters. The [protected receipt](deployments/2026-10-07/public-api-pilot-protected-hosted.json)
+records exact positive responses, validation/CORS/method checks, anonymous protection,
+and unchanged prior staging rows/reader privileges. Only approved brantly activation metadata
+changed; no new flow or intent was created. CI run `37654567571` passed.
+
+The user then approved all remaining work through release, including merge and production
+enablement. PR #146 and the production deployment remain pending. Production flags will be
+set only after the updated reviewed candidate passes CI.
 
 ## Public design preview — 2026-10-05
 
@@ -328,7 +337,7 @@ The ten settings in the [preview scope receipt](deployments/2026-10-07/public-ap
 are scoped only to `codex/api-recovery-verification`. Its database uses the existing
 `api_staging` writer for address checks; status/history still enforce read-only
 connections and transactions. Protection, firewall, signing credentials and production
-settings are unchanged. The new protected deployment and four-endpoint checks are pending.
+settings are unchanged. The new protected deployment and four-endpoint checks passed; see the confirmed-completion section above.
 
 ## Current release — 2026-09-22
 

@@ -1,6 +1,6 @@
 {
   "date": "2026-10-07",
-  "authorization": "User approved merging PR #145 after updated checks pass, copying verified brantly projections into isolated api-staging, and configuring the existing protected recovery preview for all four APIs with the existing staging writer. Production enablement remains excluded.",
+  "authorization": "User approved the original merge/copy/protected scope, then approved all remaining work through completion on October 7, including merge and production enablement after checks.",
   "pullRequest": "https://github.com/wildcardlabs/namepass/pull/145",
   "operation": "Final protected four-endpoint testnet-pilot verification; production endpoints stay disabled.",
   "merge": {
@@ -88,7 +88,8 @@
       "Regional limits and a bounded polling sample do not establish global sustained capacity."
     ]
   },
-  "publicEnablement": "Not authorized by this plan. A separate reviewed production flag change and post-deploy smoke check remain required.",
+  "publicEnablement": "Authorized after passing protected checks and updated CI; five production API/admission flags, GitHub-connected merge deployment, then bounded live verification.",
   "applyAuthorized": true,
-  "completionPolicy": "Verified confirmed ENS renewal; no additional API finality wait or finality response field. Full source-set and allocation proof remain required."
+  "completionPolicy": "Verified confirmed ENS renewal; no additional API finality wait or finality response field. Full source-set and allocation proof remain required.",
+  "protectedChecksCompleted": true
 }

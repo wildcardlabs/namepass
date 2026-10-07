@@ -1,12 +1,12 @@
 # Namepass integration documentation
 
-API version 2026-10-05. Supported networks: testnets.
+API version 2026-10-07. Supported networks: testnets.
 
 # Introduction
 
 Source: https://beta.namepass.com/docs/introduction
 
-> **API not yet available.** These guides describe the planned public API. Endpoint examples cannot be used for funding until the API release is announced. The existing Namepass application remains the testnet entry point.
+> **Testnet API pilot.** The public endpoints support the testnets listed in the address response.
 
 Namepass converts USDC deposits into ENS renewals. Each name has a deposit address shared across supported networks.
 
@@ -26,7 +26,7 @@ Namepass currently supports testnets. The [address response](/docs/addresses) li
 
 Source: https://beta.namepass.com/docs/quickstart
 
-> **API not yet available.** This is the planned integration flow. Do not send funds using these API examples until the API release is announced.
+> **Testnet API pilot.** The public endpoints support the testnets listed in the address response.
 
 ## 1. Get a deposit address
 
@@ -301,7 +301,7 @@ For agents without project skill support, use the [skill URL](/docs/skills/namep
 
 Source: https://beta.namepass.com/docs/reference
 
-> **API not yet available.** The following contract describes planned endpoints, not a deployed service.
+> **Testnet API pilot.** The public endpoints support the testnets listed in the address response.
 
 Base URL: `https://beta.namepass.com/api/v1`
 
