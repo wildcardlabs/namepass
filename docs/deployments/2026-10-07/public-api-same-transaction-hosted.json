@@ -1,0 +1,262 @@
+{
+  "observedAt": "2026-10-07T12:25:50.064Z",
+  "deployment": {
+    "id": "dpl_FVCvUQWdxmmYJ1ZkQzvaw2AK1gGb",
+    "url": "namepass-v2-6lg5ttuae-wildcard-labs.vercel.app",
+    "readyState": "READY",
+    "target": "preview",
+    "commit": "99ee52726a3ecd93ae18ef57c7846bdb39c4a040",
+    "gitBranch": "codex/api-same-transaction-replay"
+  },
+  "protection": {
+    "status": 302,
+    "anonymousApiAccess": false
+  },
+  "sameTransaction": {
+    "hash": "0xe3be1ecd354c9c1e2a542b34c5e247bb11aed16b3b64919a24c9f6bada2fb19f",
+    "depositCount": 2,
+    "amountEach": "500000",
+    "sharedRenewalId": "11155111:0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c:252",
+    "historyCountsRenewalOnce": true,
+    "historyPaginationDoesNotDuplicate": true,
+    "repeatedResponsesStable": true
+  },
+  "passedHttpChecks": 11,
+  "checks": [
+    {
+      "path": "/api/v1/status/11155111?transactionHash=0xe3be1ecd354c9c1e2a542b34c5e247bb11aed16b3b64919a24c9f6bada2fb19f",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 3831,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "state": "complete"
+    },
+    {
+      "path": "/api/v1/status/11155111?transactionHash=0xe3be1ecd354c9c1e2a542b34c5e247bb11aed16b3b64919a24c9f6bada2fb19f",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 2791,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "state": "complete"
+    },
+    {
+      "path": "/api/v1/status/11155111?transactionHash=0xe3be1ecd354c9c1e2a542b34c5e247bb11aed16b3b64919a24c9f6bada2fb19f",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 4968,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "state": "complete"
+    },
+    {
+      "path": "/api/v1/names/farcaster.eth/renewals?limit=10",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 2864,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "state": null
+    },
+    {
+      "path": "/api/v1/names/farcaster.eth/renewals?limit=1",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 2158,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "state": null
+    },
+    {
+      "path": "/api/v1/names/farcaster.eth/renewals?limit=1&cursor=WzEsImZhcmNhc3RlciIsIjIwMjYtMTAtMDdUMTA6NTc6MjQuMDAwWiIsIjB4YzUxMzI5YWMwYTNlNTg4OTcyZTcwN2NhMjM4MDgxNWIyMDU0MmY1ZGQxMmMzZWVmMTI4M2JiMTE3MjEyM2Y3YyIsMjUyLCJjZWIzMzYxYS02N2JlLTQ5MzctYWZhYy0xZDMzZDgzMTk1NmEiXQ",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 3290,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "state": null
+    },
+    {
+      "path": "/api/v1/status/11155111",
+      "method": "OPTIONS",
+      "status": 204,
+      "elapsedMs": 1981,
+      "headers": {
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "state": null
+    },
+    {
+      "path": "/api/v1/names/farcaster.eth/renewals",
+      "method": "OPTIONS",
+      "status": 204,
+      "elapsedMs": 1715,
+      "headers": {
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "GET, OPTIONS",
+        "access-control-expose-headers": "Retry-After"
+      },
+      "state": null
+    },
+    {
+      "path": "/api/v1/quote",
+      "method": "POST",
+      "status": 503,
+      "elapsedMs": 1804,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-expose-headers": "Retry-After",
+        "retry-after": "5"
+      },
+      "state": null
+    },
+    {
+      "path": "/api/v1/address",
+      "method": "POST",
+      "status": 503,
+      "elapsedMs": 2403,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+        "access-control-allow-origin": "*",
+        "access-control-allow-methods": "POST, OPTIONS",
+        "access-control-expose-headers": "Retry-After",
+        "retry-after": "5"
+      },
+      "state": null
+    },
+    {
+      "path": "/api/activity?limit=2",
+      "method": "GET",
+      "status": 200,
+      "elapsedMs": 2310,
+      "headers": {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store"
+      },
+      "state": null
+    }
+  ],
+  "representativeStatus": {
+    "chainId": "11155111",
+    "transactionHash": "0xe3be1ecd354c9c1e2a542b34c5e247bb11aed16b3b64919a24c9f6bada2fb19f",
+    "status": "complete",
+    "deposits": [
+      {
+        "name": "farcaster.eth",
+        "depositAddress": "0x16CfEB29157376F55e7976562a850d04435C171d",
+        "logIndex": 257,
+        "amount": "500000",
+        "status": "complete",
+        "reason": null,
+        "renewals": [
+          {
+            "renewalId": "11155111:0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c:252",
+            "chainId": "11155111",
+            "transactionHash": "0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c",
+            "secondsAdded": "3547790",
+            "expiry": "2032-07-22T18:32:02.000Z"
+          }
+        ]
+      },
+      {
+        "name": "farcaster.eth",
+        "depositAddress": "0x16CfEB29157376F55e7976562a850d04435C171d",
+        "logIndex": 258,
+        "amount": "500000",
+        "status": "complete",
+        "reason": null,
+        "renewals": [
+          {
+            "renewalId": "11155111:0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c:252",
+            "chainId": "11155111",
+            "transactionHash": "0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c",
+            "secondsAdded": "3547790",
+            "expiry": "2032-07-22T18:32:02.000Z"
+          }
+        ]
+      }
+    ]
+  },
+  "history": {
+    "name": "farcaster.eth",
+    "expiryUpdatedAt": null,
+    "renewalCount": 5,
+    "matchingItem": {
+      "renewalId": "11155111:0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c:252",
+      "flowId": "ceb3361a-67be-4937-afac-1d33d831956a",
+      "sourceChainId": "11155111",
+      "chainId": "11155111",
+      "transactionHash": "0xc51329ac0a3e588972e707ca2380815b20542f5dd12c3eef1283bb1172123f7c",
+      "secondsAdded": "3547790",
+      "amountApplied": "900000",
+      "renewalFee": "100000",
+      "expiry": "2032-07-22T18:32:02.000Z",
+      "status": "complete",
+      "renewedAt": "2026-10-07T10:57:24.000Z"
+    }
+  },
+  "stagingPreservation": {
+    "observedAt": "2026-10-07T12:27:02.498Z",
+    "stagingBranch": "br-autumn-cherry-av2es7od",
+    "readOnly": true,
+    "counts": {
+      "names": 9,
+      "chain_events": 20,
+      "flows": 6,
+      "deposits": 8,
+      "transaction_intents": 0,
+      "balance_snapshots": 8,
+      "balance_scan_requests": 0,
+      "goldsky.watched_addresses": 9
+    },
+    "allPriorRowsAndReaderPrivilegesPreserved": true,
+    "canaryRowsMatchApprovedFixture": true,
+    "stagingSha256": "aea1cca4eac22234e6c41fa716f9bf6d2aaed76f7cb08214851adc509159ee35",
+    "productionWritten": false
+  },
+  "scope": "Protected hosted HTTP replay of the user-signed two-deposit transaction. SELECT-only staging; no public enablement, new payments, workflow execution or production writes.",
+  "remainingGates": [
+    "Live split processing",
+    "Activation boundary and restart recovery",
+    "Public capacity and enablement decision"
+  ]
+}

@@ -217,9 +217,10 @@ More than three funding sources use a dropdown. Deposit counts stay inside expan
 details, and raw log positions remain internal. Activity totals still count renewals
 once. Uncertain breakdowns remain unavailable. Production reads now expose the new
 deposit field, including through the branch preview's read proxy.
-No schema, hosted database, pipeline or public API enablement changed. Protected
-hosted replay, live split processing, activation-boundary/restart recovery and the
-public capacity/enablement decision remain open.
+The UI release changed no schema, hosted database, pipeline or public API flag.
+The separately approved replay below closes the hosted same-transaction check.
+Live split processing, activation-boundary/restart recovery and the public
+capacity/enablement decision remain open.
 
 The user approved the [protected replay plan](deployments/2026-10-07/public-api-same-transaction-staging-plan.json).
 Its insert-only copy of two deposits, four events and one settled flow passed a
@@ -232,8 +233,15 @@ with values/types preserved from the completed enforcement verification branch.
 The [preview scope receipt](deployments/2026-10-07/public-api-same-transaction-preview-scope.json)
 records the eight branch-only settings. Deployment protection is unchanged; this
 branch has no public custom domain or signing credentials.
-Protected hosted replay is pending. Address/quote stay off; production settings
-stay unchanged. No new payment is needed.
+Protected preview `dpl_FVCvUQWdxmmYJ1ZkQzvaw2AK1gGb`, commit
+`99ee52726a3ecd93ae18ef57c7846bdb39c4a040`, passed eleven HTTP checks and
+anonymous-access protection. Both 500000-unit deposits return `complete` with the
+same exact renewal ID across three polls. History returns that renewal once with
+matching duration/expiry, and pagination does not duplicate it. OpenAPI, CORS,
+no-store and method checks pass. All prior staging rows, the copied projections
+and SELECT-only reader privileges remained unchanged. The [hosted replay receipt](deployments/2026-10-07/public-api-same-transaction-hosted.json)
+records the responses and preserved staging fingerprint. Address/quote stay off;
+production settings stay unchanged. No new payment was needed.
 
 ## Current release — 2026-09-22
 
