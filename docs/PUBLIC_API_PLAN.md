@@ -35,7 +35,9 @@ regression evidence; obsolete hosted payment history is not a compatibility requ
 The protected hosted preview now verifies fresh payments on all four source routes,
 including native and ERC-20 Arc pooled into one renewal, plus one positive newly
 registered Sepolia watch. See the [fresh-route verification](DEPLOYMENTS.md#fresh-browser-signed-route-checks-and-native-arc-indexing--2026-10-06).
-Keep production flags off while public exposure/capacity, activation-boundary and
+The [protected admission checks](PUBLIC_API_ADMISSION.md) now verify the eight
+approved regional/IP counters without enabling production endpoints.
+Keep production flags off while the public capacity/enablement decision, activation-boundary and
 restart recovery, and live same-transaction multi-deposit/split gates remain open.
 The positive watch case does not establish zero-delay ingestion or recover earlier
 filtered transfers. No additional Goldsky pipeline or schema is required.

@@ -1,5 +1,5 @@
 {
-  "status": "proposed_not_applied",
+  "status": "published_and_verified_production_apis_disabled",
   "projectId": "prj_CoorV6FFHJktolSYkOEtTEFrnb1X",
   "rules": [
     {
@@ -242,5 +242,8 @@
         }
       }
     }
-  ]
+  ],
+  "publishedAt": "2026-10-07T10:11:05.337Z",
+  "firewallVersion": 7,
+  "verificationReceipt": "../2026-10-07/public-api-admission-verification.json"
 }
