@@ -40,3 +40,28 @@ It does not replay or automatically submit payments. Keep the journal between re
 Check with `npx tsc --noEmit -p tools/payment-canary/tsconfig.json` and
 `node node_modules/vite/bin/vite.js build --config tools/payment-canary/vite.config.ts`.
 The page is outside the production application's entry point and build.
+
+## Remaining same-transaction canary
+
+The first card prepares two 0.50-USDC transfers to `farcaster.eth` in one transaction
+(1.00 testnet USDC total). Base Sepolia is selected initially; Sepolia and Arbitrum
+Sepolia are alternatives. The wallet must already report atomic batching as
+`supported` through [EIP-5792](https://eips.ethereum.org/EIPS/eip-5792).
+`ready` accounts are blocked so the page does not request a wallet upgrade.
+There is no fallback to separate transactions, token approval or new helper contract.
+
+Before a signature, the page checks the account/network, deployed factory address,
+registered monitoring, current helper/quote, USDC balance and active read-only stream
+capture. The user reviews both transfers in the wallet. The batch ID is saved before
+the wallet request; reloads and unknown request outcomes cannot enable a second
+submission. A rejected request can be retried. Use **Check submitted batch** to resume.
+
+Funding proof requires a successful atomic wallet result with one transaction hash,
+then the full public-RPC receipt with exactly two distinct 0.50-USDC transfer logs
+from the connected account to the displayed address. Wallet batch IDs or filtered
+wallet logs alone cannot establish this case. This records funding only. Separate
+index/status/history checks must prove both deposits and shared-renewal identity.
+It does not force split processing or close activation/watch recovery gates.
+
+The receipt guard regression is
+`node --import tsx --test tools/payment-canary/batch.test.ts`.
