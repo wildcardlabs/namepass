@@ -1,4 +1,3 @@
-import { useCopyFeedback } from "../hooks/use-copy-feedback";
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import {
 	useEffect,
@@ -25,8 +24,6 @@ import {
 	Loader2,
 	ExternalLink,
 	ChevronDown,
-	Copy,
-	Check,
 	CheckCircle2,
 } from "lucide-react";
 import { BackButton, ICON_BUTTON_BASE_CLASS } from "./BackButton";
@@ -61,6 +58,7 @@ import {
 } from "../lib/format";
 import { completedFlowTransactions } from "../lib/flowTransactions";
 import DepositTransactions from "./DepositTransactions";
+import FundingSources, { CopyableAddress } from "./FundingSources";
 import PassCard from "./PassCard";
 import { Card } from "./ui/card";
 import PendingBalance from "./PendingBalance";
@@ -85,13 +83,11 @@ function AmountCell({
 	applied,
 	showApplied,
 	dense,
-	depositCount,
 }: {
 	deposited: bigint;
 	applied: bigint;
 	showApplied: boolean;
 	dense?: boolean;
-	depositCount?: number;
 }) {
 	return (
 		<>
@@ -105,7 +101,6 @@ function AmountCell({
 					{fmtUsdc(applied)} applied
 				</span>
 			)}
-			{depositCount !== undefined && depositCount > 1 && <span className="block text-[11px] text-ink-secondary">{depositCount} deposits</span>}
 		</>
 	);
 }
@@ -297,7 +292,7 @@ function FeedRowContent({
 			<MobileFlowSummary
 				title={nameTitle}
 				chain={<ChainTag chain={row.chain} />}
-				received={<AmountCell deposited={row.amountDeposited} applied={row.amountApplied} showApplied={row.gasAllowance > 0n} depositCount={row.pending ? undefined : row.event.deposits?.length} dense />}
+				received={<AmountCell deposited={row.amountDeposited} applied={row.amountApplied} showApplied={row.gasAllowance > 0n} dense />}
 				rate={row.off === null ? "—" : row.off ? `${row.off} off` : "Standard"}
 				time={timeAdded}
 				footer={<StatusCell row={row} reduced={reduced} />}
@@ -314,7 +309,7 @@ function FeedRowContent({
 			>
 				{nameTitle}
 				<span className="text-[13.5px]"><ChainTag chain={row.chain} /></span>
-				<span className="text-right"><AmountCell deposited={row.amountDeposited} applied={row.amountApplied} showApplied={row.gasAllowance > 0n} depositCount={row.pending ? undefined : row.event.deposits?.length} /></span>
+				<span className="text-right"><AmountCell deposited={row.amountDeposited} applied={row.amountApplied} showApplied={row.gasAllowance > 0n} /></span>
 				<span className="flex justify-center text-[13px]"><DiscountTag off={row.off} /></span>
 				{/* Pending time uses ~ because it has not been added yet. */}
 				<span className={`text-[13.5px] text-right tabular-nums transition-colors duration-500 ${pending ? "text-ink-secondary" : "text-ink-primary"}`}>
@@ -646,32 +641,6 @@ function TransactionRow({ index, label, chain, tx }: { index: number; label: str
 	);
 }
 
-function CopyableAddress({ address, label }: { address: string; label: string }) {
-	const { copied: copiedValue, error, copy } = useCopyFeedback();
-	const copied = copiedValue === address;
-	const copyable = /^0x[a-f\d]{40}$/i.test(address);
-
-	return (
-		<span className="site-evidence-address">
-			<span className="site-evidence-address-value">
-				{address}
-				<span role="status" className="sr-only">{copied ? "Copied to clipboard" : ""}</span>
-				{error && <span role="alert" className="mt-1 block font-sans text-red-700">{error.message}</span>}
-			</span>
-			{copyable && (
-				<button
-					type="button"
-					onClick={() => void copy(address)}
-					aria-label={copied ? `${label} address copied` : `Copy ${label} address`}
-					title={copied ? "Copied" : `Copy ${label} address`}
-					className="site-data-copy inline-flex items-center justify-center transition-colors hover:text-ink-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[rgba(28,58,41,0.6)]"
-				>
-					{copied ? <Check aria-hidden="true" className="h-3.5 w-3.5" /> : <Copy aria-hidden="true" className="h-3.5 w-3.5" />}
-				</button>
-			)}
-		</span>
-	);
-}
 
 /**
  * What one renewal actually cost and which transactions carried it. The three
@@ -685,8 +654,6 @@ function RenewalBreakdown({ event }: { event: ActivityEvent }) {
 	const effectiveRate = event.seconds > 0n
 		? (event.amountApplied * YEAR_SECONDS + event.seconds / 2n) / event.seconds
 		: 0n;
-	const funders = event.deposits?.length ? [...new Set(event.deposits.map(d => d.senderAddress))] : null;
-	const hasUnknownFunder = funders?.includes(null);
 	const steps = event.deposits !== undefined ? event.steps.filter(s => s.kind !== "deposit") : event.steps;
 	return (
 		<div className="site-renewal-breakdown">
@@ -736,9 +703,7 @@ function RenewalBreakdown({ event }: { event: ActivityEvent }) {
 					<div>
 						<dt>Funded by</dt>
 						<dd>
-								{hasUnknownFunder ? <span className="text-ink-secondary">Sender information incomplete · see deposits</span>
-								: funders && funders.length > 1 ? <span className="text-ink-secondary">{funders.length} wallets · see deposits</span>
-								: <CopyableAddress address={funders?.[0] ?? event.funder} label="funded by" />}
+							<FundingSources deposits={event.deposits} fallback={event.funder} />
 						</dd>
 					</div>
 					<div>
@@ -790,7 +755,7 @@ function UnclaimedFlowCard({ label, flow, renewable, onRetry }: { label: string;
 				<div className="flex justify-between gap-4"><dt>Circle nonce</dt><dd className="font-mono truncate">{flow.cctpNonce ?? "Not available"}</dd></div>
 				<div className="flex justify-between gap-4"><dt>Latest retry</dt><dd>{flow.nextActionAt ? fmtDate(new Date(flow.nextActionAt).getTime()) : "Not scheduled"}</dd></div>
 			</dl>
-			{evidence?.originTxHash && chain && <a href={explorerUrl(chain.name, evidence.originTxHash)} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 font-mono text-[12px] text-ink-action hover:text-ink-primary">Origin transaction {truncTx(evidence.originTxHash)} <ExternalLink className="w-3 h-3" /></a>}
+			{evidence?.originTxHash && chain && <a href={explorerUrl(chain.name, evidence.originTxHash)} target="_blank" rel="noopener noreferrer" className="site-transaction-hash mt-3">Origin transaction {truncTx(evidence.originTxHash)} <ExternalLink className="w-3 h-3" /></a>}
 			<p className="mt-3 text-[12px] leading-relaxed text-ink-secondary">This transfer cannot return to {chain?.name ?? "the origin chain"}. A retry uses the same Circle message.</p>
 			{renewable && <button type="button" onClick={() => void retry()} disabled={retrying} className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-[10px] border border-[rgba(28,58,41,0.25)] px-3 py-1.5 text-[12px] text-ink-action hover:border-transparent hover:bg-white disabled:opacity-50">{retrying && <Loader2 className="w-3 h-3 animate-spin" />}Retry renewal</button>}
 			{error && <p role="alert" className="mt-2 text-[12px] text-red-700">{error}</p>}
@@ -812,7 +777,7 @@ function FailedCctpFlowCard({ flow }: { flow: PublicFlow }) {
 				<div className="flex justify-between gap-4"><dt>Origin chain</dt><dd>{chain?.name ?? flow.originChainId}</dd></div>
 			</dl>
 			{originTxHash && chain && (
-				<a href={explorerUrl(chain.name, originTxHash)} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex items-center gap-1.5 font-mono text-[12px] text-ink-action hover:text-ink-primary">
+				<a href={explorerUrl(chain.name, originTxHash)} target="_blank" rel="noopener noreferrer" className="site-transaction-hash mt-3">
 					Origin transaction {truncTx(originTxHash)} <ExternalLink className="w-3 h-3" />
 				</a>
 			)}
@@ -1201,7 +1166,7 @@ function NameDetail({
 								<MobileFlowSummary
 									title={<span className="min-w-0 flex-1 truncate text-[15px] text-ink-primary">{eventTitle}</span>}
 									chain={e.kind === "activated" ? "-" : <ChainTag chain={e.chain} />}
-									received={e.kind === "activated" ? "-" : <AmountCell deposited={e.amountDeposited} applied={e.amountApplied} showApplied={e.kind === "renewal" && e.gasAllowance > 0n} depositCount={e.deposits?.length} dense />}
+									received={e.kind === "activated" ? "-" : <AmountCell deposited={e.amountDeposited} applied={e.amountApplied} showApplied={e.kind === "renewal" && e.gasAllowance > 0n} dense />}
 									rate={eventRate}
 									time={eventTime}
 									footer={fmtDate(e.at)}
@@ -1222,7 +1187,7 @@ function NameDetail({
 									<span className="text-[13px] text-ink-secondary tabular-nums">{fmtDate(e.at)}</span>
 									<span className="text-[14.5px] text-ink-primary">{eventTitle}</span>
 									<span className="text-[13.5px]">{e.kind !== "activated" ? <ChainTag chain={e.chain} /> : <span className="text-ink-secondary">-</span>}</span>
-									<span className="text-[13.5px] text-ink-secondary text-right tabular-nums">{e.kind !== "activated" ? <AmountCell deposited={e.amountDeposited} applied={e.amountApplied} showApplied={e.kind === "renewal" && e.gasAllowance > 0n} depositCount={e.deposits?.length} /> : "-"}</span>
+									<span className="text-[13.5px] text-ink-secondary text-right tabular-nums">{e.kind !== "activated" ? <AmountCell deposited={e.amountDeposited} applied={e.amountApplied} showApplied={e.kind === "renewal" && e.gasAllowance > 0n} /> : "-"}</span>
 									<span className="flex justify-center">{e.kind === "renewal" ? <DiscountTag off={e.off} /> : <span className="text-ink-secondary">-</span>}</span>
 									<span className="text-[13.5px] text-ink-primary text-right tabular-nums">{eventTime}</span>
 									<span className="flex justify-end">{expandable && <>

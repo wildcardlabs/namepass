@@ -204,7 +204,10 @@ records the exact inputs and responses. This is not protected hosted replay.
 The branch activity read now returns individual source deposits when indexed
 credits exactly match a zero-remainder processing window. Local visual checks
 confirmed the funding wallet and both deposits in the feed and name view, including
-native/ERC-20 Arc and a 390px mobile viewport. Activity totals still count renewals
+native/ERC-20 Arc and a 390px mobile viewport. Large-list layout checks used twenty
+explicitly synthetic deposits and funding wallets: both lists scroll within 240px.
+More than three funding sources use a dropdown. Deposit counts stay inside expanded
+details, and raw log positions remain internal. Activity totals still count renewals
 once. Uncertain breakdowns remain unavailable. The branch preview's production
 read proxy cannot expose this new field until the backend change is deployed.
 No schema, hosted database, pipeline or public API enablement changed. Protected

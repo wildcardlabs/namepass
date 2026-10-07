@@ -26,23 +26,25 @@ export default function DepositTransactions({ deposits }: { deposits: PublicActi
             <span className="block text-[12px] text-ink-secondary">{deposits.length} deposits · {transactions} {transactions === 1 ? "transaction" : "transactions"}</span></span>
           <ChevronDown aria-hidden="true" className={`size-4 shrink-0 text-ink-secondary transition-transform ${expanded ? "rotate-180" : ""}`} />
         </button> : <div className="site-transaction-heading">Payment received</div>}
-        {showList && <ol id={id} className="site-deposit-list" aria-label="Source deposits">
-          {deposits.map(deposit => {
+        {showList && <ol id={id} className="site-deposit-list site-scrollable-evidence" aria-label="Source deposits" tabIndex={deposits.length > 3 ? 0 : undefined}>
+          {deposits.map((deposit, index) => {
             const chain = chainById(Number(deposit.chainId));
             const name = chain?.name ?? deposit.chainId;
             return <li key={deposit.eventId}>
               <div className="flex items-baseline justify-between gap-3 text-[12px]">
-                <span className="text-ink-secondary">{name}</span>
+                <span className="text-ink-secondary">Deposit {index + 1}</span>
                 <span className="text-ink-primary tabular-nums">{fmtUsdcExact(BigInt(deposit.amount))} <span className="text-ink-secondary">USDC</span></span>
               </div>
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
               <a href={explorerUrl(name, deposit.transactionHash)} target="_blank" rel="noopener noreferrer"
                 className="site-transaction-hash" title={deposit.transactionHash}
-                aria-label={`View ${name} deposit ${deposit.logIndex === null ? "native transfer" : `log ${deposit.logIndex}`} transaction`}>
+                aria-label={`View ${name} deposit ${index + 1} transaction`}>
                 {truncTx(deposit.transactionHash)} <ExternalLink aria-hidden="true" className="size-3 shrink-0" />
               </a>
-              <div className="mt-1 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-[11px] text-ink-secondary">
+              <span className="text-[12px] leading-5 text-ink-secondary">{name}</span>
+              </div>
+              <div className="mt-1 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 text-[12px] leading-5 text-ink-secondary">
                 <span title={deposit.senderAddress ?? undefined}>From {deposit.senderAddress ? truncAddress(deposit.senderAddress) : "unavailable"}</span>
-                <span>{deposit.logIndex === null ? "Native transfer" : `Log ${deposit.logIndex}`}</span>
               </div>
             </li>;
           })}

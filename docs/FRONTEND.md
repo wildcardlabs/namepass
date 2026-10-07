@@ -38,9 +38,13 @@ After a source-chain burn, an unclaimed payment is not a spendable source-wallet
 
 Completed activity includes `sourceDeposits` when canonical indexed credits exactly match
 the flow's zero-remainder processing window. The feed and name view keep one renewal row.
+Deposit counts appear only inside expanded flow details.
 Multiple credits appear in an expandable Payments received stage with individual amounts,
-senders, transaction links and log positions. Shared transaction hashes do not merge deposits.
-Native Arc transfers show Native transfer instead of an ERC-20 log index. Missing credits,
+senders, transaction links and numbered deposits. Shared transaction hashes do not merge deposits.
+Raw log positions stay internal. Multiple funding wallets show separate copyable addresses and
+exact contributions on the left. More than three sources use a dropdown; both evidence lists
+cap their height at 240px and scroll independently. Transaction links share the same green
+color, weight, spacing and hover behavior. Missing credits,
 partial processing or ambiguous native ordering return `null` and display unavailable evidence.
 This indexed display evidence does not establish public API completion or chain finality.
 
