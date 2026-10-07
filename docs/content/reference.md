@@ -1,4 +1,4 @@
-> **API not yet available.** The following contract describes planned endpoints, not a deployed service.
+> **Testnet API pilot.** The public endpoints support the testnets listed in the address response.
 
 Base URL: `{{DOCS_ORIGIN}}/api/v1`
 

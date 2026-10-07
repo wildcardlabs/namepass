@@ -19,7 +19,7 @@ The preview read proxy leaves this route to its own adapter.
 | `chainId`, `transactionHash` | Supported source chain and one validated, normalized hash |
 | Deposit `name`, `depositAddress` | Canonical source transfer recipient, current registered normalized label and derived wallet |
 | Deposit `amount`, `logIndex` | Exact source receipt credit in six-decimal units; native Arc public position is null |
-| Deposit `renewals` | Every exact processing call after the credit through its verified full-wallet drain, joined to finalized renewal receipts |
+| Deposit `renewals` | Every exact processing call after the credit through its verified full-wallet drain, joined to verified confirmed renewal receipts |
 | `renewalId` | Hub chain, lowercase gateway renewal transaction hash and gateway `Renewed` log index, identical to history |
 | `secondsAdded`, `expiry` | Whole gateway event duration and associated ENS registration expiry; V1 uses its BaseRegistrar event |
 
@@ -30,14 +30,16 @@ name and source-block range are constrained in SQL. The underlying verifiers aut
 factory/wallet/gateway/helper runtime and ordered credit, processing, Circle and ENS receipts.
 
 `pending` means the source set is not closed, a member is not indexed, a credit identity is
-ambiguous, the source is not provider-finalized, or an unprocessed deposit is below the protocol
-minimum. `processing` means source evidence is closed and finalized but one or more required
-allocations or finalized renewals are missing. A partial result can include a proven whole renewal
+ambiguous, or an unprocessed deposit is below the protocol
+minimum. `processing` means source evidence is closed and verified but one or more required
+allocations or verified confirmed renewals are missing. A partial result can include a proven whole renewal
 while the transaction remains processing. Shared events keep the same identifier; clients count
 whole event duration once. No duration is invented for an individual credit.
 
-`complete` requires a closed, nonempty source set and complete allocation/finalized renewal evidence
+`complete` requires a closed, nonempty source set and complete allocation/confirmed renewal evidence
 for every member. One renewed member cannot close a transaction while another arrives late.
+There is no extra finality wait or finality response field. Circle attestation and bridge processing
+are unchanged. The private operator retains its stricter finalized-evidence default.
 `failed` requires a canonical, reverted source transaction with an empty receipt log set and
 configured-provider source finality. Its indexed historical deposits are validated but have no
 renewals. An index `orphaned`/flow `failed` state alone cannot establish this result.

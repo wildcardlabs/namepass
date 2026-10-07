@@ -1,10 +1,11 @@
 {
   "date": "2026-10-07",
-  "authorization": "Pending separate approval for the merge and hosted staging/configuration changes.",
+  "authorization": "User approved the original merge/copy/protected scope, then approved all remaining work through completion on October 7, including merge and production enablement after checks.",
   "pullRequest": "https://github.com/wildcardlabs/namepass/pull/145",
   "operation": "Final protected four-endpoint testnet-pilot verification; production endpoints stay disabled.",
   "merge": {
-    "after": "Current PR checks pass; release receipts and pilot evidence limits are committed."
+    "after": "Current PR checks pass; release receipts and pilot evidence limits are committed.",
+    "completedCommit": "4cf65fad2abcd27dc163b9d126d631e19c59b082"
   },
   "staging": {
     "project": "nameless-paper-91018372",
@@ -34,7 +35,9 @@
       "CCTP message/attestation bodies"
     ],
     "addressWriteScope": "Repeated activation of the copied brantly name only; normal name/expiry/watch, four chain balance snapshots and scan metadata may update in this isolated database. No other name is activated.",
-    "paymentWork": "Verify all four wallet balances are below the trigger minimum before address probes; no funding, signer or recovery/workflow execution is authorized."
+    "paymentWork": "Verify all four wallet balances are below the trigger minimum before address probes; no funding, signer or recovery/workflow execution is authorized.",
+    "copyCompleted": true,
+    "fixtureSha256": "0b3554e6ab5df3dba574e54614a012b5281058fde9629b8abfaf7de221c5dd75"
   },
   "preview": {
     "gitBranch": "codex/api-recovery-verification",
@@ -85,6 +88,8 @@
       "Regional limits and a bounded polling sample do not establish global sustained capacity."
     ]
   },
-  "publicEnablement": "Not authorized by this plan. A separate reviewed production flag change and post-deploy smoke check remain required.",
-  "applyAuthorized": false
+  "publicEnablement": "Authorized after passing protected checks and updated CI; five production API/admission flags, GitHub-connected merge deployment, then bounded live verification.",
+  "applyAuthorized": true,
+  "completionPolicy": "Verified confirmed ENS renewal; no additional API finality wait or finality response field. Full source-set and allocation proof remain required.",
+  "protectedChecksCompleted": true
 }

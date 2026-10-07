@@ -20,7 +20,7 @@ deployment, ingestion change or verification worker is introduced.
 | `secondsAdded`, `amountApplied`, `renewalFee` | Indexed gateway facts checked against the exact receipt log |
 | `renewedAt` | Indexed block time checked against the receipt block's timestamp |
 | `expiry` | Exact ENS `NameRenewed.newExpiry` from the same gateway helper-call segment |
-| `status` | `complete` after gateway/ENS verification and hub finality; `processing` for a valid renewal above the finalized block |
+| `status` | `complete` after the confirmed gateway/ENS receipt is verified; finality is not a completion gate |
 | `nextCursor` | Versioned, normalized-name-bound timestamp, transaction hash, log index and flow UUID tuple |
 
 The established [expiry writer audit](PUBLIC_API_BASELINE.md#expiry-writer-audit) still applies.
@@ -54,17 +54,14 @@ is event-specific; `names.current_expiry` and indexed expiry projections are not
 Missing, ambiguous or inconsistent proof returns retryable 503. This enhancement therefore
 requires historical helper metadata reads as well as receipt/block reads.
 
-For each nonempty page, the adapter reads Sepolia's `finalized` block once. Each successful
-receipt must match its canonical block and indexed timestamp. A renewal at or below the
-finalized height is complete; at the same height its block hash must also equal the anchor.
-The finalized timestamp must not precede a completed renewal. A newer canonical renewal
-keeps `processing` and its verified event-specific expiry. Missing finality evidence or an
-RPC outage returns 503. `Retry-After: 5` is returned only when items remain processing.
+Each successful receipt must match its canonical block and indexed timestamp. A verified
+ENS renewal is `complete` as soon as that confirmed receipt establishes the extension.
+The adapter does not request a finalized checkpoint or add a further waiting period.
+Missing receipts, inconsistent evidence and RPC outages return retryable 503.
 
-This uses the [Ethereum execution API's finalized block semantics](https://ethereum.github.io/execution-apis/api/methods/eth_getBlockByNumber/).
-It trusts the configured RPC's canonical-chain and finality reports; it is not an independent
-consensus verifier. The anchor and receipts are refreshed on each request. No confirmation-count
-heuristic, new contract, verification worker or persistent proof table is required.
+The configured RPC supplies canonical receipt/block observations. Each request verifies them
+again. Corrections can remove a previously returned renewal. No new contract, verification
+worker, persistent proof table or finality response field is required.
 
 ## Pagination and resource bounds
 

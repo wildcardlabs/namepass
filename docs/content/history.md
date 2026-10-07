@@ -10,7 +10,7 @@ curl '{{DOCS_ORIGIN}}/api/v1/names/example.eth/renewals?limit=20'
 
 The response contains `name`, `currentExpiry`, `expiryUpdatedAt`, `items` and `nextCursor`. `currentExpiry` is the last recorded ENS expiry. `expiryUpdatedAt` is the timestamp of the ENS read that observed that same value. It is `null` when the pairing is unknown, including when `currentExpiry` is `null`. Event time, projection time and response time are not read timestamps. An [address request](/docs/addresses) refreshes ENS state, but subsequent indexed changes can leave the read timestamp unknown. History requests do not refresh state or start payment work.
 
-Each item includes `renewalId`, a flow ID, source chain, renewal transaction, duration added, amount applied, fee, expiry and renewal timestamp. Its status is `complete` after verification and finality, or `processing` while verification is pending. Unavailable nullable fields are `null`. Every returned item must have a proven renewal event identity.
+Each item includes `renewalId`, a flow ID, source chain, renewal transaction, duration added, amount applied, fee, expiry and renewal timestamp. Its status is `complete` after verification of the confirmed ENS renewal, or `processing` while verification is pending. Unavailable nullable fields are `null`. Every returned item must have a proven renewal event identity.
 
 History completion describes that renewal event. It does not establish that every deposit in a source transaction was processed. Use the [transaction status response](/docs/status) for source-payment completion.
 

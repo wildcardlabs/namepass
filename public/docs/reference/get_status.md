@@ -2,7 +2,7 @@
 
 `GET /api/v1/status/{chainId}`
 
-Track a source transaction. Complete requires independent proof of its full relevant deposit set, watch/address coverage, source validity, processing relationships and finalized renewals for every member. Missing or late-indexed members prevent aggregate completion. Shared renewals use the same renewalId. Corrections can revoke prior completion.
+Track a source transaction. Complete requires independent proof of its full relevant deposit set, watch/address coverage, source validity, processing relationships and verified confirmed ENS renewals for every member. Missing or late-indexed members prevent aggregate completion. Shared renewals use the same renewalId. Corrections can revoke prior completion.
 
 ## Parameters
 

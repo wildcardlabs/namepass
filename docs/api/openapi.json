@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Namepass public API",
-    "version": "2026-10-05",
-    "description": "Planned public API; endpoints are not yet available. Deposit addresses, renewal estimates, transaction status and ENS renewal history."
+    "version": "2026-10-07",
+    "description": "Public testnet API pilot. Deposit addresses, renewal estimates, transaction status and ENS renewal history."
   },
   "servers": [
     {
@@ -155,7 +155,7 @@
       "get": {
         "operationId": "get_status",
         "summary": "Poll a transaction",
-        "description": "Track a source transaction. Complete requires independent proof of its full relevant deposit set, watch/address coverage, source validity, processing relationships and finalized renewals for every member. Missing or late-indexed members prevent aggregate completion. Shared renewals use the same renewalId. Corrections can revoke prior completion.",
+        "description": "Track a source transaction. Complete requires independent proof of its full relevant deposit set, watch/address coverage, source validity, processing relationships and verified confirmed ENS renewals for every member. Missing or late-indexed members prevent aggregate completion. Shared renewals use the same renewalId. Corrections can revoke prior completion.",
         "parameters": [
           {
             "name": "chainId",
@@ -295,7 +295,7 @@
       "post": {
         "operationId": "post_quote",
         "summary": "Estimate a renewal",
-        "description": "Estimate renewal duration, the protocol allowance and rounding remainder for an ENS name, funding chain and USDC amount. Uses Namepass automation’s current Standard transfer policy with zero bridge fee, without Circle fee queries. Quotes expire after 60 seconds and assume one processing flow with no existing balance at the deposit address.",
+        "description": "Estimate renewal duration, the protocol allowance and rounding remainder for an ENS name, funding chain and USDC amount. Uses Namepass automation\u2019s current Standard transfer policy with zero bridge fee, without Circle fee queries. Quotes expire after 60 seconds and assume one processing flow with no existing balance at the deposit address.",
         "requestBody": {
           "required": true,
           "content": {
@@ -468,7 +468,7 @@
       "get": {
         "operationId": "get_name_renewals",
         "summary": "List a name's renewals",
-        "description": "Read-only renewal history and recorded expiry for an ENS name. Newest first, with a cursor bound to the requested name. Complete requires verification and finality; processing indicates pending verification. Each item has an event-specific renewalId shared with status. Expiry read timestamps are null without paired provenance.",
+        "description": "Read-only renewal history and recorded expiry for an ENS name. Newest first, with a cursor bound to the requested name. Complete requires verification of the confirmed ENS renewal; processing indicates pending verification. Each item has an event-specific renewalId shared with status. Expiry read timestamps are null without paired provenance.",
         "parameters": [
           {
             "name": "name",
@@ -974,7 +974,7 @@
               "processing",
               "complete"
             ],
-            "description": "Completion of this verified, finalized renewal event. It does not establish completion of every source-transaction deposit; use the transaction status response for that."
+            "description": "Completion of this verified, confirmed ENS renewal event. It does not establish completion of every source-transaction deposit; use the transaction status response for that."
           },
           "renewedAt": {
             "type": "string",

@@ -14,10 +14,12 @@ Replace `{hash}` with the transaction hash returned by the wallet. Use the sourc
 | --- | --- | --- |
 | `pending` | The deposit is indexed and verification is pending. | Poll again. |
 | `processing` | The deposit is verified and is awaiting processing or renewal confirmation. | Poll again. |
-| `complete` | The funds were processed and the renewal is finalized. | Show completion. |
+| `complete` | The funds were processed and the confirmed ENS renewal is verified. | Show completion. |
 | `failed` | The source deposit was invalidated, such as by a chain reorganization. | Inspect the transaction before taking further action. |
 
 Deposits below `minimumAmount` remain pending until the address has enough USDC to process a renewal.
+
+Completion does not wait for an additional finality checkpoint. Circle bridge processing must still finish, and the confirmed ENS renewal must be verified.
 
 ## Response
 

@@ -1,4 +1,4 @@
-> **API not yet available.** These guides describe the planned public API. Endpoint examples cannot be used for funding until the API release is announced. The existing Namepass application remains the testnet entry point.
+> **Testnet API pilot.** The public endpoints support the testnets listed in the address response.
 
 Namepass converts USDC deposits into ENS renewals. Each name has a deposit address shared across supported networks.
 
