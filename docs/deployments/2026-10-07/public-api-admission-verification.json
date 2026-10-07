@@ -1,0 +1,9 @@
+{
+  "status": "verification_in_progress",
+  "gitBranch": "codex/public-api-enforcement-verification",
+  "baseCommit": "1b422fc51895dffb28616a512a99f7b9bb2ba80c",
+  "scope": "Protected preview enforcement tests authorized by the user; production public API flags stay off.",
+  "database": "Existing isolated api-staging SELECT-only reader",
+  "signingCredentials": false,
+  "productionEnablementAuthorized": false
+}
