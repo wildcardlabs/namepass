@@ -49,7 +49,13 @@ test("community avatars use distinct completed renewals and exclude pending flow
     flows: [{ name: { displayName: "pending.eth" } }],
   } as unknown as ActivityRead);
   await act(async () =>
-    root.render(<Hero onExplore={() => {}} onDocs={() => {}} />),
+    root.render(
+      <Hero
+        onExplore={() => {}}
+        onDocs={() => {}}
+        onLeaderboard={() => {}}
+      />,
+    ),
   );
   expect(
     [...container.querySelectorAll(".hero-community img")].map((node) =>
@@ -69,11 +75,17 @@ test("community avatars use distinct completed renewals and exclude pending flow
 test("unavailable activity leaves the cover usable without invented identities", async () => {
   vi.mocked(getActivity).mockRejectedValue(new Error("Unavailable"));
   await act(async () =>
-    root.render(<Hero onExplore={() => {}} onDocs={() => {}} />),
+    root.render(
+      <Hero
+        onExplore={() => {}}
+        onDocs={() => {}}
+        onLeaderboard={() => {}}
+      />,
+    ),
   );
   expect(fetchProfile).not.toHaveBeenCalled();
   expect(container.querySelector(".hero-community")?.textContent).toBe(
-    "Used by 685+ users",
+    "See the renewal leaderboard",
   );
   expect(container.querySelectorAll(".home-hero-actions button").length).toBe(
     2,

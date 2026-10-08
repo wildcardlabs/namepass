@@ -1,4 +1,5 @@
 import NameAvatar from "./NameAvatar";
+import { ArrowUpRight } from "lucide-react";
 
 /** Retain Feature Page 03's composition and marquee with Namepass identities. */
 const ecosystem = [
@@ -95,11 +96,22 @@ const ecosystem = [
     target: 20,
   },
 ];
-export function HeroCommunity({ names }: { names: string[] }) {
+export function HeroCommunity({
+  names,
+  onLeaderboard,
+}: {
+  names: string[];
+  onLeaderboard: () => void;
+}) {
   return (
-    <div className="hero-community flex items-center rounded-full border p-1.5">
+    <button
+      type="button"
+      className="hero-community flex items-center rounded-full border p-1.5"
+      onClick={onLeaderboard}
+      aria-label="See the renewal leaderboard"
+    >
       {names.length > 0 && (
-        <div
+        <span
           data-slot="avatar-group"
           className="flex -space-x-2"
           aria-hidden="true"
@@ -116,12 +128,13 @@ export function HeroCommunity({ names }: { names: string[] }) {
               />
             </span>
           ))}
-        </div>
+        </span>
       )}
-      <p className="px-2">
-        Used by <span>685+ users</span>
-      </p>
-    </div>
+      <span className="hero-community-copy px-2">
+        See the <span>renewal leaderboard</span>
+      </span>
+      <ArrowUpRight className="hero-community-arrow" size={14} aria-hidden="true" />
+    </button>
   );
 }
 

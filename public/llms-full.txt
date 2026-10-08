@@ -14,7 +14,7 @@ Namepass converts USDC deposits into ENS renewals. Each name has a deposit addre
 
 1. **Get a deposit address** for an ENS name.
 2. **Send USDC** to the address on a supported network.
-3. **Track the renewal** using the transaction hash and source chain ID.
+3. **Track the renewal** using the transaction hash & source chain ID.
 
 ## Current networks
 
@@ -44,7 +44,7 @@ To calculate renewal duration before funding, [request a quote](/docs/quotes).
 
 Choose a chain from `chains` and transfer USDC from its `tokenAddress` contract to `depositAddress`. Use an amount at least equal to `minimumAmount`. USDC amounts use six decimal places: `1000000` represents 1 USDC.
 
-Save the transfer's transaction hash and source chain ID for status requests.
+Save the transfer's transaction hash & source chain ID for status requests.
 
 ## 3. Poll until complete
 
@@ -103,7 +103,7 @@ The request activates deposit monitoring. Repeated requests for the same name re
 
 ## Send the payment
 
-Transfer USDC to `depositAddress` on a returned chain. Use the subname only when `subnameVerified` is `true`. Save the transaction hash and source chain ID to [track the renewal](/docs/status).
+Transfer USDC to `depositAddress` on a returned chain. Use the subname only when `subnameVerified` is `true`. Save the transaction hash & source chain ID to [track the renewal](/docs/status).
 
 ## Errors
 
@@ -159,7 +159,7 @@ A quote assumes one processing flow and no existing balance at the deposit addre
 
 Source: https://beta.namepass.com/docs/status
 
-Track a USDC deposit using its transaction hash and source chain ID.
+Track a USDC deposit using its transaction hash & source chain ID.
 
 ## Request
 

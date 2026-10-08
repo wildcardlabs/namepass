@@ -252,7 +252,11 @@ function ActiveApp() {
 				{page === "home" && (
 					<>
 						<Navbar {...navProps} />
-						<Hero onExplore={goExplorer} onDocs={goDocs} />
+						<Hero
+							onExplore={goExplorer}
+							onDocs={goDocs}
+							onLeaderboard={goLeaderboard}
+						/>
 
 						{/* Four protocol properties render independently of pricing. */}
 						<Protocol />

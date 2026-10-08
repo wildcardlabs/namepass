@@ -10,9 +10,11 @@ import { HeroCommunity, HeroCompanyCarousel } from "./HeroSocial";
 export default function Hero({
   onExplore,
   onDocs,
+  onLeaderboard,
 }: {
   onExplore: () => void;
   onDocs: () => void;
+  onLeaderboard: () => void;
 }) {
   const [names, setNames] = useState<string[]>([]);
 
@@ -62,7 +64,7 @@ export default function Hero({
               <ArrowRight size={16} aria-hidden="true" />
             </Button>
           </div>
-          <HeroCommunity names={names} />
+          <HeroCommunity names={names} onLeaderboard={onLeaderboard} />
         </div>
         <HeroCompanyCarousel />
       </div>

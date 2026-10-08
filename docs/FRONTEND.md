@@ -82,8 +82,9 @@ uses relative paths. The skill uses the public HTTP flow.
 The footer, navigation and integration call-to-action open `/docs`. Homepage navigation
 uses `Rates` for the pricing simulator. The 64px sticky header has Product and Resources
 dropdowns, a direct Docs link and Get Started. Product opens Protocol, Explorer and Rates.
-Resources opens Supported networks and Leaderboard. Mobile navigation uses the same centered shadcn
-Dialog popup as docs, with grouped links, focus management and closure after choosing a destination.
+Resources opens Supported networks and Leaderboard. Mobile navigation uses a centered, rounded
+shadcn Dialog panel with icon-led rows, supporting details, grouped Product and Resources links,
+focus management, separators and closure after choosing a destination. Get Started stays in the panel.
 Docs and public pages share the 40px bordered hamburger control. The public header hides Get Started
 on mobile; the action remains inside the popup. The footer also lists
 these destinations and the legal pages. Public activity labels identify the testnet deployment.
@@ -161,10 +162,9 @@ pending flows are excluded. The surrounding floating portraits are removed.
 `NameAvatar` uses the existing cached ENS profile resolver and the leaderboard's
 name-seeded DiceBear voxel-bot fallback. Image errors cannot retry the fallback
 indefinitely. Unavailable activity omits pill avatars and keeps the cover actions
-and community text visible.
-The pill reads “Used by 685+ users” (user-supplied copy, not an API-derived count).
-It has the Built for ENS v2 badge's faint green border and white-to-pale-green
-background, without an outer shadow. Text is 13px, with medium-weight green emphasis.
+and leaderboard link visible. The pill keeps the avatar group and links to the leaderboard
+with the label “See the renewal leaderboard.” It has the Built for ENS v2 badge's faint green
+border and white-to-pale-green background. Text is 13px, with medium-weight green emphasis.
 The marquee uses nine exact user-supplied SVG wordmarks in their supplied
 order: Arc, Goldsky, Arbitrum, Circle, ENS, Ethereum, Base, USDC and Resolvio. They are stored
 locally in `public/logos/infrastructure`; its README records the source URLs.
