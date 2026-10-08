@@ -234,7 +234,7 @@ export default function Navbar({
                 className="site-mobile-dialog site-mobile-menu"
                 aria-describedby={undefined}
               >
-                <DialogTitle>Explore Namepass</DialogTitle>
+                <DialogTitle>Menu</DialogTitle>
                 <nav aria-label="Mobile navigation" className="site-mobile-links">
                   {mobileGroups.map((group) => (
                     <section className="site-mobile-group" key={group.label}>
@@ -248,17 +248,11 @@ export default function Navbar({
                               onClick={item.action}
                             >
                               <span className="site-mobile-icon">
-                                <item.icon size={20} aria-hidden="true" />
+                                <item.icon size={22} aria-hidden="true" />
                               </span>
                               <span className="site-mobile-item-copy">
                                 <span>{item.label}</span>
-                                <small>{item.detail}</small>
                               </span>
-                              <ArrowUpRight
-                                size={16}
-                                className="site-mobile-item-arrow"
-                                aria-hidden="true"
-                              />
                             </Button>
                           </DialogClose>
                         ))}
