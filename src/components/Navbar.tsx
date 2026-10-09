@@ -125,7 +125,16 @@ export default function Navbar({
       label: "Product",
       items: [
         ...product,
-        ...(onDocs ? [{ label: "Docs", action: onDocs, icon: BookOpen }] : []),
+        ...(onDocs
+          ? [
+              {
+                label: "Docs",
+                detail: "Integration guides and API reference",
+                action: onDocs,
+                icon: BookOpen,
+              },
+            ]
+          : []),
       ],
     },
     ...(resources.length ? [{ label: "Resources", items: resources }] : []),
@@ -225,27 +234,40 @@ export default function Navbar({
                 className="site-mobile-dialog site-mobile-menu"
                 aria-describedby={undefined}
               >
-                <DialogTitle>Navigation</DialogTitle>
+                <DialogTitle>Menu</DialogTitle>
                 <nav aria-label="Mobile navigation" className="site-mobile-links">
                   {mobileGroups.map((group) => (
-                    <div className="site-mobile-group" key={group.label}>
+                    <section className="site-mobile-group" key={group.label}>
                       <h3>{group.label}</h3>
-                      {group.items.map((item) => (
-                        <DialogClose key={item.label} asChild>
-                          <Button variant="ghost" onClick={item.action}>
-                            {item.label}
-                          </Button>
-                        </DialogClose>
-                      ))}
-                    </div>
+                      <div className="site-mobile-group-items">
+                        {group.items.map((item) => (
+                          <DialogClose key={item.label} asChild>
+                            <Button
+                              variant="ghost"
+                              className="site-mobile-link"
+                              onClick={item.action}
+                            >
+                              <span className="site-mobile-icon">
+                                <item.icon size={22} aria-hidden="true" />
+                              </span>
+                              <span className="site-mobile-item-copy">
+                                <span>{item.label}</span>
+                              </span>
+                            </Button>
+                          </DialogClose>
+                        ))}
+                      </div>
+                    </section>
                   ))}
                 </nav>
-                <DialogClose asChild>
-                  <Button onClick={onSearch} className="primary-action w-full">
-                    Get Started
-                    <ArrowUpRight size={16} aria-hidden="true" />
-                  </Button>
-                </DialogClose>
+                <div className="site-mobile-action">
+                  <DialogClose asChild>
+                    <Button onClick={onSearch} className="primary-action w-full">
+                      Get Started
+                      <ArrowUpRight size={16} aria-hidden="true" />
+                    </Button>
+                  </DialogClose>
+                </div>
               </DialogContent>
             </Dialog>
           )}

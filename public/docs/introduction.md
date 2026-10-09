@@ -8,7 +8,7 @@ Namepass converts USDC deposits into ENS renewals. Each name has a deposit addre
 
 1. **Get a deposit address** for an ENS name.
 2. **Send USDC** to the address on a supported network.
-3. **Track the renewal** using the transaction hash and source chain ID.
+3. **Track the renewal** using the transaction hash & source chain ID.
 
 ## Current networks
 

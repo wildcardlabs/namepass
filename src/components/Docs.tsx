@@ -1056,23 +1056,63 @@ export default function Docs({ onHome }: { onHome: () => void }) {
         </div>
       </CommandDialog>
       <Dialog open={mobile} onOpenChange={setMobile}>
-        <DialogContent className="site-mobile-dialog docs-mobile-dialog">
-          <DialogTitle>Documentation</DialogTitle>
-          <DialogDescription>
-            Explore the Namepass integration.
-          </DialogDescription>
-          <button
-            className="docs-search-trigger"
-            aria-label="Search documentation"
-            onClick={() => {
-              setMobile(false);
-              setSearch(true);
-            }}
-          >
-            <Search size={15} />
-            Search documentation
-          </button>
-          {navigation}
+        <DialogContent
+          className="site-mobile-dialog site-mobile-menu docs-mobile-dialog"
+          aria-describedby={undefined}
+        >
+          <DialogTitle>Menu</DialogTitle>
+          <nav aria-label="Documentation navigation" className="site-mobile-links">
+            <section className="site-mobile-group">
+              <h3>Documentation</h3>
+              <div className="site-mobile-group-items">
+                {tabs.map(({ start, label, icon: Icon }) =>
+                  link(
+                    `/docs/${start}`,
+                    <>
+                      <span className="site-mobile-icon">
+                        <Icon size={22} aria-hidden="true" />
+                      </span>
+                      <span className="site-mobile-item-copy">
+                        <span>{label}</span>
+                      </span>
+                    </>,
+                    "site-mobile-link",
+                  ),
+                )}
+              </div>
+            </section>
+            <section className="site-mobile-group">
+              <h3>Quick actions</h3>
+              <div className="site-mobile-group-items">
+                <button
+                  type="button"
+                  className="site-mobile-link"
+                  aria-label="Search documentation"
+                  onClick={() => {
+                    setMobile(false);
+                    setSearch(true);
+                  }}
+                >
+                  <span className="site-mobile-icon">
+                    <Search size={22} aria-hidden="true" />
+                  </span>
+                  <span className="site-mobile-item-copy">
+                    <span>Search documentation</span>
+                  </span>
+                </button>
+              </div>
+            </section>
+          </nav>
+          <div className="site-mobile-action">
+            <a
+              href="https://beta.namepass.com"
+              className="primary-action site-mobile-open-app"
+              onClick={() => setMobile(false)}
+            >
+              Open app
+              <ArrowUpRight size={16} aria-hidden="true" />
+            </a>
+          </div>
         </DialogContent>
       </Dialog>
       <Dialog open={agent} onOpenChange={setAgent}>

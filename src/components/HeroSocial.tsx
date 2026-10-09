@@ -95,11 +95,17 @@ const ecosystem = [
     target: 20,
   },
 ];
-export function HeroCommunity({ names }: { names: string[] }) {
+export function HeroCommunity({
+  names,
+  trackedNames,
+}: {
+  names: string[];
+  trackedNames: string | null;
+}) {
   return (
     <div className="hero-community flex items-center rounded-full border p-1.5">
       {names.length > 0 && (
-        <div
+        <span
           data-slot="avatar-group"
           className="flex -space-x-2"
           aria-hidden="true"
@@ -116,11 +122,17 @@ export function HeroCommunity({ names }: { names: string[] }) {
               />
             </span>
           ))}
-        </div>
+        </span>
       )}
-      <p className="px-2">
-        Used by <span>685+ users</span>
-      </p>
+      <span className="hero-community-copy px-2">
+        {trackedNames === null ? (
+          <>Names tracked</>
+        ) : (
+          <>
+            <span>{trackedNames}+</span> names tracked
+          </>
+        )}
+      </span>
     </div>
   );
 }

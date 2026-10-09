@@ -4,10 +4,13 @@ import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import Hero from "./Hero";
 import NameAvatar from "./NameAvatar";
-import { getActivity, type ActivityRead } from "../lib/publicApi";
+import { getActivity, getStats, type ActivityRead } from "../lib/publicApi";
 import { fetchProfile, type EnsProfile } from "../lib/ens";
 
-vi.mock("../lib/publicApi", () => ({ getActivity: vi.fn() }));
+vi.mock("../lib/publicApi", () => ({
+  getActivity: vi.fn(),
+  getStats: vi.fn(),
+}));
 vi.mock("../lib/ens", () => ({ fetchProfile: vi.fn() }));
 vi.mock("./CoverGrid", () => ({ default: () => null }));
 
@@ -17,6 +20,12 @@ beforeEach(() => {
   vi.resetAllMocks();
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
   vi.mocked(fetchProfile).mockResolvedValue(null);
+  vi.mocked(getStats).mockResolvedValue({
+    names: "685",
+    lifetimeReceived: "0",
+    lifetimeApplied: "0",
+    timeDeliveredSeconds: "0",
+  });
   container = document.createElement("div");
   document.body.append(container);
   root = createRoot(container);
@@ -73,7 +82,7 @@ test("unavailable activity leaves the cover usable without invented identities",
   );
   expect(fetchProfile).not.toHaveBeenCalled();
   expect(container.querySelector(".hero-community")?.textContent).toBe(
-    "Used by 685+ users",
+    "685+ names tracked",
   );
   expect(container.querySelectorAll(".home-hero-actions button").length).toBe(
     2,

@@ -18,7 +18,7 @@ To calculate renewal duration before funding, [request a quote](/docs/quotes).
 
 Choose a chain from `chains` and transfer USDC from its `tokenAddress` contract to `depositAddress`. Use an amount at least equal to `minimumAmount`. USDC amounts use six decimal places: `1000000` represents 1 USDC.
 
-Save the transfer's transaction hash and source chain ID for status requests.
+Save the transfer's transaction hash & source chain ID for status requests.
 
 ## 3. Poll until complete
 

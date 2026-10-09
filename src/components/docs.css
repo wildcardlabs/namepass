@@ -1244,8 +1244,7 @@
   overflow: hidden;
   box-shadow: 0 20px 80px #28493620;
 }
-.docs-agent-dialog,
-.docs-mobile-dialog {
+.docs-agent-dialog {
   font-family: var(--site-font);
   background: white !important;
   border: 1px solid #e1e9e4 !important;
@@ -1566,14 +1565,6 @@
   }
   .docs-endpoint code {
     font-size: var(--docs-caption-size);
-  }
-  .docs-mobile-dialog {
-    width: calc(100% - 24px) !important;
-    max-height: 86dvh;
-    overflow: auto;
-  }
-  .docs-mobile-dialog nav {
-    margin-top: 14px;
   }
   .docs-agent-dialog {
     width: calc(100% - 24px) !important;

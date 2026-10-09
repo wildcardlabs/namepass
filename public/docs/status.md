@@ -1,6 +1,6 @@
 # Poll status
 
-Track a USDC deposit using its transaction hash and source chain ID.
+Track a USDC deposit using its transaction hash & source chain ID.
 
 ## Request
 

@@ -22,7 +22,7 @@ The request activates deposit monitoring. Repeated requests for the same name re
 
 ## Send the payment
 
-Transfer USDC to `depositAddress` on a returned chain. Use the subname only when `subnameVerified` is `true`. Save the transaction hash and source chain ID to [track the renewal](/docs/status).
+Transfer USDC to `depositAddress` on a returned chain. Use the subname only when `subnameVerified` is `true`. Save the transaction hash & source chain ID to [track the renewal](/docs/status).
 
 ## Errors
 

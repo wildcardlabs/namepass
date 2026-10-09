@@ -142,6 +142,13 @@ export interface LeaderboardRead {
 	items: PublicName[];
 }
 
+export interface PublicStatsRead {
+	names: string;
+	lifetimeReceived: string;
+	lifetimeApplied: string;
+	timeDeliveredSeconds: string;
+}
+
 type ApiErrorBody = { error?: { message?: unknown } };
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
@@ -181,6 +188,10 @@ export function getActivity(page = 1, limit = 15): Promise<ActivityRead> {
 
 export function getLeaderboard(): Promise<LeaderboardRead> {
 	return request("/api/leaderboard?limit=100");
+}
+
+export function getStats(): Promise<PublicStatsRead> {
+	return request("/api/stats");
 }
 
 export function getPublicConfig(): Promise<PublicConfigRead> {
