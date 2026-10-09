@@ -165,9 +165,9 @@ pending flows are excluded. The surrounding floating portraits are removed.
 name-seeded DiceBear voxel-bot fallback. Image errors cannot retry the fallback
 indefinitely. Unavailable activity omits pill avatars and keeps the cover actions
 and tracked-name label visible. The informational pill shows the live count of activated ENS
-names with deposit addresses when stats are available, alongside up to four avatars from recent
-completed renewals. It has the Built for ENS v2 badge's faint green border and white-to-pale-green
-background. Text is 13px, with medium-weight green emphasis.
+names with deposit addresses as “N+ names tracked” when stats are available, alongside up to four
+avatars from recent completed renewals. It has the Built for ENS v2 badge's faint green border and
+white-to-pale-green background. Text is 13px, with medium-weight green emphasis.
 The marquee uses nine exact user-supplied SVG wordmarks in their supplied
 order: Arc, Goldsky, Arbitrum, Circle, ENS, Ethereum, Base, USDC and Resolvio. They are stored
 locally in `public/logos/infrastructure`; its README records the source URLs.

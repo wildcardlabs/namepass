@@ -82,7 +82,7 @@ test("unavailable activity leaves the cover usable without invented identities",
   );
   expect(fetchProfile).not.toHaveBeenCalled();
   expect(container.querySelector(".hero-community")?.textContent).toBe(
-    "685 ENS names tracked",
+    "685+ names tracked",
   );
   expect(container.querySelectorAll(".home-hero-actions button").length).toBe(
     2,

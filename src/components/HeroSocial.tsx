@@ -126,13 +126,10 @@ export function HeroCommunity({
       )}
       <span className="hero-community-copy px-2">
         {trackedNames === null ? (
-          <>ENS names tracked</>
+          <>Names tracked</>
         ) : (
           <>
-            <span>
-              {trackedNames} ENS {trackedNames === "1" ? "name" : "names"}
-            </span>{" "}
-            tracked
+            <span>{trackedNames}+</span> names tracked
           </>
         )}
       </span>
