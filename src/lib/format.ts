@@ -59,20 +59,23 @@ export function fmtUsdcExact(micro: bigint): string {
 
 /**
  * Renewal time delivered, in words. Adaptive because neither unit works alone:
- * most names sit under a year, where "0.4 years" reads as nothing, and the
+ * recent renewals are clearest in days, most names sit under a year, and the
  * heavily-funded ones reach decades, where "264 months" is arithmetic homework.
  *
  * "9 days" · "8 months" · "1 year 3 months" · "22 years"
  */
 export function fmtDelivered(seconds: bigint): string {
 	const months = (seconds * 12n + YEAR_SECONDS / 2n) / YEAR_SECONDS;
-	/* A three-character name's renewals are measured in days, and rounding those
-	   to months just prints "0 months delivered". */
-	if (months < 1n) {
+	/* Keep recent renewals in days instead of rounding, for example, 18 days to
+	   "1 month". */
+	if (seconds < 30n * 86_400n) {
 		const days = (seconds + 43_200n) / 86_400n;
 		return `${days} day${days === 1n ? "" : "s"}`;
 	}
-	if (months < 12n) return `${months} month${months === 1n ? "" : "s"}`;
+	if (seconds < YEAR_SECONDS) {
+		const displayMonths = months < 12n ? months : 11n;
+		return `${displayMonths} month${displayMonths === 1n ? "" : "s"}`;
+	}
 	const y = months / 12n;
 	const m = months % 12n;
 	const yPart = `${y} year${y === 1n ? "" : "s"}`;
