@@ -4,7 +4,7 @@ import { ArrowLeft, ArrowRight, ChevronDown, ExternalLink, Loader2 } from "lucid
 import { BackButton } from "./BackButton";
 import { leaderboardNames, renewalCount, renewalEvent, syncLeaderboard, timeDelivered, type ActivityEvent, type NameRecord } from "../lib/readModel";
 import { getLeaderboard, getNameActivity } from "../lib/publicApi";
-import { explorerUrl, fmtDate, fmtDelivered, fmtDuration, fmtUsdc, fmtYears, truncTx } from "../lib/format";
+import { explorerUrl, fmtDate, fmtDelivered, fmtDuration, fmtUsdc, truncTx } from "../lib/format";
 import DotPattern from "./magicui/DotPattern";
 import NameAvatar from "./NameAvatar";
 import ChainTag from "./ChainTag";
@@ -267,9 +267,10 @@ export default function Leaderboard({ onBack, onViewName }: Props) {
 						/* The ranked figure switches unit where the subtitle beneath it
 						   does: days, then months, then years — so a 3-character name
 						   measured in days doesn't rank as a flat zero. */
+						const delivered = fmtDelivered(timeDelivered(r));
 						const primary = mode === "renewals"
 							? renewalCount(r).toString()
-							: `${fmtYears(timeDelivered(r))}y`;
+							: delivered;
 
 						return (
 							<div key={r.name}>
@@ -294,8 +295,8 @@ export default function Leaderboard({ onBack, onViewName }: Props) {
 											{r.name}
 										</div>
 										<div className="mt-0.5 text-[12.5px] text-ink-secondary tabular-nums">
-											{renewalCount(r).toString()} renewals · {fmtDelivered(timeDelivered(r))}{" "}
-											delivered
+											{renewalCount(r).toString()} renewals
+											{mode === "renewals" && <> · {delivered} delivered</>}
 										</div>
 									</div>
 

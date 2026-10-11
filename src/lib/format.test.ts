@@ -1,7 +1,18 @@
 import { describe, expect, test } from "vitest";
 
 import { YEAR_SECONDS } from "./pricing";
-import { fmtDuration, fmtDurationPrecise } from "./format";
+import { fmtDelivered, fmtDuration, fmtDurationPrecise } from "./format";
+
+describe("delivered renewal time", () => {
+	test("keeps recent renewals in days", () => {
+		expect(fmtDelivered(18n * 86_400n)).toBe("18 days");
+	});
+
+	test("uses months below a year and years plus months above it", () => {
+		expect(fmtDelivered(8n * (YEAR_SECONDS / 12n))).toBe("8 months");
+		expect(fmtDelivered(YEAR_SECONDS + 2n * (YEAR_SECONDS / 12n))).toBe("1 year 2 months");
+	});
+});
 
 describe("compact renewal duration", () => {
 	test("shows the live three-character renewal in hours instead of zero days", () => {
