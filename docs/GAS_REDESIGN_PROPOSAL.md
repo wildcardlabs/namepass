@@ -189,6 +189,36 @@ of which about 44k is the V1 migration bridge, and about 38k on the V2 route. Th
 is the same on both routes, so the percentage grows as names migrate. See `test/gas/README.md`
 for every method.
 
+## Glamsterdam
+
+Sepolia activated Glamsterdam on 2026-10-06; mainnet is planned for the fourth quarter of 2026
+with no confirmed date. The parts that touch this design, with the EIP figures:
+
+- **State creation, EIP-8037.** A new storage slot costs 97,920 state gas instead of 20,000,
+  refilled if the slot is cleared in the same transaction. A new account costs 183,600 instead of
+  25,000, and code deposit costs 1,530 per byte instead of 200. Consequences measured live: a
+  deposit wallet's creation is about 267k instead of about 44k; deploying the 13,352-byte factory
+  is 21.4M gas by the node's estimate, and the October helper deployment, 7,589 bytes, paid
+  11.96M. The approve-and-clear hops stay cheap because their slots are refilled.
+- **State access, EIP-8038.** Any storage write that changes a value costs 10,000 instead of
+  about 2,900, cold account access 3,000 instead of 2,600, and the clear refund 11,616 instead of
+  4,800. This is why steady-state renewals rose on both designs, mostly inside USDC and ENS. It
+  also makes the factory's reentrancy guard cost about 20k per transaction for its two writes;
+  transient storage would avoid that but needs the Cancun target, which Arc does not support.
+- **Transaction gas cap.** Fusaka's EIP-7825 caps a transaction at 16,777,216 gas, below the
+  factory's deployment cost. Sepolia is including transactions with 30M gas limits after
+  Glamsterdam, so the cap is not binding there. Mainnet runs the cap today, so the factory can be
+  deployed there either before Glamsterdam, at about 3M gas on the pre-fork schedule, or after it
+  if the cap is lifted as on Sepolia. Shrinking the factory below about 10.4 KB would remove the
+  dependency; `via_ir` reaches 11.9 KB and the pinned settings 13.4 KB.
+- **Executor balance.** Paying the executor into a zero USDC balance now creates a slot at
+  97,920 gas. The relayer must keep a nonzero USDC balance.
+- **`GAS` returns execution gas only.** State gas is separate. The contracts do not read
+  `gasleft()`; the warm-state harness does, so its figures understate the live cost further.
+- **Not relevant to the contracts.** Block-level access lists, ePBS, the 200M gas limit, the
+  64 KB contract size limit, ETH transfer logs, and the deterministic factory predeploy at `0x12`.
+  The L2s do not run Glamsterdam; their deposit-side costs are unchanged.
+
 ## Backend changes
 
 The event schema and database do not change. The following code does. All of it is bounded and

@@ -12,8 +12,11 @@ Nothing below broadcasts a transaction without your signature.
 - Rainbow connected to Ethereum Sepolia, Base Sepolia, Arbitrum Sepolia, and Arc Testnet
   (chain 5042002, RPC from `src/lib/chains.ts`).
 - Native gas on all four testnets in the deploying wallet, `0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6`,
-  which stays the factory owner and timelock proposer. Budget about 0.05 test ETH per chain for
-  deployment plus initialization, and Arc's native USDC for its gas.
+  which stays the factory owner and timelock proposer. Sepolia runs Glamsterdam's state pricing:
+  the factory deployment is about 21.4M gas and the adapter about 9M, so budget Sepolia at those
+  figures times the current base fee, with margin. The L2s are on their own schedules; budget
+  about 3.5M gas each for factory deployment plus initialization, and Arc's native USDC for its
+  gas. The page estimates every transaction before asking for a signature.
 - Testnet USDC for canaries: about 1 USDC per chain, Arc in native USDC.
 - The existing Sepolia test timelock `0x996cbd179f361B1043Ad1999864eD41496C633c8` is reused as
   the governance executor; it is wallet-controlled with a 60-second delay. No new timelock.
@@ -72,8 +75,10 @@ Order matters: the hub first, so the adapter can point at a factory that exists.
 | 3.10 | Arc Testnet | Deploy factory | You |
 | 3.11 | Arc Testnet | `initialize` | You |
 
-Eleven signatures. After each receipt the tool checks code hash, owner, configuration, and that
-the factory address matches on every chain. Claude then verifies source on Sourcify and the
+Eleven signatures. The Sepolia factory deployment exceeds Fusaka's 16,777,216 per-transaction
+cap; Sepolia no longer enforces it after Glamsterdam, which the page confirms by estimating the
+transaction before enabling the step. After each receipt the tool checks code hash, owner,
+configuration, and that the factory address matches on every chain. Claude then verifies source on Sourcify and the
 explorers, runs the fork compatibility test against the deployed addresses, and writes
 `docs/deployments/<date>/manifest.json` and `verification.json`.
 
