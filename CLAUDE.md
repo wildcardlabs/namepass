@@ -13,7 +13,7 @@ falls outside it. User instructions take precedence over repository workflow pre
 Wallet transactions require the user's signature. Do not infer permission to reset hosted data,
 merge, or change production from permission to edit code.
 
-Use a `codex/` branch. Commit and push changes there, never directly to `main`. Production
+Use a `codex/` or `claude/` branch. Commit and push changes there, never directly to `main`. Production
 releases use the GitHub-connected PR flow: inspect remote main, complete required CI and
 deployment checks, merge when authorized, then verify the deployed commit. A local production
 deploy or alias promotion requires an explicit exception from the user.
