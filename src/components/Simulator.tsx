@@ -1,4 +1,4 @@
-import { type CSSProperties, useEffect, useId, useMemo, useState } from "react";
+import { type CSSProperties, useId, useMemo, useState } from "react";
 import { ArrowRight, BadgePercent } from "lucide-react";
 import {
   ceilToCent,
@@ -174,21 +174,14 @@ function SimulatorBody() {
   );
   const years = Number(result.seconds) / Number(YEAR_SECONDS);
 
-  /* Keep the amount sensible when switching name length. */
-  useEffect(() => {
-    setBudget((b) => {
-      const max = maxFor(len);
-      return b > max ? max : b;
-    });
-  }, [len]);
-
   function commitDraft() {
     const cleaned = draft.replace(/[^0-9.]/g, "");
     const value = Number.parseFloat(cleaned);
     setEditing(false);
     if (!Number.isFinite(value) || value < 0) return;
     const micro = BigInt(Math.round(value * 1e6));
-    setBudget(micro > maxFor(len) ? maxFor(len) : micro);
+    // Only the slider position is capped; typed amounts use the full budget.
+    setBudget(micro);
   }
 
   return (

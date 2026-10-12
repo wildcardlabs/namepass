@@ -4,7 +4,7 @@ import { act, createElement } from "react";
 import { createRoot } from "react-dom/client";
 import { expect, test, vi } from "vitest";
 import Simulator from "../components/Simulator";
-import { ceilToCent, payableThresholds, setRates, solve } from "./pricing";
+import { ceilToCent, payableThresholds, setRates, solve, YEAR_SECONDS } from "./pricing";
 import { GAS_ALLOWANCE } from "./fees";
 import { fmtDurationPrecise } from "./format";
 import type { OracleRates } from "./oracle";
@@ -83,6 +83,52 @@ test("moving the amount range keeps renewal output mounted and exposes USDC valu
 		expect(slider.getAttribute("aria-valuetext")).toMatch(/^\$[\d,.]+ USDC$/);
 		expect(slider.getAttribute("aria-valuetext")).not.toBe("$0 USDC");
 		expect(container.querySelector('button[aria-pressed="true"]')?.textContent).toContain("5+ characters");
+	} finally {
+		await act(async () => root.unmount());
+		container.remove();
+		vi.unstubAllGlobals();
+		vi.restoreAllMocks();
+	}
+});
+
+test("typed amounts above the slider maximum retain their full renewal value across name lengths", async () => {
+	vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
+	vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+	const container = document.createElement("div");
+	document.body.append(container);
+	const root = createRoot(container);
+	try {
+		// Exact fixture: $8/$160 base rates, discounted to $4.50/$90 per year.
+		setRates({ ...rates, baseRates: [0n, 0n, 640000000n, 160000000n, 8000000n], tokenDenom: YEAR_SECONDS });
+		await act(async () => root.render(createElement(Simulator, { priced: true, problem: null, onRetry: () => {} })));
+		const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
+		await act(async () => (container.querySelector('[title="Click to type an amount"]') as HTMLButtonElement).click());
+		const input = container.querySelector<HTMLInputElement>('input[aria-label="Enter payment amount in USDC"]')!;
+		await act(async () => {
+			setValue.call(input, "900.10");
+			input.dispatchEvent(new Event("input", { bubbles: true }));
+		});
+		await act(async () => input.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true })));
+		const slider = container.querySelector<HTMLInputElement>('input[type="range"]')!;
+		const output = container.querySelector(".site-result")!;
+		const applied = [...container.querySelectorAll("dt")].find(el => el.textContent === "Reaches renewal")!.nextElementSibling!;
+		expect(slider.value).toBe("1");
+		expect(slider.getAttribute("aria-valuetext")).toBe("$900.10 USDC");
+		expect(applied.textContent).toBe("$900");
+		expect(output.textContent).toBe("200 years");
+		await act(async () => [...container.querySelectorAll("button")].find(button => button.textContent?.startsWith("4 characters"))!.click());
+		expect(slider.value).toBe("1");
+		expect(slider.getAttribute("aria-valuetext")).toBe("$900.10 USDC");
+		expect(applied.textContent).toBe("$900");
+		expect(output.textContent).toBe("10 years");
+		await act(async () => [...container.querySelectorAll("button")].find(button => button.textContent?.startsWith("5+ characters"))!.click());
+		expect(output.textContent).toBe("200 years");
+		await act(async () => {
+			setValue.call(slider, "0");
+			slider.dispatchEvent(new Event("input", { bubbles: true }));
+		});
+		expect(slider.getAttribute("aria-valuetext")).toBe("$0 USDC");
+		expect(output.textContent).toBe("-");
 	} finally {
 		await act(async () => root.unmount());
 		container.remove();
