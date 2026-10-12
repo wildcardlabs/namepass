@@ -17,11 +17,37 @@
 # change a database. The script does not print token values.
 set -uo pipefail
 
-export PATH="$HOME/.goldsky/bin:$PATH"
+SHIM_DIR="$HOME/.goldsky/proxy-shim"
+export PATH="$HOME/.local/bin:$HOME/.goldsky/bin:$PATH"
+
+# The Goldsky CLI bundles an axios release that sends absolute-form requests to HTTPS_PROXY.
+# The cloud session proxy accepts only CONNECT tunnels. This preload sends Node HTTPS through
+# a CONNECT agent, and makes axios skip its own proxy handling for Goldsky hosts.
+install_goldsky_proxy_shim() {
+	[ -n "${HTTPS_PROXY:-${https_proxy:-}}" ] || return 0
+	mkdir -p "$SHIM_DIR" "$HOME/.local/bin" || return 1
+	(cd "$SHIM_DIR" && npm init -y >/dev/null && npm install --no-fund --no-audit https-proxy-agent@7) || return 1
+	cat >"$SHIM_DIR/preload.cjs" <<'EOF'
+const proxy = process.env.HTTPS_PROXY || process.env.https_proxy;
+if (proxy) {
+	const { HttpsProxyAgent } = require("https-proxy-agent");
+	require("https").globalAgent = new HttpsProxyAgent(proxy);
+	const hosts = ".goldsky.com,goldsky.com";
+	for (const k of ["NO_PROXY", "no_proxy"]) process.env[k] = process.env[k] ? `${process.env[k]},${hosts}` : hosts;
+}
+EOF
+	# ~/.local/bin precedes the npm global bin in PATH, so `goldsky` resolves to this wrapper.
+	cat >"$HOME/.local/bin/goldsky" <<EOF
+#!/usr/bin/env bash
+NODE_OPTIONS="\${NODE_OPTIONS:-} --require $SHIM_DIR/preload.cjs" exec node "$(npm root -g)/@goldskycom/cli/bin/goldsky" "\$@"
+EOF
+	chmod +x "$HOME/.local/bin/goldsky"
+}
 
 install_clis() {
 	echo "Installing vercel, neonctl and the Goldsky CLI..."
 	npm install -g --no-fund --no-audit vercel neonctl @goldskycom/cli || return 1
+	install_goldsky_proxy_shim || return 1
 	# `goldsky turbo` needs a separate binary. --force skips the interactive prompt.
 	goldsky turbo install --force || return 1
 }
