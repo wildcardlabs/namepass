@@ -2,8 +2,10 @@
 # Install and check the backend service CLIs for a Claude Code cloud session.
 #
 # Usage:
-#   bash scripts/cloud-setup.sh          Install the CLIs, then run the read-only checks.
+#   bash scripts/cloud-setup.sh          Install missing CLIs, then run the read-only checks.
 #   bash scripts/cloud-setup.sh --check  Run the read-only checks only.
+#
+# The SessionStart hook in .claude/settings.json runs this script in every cloud session.
 #
 # Each CLI reads its token from the environment. Set the tokens as environment secrets,
 # never in git:
@@ -44,12 +46,32 @@ EOF
 	chmod +x "$HOME/.local/bin/goldsky"
 }
 
+goldsky_proxy_shim_ready() {
+	[ -z "${HTTPS_PROXY:-${https_proxy:-}}" ] ||
+		{ [ -f "$SHIM_DIR/preload.cjs" ] && [ -d "$SHIM_DIR/node_modules/https-proxy-agent" ] &&
+			[ -x "$HOME/.local/bin/goldsky" ]; }
+}
+
+# Each step is skipped when its result is already present, so a session start hook can run
+# this script every time. A cached container then needs no network install.
 install_clis() {
-	echo "Installing vercel, neonctl and the Goldsky CLI..."
-	npm install -g --no-fund --no-audit vercel neonctl @goldskycom/cli || return 1
-	install_goldsky_proxy_shim || return 1
-	# `goldsky turbo` needs a separate binary. --force skips the interactive prompt.
-	goldsky turbo install --force || return 1
+	local missing=()
+	command -v vercel >/dev/null || missing+=(vercel)
+	command -v neonctl >/dev/null || missing+=(neonctl)
+	[ -d "$(npm root -g)/@goldskycom/cli" ] || missing+=(@goldskycom/cli)
+	if [ "${#missing[@]}" -gt 0 ]; then
+		echo "Installing ${missing[*]}..."
+		npm install -g --no-fund --no-audit "${missing[@]}" || return 1
+	fi
+	if ! goldsky_proxy_shim_ready; then
+		echo "Installing the Goldsky proxy shim..."
+		install_goldsky_proxy_shim || return 1
+	fi
+	if [ ! -x "$HOME/.goldsky/bin/turbo" ]; then
+		# `goldsky turbo` needs a separate binary. --force skips the interactive prompt.
+		echo "Installing the Goldsky Turbo binary..."
+		goldsky turbo install --force || return 1
+	fi
 }
 
 check() {
