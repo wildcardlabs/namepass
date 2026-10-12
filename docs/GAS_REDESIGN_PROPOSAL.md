@@ -6,7 +6,7 @@ mainnet deployment exists, so addresses are not yet fixed.
 Revision notes: the first version claimed the backend needed only configuration changes and that
 trust was unchanged. Both were wrong. This version scopes the backend work, states the settlement
 invariants explicitly, describes the adapter change as a changed execution model with comparable
-payment authority, corrects the figures, defers batching, and adds a testnet migration plan.
+payment authority, corrects the figures, defers batching, and adds a testnet cutover plan.
 
 ## Summary
 
@@ -178,43 +178,30 @@ has existing tests to update.
 | Receipt parsing | `server/ethereum.ts` | Emitter addresses come from configuration; the one-pair-per-receipt rule stays because batching is deferred. |
 | Discovery | `src/lib/helperDiscovery.ts` | Accept `interfaceVersion` 2 and reject 1. Equality checks against the gateway and pointer pass through the factory shims. |
 | Adapter fingerprint | `scripts/generate-helper-adapter.mjs`, `src/lib/helperAdapter.generated.ts` | Point at the new adapter artifact and regenerate. |
-| Configuration | `src/lib/chains.ts` | New factory address and deployment blocks on all four testnets; gateway and pointer addresses set to the factory; the pending-burn drain block for the old deployment. |
+| Configuration | `src/lib/chains.ts` | New factory address and deployment blocks on all four testnets; gateway and pointer addresses set to the factory. |
 | Pipeline | `goldsky/generate-testnet.mjs`, `goldsky/namepass-testnet.yaml` | Regenerate with the new addresses and start blocks. Deduplicate identical addresses in the raw-log filter. |
 | Fixtures and tests | `test/fixtures/*`, `server/*.test.ts` | Replace recorded receipts with receipts from the new deployment's canaries. |
 | Tools | `tools/helper-deployment`, `tools/payment-canary`, `tools/activation-canary` | Read `currentHelper` from the configured pointer address, which becomes the factory. |
 | Contracts and Foundry tests | `contracts/*`, `test/*.t.sol` | New factory and adapter; rewritten renewal, CCTP, and pointer suites; pricing and fork compatibility tests preserved. |
 | Documentation | `CONTRACTS_V2.md`, `ENGINEERING_CONSTRAINTS.md`, `DEPLOYMENTS.md`, `DECISIONS.md` | Removed forward quote, removed residue, merged roles, changed execution model, new addresses. |
 
-## Testnet migration
+## Testnet cutover
 
-Published deposit addresses and outstanding CCTP burns are bound to the current deployment.
-Changing configuration does not redirect them, and nothing can close an old deposit address:
-anyone with a saved address can still send to it after the switch.
+The current beta deployment is disposable, including its deposit addresses, and there are no
+flows in progress. The cutover is therefore a replacement, not a migration, following the
+September 22 precedent.
 
-1. Stop displaying old addresses in the application and the resolver once the new factory is
-   deployed and verified.
-2. Process every remaining old-wallet balance through the old factory. This creates the last
-   burns on the L2s.
-3. Inventory outstanding burns from the old factories' `DepositProcessed` events and claim each
-   through the old gateway.
-4. Record the final reconciliation block per chain, and record any unclaimable message or
-   retained balance as an explicit exception in `docs/DEPLOYMENTS.md`.
-5. Switch configuration, regenerate the pipeline, run the canaries, and record the manifest.
+1. Deploy the new factory on all four testnets and the adapter on Sepolia; verify source,
+   creation hash, configuration, and owner.
+2. Reset application data. Old deposit addresses are no longer shown or processed, and the old
+   deployment is not indexed. Its manifest stays under `docs/deployments/` as history.
+3. Update `chains.ts`, regenerate the pipeline, regenerate the adapter fingerprint, replace the
+   receipt fixtures, and update the verifier hash pins.
+4. Run one canary per chain through the new path and record the manifest in `docs/DEPLOYMENTS.md`.
 
-Late deposits to old addresses after the switch stay discoverable and processable:
-
-- The old factory and gateway stay in the pipeline as a legacy source set with their own
-  address filters, so old-address transfers and old-deployment events keep arriving. The
-  generator takes a legacy deployment list beside the active one.
-- `chains.ts` keeps the old deployment as a legacy entry. Processing old balances needs no key:
-  `renew` on the old factory and `completeCCTP` on the old gateway are permissionless, so a
-  scheduled sweep can process late deposits and claim their burns, and the old evidence
-  verifiers' hash pins apply to legacy events.
-- The September 22 style data reset simplifies application history only. It does not remove old
-  balances or outstanding claims. The deployment manifest and the reconciliation evidence live
-  under `docs/deployments/` and are preserved outside any reset.
-
-On mainnet none of this arises, because there is no prior deployment.
+If a user funds an old address after the reset, the old factory still accepts a permissionless
+`renew` call, but the application will not see or process it. The beta copy should say that old
+addresses are retired. On mainnet none of this arises, because there is no prior deployment.
 
 ## Deferred
 
