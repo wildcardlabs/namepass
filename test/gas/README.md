@@ -18,20 +18,29 @@ forge build
 node test/gas/benchmark.mjs
 ```
 
-Sepolia fork at block 11,900,829, `vitalik` through the live V1 renewer, 27.11 USDC per payment:
+Sepolia fork at block 11,900,886, 27.11 USDC per payment. V1 route: `vitalik`, a premigrated
+reservation renewed through `ETHRenewerV1` with its V1 bridge. V2 route: `skellat`, a migrated name
+renewed through the V2 registrar.
 
 | Transaction | Current, five contracts | Merged, two contracts | Saving |
 | --- | --- | --- | --- |
-| Direct renewal, first use | 404,724 | 318,287 | 86,437 (21%) |
-| Direct renewal, steady state | 369,700 | 274,508 | 95,192 (26%) |
-| CCTP claim, excluding Circle | 363,931 | 319,886 | 44,045 (12%) |
+| Direct V1, first use | 404,724 | 318,888 | 85,836 (21%) |
+| Direct V1, steady state | 369,700 | 275,109 | 94,591 (26%) |
+| CCTP claim V1, excluding Circle | 363,931 | 320,487 | 43,444 (12%) |
+| Direct V2, first use | see note | 237,962 | |
+| Direct V2, steady state | 289,074 | 194,183 | 94,891 (33%) |
+| CCTP claim V2, excluding Circle | 283,049 | 239,561 | 43,488 (15%) |
+
+Note: the current release already has a deployed `skellat` wallet on Sepolia, so its V2 first-use
+row equals its steady state and is omitted.
 
 The transaction-level saving is smaller than the warm-state execution delta below because, at
 transaction level, the current design's approve-and-clear refunds are realized: the cold accesses
 of a real transaction raise `gasUsed` and therefore the refund cap. The removed hops cost about
 50k gross each but only about 10k after refunds; the real savings come from the forward quote,
 the residue write, the pointer and gateway calls, the balance reads, and three fewer contracts
-touched cold.
+touched cold. The absolute saving is about 95k on a direct renewal and about 43k on a claim on
+either route, so the percentage is higher on the cheaper V2 route.
 
 ## Warm-state execution measurement
 
@@ -47,9 +56,10 @@ NAMEPASS_FORK_BLOCK=<recent block> \
 These figures exclude intrinsic gas, calldata, cold accesses already paid earlier in the test,
 and the refund cap. They are for comparing call trees, not for what a relayer pays.
 
-| Block | Design | First use | Steady state |
-| --- | --- | --- | --- |
-| 11,900,165 | Current, five contracts | 489,531 | 305,351 |
-| 11,900,818 | Merged, two contracts | 332,220 | 169,241 |
+| Block | Design | Route | First use | Steady state |
+| --- | --- | --- | --- | --- |
+| 11,900,165 | Current, five contracts | V1 | 489,531 | 305,351 |
+| 11,900,888 | Merged, two contracts | V1 | 332,821 | 169,846 |
+| 11,900,888 | Merged, two contracts | V2 | 234,495 | 114,120 |
 
 The public node prunes state after a few days, so pass a recent block.

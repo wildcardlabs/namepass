@@ -1141,7 +1141,7 @@ contract NamepassFactory {
      *
      * Invariants:
      *  - `0 < price <= amount - GAS_ALLOWANCE`, `duration > 0`;
-     *  - the target is a contract and is not the payer, the factory, or the token;
+     *  - the target and the spender are contracts, and neither is the payer, the factory, or the token;
      *  - the payer's balance decreases by exactly `price`;
      *  - no allowance remains afterwards;
      *  - the executor receives exactly `amount - price`.
@@ -1152,12 +1152,13 @@ contract NamepassFactory {
     {
         if (amount <= GAS_ALLOWANCE) revert InsufficientAmount();
 
+        address spender;
         bytes memory data;
-        (renewer, duration, price, data) = INamepassRenewalAdapter(adapter).plan(label, amount - GAS_ALLOWANCE);
+        (renewer, spender, duration, price, data) = INamepassRenewalAdapter(adapter).plan(label, amount - GAS_ALLOWANCE);
 
         if (duration == 0 || price == 0 || price > amount - GAS_ALLOWANCE) revert InvalidPlan();
 
-        if (renewer == address(this) || renewer == SELF || renewer == usdcAddress || renewer.code.length == 0) {
+        if (!_acceptableTarget(renewer, usdcAddress) || !_acceptableTarget(spender, usdcAddress)) {
             revert InvalidPlanTarget();
         }
 
@@ -1165,12 +1166,12 @@ contract NamepassFactory {
         if (before < amount) revert InsufficientAmount();
 
         /*
-         * Approve only what this specific renewal costs, execute the
-         * plan, and require that exactly that amount left. ENS prices
-         * the renewal itself inside `renew`, so a plan that disagrees
-         * with ENS fails here on the allowance or on the delta.
+         * Approve the spender for exactly the price, execute the plan
+         * against the target, and require that exactly the price left.
+         * ENS prices the renewal itself inside `renew`, so a plan that
+         * disagrees with ENS fails here on the allowance or on the delta.
          */
-        _safeApprove(usdcAddress, renewer, price);
+        _safeApprove(usdcAddress, spender, price);
 
         (bool ok, bytes memory returned) = renewer.call(data);
         if (!ok) {
@@ -1182,11 +1183,16 @@ contract NamepassFactory {
 
         if (IERC20(usdcAddress).balanceOf(address(this)) + price != before) revert InvalidSettlement();
 
-        if (IERC20(usdcAddress).allowance(address(this), renewer) != 0) {
-            _safeApprove(usdcAddress, renewer, 0);
+        if (IERC20(usdcAddress).allowance(address(this), spender) != 0) {
+            _safeApprove(usdcAddress, spender, 0);
         }
 
         _safeTransfer(usdcAddress, executor, amount - price);
+    }
+
+    /// @dev A plan may name a contract, never the payer, the factory, or the token.
+    function _acceptableTarget(address target, address usdcAddress) private view returns (bool) {
+        return target != address(this) && target != SELF && target != usdcAddress && target.code.length != 0;
     }
 
     function _settleAndReport(

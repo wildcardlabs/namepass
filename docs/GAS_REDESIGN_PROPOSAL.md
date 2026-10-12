@@ -12,9 +12,9 @@ payment authority, corrects the figures, defers batching, and adds a testnet cut
 
 Merge the gateway and the pointer into the factory, and make the ENS helper a view-only adapter
 that never holds funds. Measured from mined transaction receipts on an Anvil fork of Sepolia,
-against the deployed testnet release, a direct Ethereum renewal drops from 369,700 to 274,508
-gas, a 26% saving, and a CCTP claim drops from 363,931 to 319,886, a 12% saving excluding
-Circle's fixed share. Every indexed event keeps its signature, fields, and order, so the Goldsky
+against the deployed testnet release, a direct Ethereum renewal saves about 95k gas: 26% on the
+V1 route and 33% on the native V2 route. A CCTP claim saves about 43k, 12% and 15% respectively,
+excluding Circle's fixed share. Every indexed event keeps its signature, fields, and order, so the Goldsky
 pipeline and the database schema do not change. The backend evidence verifiers, discovery,
 fixtures, and configuration do change; that work is scoped below and is doable. Two
 configuration trust points are removed. The right time to do this is now, before the independent
@@ -67,9 +67,9 @@ Two contracts plus the existing storage-free ERC-1167 deposit wallets.
 The universal-address factory keeps its current role and absorbs the gateway and the pointer.
 
 - **Direct Ethereum path.** The renewal runs inside the wallet context. The wallet asks the
-  adapter for a plan, approves the returned renewer for exactly the returned price, executes the
-  returned calldata, requires that its balance fell by exactly that price, clears any residual
-  allowance, and transfers `amount − price` to the executor. The wallet returns the figures and
+  adapter for a plan, approves the returned spender for exactly the returned price, executes the
+  returned calldata against the returned renewer, requires that its balance fell by exactly that
+  price, clears any residual allowance, and transfers `amount − price` to the executor. The wallet returns the figures and
   the factory emits `HelperUsed`, `Renewed`, then `DepositProcessed`, in that order.
 - **CCTP path.** The mint recipient and destination caller in every L2 burn become the factory's
   own address, which is identical on every chain. The hub stores Circle's transmitter and
@@ -95,7 +95,9 @@ below the minimum, deploy the wallet if needed, burn with the label as hook data
 ### Adapter
 
 The current `ENSV2RenewalHelper` with `execute` replaced by a view function
-`plan(label, budget)` that returns the renewer, duration, price, and renewal calldata. It keeps
+`plan(label, budget)` that returns the renewer to call, the spender that pulls the payment,
+duration, price, and renewal calldata. For ENS V2 the spender is the renewer itself; the separate
+field lets a future ENS route payment through another contract without a factory change. It keeps
 `quote`, `renewableBy`, `nameState`, the ENS address getters, `referrer`, and the interface
 metadata. It never holds funds, so its balance checks, allowance clearing, and forward quote are
 gone. `interfaceVersion` becomes 2, because the execution interface changed. ENS governance still
@@ -111,12 +113,12 @@ These are requirements for the implementation and its tests, not descriptions.
    After a CCTP claim the factory's balance equals its pre-claim balance. Unsolicited USDC sent to
    the factory or to a wallet between flows is never spent by a flow. The existing
    `test_existingDustIsNotCountedIntoTheFlow` boundary carries over.
-2. **Exact approval, exact charge.** Approve the returned renewer for exactly `price`. After the
-   call, the payer's balance must have decreased by exactly `price`. Any remaining allowance is
-   cleared. This replaces the forward quote; ENS still prices the renewal itself inside `renew`.
+2. **Exact approval, exact charge.** Approve the returned spender for exactly `price`. After the
+   call to the returned renewer, the payer's balance must have decreased by exactly `price`. Any
+   remaining allowance to the spender is cleared. This replaces the forward quote; ENS still prices the renewal itself inside `renew`.
 3. **Plan constraints.** `0 < price ≤ amount − GAS_ALLOWANCE`, `duration > 0`, ordinary `CALL`
-   with zero native value, and the call must succeed. The target must not be the factory, the
-   calling wallet, or USDC. The existing context guards distinguish execution location and
+   with zero native value, and the call must succeed. The target and the spender must be contracts,
+   and neither may be the factory, the calling wallet, or USDC. The existing context guards distinguish execution location and
    immediate caller; they are not a target allowlist, so these rejections are explicit.
 4. **Reentrancy.** One guard in factory storage covers every payment entrypoint. A wallet can only
    be entered by the factory, and the factory's payment entrypoints are guarded, so calldata aimed
@@ -145,7 +147,8 @@ factory as `msg.sender`; ENS keys nothing on the payer, and the referrer travels
 ## Benchmarks
 
 Receipt-level figures, `gasUsed` from mined transactions on an Anvil fork of Sepolia at block
-11,900,829, renewing `vitalik` through the live V1 renewer with 27.11 USDC. The current column is
+11,900,886, with 27.11 USDC per payment. `vitalik` is a premigrated reservation renewed through
+`ETHRenewerV1`; `skellat` is a migrated name renewed through the V2 registrar. The current column is
 the deployed five-contract testnet release; the merged column is the implemented two-contract
 design from the local artifacts. CCTP claims replace Circle's transmitter with a stand-in that
 pays the minted amount, so Circle's attestation check and mint are excluded from both columns.
@@ -153,23 +156,24 @@ See `test/gas/README.md` for the method.
 
 | Transaction | Current | Merged | Saving |
 | --- | --- | --- | --- |
-| Direct renewal, first use | 404,724 | 318,287 | 86,437 (21%) |
-| Direct renewal, steady state | 369,700 | 274,508 | 95,192 (26%) |
-| CCTP claim, excluding Circle | 363,931 | 319,886 | 44,045 (12%) |
+| Direct V1 (`vitalik`), first use | 404,724 | 318,888 | 85,836 (21%) |
+| Direct V1, steady state | 369,700 | 275,109 | 94,591 (26%) |
+| Direct V2 (`skellat`), steady state | 289,074 | 194,183 | 94,891 (33%) |
+| CCTP claim V1, excluding Circle | 363,931 | 320,487 | 43,444 (12%) |
+| CCTP claim V2, excluding Circle | 283,049 | 239,561 | 43,488 (15%) |
 
 Warm-state execution gas inside one fork test, which is the call-tree comparison the first draft
-used, shows 305,351 against 169,241 steady state and 489,531 against 332,220 first use. The
+used, shows 305,351 against 169,846 steady state on the V1 route, 114,120 on the V2 route, and
+489,531 against 332,821 first use. The
 difference between the two views is refunds: at transaction level, cold accesses raise `gasUsed`
 and therefore the EIP-3529 refund cap, so the current design's approve-and-clear pattern refunds
 almost all of its approval cost. Each removed hop therefore saves about 10k after refunds rather
 than 50k. The transaction-level savings come from the forward quote, the residue write, the
 pointer and gateway calls, the redundant balance reads, and three fewer contracts touched cold.
 
-Of the merged steady-state receipt, ENS's own work is about 82k at warm prices and more when
-cold. About 44k of that is the V1 migration bridge, which disappears as names migrate; a native V2
-renewal is about 38k inside ENS. A native V2 route was not benchmarked because the October
-registrar's registration interface is not vendored; it should be added when a V2-renewable
-testnet name is available.
+ENS's own work is about 82k at warm prices on the V1 route, of which about 44k is the V1
+migration bridge, and about 38k on the V2 route. The absolute saving is the same on both routes,
+so the percentage grows as names migrate.
 
 ## Backend changes
 
@@ -234,6 +238,8 @@ addresses are retired. On mainnet none of this arises, because there is no prior
 - **Caller-proposed duration verified on-chain.** Costs about the same as computing it.
 - **Trimming events.** Changes the schema.
 - **Dropping the executor payment.** Removes the permissionless completion incentive.
+- **Approving the call target only.** Rejected in favor of a separate spender field, so an ENS
+  that routes payment through another contract needs a new adapter, not a new factory.
 - **Dropping the reentrancy guard.** Saves about 2k net. Kept as defense in depth.
 - **Computing the wallet address in a second place.** Saves about 1k and duplicates derivation
   logic in a permanent contract.

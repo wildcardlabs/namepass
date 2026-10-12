@@ -57,8 +57,10 @@ contract SepoliaForkTest is Test {
         uint256 budget = AMOUNT - factory.GAS_ALLOWANCE();
         (duration, charge) = adapter.quote(label, budget);
         assertEq(IETHRenewer(renewer).getRenewPrice(label, duration, IERC20(USDC)), charge);
-        (address plannedRenewer, uint64 plannedDuration, uint256 plannedPrice,) = adapter.plan(label, budget);
+        (address plannedRenewer, address plannedSpender, uint64 plannedDuration, uint256 plannedPrice,) =
+            adapter.plan(label, budget);
         assertEq(plannedRenewer, renewer);
+        assertEq(plannedSpender, renewer);
         assertEq(plannedDuration, duration);
         assertEq(plannedPrice, charge);
         (uint64 reportedExpiry, address selected) = adapter.nameState(label);
@@ -101,6 +103,15 @@ contract SepoliaForkTest is Test {
             return;
         }
         _renewAndCheck("vitalik", V1);
+    }
+
+    /// @dev A migrated V2 name renews through the V2 registrar with no V1 bridge.
+    function testFork_nativeV2Renewal() public {
+        if (!enabled) {
+            vm.skip(true);
+            return;
+        }
+        _renewAndCheck("skellat", REGISTRAR);
     }
 
     /// @dev A second renewal reuses the deployed wallet and settles identically.

@@ -36,7 +36,7 @@ const MESSENGER = "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA";
 const OLD_FACTORY = "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150";
 const OLD_GATEWAY = "0x39351C9f9eAb6093eFB4e865a6330ECd2a756F0f";
 const USDC_BALANCE_SLOT = 9n;
-const LABEL = "vitalik";
+const LABELS = { V1: "vitalik", V2: "skellat" };
 const AMOUNT = 27_110_000n;
 const REFERRER = pad("0x1208", { size: 32 });
 
@@ -77,14 +77,14 @@ async function send(to, data, account = deployer, label) {
 	return { label, gasUsed: receipt.gasUsed };
 }
 
-function cctpMessage(recipient, destination, sourceWallet, amount, nonce) {
+function cctpMessage(recipient, destination, sourceWallet, amount, nonce, label) {
 	const header = encodePacked(
 		["uint32", "uint32", "uint32", "bytes32", "bytes32", "bytes32", "bytes32", "uint32", "uint32"],
 		[1, 6, 0, pad(toHex(nonce), { size: 32 }), pad("0x00", { size: 32 }), pad(MESSENGER, { size: 32 }), pad(destination, { size: 32 }), 2000, 2000],
 	);
 	const body = encodePacked(
 		["uint32", "bytes32", "bytes32", "uint256", "bytes32", "uint256", "uint256", "uint256", "bytes"],
-		[1, pad("0x00", { size: 32 }), pad(destination, { size: 32 }), amount, pad(sourceWallet, { size: 32 }), 0n, 0n, 0n, toHex(LABEL)],
+		[1, pad("0x00", { size: 32 }), pad(destination, { size: 32 }), amount, pad(sourceWallet, { size: 32 }), 0n, 0n, 0n, toHex(label)],
 	);
 	recipient;
 	return concat([header, body]);
@@ -100,39 +100,39 @@ const adapter = await deploy(adapterArtifact, [factory, USDC, REGISTRAR, V1, REF
 await test.impersonateAccount({ address: governance });
 await test.setBalance({ address: governance, value: 10n ** 18n });
 await mined(await wallet.writeContract({ address: factory, abi: factoryArtifact.abi, functionName: "setHelper", args: [adapter], account: governance }));
-const newWallet = await pub.readContract({ address: factory, abi: factoryArtifact.abi, functionName: "predictWallet", args: [LABEL] });
-
-const renewNew = encodeFunctionData({ abi: factoryArtifact.abi, functionName: "renew", args: [LABEL] });
-for (const tag of ["first use", "steady state", "steady state"]) {
-	await setUsdcBalance(newWallet, AMOUNT);
-	rows.push(await send(factory, renewNew, deployer, `merged direct V1, ${tag}`));
-}
-
-// Five-contract release already deployed on Sepolia.
-const oldWallet = await pub.readContract({ address: OLD_FACTORY, abi: oldFactoryAbi, functionName: "predictWallet", args: [LABEL] });
-const renewOld = encodeFunctionData({ abi: oldFactoryAbi, functionName: "renew", args: [LABEL] });
-for (const tag of ["first use", "steady state", "steady state"]) {
-	await setUsdcBalance(oldWallet, AMOUNT);
-	rows.push(await send(OLD_FACTORY, renewOld, deployer, `current direct V1, ${tag}`));
-}
-
-// CCTP claims with Circle's transmitter replaced by the benchmark stand-in, pre-funded.
-await test.setCode({ address: TRANSMITTER, bytecode: transmitterArtifact.deployedBytecode.object });
-await setUsdcBalance(TRANSMITTER, 10n * AMOUNT);
 let nonce = 0xc0ffee;
-for (const tag of ["first claim", "steady state", "steady state"]) {
-	const message = cctpMessage(MESSENGER, factory, newWallet, AMOUNT, nonce++);
-	const data = encodeFunctionData({ abi: factoryArtifact.abi, functionName: "completeCCTP", args: [message, "0x1234"] });
-	rows.push(await send(factory, data, deployer, `merged CCTP claim, ${tag}`));
-}
-for (const tag of ["first claim", "steady state", "steady state"]) {
-	const message = cctpMessage(MESSENGER, OLD_GATEWAY, oldWallet, AMOUNT, nonce++);
-	const data = encodeFunctionData({ abi: oldGatewayAbi, functionName: "completeCCTP", args: [message, "0x1234"] });
-	rows.push(await send(OLD_GATEWAY, data, deployer, `current CCTP claim, ${tag}`));
+await test.setCode({ address: TRANSMITTER, bytecode: transmitterArtifact.deployedBytecode.object });
+await setUsdcBalance(TRANSMITTER, 100n * AMOUNT);
+
+for (const [route, label] of Object.entries(LABELS)) {
+	const newWallet = await pub.readContract({ address: factory, abi: factoryArtifact.abi, functionName: "predictWallet", args: [label] });
+	const renewNew = encodeFunctionData({ abi: factoryArtifact.abi, functionName: "renew", args: [label] });
+	for (const tag of ["first use", "steady state", "steady state"]) {
+		await setUsdcBalance(newWallet, AMOUNT);
+		rows.push(await send(factory, renewNew, deployer, `merged direct ${route}, ${tag}`));
+	}
+
+	const oldWallet = await pub.readContract({ address: OLD_FACTORY, abi: oldFactoryAbi, functionName: "predictWallet", args: [label] });
+	const renewOld = encodeFunctionData({ abi: oldFactoryAbi, functionName: "renew", args: [label] });
+	for (const tag of ["first use", "steady state", "steady state"]) {
+		await setUsdcBalance(oldWallet, AMOUNT);
+		rows.push(await send(OLD_FACTORY, renewOld, deployer, `current direct ${route}, ${tag}`));
+	}
+
+	for (const tag of ["first claim", "steady state", "steady state"]) {
+		const message = cctpMessage(MESSENGER, factory, newWallet, AMOUNT, nonce++, label);
+		const data = encodeFunctionData({ abi: factoryArtifact.abi, functionName: "completeCCTP", args: [message, "0x1234"] });
+		rows.push(await send(factory, data, deployer, `merged CCTP claim ${route}, ${tag}`));
+	}
+	for (const tag of ["first claim", "steady state", "steady state"]) {
+		const message = cctpMessage(MESSENGER, OLD_GATEWAY, oldWallet, AMOUNT, nonce++, label);
+		const data = encodeFunctionData({ abi: oldGatewayAbi, functionName: "completeCCTP", args: [message, "0x1234"] });
+		rows.push(await send(OLD_GATEWAY, data, deployer, `current CCTP claim ${route}, ${tag}`));
+	}
 }
 
 const block = await pub.getBlockNumber();
-console.log(`fork head ${block}; executor ${deployer}; wallet balance after ${await pub.readContract({ address: USDC, abi: usdcAbi, functionName: "balanceOf", args: [newWallet] })}`);
+console.log(`fork head ${block}; executor ${deployer}`);
 console.log("| Transaction | gasUsed |");
 console.log("| --- | --- |");
 for (const row of rows) console.log(`| ${row.label} | ${row.gasUsed.toLocaleString("en-US")} |`);

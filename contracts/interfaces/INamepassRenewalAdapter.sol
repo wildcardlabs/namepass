@@ -13,9 +13,10 @@ interface INamepassRenewalAdapter {
     function quote(string calldata label, uint256 budget) external view returns (uint64 duration, uint256 amountNeeded);
     function renewableBy(string calldata label) external view returns (address);
     function nameState(string calldata label) external view returns (uint64 expiry, address renewer);
-    /// @notice Who to pay, for how long, how much, and the exact call that renews.
+    /// @notice Who to call, who pulls the payment, for how long, how much, and the exact call that renews.
+    /// @dev `spender` receives the approval for exactly `price`; it is the renewer itself for ENS V2.
     function plan(string calldata label, uint256 budget)
         external
         view
-        returns (address renewer, uint64 duration, uint256 price, bytes memory data);
+        returns (address renewer, address spender, uint64 duration, uint256 price, bytes memory data);
 }

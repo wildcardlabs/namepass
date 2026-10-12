@@ -67,18 +67,20 @@ contract ENSV2RenewalAdapter is INamepassRenewalAdapter {
         expiry = reader.ETH_REGISTRY().findExpiry(label);
     }
 
-    /// @notice Who to pay, for how long, how much, and the exact call that renews.
-    /// @dev View only. The payer approves `renewer` for exactly `price` and executes `data`.
+    /// @notice Who to call, who pulls the payment, for how long, how much, and the exact call that renews.
+    /// @dev View only. The payer approves `spender` for exactly `price` and executes `data` against
+    /// `renewer`. ENS V2 renewers pull the payment themselves, so both are the selected renewer.
     function plan(string calldata label, uint256 budget)
         external
         view
-        returns (address renewer, uint64 duration, uint256 price, bytes memory data)
+        returns (address renewer, address spender, uint64 duration, uint256 price, bytes memory data)
     {
         _validateLabel(label);
         IETHRenewer selected = _selectRenewer(label);
         (duration, price) = _quote(selected, label, budget);
         if (duration == 0 || price == 0 || price > budget) revert InsufficientAmount();
         renewer = address(selected);
+        spender = renewer;
         data = abi.encodeCall(IETHRenewer.renew, (IETHRenewer.RenewData(label, duration, referrer), USDC));
     }
 

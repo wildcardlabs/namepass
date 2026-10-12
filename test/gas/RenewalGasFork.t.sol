@@ -53,6 +53,17 @@ contract RenewalGasForkTest is Test {
         _renew("vitalik", "merged#2 steady state");
         _renew("vitalik", "merged#3 steady state");
     }
+
+    function testForkGas_directPathV2() public {
+        if (!enabled) {
+            vm.skip(true);
+            return;
+        }
+        assertEq(adapter.renewableBy("skellat"), REGISTRAR);
+        _renew("skellat", "merged V2 #1 first use: wallet deploy, executor slot cold");
+        _renew("skellat", "merged V2 #2 steady state");
+        _renew("skellat", "merged V2 #3 steady state");
+    }
 }
 
 contract GasGovernance {}
