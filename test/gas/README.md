@@ -42,6 +42,22 @@ the residue write, the pointer and gateway calls, the balance reads, and three f
 touched cold. The absolute saving is about 95k on a direct renewal and about 43k on a claim on
 either route, so the percentage is higher on the cheaper V2 route.
 
+## A real claim on the current release
+
+Transaction `0x1bfa297b…ba488` on Sepolia (block 11,858,547) is a CCTP claim for `farcaster`
+through the current five-contract release, the first claim after the October adapter rotation.
+Its receipt reports 586,408 gas. An archive replay with `cast run` gives this call-level split:
+
+| Part | Gas |
+| --- | --- |
+| Circle `receiveMessage`: attestation check, nonce, mint | 116,573 |
+| ENS `renew`, V1 route with its V1 bridge | 139,812 |
+| Helper: oracle reads, forward quote, pull, approvals, balance reads | about 148,000 |
+| Gateway: pointer and factory calls, approvals, balance reads, executor transfer, events | about 99,000 |
+
+Circle's share on a real claim is therefore about 117k, which the stand-in benchmark above
+excludes from both columns.
+
 ## Warm-state execution measurement
 
 `RenewalGasFork.t.sol` is an opt-in fork test that prints execution gas inside one test. It skips

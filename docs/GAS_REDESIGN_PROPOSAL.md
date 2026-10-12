@@ -151,8 +151,9 @@ Receipt-level figures, `gasUsed` from mined transactions on an Anvil fork of Sep
 `ETHRenewerV1`; `skellat` is a migrated name renewed through the V2 registrar. The current column is
 the deployed five-contract testnet release; the merged column is the implemented two-contract
 design from the local artifacts. CCTP claims replace Circle's transmitter with a stand-in that
-pays the minted amount, so Circle's attestation check and mint are excluded from both columns.
-See `test/gas/README.md` for the method.
+pays the minted amount, so Circle's attestation check and mint are excluded from both columns;
+on a real Sepolia claim that share is about 117k, measured by replaying a recorded claim. See
+`test/gas/README.md` for the method and the replay.
 
 | Transaction | Current | Merged | Saving |
 | --- | --- | --- | --- |

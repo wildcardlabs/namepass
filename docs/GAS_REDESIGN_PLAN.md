@@ -51,7 +51,8 @@ Each step checks chain, account, nonce state, and existing code before enabling 
 verifies on-chain state after the receipt. Reloading preserves progress.
 
 Exit: `npx tsc --noEmit -p tools/protocol-deployment/tsconfig.json` passes; a dry run against
-an Anvil fork completes all steps.
+Anvil forks of all four chains completes every step and every verification check. Done; see
+`tools/protocol-deployment/README.md`.
 
 ## Phase 3: deployment (you sign, Claude verifies)
 
