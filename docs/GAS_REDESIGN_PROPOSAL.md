@@ -189,7 +189,8 @@ has existing tests to update.
 
 The current beta deployment is disposable, including its deposit addresses, and there are no
 flows in progress. The cutover is therefore a replacement, not a migration, following the
-September 22 precedent.
+September 22 precedent. The step-by-step plan, including every wallet transaction, is in
+[GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md).
 
 1. Deploy the new factory on all four testnets and the adapter on Sepolia; verify source,
    creation hash, configuration, and owner.
