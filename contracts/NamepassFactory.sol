@@ -280,8 +280,8 @@ contract NamepassFactory {
     uint256 private constant BURN_FEE_EXECUTED_OFFSET = 312;
     uint256 private constant BURN_HOOK_DATA_OFFSET = 376;
 
-    uint256 private constant NOT_ENTERED = 1;
-    uint256 private constant ENTERED = 2;
+    /// @dev Transient storage slot of the reentrancy guard. Costs no persistent state.
+    bytes32 private constant REENTRANCY_SLOT = keccak256("namepass.factory.reentrancy");
 
     /*//////////////////////////////////////////////////////////////
                               IMMUTABLES
@@ -331,8 +331,6 @@ contract NamepassFactory {
     address private _governanceExecutor;
 
     address private _pendingGovernanceExecutor;
-
-    uint256 private _entered;
 
     /*//////////////////////////////////////////////////////////////
                                 ERRORS
@@ -466,7 +464,6 @@ contract NamepassFactory {
         SELF = address(this);
         HUB_CHAIN_ID = hubChainId;
         _owner = initialOwner;
-        _entered = NOT_ENTERED;
 
         emit OwnershipTransferred(address(0), initialOwner);
     }
@@ -514,18 +511,26 @@ contract NamepassFactory {
     }
 
     /**
-     * @dev One guard in factory storage covers every payment
-     * entrypoint. A wallet can only be entered by the factory, and the
-     * factory's payment entrypoints are guarded, so plan calldata
-     * aimed back at either cannot start a second settlement.
+     * @dev One guard in the factory's transient storage covers every
+     * payment entrypoint. A wallet can only be entered by the factory,
+     * and the factory's payment entrypoints are guarded, so plan
+     * calldata aimed back at either cannot start a second settlement.
+     * Transient storage clears at the end of the transaction and is
+     * not subject to state-write pricing.
      */
     modifier nonReentrant() {
-        if (_entered == ENTERED) {
-            revert Reentrancy();
+        bytes32 slot = REENTRANCY_SLOT;
+        assembly ("memory-safe") {
+            if tload(slot) {
+                mstore(0x00, 0xab143c06) // Reentrancy()
+                revert(0x1c, 0x04)
+            }
+            tstore(slot, 1)
         }
-        _entered = ENTERED;
         _;
-        _entered = NOT_ENTERED;
+        assembly ("memory-safe") {
+            tstore(slot, 0)
+        }
     }
 
     /*//////////////////////////////////////////////////////////////

@@ -12,7 +12,7 @@ payment authority, corrects the figures, defers batching, and adds a testnet cut
 
 Merge the gateway and the pointer into the factory, and make the ENS helper a view-only adapter
 that never holds funds. Measured on the live Sepolia gas schedule, which has run Glamsterdam's
-state repricing since 2026-10-06, a direct Ethereum renewal saves about 78k gas: 20% on the V1
+state repricing since 2026-10-06, a direct Ethereum renewal saves about 80k gas: 20% on the V1
 route and 27% on the native V2 route. On the pre-fork schedule, from mined receipts on an Anvil
 fork, the saving is about 95k, and a CCTP claim saves about 43k excluding Circle's share. Mainnet
 is planned to adopt the same repricing in the fourth quarter of 2026, so the live figures are the
@@ -159,9 +159,12 @@ node's root `gasUsed` is what a transaction pays; it matched a recorded claim's 
 
 | Transaction | Current | Merged | Saving |
 | --- | --- | --- | --- |
-| Direct V1, first use | 656,750 | 578,934 | 77,816 (12%) |
-| Direct V1, steady state | 389,508 | 311,693 | 77,815 (20%) |
-| Direct V2, steady state | 291,126 | 213,267 | 77,859 (27%) |
+| Direct V1, first use | 656,750 | 576,935 | 79,815 (12%) |
+| Direct V1, steady state | 389,508 | 309,694 | 79,814 (20%) |
+| Direct V2, steady state | 291,126 | 211,268 | 79,858 (27%) |
+
+These merged figures are for the Cancun build with the transient-storage guard at block
+11,901,276; the Shanghai build with a storage guard measured 2k higher on each row.
 
 **Pre-fork schedule.** `gasUsed` from mined receipts on an Anvil fork at block 11,900,886, with
 CCTP claims using a stand-in transmitter that excludes Circle's share, about 117k on a real claim.
@@ -174,7 +177,7 @@ CCTP claims using a stand-in transmitter that excludes Circle's share, about 117
 | CCTP claim V1, excluding Circle | 363,931 | 320,487 | 43,444 (12%) |
 | CCTP claim V2, excluding Circle | 283,049 | 239,561 | 43,488 (15%) |
 
-The saving is about 78k per direct renewal on the live schedule and about 95k before the fork.
+The saving is about 80k per direct renewal on the live schedule and about 95k before the fork.
 The approvals the redesign removes are transient slots whose creation cost is refunded when they
 clear within the transaction, so the repricing adds little to them; the repriced cold access that
 remains is mostly in ENS and USDC. Wallet creation becomes much dearer under the new schedule,
@@ -202,9 +205,12 @@ with no confirmed date. The parts that touch this design, with the EIP figures:
   11.96M. The approve-and-clear hops stay cheap because their slots are refilled.
 - **State access, EIP-8038.** Any storage write that changes a value costs 10,000 instead of
   about 2,900, cold account access 3,000 instead of 2,600, and the clear refund 11,616 instead of
-  4,800. This is why steady-state renewals rose on both designs, mostly inside USDC and ENS. It
-  also makes the factory's reentrancy guard cost about 20k per transaction for its two writes;
-  transient storage would avoid that but needs the Cancun target, which Arc does not support.
+  4,800. This is why steady-state renewals rose on both designs, mostly inside USDC and ENS. The
+  factory's reentrancy guard uses transient storage, so the factory writes no persistent state
+  during a renewal; measured live, that is worth about 2k per renewal against a storage guard,
+  because a slot restored to its original value in the same transaction is refunded. It needs the
+  Cancun target, which creation calls confirmed on all four testnets and on Arc mainnet on
+  2026-10-12, so the new set is compiled for Cancun.
 - **Transaction gas cap.** Fusaka's EIP-7825 caps a transaction at 16,777,216 gas, below the
   factory's deployment cost. Sepolia is including transactions with 30M gas limits after
   Glamsterdam, so the cap is not binding there. Mainnet runs the cap today, so the factory can be

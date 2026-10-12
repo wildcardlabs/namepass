@@ -11,14 +11,22 @@
 //   DRY_RUN_RPC_11155111=http://127.0.0.1:8545 node --import tsx tools/protocol-deployment/dry-run.ts
 //   LIVE_RPC=https://sepolia.drpc.org ANVIL_RPC=http://127.0.0.1:8545 node test/gas/live-schedule.mjs
 
-import { createPublicClient, http, encodeFunctionData, encodePacked, keccak256, pad, toHex, parseAbi, getAddress } from "viem";
+import { readFileSync } from "node:fs";
+import { createPublicClient, http, encodeFunctionData, encodeDeployData, encodePacked, getContractAddress, keccak256, pad, stringToHex, toHex, parseAbi, getAddress } from "viem";
 
 const RPC = process.env.LIVE_RPC ?? "https://sepolia.drpc.org";
 const USDC = "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238";
 const OLD_FACTORY = "0x2dCB5CA6b21372b43e37C35Da8D5D15160423150";
-const NEW_FACTORY = "0x0b95a96ffB2740fB954FBc415c160D8418d23976";
-const NEW_ADAPTER = "0x44C20C78378B22E9BBa4c2553b8D446329809878";
 const OWNER = "0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6";
+// Deterministic addresses for the current build, derived exactly as tools/protocol-deployment does.
+const artifacts = JSON.parse(readFileSync(new URL("../../tools/protocol-deployment/artifacts.json", import.meta.url), "utf8"));
+const SINGLETON = "0x914d7Fec6aaC8cd542e72Bca78B30650d45643d7";
+const SALT_LABEL = process.env.SALT_LABEL ?? "namepass-two-contract-2026-10-12";
+const salt = (name) => keccak256(stringToHex(`${SALT_LABEL}/${name}`));
+const factoryInit = encodeDeployData({ abi: artifacts.NamepassFactory.abi, bytecode: artifacts.NamepassFactory.bytecode, args: [OWNER, 11155111n] });
+const NEW_FACTORY = getContractAddress({ opcode: "CREATE2", from: SINGLETON, salt: salt("NamepassFactory"), bytecode: factoryInit });
+const adapterInit = encodeDeployData({ abi: artifacts.ENSV2RenewalAdapter.abi, bytecode: artifacts.ENSV2RenewalAdapter.bytecode, args: [NEW_FACTORY, USDC, "0xf633e7FC17e2bbE0D0965D18ec1821dcB754a3d3", "0xf2ece44980778966b8a0FccB3A9E339440f6e045", pad("0x1208a26faa0f4ac65b42098419eb4daa5e580ac6", { size: 32 })] });
+const NEW_ADAPTER = getContractAddress({ opcode: "CREATE2", from: SINGLETON, salt: salt("ENSV2RenewalAdapter"), bytecode: adapterInit });
 const AMOUNT = 27_110_000n;
 const abi = parseAbi(["function renew(string label)", "function predictWallet(string label) view returns (address)"]);
 

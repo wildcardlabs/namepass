@@ -61,6 +61,11 @@ Block 11,900,999, 27.11 USDC per payment:
 | Direct V2, steady state | 291,126 | 213,267 | 77,859 (27%) |
 | Direct V2, first use, merged only | | 480,508 | |
 
+With the Cancun build and the transient-storage reentrancy guard, block 11,901,276, the merged
+rows are 576,935, 309,694 and 211,268, and the V2 first use 478,509: about 2k less each. A
+storage guard whose slot is restored in the same transaction is mostly refunded under EIP-8038,
+so the guard was never the 20k that the raw write price suggests.
+
 The current release's `skellat` wallet is already deployed, so it has no first-use row. The
 saving is about 78k per direct renewal on either route, a little below the 95k on the pre-fork
 schedule: the approvals the redesign removes are transient slots whose creation cost is refunded
