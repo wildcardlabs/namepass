@@ -1,7 +1,42 @@
 # Gas measurement harness
 
-Opt-in fork tests behind `docs/GAS_REDESIGN_PROPOSAL.md`. They skip without `NAMEPASS_FORK_RPC`,
-so `forge test` in CI is unaffected. They broadcast nothing.
+Two measurements back `docs/GAS_REDESIGN_PROPOSAL.md`. Neither broadcasts anything.
+
+## Receipt-level benchmark
+
+`benchmark.mjs` drives an Anvil fork of Sepolia. It deploys the two-contract design from the
+local artifacts, exercises the direct V1 route and a CCTP claim, and runs the same flows against
+the deployed five-contract testnet release. Every figure is `gasUsed` from a mined receipt: what a
+relayer pays, with intrinsic gas, calldata, cold accesses and the EIP-3529 refund cap included.
+`BenchTransmitter.sol` replaces Circle's transmitter for the claims, so Circle's attestation check
+and mint, which are fixed costs outside this design, are excluded from both columns.
+
+```sh
+anvil --fork-url https://ethereum-sepolia-rpc.publicnode.com --fork-block-number <recent> \
+  --auto-impersonate --port 8545 --silent &
+forge build
+node test/gas/benchmark.mjs
+```
+
+Sepolia fork at block 11,900,829, `vitalik` through the live V1 renewer, 27.11 USDC per payment:
+
+| Transaction | Current, five contracts | Merged, two contracts | Saving |
+| --- | --- | --- | --- |
+| Direct renewal, first use | 404,724 | 318,287 | 86,437 (21%) |
+| Direct renewal, steady state | 369,700 | 274,508 | 95,192 (26%) |
+| CCTP claim, excluding Circle | 363,931 | 319,886 | 44,045 (12%) |
+
+The transaction-level saving is smaller than the warm-state execution delta below because, at
+transaction level, the current design's approve-and-clear refunds are realized: the cold accesses
+of a real transaction raise `gasUsed` and therefore the refund cap. The removed hops cost about
+50k gross each but only about 10k after refunds; the real savings come from the forward quote,
+the residue write, the pointer and gateway calls, the balance reads, and three fewer contracts
+touched cold.
+
+## Warm-state execution measurement
+
+`RenewalGasFork.t.sol` is an opt-in fork test that prints execution gas inside one test. It skips
+without `NAMEPASS_FORK_RPC`, so `forge test` in CI is unaffected.
 
 ```sh
 NAMEPASS_FORK_RPC=https://ethereum-sepolia-rpc.publicnode.com \
@@ -9,29 +44,12 @@ NAMEPASS_FORK_BLOCK=<recent block> \
   forge test --match-path "test/gas/*" -vv
 ```
 
-Pass a recent block: the public node prunes state after a few days. Run both tests in one
-invocation so they fork the same block. Add `-vvvv` for the per-call trace that the proposal's
-cost breakdown comes from.
+These figures exclude intrinsic gas, calldata, cold accesses already paid earlier in the test,
+and the refund cap. They are for comparing call trees, not for what a relayer pays.
 
-| File | What it measures |
-| --- | --- |
-| `CurrentPathGasFork.t.sol` | The current five-contract direct path, built from source, renewing `vitalik` through the live V1 renewer and the real USDC proxy. |
-| `MergedCoreGasFork.t.sol` | The merged design's settlement routine: plan from a view-only adapter, exact approval, execute, balance delta, pay the executor, emit the three events. It omits the factory's label hashing and the proxy dispatch. |
-| `MergedCoreAdapter.sol` | `ENSV2RenewalHelper` with `execute` replaced by a view `plan`. A measurement fixture, not the proposed adapter. |
-| `five-contract-trims.patch` | The smaller option: apply to `contracts/`, run `CurrentPathGasFork.t.sol`, then revert. |
+| Block | Design | First use | Steady state |
+| --- | --- | --- | --- |
+| 11,900,165 | Current, five contracts | 489,531 | 305,351 |
+| 11,900,818 | Merged, two contracts | 332,220 | 169,241 |
 
-All printed figures are warm-state execution gas inside one test. They exclude intrinsic gas,
-calldata, cold accesses already paid earlier in the test, and the EIP-3529 refund cap. They are
-for comparison between designs, not acceptance criteria.
-
-## Recorded runs
-
-Sepolia, direct V1 route, `vitalik`, 27.11 USDC per renewal.
-
-| Block | Current #1 first use | Current steady | Merged core #1 | Merged core steady |
-| --- | --- | --- | --- | --- |
-| 11,900,165 | 489,531 | 305,351 | 291,562 | 160,363 |
-| 11,900,663 | 489,537 | 305,361 | 291,640 | 160,444 |
-
-Smaller option at block 11,900,165, cumulative, steady state: duplicate balance reads removed
-302,148; conditional allowance clears 298,170; forward quote dropped 285,231.
+The public node prunes state after a few days, so pass a recent block.

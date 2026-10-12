@@ -4,12 +4,12 @@ pragma solidity 0.8.24;
 import {Test} from "forge-std/Test.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-import {ENSV2RenewalHelper} from "../contracts/ENSV2RenewalHelper.sol";
+import {ENSV2RenewalAdapter} from "../contracts/ENSV2RenewalAdapter.sol";
 
 import {StandardRentPriceOracle, DiscountPoint, PaymentRatio} from "./ens/registrar/StandardRentPriceOracle.sol";
 import {IRentPriceOracle} from "./ens/registrar/interfaces/IRentPriceOracle.sol";
 
-import {MockUSDC, MockRenewer, MockFactory, MockMessageTransmitter, Dummy} from "./mocks/Mocks.sol";
+import {MockUSDC, MockRenewer, Dummy} from "./mocks/Mocks.sol";
 
 /**
  * @notice The helper inverts ENS's pricing; this checks the inversion
@@ -32,11 +32,10 @@ contract PricingTest is Test {
 
     uint128 constant DISCOUNT_DENOMINATOR = 1e38;
 
-    ENSV2RenewalHelper internal helper;
+    ENSV2RenewalAdapter internal helper;
     StandardRentPriceOracle internal oracle;
     MockRenewer internal renewer;
     MockUSDC internal usdc;
-    MockFactory internal factory;
 
     address constant GOVERNANCE = address(0xE45);
     bytes32 constant REFERRER = bytes32(uint256(0x1208));
@@ -45,11 +44,8 @@ contract PricingTest is Test {
         usdc = new MockUSDC();
         oracle = _deployOracle(1, 1e6);
         renewer = new MockRenewer(IRentPriceOracle(address(oracle)), address(0xBEEF));
-        factory = new MockFactory();
 
-        helper = new ENSV2RenewalHelper(
-            address(new Dummy()), address(factory), address(usdc), address(renewer), address(0), REFERRER
-        );
+        helper = new ENSV2RenewalAdapter(address(new Dummy()), address(usdc), address(renewer), address(0), REFERRER);
     }
 
     function _deployOracle(uint128 numer, uint128 denom) internal returns (StandardRentPriceOracle) {
@@ -119,7 +115,7 @@ contract PricingTest is Test {
         } catch (bytes memory reason) {
             assertEq(
                 bytes4(reason),
-                ENSV2RenewalHelper.DurationOverflow.selector,
+                ENSV2RenewalAdapter.DurationOverflow.selector,
                 "quote reverted for a reason other than overflow"
             );
             return;
@@ -190,7 +186,7 @@ contract PricingTest is Test {
      * paid for.
      */
     function test_absurdBudgetRevertsRatherThanTruncating() public {
-        vm.expectRevert(ENSV2RenewalHelper.DurationOverflow.selector);
+        vm.expectRevert(ENSV2RenewalAdapter.DurationOverflow.selector);
         helper.quote(_label(5), type(uint96).max);
     }
 
@@ -234,7 +230,7 @@ contract PricingTest is Test {
     //////////////////////////////////////////////////////////////*/
 
     function test_rejectsEmptyLabel() public {
-        vm.expectRevert(ENSV2RenewalHelper.InvalidLabel.selector);
+        vm.expectRevert(ENSV2RenewalAdapter.InvalidLabel.selector);
         helper.quote("", 1e6);
     }
 
@@ -246,7 +242,7 @@ contract PricingTest is Test {
             long[i] = "a";
         }
 
-        vm.expectRevert(ENSV2RenewalHelper.InvalidLabel.selector);
+        vm.expectRevert(ENSV2RenewalAdapter.InvalidLabel.selector);
         helper.quote(string(long), 1e6);
     }
 

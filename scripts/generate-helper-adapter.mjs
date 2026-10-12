@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { keccak256 } from "viem";
-const artifact = JSON.parse(readFileSync(new URL("../out/ENSV2RenewalHelper.sol/ENSV2RenewalHelper.json", import.meta.url)));
+const artifact = JSON.parse(readFileSync(new URL("../out/ENSV2RenewalAdapter.sol/ENSV2RenewalAdapter.json", import.meta.url)));
 let code = artifact.deployedBytecode.object.replace(/^0x/, "");
 const ranges = Object.values(artifact.deployedBytecode.immutableReferences).flat().sort((a, b) => a.start - b.start);
 for (const { start, length } of ranges) code = code.slice(0, start * 2) + "00".repeat(length) + code.slice((start + length) * 2);

@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
+import {INamepassRenewalAdapter} from "./interfaces/INamepassRenewalAdapter.sol";
+
 /*//////////////////////////////////////////////////////////////
                             INTERFACES
 //////////////////////////////////////////////////////////////*/
@@ -8,10 +10,11 @@ pragma solidity 0.8.24;
 interface IERC20 {
     function balanceOf(address account) external view returns (uint256);
 
-    function approve(
-        address spender,
-        uint256 amount
-    ) external returns (bool);
+    function allowance(address owner, address spender) external view returns (uint256);
+
+    function approve(address spender, uint256 amount) external returns (bool);
+
+    function transfer(address to, uint256 amount) external returns (bool);
 }
 
 interface ITokenMessengerV2 {
@@ -37,52 +40,44 @@ interface ITokenMessengerV2 {
      * @dev Circle's TokenMinter for this chain, which is where the
      * per-message burn limit actually lives.
      */
-    function localMinter()
-        external
-        view
-        returns (ITokenMinterV2);
+    function localMinter() external view returns (ITokenMinterV2);
 }
 
 interface ITokenMinterV2 {
-    function burnLimitsPerMessage(
-        address token
-    ) external view returns (uint256);
+    function burnLimitsPerMessage(address token) external view returns (uint256);
 }
 
-interface INamepassL1Helper {
-    /**
-     * @dev The helper *pulls* `amount` with transferFrom, so this
-     * must be preceded by an approval rather than a transfer. That
-     * way the figure it prices against is one it can verify instead
-     * of one its caller asserts, matching the CCTP path where the
-     * amount is authenticated by Circle.
-     *
-     * `executor` is paid the helper's flat gas allowance. It is
-     * threaded through from whoever called `renew`, because
-     * msg.sender at the helper is the wallet — paying that would
-     * hand the deposit address its own money back.
-     */
-    function renewFromWallet(
-        string calldata label,
-        uint256 amount,
-        address executor
-    ) external;
+interface IMessageTransmitterV2 {
+    function receiveMessage(bytes calldata message, bytes calldata attestation) external returns (bool);
+}
 
-    /**
-     * @dev Must return the factory this helper derives deposit
-     * addresses from. Checked at initialization on Ethereum so a
-     * mistyped or unrelated helper cannot be frozen in.
-     */
-    function factory() external view returns (address);
+/// @dev Everything an L2 wallet needs for a burn, as one calldata struct.
+struct BurnParams {
+    uint256 amount;
+    uint16 maxFeeBps;
+    address usdc;
+    address messenger;
+    uint32 minFinalityThreshold;
+}
+
+/// @dev Figures of one settlement, kept in memory so the events can be emitted without stack pressure.
+struct Settlement {
+    bytes32 labelKey;
+    address wallet;
+    address executor;
+    address adapter;
+    uint64 duration;
+    uint256 amount;
+    uint256 price;
+    bool fromCCTP;
 }
 
 interface INamepassWallet {
-    function execute(
-        string calldata label,
-        uint256 amount,
-        uint16 maxFeeBps,
-        address executor
-    ) external;
+    function executeHub(string calldata label, uint256 amount, address executor, address usdcAddress, address adapter)
+        external
+        returns (address renewer, uint64 duration, uint256 price);
+
+    function executeL2(string calldata label, BurnParams calldata burn) external;
 }
 
 /*//////////////////////////////////////////////////////////////
@@ -99,41 +94,21 @@ library MinimalProxy {
      * Creation bytecode: 55 bytes.
      * Storage slots: none.
      */
-    function cloneUniversal(
-        address implementation,
-        bytes32 salt
-    ) internal returns (address instance) {
+    function cloneUniversal(address implementation, bytes32 salt) internal returns (address instance) {
         assembly ("memory-safe") {
             /*
              * Packs the first portion of the ERC-1167 creation code
              * and the first three bytes of the implementation.
              */
-            mstore(
-                0x00,
-                or(
-                    shr(232, shl(96, implementation)),
-                    0x3d602d80600a3d3981f3363d3d373d3d3d363d73000000
-                )
-            )
+            mstore(0x00, or(shr(232, shl(96, implementation)), 0x3d602d80600a3d3981f3363d3d373d3d3d363d73000000))
 
             /*
              * Packs the remaining seventeen bytes of the
              * implementation and the proxy suffix.
              */
-            mstore(
-                0x20,
-                or(
-                    shl(120, implementation),
-                    0x5af43d82803e903d91602b57fd5bf3
-                )
-            )
+            mstore(0x20, or(shl(120, implementation), 0x5af43d82803e903d91602b57fd5bf3))
 
-            instance := create2(
-                0,
-                0x09,
-                0x37,
-                salt
-            )
+            instance := create2(0, 0x09, 0x37, salt)
         }
 
         if (instance == address(0)) {
@@ -144,51 +119,27 @@ library MinimalProxy {
     /**
      * @notice Predicts the CREATE2 address of the minimal proxy.
      */
-    function predictUniversalAddress(
-        address implementation,
-        bytes32 salt,
-        address deployer
-    ) internal pure returns (address predicted) {
+    function predictUniversalAddress(address implementation, bytes32 salt, address deployer)
+        internal
+        pure
+        returns (address predicted)
+    {
         assembly ("memory-safe") {
             let ptr := mload(0x40)
 
             mstore(add(ptr, 0x38), deployer)
 
-            mstore(
-                add(ptr, 0x24),
-                0x5af43d82803e903d91602b57fd5bf3ff
-            )
+            mstore(add(ptr, 0x24), 0x5af43d82803e903d91602b57fd5bf3ff)
 
-            mstore(
-                add(ptr, 0x14),
-                implementation
-            )
+            mstore(add(ptr, 0x14), implementation)
 
-            mstore(
-                ptr,
-                0x3d602d80600a3d3981f3363d3d373d3d3d363d73
-            )
+            mstore(ptr, 0x3d602d80600a3d3981f3363d3d373d3d3d363d73)
 
-            mstore(
-                add(ptr, 0x58),
-                salt
-            )
+            mstore(add(ptr, 0x58), salt)
 
-            mstore(
-                add(ptr, 0x78),
-                keccak256(
-                    add(ptr, 0x0c),
-                    0x37
-                )
-            )
+            mstore(add(ptr, 0x78), keccak256(add(ptr, 0x0c), 0x37))
 
-            predicted := and(
-                keccak256(
-                    add(ptr, 0x43),
-                    0x55
-                ),
-                0xffffffffffffffffffffffffffffffffffffffff
-            )
+            predicted := and(keccak256(add(ptr, 0x43), 0x55), 0xffffffffffffffffffffffffffffffffffffffff)
         }
     }
 }
@@ -200,19 +151,15 @@ library MinimalProxy {
 /**
  * @title NamepassFactory
  *
- * @notice Creates universal USDC deposit wallets for normalized
- * ENS labels and processes their balances.
+ * @notice Creates universal USDC deposit wallets for normalized ENS
+ * labels, processes their balances, receives CCTP mints on the hub,
+ * and settles renewals through a governance-selected adapter.
  *
  * @dev A **label** is the single name component with no TLD and no
  * dots — `vitalik`, never `vitalik.eth`. Dots are rejected on chain
  * so an off-chain caller that passes a full name fails loudly at
  * prediction time instead of quietly deriving an address nobody can
- * ever process. User-facing copy still says *name*, because that is
- * what users have; only the on-chain key is a label.
- *
- * Rejecting dots also excludes subnames, which is correct rather
- * than merely convenient: subnames don't pay renewal fees, so a
- * subname deposit address would have nothing to buy.
+ * ever process.
  *
  * Each deposit wallet is a storage-free ERC-1167 proxy that
  * permanently delegates to this factory.
@@ -227,49 +174,37 @@ library MinimalProxy {
  * Constructor arguments are part of the creation code, so
  * `initialOwner` and `hubChainId` must be identical on every chain
  * in a deployment set. Everything chain-*specific* lives in storage
- * and does not affect universal wallet addresses, which is *why*
- * the frozen values below are set-once storage rather than
- * `immutable`. A constructor argument that differed per chain would
- * move the factory address per chain and break the one-address
- * promise outright.
+ * and does not affect universal wallet addresses.
  *
- * `hubChainId` is 1 for mainnet and 11155111 for a Sepolia-based
- * testnet. The two produce different factory addresses, and so
- * different deposit addresses, which is what separate deployments
- * should do.
+ * ## Roles
  *
- * Deployment order:
+ * The factory has one address on every chain, and that address is
+ * also the CCTP mint recipient and destination caller recorded in
+ * every L2 burn. There is nothing to configure about where bridged
+ * funds land and therefore nothing to get wrong.
  *
- * 1. Deploy this factory, same address on every chain, through a
- *    universal deployer.
- * 2. Deploy the single L1 helper, hardcoding this factory's address
- *    so it can derive deposit addresses without calling back.
- * 3. `initialize` once per chain. It can never be called again.
+ * On the hub, a renewal runs inside the deposit wallet: the wallet
+ * asks the active adapter for a plan, approves the ENS renewer for
+ * exactly the quoted price, executes the plan, verifies that exactly
+ * the price left, and pays whatever remains to the executor. A CCTP
+ * claim runs the same routine from the factory's own balance,
+ * spending only the amount Circle authenticated.
+ *
+ * The adapter is view-only and is selected by the ENS governance
+ * executor. It can direct at most the quoted price of one payment,
+ * and only after governance activates it.
  *
  * ## Custody
  *
  * After `initialize`, the owner cannot move a single deposited
- * dollar. Every address that can receive USDC — the local token, the
- * CCTP messenger it is approved to, and the Ethereum helper it is
- * ultimately paid to — is frozen. One setting remains: the CCTP
- * finality tier. The per-burn maximum used to be the second, and is
- * now read live from Circle's own TokenMinter rather than stored, so
- * no Namepass key decides how much travels. It does not change where
- * anything goes, only how long it waits and how much travels per
- * transaction.
+ * dollar. The token, the CCTP messenger, and the transmitter are
+ * frozen. One setting remains: the CCTP finality tier. The per-burn
+ * maximum is read live from Circle's own TokenMinter.
  *
- * The fee ceiling is deliberately *not* among them. It is supplied
- * per call, so no owner setting can price a transfer or, more to
- * the point, stop one — `renewWithFee` lets anyone push a payment
- * through at their own chosen ceiling if Circle ever starts
- * charging for the tier this chain is set to.
- *
- * There is deliberately **no sweep**. A rescue path is a path that
- * moves a deposit wallet's tokens to an owner-chosen address, and
- * every version of it is one config mistake away from being a
- * withdrawal route for the payment asset itself. Non-USDC tokens
- * sent to a deposit address are therefore permanently lost, and the
- * UI is responsible for saying so plainly.
+ * There is deliberately **no sweep** and no residue account. Rounding
+ * dust goes to the executor with the fixed allowance. Non-USDC tokens
+ * sent to a deposit address are permanently lost, and the UI is
+ * responsible for saying so plainly.
  */
 contract NamepassFactory {
     error UnsupportedNativeDeposit();
@@ -287,31 +222,28 @@ contract NamepassFactory {
     //////////////////////////////////////////////////////////////*/
 
     /**
+     * @notice Flat allowance paid to whoever executes a renewal, in
+     * USDC base units. $0.10.
+     */
+    uint256 public constant GAS_ALLOWANCE = 100_000;
+
+    /// @dev Required adapter interface version.
+    uint256 private constant ADAPTER_INTERFACE_VERSION = 2;
+
+    /**
      * @dev Circle's CCTP domain for the hub. Zero for both Ethereum
-     * mainnet and Sepolia, so it holds across a testnet and a
-     * mainnet deployment alike.
+     * mainnet and Sepolia.
      */
     uint32 private constant HUB_CCTP_DOMAIN = 0;
 
     uint256 private constant BPS_DENOMINATOR = 10_000;
 
     /**
-     * @dev Standard transfers — what an L2 starts on.
-     *
-     * Circle documents <= 1000 as Fast/Confirmed and > 1000 as
-     * Standard/Finalized; 1000 and 2000 are the two defined values.
-     * There is no undocumented middle band -- 1500 is simply
-     * Standard. Passed through unvalidated for forward
-     * compatibility, so choose it carefully -- 0 means Fast, not
-     * "unset".
+     * @dev Standard transfers — what an L2 starts on. Circle documents
+     * <= 1000 as Fast/Confirmed and > 1000 as Standard/Finalized.
      */
     uint32 private constant FINALITY_FINALIZED = 2000;
 
-    /**
-     * @dev Circle's per-burn ceiling today: 10,000,000 USDC at 6 decimals.
-     * The value `initialize` starts an L2 at; adjustable afterwards, because
-     * this number is Circle's and can move.
-     */
     /// @dev Ethereum mainnet — the hub for a production set.
     uint256 private constant MAINNET_CHAIN_ID = 1;
 
@@ -320,100 +252,87 @@ contract NamepassFactory {
 
     /**
      * @dev Longest label ENS will price, in raw UTF-8 bytes.
-     *
-     * Not a Namepass policy — the one validity constraint ENS
-     * applies that can be checked universally on any chain.
      */
     uint256 private constant MAX_LABEL_BYTES = 255;
 
-    bytes32 private constant WALLET_SALT_NAMESPACE =
-        keccak256("NAMEPASS_DEPOSIT_WALLET_V1");
+    bytes32 private constant WALLET_SALT_NAMESPACE = keccak256("NAMEPASS_DEPOSIT_WALLET_V1");
+
+    /**
+     * @notice Smallest amount worth bridging, in USDC base units.
+     *
+     * @dev $0.11 — the gas allowance plus a margin for the dearest
+     * second ENS sells. Below this a burn produces a CCTP message that
+     * can never be claimed. At present rates the dearest second is 21
+     * base units against a margin of 10,000.
+     */
+    uint256 private constant MIN_BURN_AMOUNT = 110_000;
+
+    /* CCTP V2 message layout. */
+    uint256 private constant MESSAGE_SOURCE_DOMAIN_OFFSET = 4;
+    uint256 private constant MESSAGE_DESTINATION_DOMAIN_OFFSET = 8;
+    uint256 private constant MESSAGE_NONCE_OFFSET = 12;
+    uint256 private constant MESSAGE_RECIPIENT_OFFSET = 76;
+    uint256 private constant MESSAGE_DESTINATION_CALLER_OFFSET = 108;
+    uint256 private constant BURN_BODY_VERSION_OFFSET = 148;
+    uint256 private constant BURN_MINT_RECIPIENT_OFFSET = 184;
+    uint256 private constant BURN_AMOUNT_OFFSET = 216;
+    uint256 private constant BURN_MESSAGE_SENDER_OFFSET = 248;
+    uint256 private constant BURN_FEE_EXECUTED_OFFSET = 312;
+    uint256 private constant BURN_HOOK_DATA_OFFSET = 376;
+
+    uint256 private constant NOT_ENTERED = 1;
+    uint256 private constant ENTERED = 2;
 
     /*//////////////////////////////////////////////////////////////
-                                STORAGE
+                              IMMUTABLES
     //////////////////////////////////////////////////////////////*/
 
     /**
      * @dev The real factory address remains embedded in the
      * implementation bytecode during delegatecall.
      *
-     * Direct factory execution:
-     * address(this) == SELF
-     *
-     * Wallet delegatecall execution:
-     * address(this) == universal wallet
-     * SELF          == real factory
+     * Direct factory execution:   address(this) == SELF
+     * Wallet delegatecall:        address(this) == wallet, SELF == factory
      */
-    /**
-     * @notice Smallest amount worth bridging, in USDC base units.
-     *
-     * @dev $0.11 — the helper's $0.10 gas allowance plus a margin
-     * for the dearest second ENS sells. Below this a burn produces a
-     * CCTP message that can never be claimed. See the note at the
-     * burn site.
-     *
-     * This is the factory's one ENS pricing assumption, and it is an
-     * assumption rather than a calculation: it takes on faith that
-     * the maximum supported one-second price stays inside the margin
-     * above the allowance. At present rates the dearest second is 21
-     * base units against a margin of 10,000, so the headroom is
-     * ample — but ENS governance sets those rates, and this constant
-     * cannot follow them.
-     */
-    uint256 private constant MIN_BURN_AMOUNT = 110_000;
-
     address private immutable SELF;
 
     /**
      * @dev The chain ENS renewal happens on: 1 for mainnet,
-     * 11155111 for a Sepolia-based testnet deployment.
-     *
-     * A constructor argument rather than a constant so one source
-     * file serves both, instead of an edit between deployments that
-     * has to be remembered. Constructor arguments are part of the
-     * creation code, so this must be **identical across every chain
-     * in one deployment set** or the factory lands on a different
-     * address per chain and the one-address promise breaks. A
-     * testnet set and a mainnet set therefore have different factory
-     * addresses, which is correct: they are separate deployments
-     * with separate deposit addresses.
-     *
-     * No exact ENS pricing calculation happens here — the helper
-     * reads rates from the registrar's own oracle, so rent and
-     * discount changes never reach this factory. There is one
-     * approximation: `MIN_BURN_AMOUNT` conservatively assumes the
-     * dearest supported one-second price stays inside its margin
-     * above the gas allowance. That is an assumption, not a
-     * calculation, and it holds with room to spare at present rates.
+     * 11155111 for a Sepolia-based testnet deployment. Part of the
+     * creation code, so identical across every chain in one set.
      */
     uint256 private immutable HUB_CHAIN_ID;
+
+    /*//////////////////////////////////////////////////////////////
+                                STORAGE
+    //////////////////////////////////////////////////////////////*/
 
     address private _owner;
 
     /// @dev Set by `transferOwnership`, cleared by `acceptOwnership`.
     address private _pendingOwner;
 
-    /*
-     * Slot: _usdc | _minFinalityThreshold  (24 bytes)
-     */
-
-    /// @dev Native USDC on this chain. Frozen at initialization.
+    /// @dev Native USDC on this chain. Frozen at initialization. Doubles as the initialization flag.
     address private _usdc;
 
-    /// @dev CCTP finality threshold. Owner-adjustable.
+    /// @dev CCTP finality threshold. Owner-adjustable on an L2.
     uint32 private _minFinalityThreshold;
 
-    /// @dev Local TokenMessengerV2. Zero on Ethereum. Frozen.
+    /// @dev Circle TokenMessengerV2 on this chain. Burns from an L2; the expected recipient of a hub message. Frozen.
     address private _tokenMessenger;
 
-    /**
-     * @dev The single Ethereum helper. On L2 this is both the CCTP
-     * mint recipient and destination caller. Frozen.
-     *
-     * Doubles as the initialization flag: it is non-zero on every
-     * chain once set, so no separate bool is needed.
-     */
-    address private _l1Helper;
+    /// @dev Circle MessageTransmitterV2 on the hub. Zero on an L2. Frozen.
+    address private _messageTransmitter;
+
+    /// @dev The active ENS adapter on the hub. Selected by governance.
+    address private _adapter;
+
+    /// @dev The ENS governance executor on the hub. Must be the ENS Timelock on mainnet.
+    address private _governanceExecutor;
+
+    address private _pendingGovernanceExecutor;
+
+    uint256 private _entered;
 
     /*//////////////////////////////////////////////////////////////
                                 ERRORS
@@ -421,46 +340,51 @@ contract NamepassFactory {
 
     error NotOwner();
     error NotPendingOwner();
+    error NotGovernance();
+    error NotPendingGovernance();
     error WrongExecutionContext();
+    error Reentrancy();
 
     error ZeroAddress();
     error InvalidHubChainId();
     error EmptyLabel();
     error DottedLabel();
-
     error LabelTooLong();
     error NoUSDC();
 
-    error TransferFailed();
     error ApprovalFailed();
+    error TransferFailed();
     error NotAContract();
     error PredictionMismatch();
 
     error NotInitialized();
     error AlreadyInitialized();
-    error InvalidHelper();
-
+    error NotHub();
+    error UnexpectedHubConfiguration();
     error InvalidFinalityThreshold();
     error BelowMinimumBurn();
-
     error BurnsDisabled();
 
-    error MissingTokenMessenger();
-    error UnexpectedTokenMessenger();
+    error NoActiveHelper();
+    error IncompatibleHelper();
+    error InsufficientAmount();
+    error InvalidPlan();
+    error InvalidPlanTarget();
+    error RenewalFailed();
+    error InvalidSettlement();
+
+    error InvalidCCTPMessage();
+    error InvalidWallet();
+    error CCTPReceiveFailed();
+    error UnexpectedMintAmount();
 
     /*//////////////////////////////////////////////////////////////
                                 EVENTS
     //////////////////////////////////////////////////////////////*/
 
-    event OwnershipTransferStarted(
-        address indexed previousOwner,
-        address indexed newOwner
-    );
+    event OwnershipTransferStarted(address indexed previousOwner, address indexed newOwner);
 
-    event OwnershipTransferred(
-        address indexed previousOwner,
-        address indexed newOwner
-    );
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
 
     /**
      * @dev Emitted exactly once in the lifetime of the factory. The
@@ -468,93 +392,83 @@ contract NamepassFactory {
      * payment route was ever redirected.
      */
     event Initialized(
-        address indexed usdc,
-        address indexed tokenMessenger,
-        address indexed l1Helper
+        address indexed usdc, address indexed tokenMessenger, address indexed messageTransmitter, address governance
     );
 
     event FinalityUpdated(uint32 minFinalityThreshold);
+
+    event HelperUpdated(address indexed previousHelper, address indexed newHelper, bytes32 codeHash);
+
+    event GovernanceTransferStarted(address indexed previousExecutor, address indexed newExecutor);
+
+    event GovernanceExecutorUpdated(address indexed previousExecutor, address indexed newExecutor);
 
     /**
      * @dev The only on-chain record of the label a wallet belongs
      * to. `labelKey` is a keccak hash and cannot be reversed, so the
      * label ships as data for the indexer to store once.
      */
-    event WalletDeployed(
-        bytes32 indexed labelKey,
-        address indexed wallet,
-        string label
-    );
+    event WalletDeployed(bytes32 indexed labelKey, address indexed wallet, string label);
 
     /**
-     * @dev One per processed deposit, emitted by the factory rather
-     * than the wallet so an indexer watches a single address.
+     * @dev One per processed deposit. On the hub, `HelperUsed` and
+     * `Renewed` fire *before* this, in that order. On an L2 it marks
+     * the burn; the CCTP nonce is in TokenMessengerV2's
+     * `DepositForBurn` in the same transaction.
      *
-     * On Ethereum the helper's `Renewed` fires *before* this, not
-     * after: the renewal happens inside `wallet.execute()`, and this
-     * is emitted only once that returns. An indexer keying off log
-     * order needs `Renewed` then `DepositProcessed`. On an L2 it
-     * marks the burn — the CCTP nonce is
-     * in TokenMessengerV2's `DepositForBurn` in the same
-     * transaction, and the helper emits the settlement on mainnet.
-     *
-     * `remaining` is what is still at the deposit address afterwards. It is
-     * non-zero when the balance exceeded the per-burn cap, and it is the
-     * signal to call `renew` again rather than to wait for another deposit.
+     * `remaining` is what is still at the deposit address afterwards.
+     * It is non-zero when the balance exceeded the per-burn cap.
      */
-    event DepositProcessed(
-        bytes32 indexed labelKey,
+    event DepositProcessed(bytes32 indexed labelKey, address indexed wallet, uint256 amount, uint256 remaining);
+
+    event CCTPClaimed(
+        bytes32 indexed nonce,
         address indexed wallet,
-        uint256 amount,
-        uint256 remaining
+        uint32 sourceDomain,
+        uint256 burnAmount,
+        uint256 feeExecuted,
+        uint256 mintedAmount
+    );
+
+    event HelperUsed(address indexed helper, bytes32 indexed labelHash, address indexed wallet);
+
+    event Renewed(
+        bytes32 indexed labelHash,
+        address indexed wallet,
+        address indexed executor,
+        string label,
+        uint64 duration,
+        uint256 amountReceived,
+        uint256 gasAllowance,
+        uint256 amountApplied,
+        uint256 remainder,
+        bool fromCCTP
     );
 
     /*//////////////////////////////////////////////////////////////
                               CONSTRUCTOR
     //////////////////////////////////////////////////////////////*/
 
-    constructor(
-        address initialOwner,
-        uint256 hubChainId
-    ) {
+    constructor(address initialOwner, uint256 hubChainId) {
         if (initialOwner == address(0)) {
             revert ZeroAddress();
         }
 
         /*
-         * Only the hubs this bytecode was written for.
-         *
-         * `hubChainId` decides which path the contract believes is
-         * Ethereum, it is immutable, and it is part of the creation
-         * code — so a wrong value is not a misconfiguration to be
-         * corrected but a whole deployment set at wrong addresses,
-         * with an L2 that thinks it is the hub and never burns. A
-         * zero check catches nothing plausible; the plausible
-         * mistakes are `1115511`, or an L2's own id pasted from the
-         * chain list.
-         *
-         * Adding a hub later is a deliberate source edit and a new
-         * deployment set, which is what it would be regardless: a
-         * different hub needs its own helper, its own CCTP domain,
-         * and its own deposit addresses.
+         * Only the hubs this bytecode was written for. A wrong value
+         * is not a misconfiguration to be corrected but a whole
+         * deployment set at wrong addresses.
          */
-        if (
-            hubChainId != MAINNET_CHAIN_ID &&
-            hubChainId != SEPOLIA_CHAIN_ID
-        ) {
+        if (hubChainId != MAINNET_CHAIN_ID && hubChainId != SEPOLIA_CHAIN_ID) {
             revert InvalidHubChainId();
         }
 
         SELF = address(this);
-
         HUB_CHAIN_ID = hubChainId;
-
         _owner = initialOwner;
+        _entered = NOT_ENTERED;
 
-        emit OwnershipTransferred(
-            address(0),
-            initialOwner
-        );
+        emit OwnershipTransferred(address(0), initialOwner);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -562,42 +476,26 @@ contract NamepassFactory {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * @dev Requires execution directly on the real factory.
-     *
-     * This does not restrict who may call view functions. It only
-     * prevents factory-management selectors from being executed
-     * through a deposit wallet proxy.
+     * @dev Requires execution directly on the real factory. It only
+     * prevents factory selectors from being executed through a
+     * deposit wallet proxy.
      */
     modifier onlyFactoryContext() {
-        if (address(this) != SELF) {
+        if (address(this) == SELF) {
+            _;
+        } else {
             revert WrongExecutionContext();
         }
-
-        _;
     }
 
     /**
-     * @dev Requires execution through a universal wallet and
-     * requires the real factory to be its immediate caller.
-     *
-     * Expected call path:
-     *
-     * factory.renew(label)
-     *     -> wallet.execute(label, amount, maxFeeBps, executor)
-     *         -> delegatecall factory.execute(...)
-     *
-     * `executor` is renew()'s own msg.sender, carried through so the
-     * Ethereum path can pay the helper's gas allowance to whoever
-     * paid for the transaction.
+     * @dev Requires execution through a universal wallet with the
+     * real factory as its immediate caller.
      */
     modifier onlyWalletContext() {
-        if (
-            address(this) == SELF ||
-            msg.sender != SELF
-        ) {
+        if (address(this) == SELF || msg.sender != SELF) {
             revert WrongExecutionContext();
         }
-
         _;
     }
 
@@ -605,91 +503,115 @@ contract NamepassFactory {
         if (msg.sender != _owner) {
             revert NotOwner();
         }
-
         _;
+    }
+
+    modifier onlyGovernance() {
+        if (_governanceExecutor == address(0) || msg.sender != _governanceExecutor) {
+            revert NotGovernance();
+        }
+        _;
+    }
+
+    /**
+     * @dev One guard in factory storage covers every payment
+     * entrypoint. A wallet can only be entered by the factory, and the
+     * factory's payment entrypoints are guarded, so plan calldata
+     * aimed back at either cannot start a second settlement.
+     */
+    modifier nonReentrant() {
+        if (_entered == ENTERED) {
+            revert Reentrancy();
+        }
+        _entered = ENTERED;
+        _;
+        _entered = NOT_ENTERED;
     }
 
     /*//////////////////////////////////////////////////////////////
                                  VIEWS
     //////////////////////////////////////////////////////////////*/
 
-    function owner()
-        external
-        view
-        onlyFactoryContext
-        returns (address)
-    {
+    function owner() external view onlyFactoryContext returns (address) {
         return _owner;
     }
 
-    function pendingOwner()
-        external
-        view
-        onlyFactoryContext
-        returns (address)
-    {
+    function pendingOwner() external view onlyFactoryContext returns (address) {
         return _pendingOwner;
     }
 
-    function usdc()
-        external
-        view
-        onlyFactoryContext
-        returns (address)
-    {
+    function usdc() external view onlyFactoryContext returns (address) {
         return _usdc;
     }
 
-    function tokenMessenger()
-        external
-        view
-        onlyFactoryContext
-        returns (address)
-    {
+    /// @notice The payment token. Same value as `usdc()`, under the name the adapter interface uses.
+    function paymentToken() external view onlyFactoryContext returns (address) {
+        return _usdc;
+    }
+
+    function tokenMessenger() external view onlyFactoryContext returns (address) {
         return _tokenMessenger;
     }
 
-    function l1Helper()
-        external
-        view
-        onlyFactoryContext
-        returns (address)
-    {
-        return _l1Helper;
+    function messageTransmitter() external view onlyFactoryContext returns (address) {
+        return _messageTransmitter;
     }
 
-    function finality()
-        external
-        view
-        onlyFactoryContext
-        returns (uint32)
-    {
+    /// @notice The hub settlement address recorded in every burn: this factory, on every chain.
+    function l1Helper() external view onlyFactoryContext returns (address) {
+        return SELF;
+    }
+
+    /// @notice Compatibility shim: the factory is its own gateway.
+    function gateway() external view onlyFactoryContext returns (address) {
+        return SELF;
+    }
+
+    /// @notice Compatibility shim: the factory is its own pointer.
+    function pointer() external view onlyFactoryContext returns (address) {
+        return SELF;
+    }
+
+    function factory() external view onlyFactoryContext returns (address) {
+        return SELF;
+    }
+
+    function finality() external view onlyFactoryContext returns (uint32) {
         return _minFinalityThreshold;
     }
 
-    /**
-     * @notice Everything a deposit wallet needs, in one call.
-     *
-     * @dev A wallet executing by delegatecall sees its own (empty)
-     * storage, so it cannot read any of this directly.
-     */
-    function walletParams()
+    function currentHelper() external view onlyFactoryContext returns (address) {
+        return _adapter;
+    }
+
+    function ensGovernanceExecutor() external view onlyFactoryContext returns (address) {
+        return _governanceExecutor;
+    }
+
+    function pendingGovernanceExecutor() external view onlyFactoryContext returns (address) {
+        return _pendingGovernanceExecutor;
+    }
+
+    /// @notice Quote a budget after the fixed executor allowance has been removed.
+    function quote(string calldata label, uint256 budget)
         external
         view
         onlyFactoryContext
-        returns (
-            address usdcAddress,
-            address messenger,
-            address helper,
-            uint32 minFinalityThreshold
-        )
+        returns (uint64 duration, uint256 needed)
     {
-        return (
-            _usdc,
-            _tokenMessenger,
-            _l1Helper,
-            _minFinalityThreshold
-        );
+        address adapter = _adapter;
+        if (adapter == address(0)) revert NoActiveHelper();
+        return INamepassRenewalAdapter(adapter).quote(label, budget);
+    }
+
+    /**
+     * @notice Predicts the deposit address for an ENS label.
+     *
+     * @dev The supplied label must already be ENSIP-15 normalized
+     * and must not include the TLD.
+     */
+    function predictWallet(string calldata label) external view onlyFactoryContext returns (address) {
+        return _predict(_walletSalt(_labelKey(label)));
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -699,94 +621,65 @@ contract NamepassFactory {
     /**
      * @notice Freezes every payment route. Callable once, ever.
      *
-     * Ethereum:
-     *   usdc          = ETHEREUM_USDC
-     *   tokenMessenger= address(0)
-     *   l1Helper      = NAMEPASS_L1_HELPER
+     * Hub:
+     *   usdcAddress   = hub USDC
+     *   messenger     = hub TokenMessengerV2 (the expected recipient of every claimed message)
+     *   transmitter   = hub MessageTransmitterV2
+     *   governance    = ENS governance executor (the ENS Timelock on mainnet)
      *
      * L2:
-     *   usdc          = LOCAL_NATIVE_USDC
-     *   tokenMessenger= LOCAL_TOKEN_MESSENGER_V2
-     *   l1Helper      = NAMEPASS_L1_HELPER   (an Ethereum address)
+     *   usdcAddress   = local native USDC
+     *   messenger     = local TokenMessengerV2
+     *   transmitter   = address(0)
+     *   governance    = address(0)
      *
      * @dev The trust window is the gap between deployment and this
      * call. After it, the owner cannot move deposited funds at all.
-     *
-     * On Ethereum the helper is verified to exist and to point back
-     * at this factory. On an L2 neither check is possible — the
-     * helper is an Ethereum address with no code locally — so the
-     * same value must be verified off chain before publishing any
-     * deposit address. Getting it wrong on one L2 sends every CCTP
-     * mint from that chain to a permanently wrong recipient.
+     * The mint recipient of every burn is this contract's own
+     * address, so there is no hub address to verify off chain.
      */
-    function initialize(
-        address usdcAddress,
-        address messenger,
-        address helper
-    )
+    function initialize(address usdcAddress, address messenger, address transmitter, address governance)
         external
         onlyFactoryContext
         onlyOwner
     {
-        if (_l1Helper != address(0)) {
+        if (_usdc != address(0)) {
             revert AlreadyInitialized();
         }
 
-        if (
-            usdcAddress == address(0) ||
-            helper == address(0)
-        ) {
+        if (usdcAddress == address(0) || messenger == address(0)) {
             revert ZeroAddress();
         }
 
-        if (usdcAddress.code.length == 0) {
+        if (usdcAddress.code.length == 0 || messenger.code.length == 0) {
             revert NotAContract();
         }
 
         if (block.chainid == HUB_CHAIN_ID) {
-            if (messenger != address(0)) {
-                revert UnexpectedTokenMessenger();
+            if (transmitter == address(0) || governance == address(0)) {
+                revert ZeroAddress();
             }
-
-            if (helper.code.length == 0) {
+            if (transmitter.code.length == 0 || governance.code.length == 0) {
                 revert NotAContract();
             }
-
-            if (
-                INamepassL1Helper(helper)
-                    .factory() != SELF
-            ) {
-                revert InvalidHelper();
-            }
+            _messageTransmitter = transmitter;
+            _governanceExecutor = governance;
+            emit GovernanceExecutorUpdated(address(0), governance);
         } else {
-            if (messenger == address(0)) {
-                revert MissingTokenMessenger();
+            if (transmitter != address(0) || governance != address(0)) {
+                revert UnexpectedHubConfiguration();
             }
-
-            if (messenger.code.length == 0) {
-                revert NotAContract();
-            }
-
             /*
              * Standard transfers, no fee, until told otherwise.
              */
-            _minFinalityThreshold =
-                FINALITY_FINALIZED;
-
+            _minFinalityThreshold = FINALITY_FINALIZED;
         }
 
         _usdc = usdcAddress;
         _tokenMessenger = messenger;
-        _l1Helper = helper;
 
-        emit Initialized(
-            usdcAddress,
-            messenger,
-            helper
-        );
-
+        emit Initialized(usdcAddress, messenger, transmitter, governance);
         emit FinalityUpdated(_minFinalityThreshold);
-
     }
 
     /**
@@ -794,39 +687,17 @@ contract NamepassFactory {
      *
      * @dev Speed only. The fee ceiling is *not* stored — it is
      * supplied per call, so no setting here can price a transfer.
-     *
-     * Circle documents <= 1000 as Fast/Confirmed and > 1000 as
-     * Standard/Finalized; 1000 and 2000 are the two defined values.
-     * There is no undocumented middle band -- 1500 is simply
-     * Standard. Passed through unvalidated for forward
-     * compatibility, so choose it carefully -- 0 means Fast, not
-     * "unset".
-     *
-     * Mutable because a redeploy is not available as a remedy:
-     * wallets delegate to this factory forever, so a new factory
-     * would not repair a single existing deposit address. The move
-     * that matters is switching to Fast on the day Circle stops
-     * charging for it.
      */
-    function setFinality(
-        uint32 minFinalityThreshold
-    )
-        external
-        onlyFactoryContext
-        onlyOwner
-    {
-        if (_l1Helper == address(0)) {
+    function setFinality(uint32 minFinalityThreshold) external onlyFactoryContext onlyOwner {
+        if (_usdc == address(0)) {
             revert NotInitialized();
         }
 
         /*
-         * There is no CCTP leg on Ethereum. Storing a value that
+         * There is no CCTP leg on the hub. Storing a value that
          * nothing reads invites a later reader to trust it.
          */
-        if (
-            block.chainid == HUB_CHAIN_ID &&
-            minFinalityThreshold != 0
-        ) {
+        if (block.chainid == HUB_CHAIN_ID && minFinalityThreshold != 0) {
             revert InvalidFinalityThreshold();
         }
 
@@ -837,90 +708,92 @@ contract NamepassFactory {
 
     /**
      * @notice Nominates a new owner. Two-step: they must accept.
-     *
-     * @dev The owner cannot move funds, which makes two-step *more*
-     * appropriate here, not less. The only thing ownership carries
-     * is the ability to retune CCTP settings, and that ability is
-     * the sole defence deposit wallets have against Circle changing
-     * something — the wallets are permanent and cannot be
-     * redeployed. A mistyped address in a single-step transfer would
-     * strand every published address on today's settings forever.
      */
-    function transferOwnership(
-        address newOwner
-    )
-        external
-        onlyFactoryContext
-        onlyOwner
-    {
+    function transferOwnership(address newOwner) external onlyFactoryContext onlyOwner {
         if (newOwner == address(0)) {
             revert ZeroAddress();
         }
 
         _pendingOwner = newOwner;
 
-        emit OwnershipTransferStarted(
-            _owner,
-            newOwner
-        );
+        emit OwnershipTransferStarted(_owner, newOwner);
     }
 
     /**
      * @notice Completes a transfer started by `transferOwnership`.
      */
-    function acceptOwnership()
-        external
-        onlyFactoryContext
-    {
+    function acceptOwnership() external onlyFactoryContext {
         if (msg.sender != _pendingOwner) {
             revert NotPendingOwner();
         }
 
         address previousOwner = _owner;
-
         _owner = msg.sender;
-
         delete _pendingOwner;
 
-        emit OwnershipTransferred(
-            previousOwner,
-            msg.sender
-        );
+        emit OwnershipTransferred(previousOwner, msg.sender);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                             GOVERNANCE
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @notice Activates an ENS adapter. Hub only; the executor is the
+     * ENS governance timelock.
+     *
+     * @dev The adapter must report interface version 2 and name this
+     * factory as its payer and `_usdc` as its token. There is no
+     * Namepass bypass and no immediate rollback role.
+     */
+    function setHelper(address next) external onlyFactoryContext onlyGovernance {
+        if (next.code.length == 0) revert ZeroAddress();
+
+        INamepassRenewalAdapter adapter = INamepassRenewalAdapter(next);
+        if (
+            adapter.interfaceVersion() != ADAPTER_INTERFACE_VERSION || adapter.factory() != SELF
+                || adapter.gateway() != SELF || adapter.paymentToken() != _usdc
+        ) {
+            revert IncompatibleHelper();
+        }
+
+        address previous = _adapter;
+        _adapter = next;
+
+        emit HelperUpdated(previous, next, next.codehash);
+    }
+
+    function transferGovernance(address next) external onlyFactoryContext onlyGovernance {
+        if (next.code.length == 0 || next == SELF) revert ZeroAddress();
+
+        _pendingGovernanceExecutor = next;
+
+        emit GovernanceTransferStarted(_governanceExecutor, next);
+    }
+
+    function cancelGovernanceTransfer() external onlyFactoryContext onlyGovernance {
+        delete _pendingGovernanceExecutor;
+
+        emit GovernanceTransferStarted(_governanceExecutor, address(0));
+    }
+
+    function acceptGovernance() external onlyFactoryContext {
+        if (_pendingGovernanceExecutor == address(0) || msg.sender != _pendingGovernanceExecutor) {
+            revert NotPendingGovernance();
+        }
+
+        address previous = _governanceExecutor;
+        _governanceExecutor = msg.sender;
+        delete _pendingGovernanceExecutor;
+
+        emit GovernanceExecutorUpdated(previous, msg.sender);
     }
 
     /*//////////////////////////////////////////////////////////////
                     UNIVERSAL ADDRESS LOGIC
     //////////////////////////////////////////////////////////////*/
 
-    /**
-     * @notice Predicts the deposit address for an ENS label.
-     *
-     * @dev The supplied label must already be ENSIP-15 normalized
-     * and must not include the TLD. The exact UTF-8 bytes are used
-     * to derive the wallet salt.
-     */
-    function predictWallet(
-        string calldata label
-    )
-        external
-        view
-        onlyFactoryContext
-        returns (address)
-    {
-        return _predict(
-            _walletSalt(
-                _labelKey(label)
-            )
-        );
-    }
-
-    function _labelKey(
-        string calldata label
-    )
-        private
-        pure
-        returns (bytes32)
-    {
+    function _labelKey(string calldata label) private pure returns (bytes32) {
         bytes calldata raw = bytes(label);
 
         if (raw.length == 0) {
@@ -930,17 +803,8 @@ contract NamepassFactory {
         /*
          * ENS's pricing path rejects labels beyond this length
          * outright, so a longer one derives an address that is
-         * provably useless: fundable, burnable, and impossible to
-         * renew against. Mirroring the one universal constraint
-         * ENS applies costs a comparison and removes that whole
-         * class of address.
-         *
-         * This is emphatically **not** normalization. ENSIP-15 is
-         * not reproducible in Solidity, so a label that is merely
-         * un-normalized still derives a valid-looking address here
-         * and still cannot be renewed. That gap is real and belongs
-         * to off-chain tooling — normalize before showing anyone an
-         * address, not after they have funded it.
+         * provably useless. This is **not** normalization; ENSIP-15
+         * belongs to off-chain tooling.
          */
         if (raw.length > MAX_LABEL_BYTES) {
             revert LabelTooLong();
@@ -949,8 +813,7 @@ contract NamepassFactory {
         /*
          * A label is one component. A caller passing "vitalik.eth"
          * would otherwise derive a perfectly valid address that no
-         * renewal can ever be executed against — and with no sweep,
-         * anything sent there is gone.
+         * renewal can ever be executed against.
          */
         for (uint256 i; i < raw.length; ++i) {
             if (raw[i] == 0x2e) {
@@ -961,292 +824,247 @@ contract NamepassFactory {
         return keccak256(raw);
     }
 
-    function _walletSalt(
-        bytes32 labelKey
-    )
-        private
-        pure
-        returns (bytes32 salt)
-    {
-        bytes32 namespace =
-            WALLET_SALT_NAMESPACE;
+    function _walletSalt(bytes32 labelKey) private pure returns (bytes32 salt) {
+        bytes32 namespace = WALLET_SALT_NAMESPACE;
 
         assembly ("memory-safe") {
             mstore(0x00, namespace)
             mstore(0x20, labelKey)
 
-            salt := keccak256(
-                0x00,
-                0x40
-            )
+            salt := keccak256(0x00, 0x40)
         }
     }
 
-    function _predict(
-        bytes32 salt
-    )
-        private
-        view
-        returns (address)
-    {
-        return MinimalProxy
-            .predictUniversalAddress(
-                SELF,
-                salt,
-                SELF
-            );
+    function _predict(bytes32 salt) private view returns (address) {
+        return MinimalProxy.predictUniversalAddress(SELF, salt, SELF);
     }
 
     /*//////////////////////////////////////////////////////////////
-                          API ENTRYPOINT
+                          API ENTRYPOINTS
     //////////////////////////////////////////////////////////////*/
 
     /**
      * @notice Processes all native USDC currently held by the
      * universal wallet for `label`.
      *
-     * @dev Permissionless, and authorizes **no** CCTP fee — which
-     * is the right default while Standard is free. Every destination
-     * is frozen, so the caller chooses nothing except to spend their
-     * own gas pushing a deposit along the one path it can take. This
-     * removes the backend as a liveness dependency: a funder can
-     * always complete their own payment.
-     *
-     * See `renewWithFee` for the case where Circle prices the tier
-     * this chain is set to.
+     * @dev Permissionless, and authorizes **no** CCTP fee. Every
+     * destination is frozen, so the caller chooses nothing except to
+     * spend their own gas pushing a deposit along the one path it can
+     * take. On the hub the caller is paid the gas allowance plus
+     * rounding dust.
      */
-    function renew(
-        string calldata label
-    )
-        external
-        onlyFactoryContext
-    {
+    function renew(string calldata label) external onlyFactoryContext nonReentrant {
         _renew(label, 0, msg.sender);
     }
 
     /**
      * @notice Same, but authorizes Circle to charge up to
-     * `maxFeeBps` of the transfer.
+     * `maxFeeBps` of the transfer on an L2.
      *
-     * @dev The escape hatch. `renew` authorizes nothing, which is
-     * right while Standard is free — but if Circle ever prices it,
-     * every zero-fee burn reverts and the funds would sit at their
-     * deposit addresses with no way to move. Because this is
-     * permissionless, anyone can then push their own payment through
-     * without waiting for Namepass to notice.
-     *
-     * The ceiling is a per-call argument rather than stored state so
-     * that no owner setting can price a transfer, or stop one. What
-     * that trades: anyone can authorize Circle's fee on someone
-     * else's deposit. They cannot receive it, redirect anything, or
-     * make Circle take the full ceiling — Circle charges its actual
-     * fee — so the worst case is a funder paying the going rate for
-     * speed they did not ask for, and only when this chain is set to
-     * Fast at all.
-     *
-     * Solidity has no default arguments, hence two named functions
-     * rather than an overload — the selectors stay legible from a
-     * frontend.
+     * @dev The escape hatch for the day Circle prices the tier this
+     * chain is set to. Anyone can authorize Circle's fee on someone
+     * else's deposit; they cannot receive it, redirect anything, or
+     * make Circle take more than its actual fee.
      */
-    function renewWithFee(
-        string calldata label,
-        uint16 maxFeeBps
-    )
-        external
-        onlyFactoryContext
-    {
+    function renewWithFee(string calldata label, uint16 maxFeeBps) external onlyFactoryContext nonReentrant {
         _renew(label, maxFeeBps, msg.sender);
     }
 
-    function _renew(
-        string calldata label,
-        uint16 maxFeeBps,
-        address executor
-    )
-        private
+    /**
+     * @notice Receives an attested CCTP V2 burn and renews the ENS
+     * label encoded in its hook data. Hub only.
+     *
+     * @dev Accounting is based only on `burn.amount - burn.feeExecuted`
+     * from the authenticated message. The factory's existing balance
+     * is never used to decide how much this renewal may spend, and it
+     * is unchanged after the claim.
+     *
+     * Permissionless by design: the label is bound to the wallet that
+     * burned, so a caller cannot redirect the payment. Whoever submits
+     * it is paid the gas allowance plus rounding dust.
+     */
+    function completeCCTP(bytes calldata message, bytes calldata attestation)
+        external
+        onlyFactoryContext
+        nonReentrant
     {
-        if (_l1Helper == address(0)) {
+        if (_messageTransmitter == address(0)) {
+            revert NotHub();
+        }
+
+        if (message.length < BURN_HOOK_DATA_OFFSET) {
+            revert InvalidCCTPMessage();
+        }
+
+        _validateRoute(message);
+
+        /*
+         * The L2 factory sends raw bytes(label), not abi.encode(label).
+         */
+        string calldata label = string(message[BURN_HOOK_DATA_OFFSET:]);
+        bytes32 labelKey = _labelKey(label);
+        address wallet = _predict(_walletSalt(labelKey));
+
+        /*
+         * BurnMessageV2.messageSender is the universal source wallet
+         * that called TokenMessengerV2. Reject a noncanonical encoding
+         * before comparing addresses.
+         */
+        bytes32 sender = _readBytes32(message, BURN_MESSAGE_SENDER_OFFSET);
+        if (sender != _addressToBytes32(address(uint160(uint256(sender))))) {
+            revert InvalidCCTPMessage();
+        }
+        if (sender != _addressToBytes32(wallet)) {
+            revert InvalidWallet();
+        }
+
+        address adapter = _adapter;
+        if (adapter == address(0)) revert NoActiveHelper();
+
+        uint256 minted = _claim(message, attestation, wallet);
+
+        _settleAndReport(label, labelKey, wallet, minted, msg.sender, adapter, true);
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                           DEPOSIT PROCESSING
+    //////////////////////////////////////////////////////////////*/
+
+    function _renew(string calldata label, uint16 maxFeeBps, address executor) private {
+        address usdcAddress = _usdc;
+        if (usdcAddress == address(0)) {
             revert NotInitialized();
         }
 
         bytes32 labelKey = _labelKey(label);
-
         bytes32 salt = _walletSalt(labelKey);
-
         address wallet = _predict(salt);
 
         /*
          * Read before deploying. An empty wallet would otherwise be
-         * created and then rolled back by the revert below, paying
-         * for a deployment that does not survive the transaction.
-         *
-         * This is also the only balance read in the flow — the
-         * amount is handed to the wallet rather than looked up a
-         * second time from inside it.
+         * created and then rolled back by the revert below.
          */
-        uint256 balance =
-            IERC20(_usdc).balanceOf(wallet);
-
+        uint256 balance = IERC20(usdcAddress).balanceOf(wallet);
         if (balance == 0) {
             revert NoUSDC();
         }
 
         uint256 amount = balance;
 
-        /*
-         * Circle rejects a burn above its per-transaction limit, and a retry
-         * would be the same oversized burn — so an over-limit balance would
-         * sit here indefinitely rather than fail once and recover. Take a
-         * slice instead and let repeated calls drain the rest.
-         *
-         * The limit is read from Circle rather than stored here. It used to be
-         * owner-adjustable, which meant an over-limit deposit could depend on
-         * somebody at Namepass correcting a setting — the one liveness gap
-         * left in a system whose whole claim is that it keeps working with
-         * nobody paying attention. `TokenMessengerV2.localMinter()` exposes
-         * the TokenMinter that actually enforces the ceiling, so the factory
-         * follows Circle's live configuration automatically and no key is
-         * needed when Circle moves it.
-         *
-         * A zero limit means Circle has disabled burns for this token, not
-         * that burns are unlimited, so it is refused rather than treated as
-         * absent.
-         *
-         * Ethereum is uncapped: nothing is burned there, only transferred to
-         * the helper, and no limit applies to that.
-         */
-        if (
-            block.chainid !=
-            HUB_CHAIN_ID
-        ) {
-            uint256 burnLimit =
-                ITokenMessengerV2(_tokenMessenger)
-                    .localMinter()
-                    .burnLimitsPerMessage(_usdc);
-
-            if (burnLimit == 0) {
-                revert BurnsDisabled();
-            }
-
-            if (amount > burnLimit) {
-                amount = burnLimit;
-            }
+        if (block.chainid == HUB_CHAIN_ID) {
+            _renewHub(label, labelKey, salt, wallet, amount, executor, usdcAddress);
+        } else {
+            amount = _renewL2(label, labelKey, salt, wallet, amount, maxFeeBps, usdcAddress);
         }
 
-        /*
-         * Off the hub chain, refuse to burn what mainnet could never
-         * spend.
-         *
-         * The helper takes a flat gas allowance off every payment
-         * before pricing it, and reverts if what remains cannot buy a
-         * whole second. On Ethereum that revert is harmless — the
-         * transfer reverts with it and the funds stay at the deposit
-         * address, visible and retryable.
-         *
-         * A burn is not reversible. Burn less than the allowance and
-         * the USDC leaves this chain, arrives as an attested CCTP
-         * message, and every attempt to claim it reverts forever:
-         * stranded, not pending, and invisible to the pending-balance
-         * card, which reads the deposit address. So the check has to
-         * happen here, before the burn, rather than on arrival.
-         *
-         * The floor is the allowance plus the dearest one-second
-         * price ENS charges — a three-character name at 20_294_267
-         * per second is 21 base units — rounded up to a clean figure.
-         * Keep `MIN_BURN_AMOUNT` at or above
-         * `ENSV2RenewalHelper.GAS_ALLOWANCE` plus that second; it
-         * cannot be read from the helper, which lives on Ethereum.
-         *
-         * It is checked against what would *arrive*, not what is
-         * sent. Circle takes its fee out of the burn, so the figure
-         * mainnet has to work with is `amount - fee`, and a gross
-         * check would pass a payment whose net cannot cover the
-         * allowance: burned, unclaimable, exactly the state this
-         * guard exists to prevent. The real fee is only known at
-         * settlement, so the ceiling the caller authorized stands in
-         * for it -- the same `maxFee` computed in `_executeL2`,
-         * which is the most Circle can take.
-         *
-         * Zero-fee Standard transfers make this identical to a gross
-         * check today. That is a property of Circle's current
-         * pricing rather than of this design, and `renewWithFee`
-         * exists precisely because it may not hold.
-         */
-        if (
-            block.chainid !=
-            HUB_CHAIN_ID
-        ) {
-            uint256 worstCaseFee =
-                (
-                    amount *
-                    uint256(maxFeeBps) +
-                    BPS_DENOMINATOR -
-                    1
-                ) /
-                BPS_DENOMINATOR;
-
-            if (
-                worstCaseFee >= amount ||
-                amount - worstCaseFee <
-                MIN_BURN_AMOUNT
-            ) {
-                revert BelowMinimumBurn();
-            }
-        }
-
-        _deployIfNeeded(
-            wallet,
-            salt,
-            labelKey,
-            label
-        );
-
-        INamepassWallet(wallet)
-            .execute(label, amount, maxFeeBps, executor);
-
-        emit DepositProcessed(
-            labelKey,
-            wallet,
-            amount,
-            balance - amount
-        );
+        emit DepositProcessed(labelKey, wallet, amount, balance - amount);
     }
 
-    function _deployIfNeeded(
-        address wallet,
-        bytes32 salt,
+    function _renewHub(
+        string calldata label,
         bytes32 labelKey,
-        string calldata label
-    )
-        private
-    {
+        bytes32 salt,
+        address wallet,
+        uint256 amount,
+        address executor,
+        address usdcAddress
+    ) private {
+        address adapter = _adapter;
+        if (adapter == address(0)) revert NoActiveHelper();
+
+        _deployIfNeeded(wallet, salt, labelKey, label);
+
+        Settlement memory settled = Settlement({
+            labelKey: labelKey,
+            wallet: wallet,
+            executor: executor,
+            adapter: adapter,
+            duration: 0,
+            amount: amount,
+            price: 0,
+            fromCCTP: false
+        });
+
+        (, settled.duration, settled.price) =
+            INamepassWallet(wallet).executeHub(label, amount, executor, usdcAddress, adapter);
+
+        _report(label, settled);
+    }
+
+    function _renewL2(
+        string calldata label,
+        bytes32 labelKey,
+        bytes32 salt,
+        address wallet,
+        uint256 amount,
+        uint16 maxFeeBps,
+        address usdcAddress
+    ) private returns (uint256) {
+        amount = _capBurn(usdcAddress, amount, maxFeeBps);
+
+        _deployIfNeeded(wallet, salt, labelKey, label);
+
+        INamepassWallet(wallet).executeL2(
+            label,
+            BurnParams({
+                amount: amount,
+                maxFeeBps: maxFeeBps,
+                usdc: usdcAddress,
+                messenger: _tokenMessenger,
+                minFinalityThreshold: _minFinalityThreshold
+            })
+        );
+
+        return amount;
+    }
+
+    /**
+     * @dev Circle rejects a burn above its per-transaction limit, so
+     * an over-limit balance is processed in slices across calls. The
+     * limit is read from Circle's own TokenMinter so no Namepass key
+     * decides how much travels. A zero limit means burns are disabled.
+     *
+     * Off the hub, also refuse to burn what the hub could never spend:
+     * the allowance plus one second of the dearest name, checked
+     * against what would arrive after the authorized fee ceiling.
+     */
+    function _capBurn(address usdcAddress, uint256 amount, uint16 maxFeeBps) private view returns (uint256) {
+        uint256 burnLimit = ITokenMessengerV2(_tokenMessenger).localMinter().burnLimitsPerMessage(usdcAddress);
+
+        if (burnLimit == 0) {
+            revert BurnsDisabled();
+        }
+
+        if (amount > burnLimit) {
+            amount = burnLimit;
+        }
+
+        uint256 worstCaseFee = (amount * uint256(maxFeeBps) + BPS_DENOMINATOR - 1) / BPS_DENOMINATOR;
+
+        if (worstCaseFee >= amount || amount - worstCaseFee < MIN_BURN_AMOUNT) {
+            revert BelowMinimumBurn();
+        }
+
+        return amount;
+    }
+
+    function _deployIfNeeded(address wallet, bytes32 salt, bytes32 labelKey, string calldata label) private {
         if (wallet.code.length != 0) {
             return;
         }
 
-        address deployed =
-            MinimalProxy.cloneUniversal(
-                SELF,
-                salt
-            );
+        address deployed = MinimalProxy.cloneUniversal(SELF, salt);
 
         /*
-         * Prediction and deployment are two separate assembly
-         * blocks that must agree. They do — but only one of them
-         * could be edited later, and the failure would be silent
-         * and unrecoverable: funds sent to the advertised address
-         * with the code somewhere else. One comparison, once per
-         * wallet, closes that off.
+         * Prediction and deployment are two separate assembly blocks
+         * that must agree. One comparison, once per wallet, closes
+         * off a silent and unrecoverable divergence.
          */
         if (deployed != wallet) {
             revert PredictionMismatch();
         }
 
-        emit WalletDeployed(
-            labelKey,
-            wallet,
-            label
-        );
+        emit WalletDeployed(labelKey, wallet, label);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -1254,184 +1072,236 @@ contract NamepassFactory {
     //////////////////////////////////////////////////////////////*/
 
     /**
-     * @notice Runs through delegatecall inside the universal
-     * wallet.
-     *
-     * @dev The wallet stores nothing. The label and the amount are
-     * supplied only as transaction calldata.
-     *
-     * Direct calls to the wallet are rejected because only the real
-     * factory can be msg.sender in wallet execution context, and the
-     * factory guarantees `amount` is the wallet's live USDC balance
-     * and non-zero.
-     *
-     * A second label-to-wallet calculation is not needed here:
-     *
-     * 1. factory.renew(label) derives the wallet from that label;
-     * 2. the factory calls only that derived wallet;
-     * 3. direct wallet execution is rejected;
-     * 4. the factory exposes no arbitrary wallet-call function.
+     * @notice Runs through delegatecall inside the universal wallet on
+     * the hub. The wallet stores nothing; every input is calldata from
+     * the factory, which guarantees `amount` is the wallet's live USDC
+     * balance and non-zero.
      */
-    function execute(
-        string calldata label,
-        uint256 amount,
-        uint16 maxFeeBps,
-        address executor
-    )
+    function executeHub(string calldata label, uint256 amount, address executor, address usdcAddress, address adapter)
         external
         onlyWalletContext
+        returns (address renewer, uint64 duration, uint256 price)
     {
-        /*
-         * Delegatecall uses the wallet's storage. The wallet has no
-         * configuration, so it is fetched through an external call
-         * to the real factory.
-         */
-        (
-            address usdcAddress,
-            address messenger,
-            address helper,
-            uint32 minFinalityThreshold
-        ) = NamepassFactory(payable(SELF)).walletParams();
-
-        if (
-            block.chainid ==
-            HUB_CHAIN_ID
-        ) {
-            _executeEthereum(
-                usdcAddress,
-                helper,
-                label,
-                amount,
-                executor
-            );
-        } else {
-            _executeL2(
-                usdcAddress,
-                messenger,
-                helper,
-                maxFeeBps,
-                minFinalityThreshold,
-                label,
-                amount
-            );
-        }
+        return _settle(label, amount, executor, usdcAddress, adapter);
     }
 
-    /*//////////////////////////////////////////////////////////////
-                          ETHEREUM PATH
-    //////////////////////////////////////////////////////////////*/
-
-    function _executeEthereum(
-        address usdcAddress,
-        address helper,
-        string calldata label,
-        uint256 amount,
-        address executor
-    )
-        private
-    {
+    /**
+     * @notice Runs through delegatecall inside the universal wallet on
+     * an L2. Burns `burn.amount` to this factory's own address on the hub.
+     */
+    function executeL2(string calldata label, BurnParams calldata burn) external onlyWalletContext {
         /*
-         * Approve rather than transfer: the helper pulls what it is
-         * about to spend, so the amount it prices against is one it
-         * verified rather than one this contract asserted.
-         *
-         * The approval and helper call are atomic.
-         *
-         * If renewFromWallet() reverts, the approval reverts with
-         * it and the funds stay at the deposit address, where the
-         * sender left them and where the pending-balance card can
-         * still see them. On success the helper pulls exactly
-         * `amount`, so no allowance is left standing.
+         * TokenMessengerV2 pulls exactly `amount` from this wallet. A
+         * successful burn consumes the allowance; a reverted burn
+         * reverts the approval with it.
          */
-        _safeApprove(
-            usdcAddress,
-            helper,
-            amount
-        );
+        _safeApprove(burn.usdc, burn.messenger, burn.amount);
 
-        INamepassL1Helper(helper)
-            .renewFromWallet(
-                label,
-                amount,
-                executor
-            );
+        /*
+         * Raw label bytes, not abi.encode — the hub reads this as
+         * string(hookData). Mint recipient and destination caller are
+         * this factory's own address, identical on every chain.
+         */
+        ITokenMessengerV2(burn.messenger).depositForBurnWithHook(
+            burn.amount,
+            HUB_CCTP_DOMAIN,
+            _addressToBytes32(SELF),
+            burn.usdc,
+            _addressToBytes32(SELF),
+            _maxFee(burn.amount, burn.maxFeeBps),
+            burn.minFinalityThreshold,
+            bytes(label)
+        );
     }
 
-    /*//////////////////////////////////////////////////////////////
-                              L2 PATH
-    //////////////////////////////////////////////////////////////*/
+    /**
+     * @dev Converts the fee ceiling into USDC subunits, rounding up,
+     * and always leaves at least one subunit to mint on the hub.
+     */
+    function _maxFee(uint256 amount, uint16 maxFeeBps) private pure returns (uint256 maxFee) {
+        maxFee = (amount * uint256(maxFeeBps) + BPS_DENOMINATOR - 1) / BPS_DENOMINATOR;
 
-    function _executeL2(
-        address usdcAddress,
-        address messenger,
-        address helper,
-        uint16 maxFeeBps,
-        uint32 minFinalityThreshold,
-        string calldata label,
-        uint256 amount
-    )
-        private
-    {
-        /*
-         * TokenMessengerV2 pulls exactly `amount` from this wallet.
-         *
-         * A successful burn consumes the allowance. If the burn
-         * reverts, the approval also reverts.
-         */
-        _safeApprove(
-            usdcAddress,
-            messenger,
-            amount
-        );
-
-        bytes32 helperBytes32 =
-            bytes32(
-                uint256(
-                    uint160(helper)
-                )
-            );
-
-        /*
-         * Convert the configured bps cap into USDC subunits.
-         *
-         * The calculation rounds upward so the resulting unit cap
-         * is not accidentally one token subunit below the configured
-         * percentage.
-         */
-        uint256 maxFee =
-            (
-                amount *
-                uint256(maxFeeBps) +
-                BPS_DENOMINATOR -
-                1
-            ) /
-            BPS_DENOMINATOR;
-
-        /*
-         * The transfer must always leave at least one burn-token
-         * subunit available to mint on Ethereum.
-         */
         if (maxFee >= amount) {
             unchecked {
                 maxFee = amount - 1;
             }
         }
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                              SETTLEMENT
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @dev The one settlement routine. Runs inside a wallet on the
+     * direct path and inside the factory on the CCTP path. `amount` is
+     * the authenticated payment: the wallet balance the factory read,
+     * or the amount Circle minted. Nothing else held by the payer is
+     * ever spent.
+     *
+     * Invariants:
+     *  - `0 < price <= amount - GAS_ALLOWANCE`, `duration > 0`;
+     *  - the target is a contract and is not the payer, the factory, or the token;
+     *  - the payer's balance decreases by exactly `price`;
+     *  - no allowance remains afterwards;
+     *  - the executor receives exactly `amount - price`.
+     */
+    function _settle(string calldata label, uint256 amount, address executor, address usdcAddress, address adapter)
+        private
+        returns (address renewer, uint64 duration, uint256 price)
+    {
+        if (amount <= GAS_ALLOWANCE) revert InsufficientAmount();
+
+        bytes memory data;
+        (renewer, duration, price, data) = INamepassRenewalAdapter(adapter).plan(label, amount - GAS_ALLOWANCE);
+
+        if (duration == 0 || price == 0 || price > amount - GAS_ALLOWANCE) revert InvalidPlan();
+
+        if (renewer == address(this) || renewer == SELF || renewer == usdcAddress || renewer.code.length == 0) {
+            revert InvalidPlanTarget();
+        }
+
+        uint256 before = IERC20(usdcAddress).balanceOf(address(this));
+        if (before < amount) revert InsufficientAmount();
 
         /*
-         * Raw label bytes, not abi.encode — the helper reads this
-         * as string(hookData).
+         * Approve only what this specific renewal costs, execute the
+         * plan, and require that exactly that amount left. ENS prices
+         * the renewal itself inside `renew`, so a plan that disagrees
+         * with ENS fails here on the allowance or on the delta.
          */
-        ITokenMessengerV2(messenger)
-            .depositForBurnWithHook(
-                amount,
-                HUB_CCTP_DOMAIN,
-                helperBytes32, // mintRecipient
-                usdcAddress,
-                helperBytes32, // destinationCaller
-                maxFee,
-                minFinalityThreshold,
-                bytes(label)
-            );
+        _safeApprove(usdcAddress, renewer, price);
+
+        (bool ok, bytes memory returned) = renewer.call(data);
+        if (!ok) {
+            if (returned.length == 0) revert RenewalFailed();
+            assembly ("memory-safe") {
+                revert(add(returned, 0x20), mload(returned))
+            }
+        }
+
+        if (IERC20(usdcAddress).balanceOf(address(this)) + price != before) revert InvalidSettlement();
+
+        if (IERC20(usdcAddress).allowance(address(this), renewer) != 0) {
+            _safeApprove(usdcAddress, renewer, 0);
+        }
+
+        _safeTransfer(usdcAddress, executor, amount - price);
+    }
+
+    function _settleAndReport(
+        string calldata label,
+        bytes32 labelKey,
+        address wallet,
+        uint256 amount,
+        address executor,
+        address adapter,
+        bool fromCCTP
+    ) private {
+        Settlement memory settled = Settlement({
+            labelKey: labelKey,
+            wallet: wallet,
+            executor: executor,
+            adapter: adapter,
+            duration: 0,
+            amount: amount,
+            price: 0,
+            fromCCTP: fromCCTP
+        });
+
+        (, settled.duration, settled.price) = _settle(label, amount, executor, _usdc, adapter);
+
+        _report(label, settled);
+    }
+
+    /// @dev `HelperUsed` immediately before `Renewed`, both from the factory address.
+    function _report(string calldata label, Settlement memory s) private {
+        emit HelperUsed(s.adapter, s.labelKey, s.wallet);
+        emit Renewed(
+            s.labelKey,
+            s.wallet,
+            s.executor,
+            label,
+            s.duration,
+            s.amount,
+            GAS_ALLOWANCE,
+            s.price,
+            s.amount - GAS_ALLOWANCE - s.price,
+            s.fromCCTP
+        );
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                              CCTP CLAIM
+    //////////////////////////////////////////////////////////////*/
+
+    /**
+     * @dev Requires a genuine Namepass-shaped CCTP route: message and
+     * burn-body version 1, hub destination domain, a non-hub source
+     * domain, Circle's TokenMessenger as recipient, and this factory
+     * as both destination caller and mint recipient.
+     */
+    function _validateRoute(bytes calldata message) private view {
+        if (
+            _readUint32(message, 0) != 1 || _readUint32(message, BURN_BODY_VERSION_OFFSET) != 1
+                || _readUint32(message, MESSAGE_DESTINATION_DOMAIN_OFFSET) != HUB_CCTP_DOMAIN
+                || _readUint32(message, MESSAGE_SOURCE_DOMAIN_OFFSET) == 0
+        ) revert InvalidCCTPMessage();
+
+        bytes32 self = _addressToBytes32(SELF);
+
+        if (
+            _readBytes32(message, MESSAGE_RECIPIENT_OFFSET) != _addressToBytes32(_tokenMessenger)
+                || _readBytes32(message, MESSAGE_DESTINATION_CALLER_OFFSET) != self
+                || _readBytes32(message, BURN_MINT_RECIPIENT_OFFSET) != self
+        ) {
+            revert InvalidCCTPMessage();
+        }
+    }
+
+    /**
+     * @dev Claims the message and returns the amount Circle actually
+     * minted, which is the only figure the renewal may spend against.
+     * The balance reads are an assertion around the mint, not an
+     * input to the renewal.
+     */
+    function _claim(bytes calldata message, bytes calldata attestation, address wallet)
+        private
+        returns (uint256 mintedAmount)
+    {
+        uint256 burnAmount = uint256(_readBytes32(message, BURN_AMOUNT_OFFSET));
+        uint256 feeExecuted = uint256(_readBytes32(message, BURN_FEE_EXECUTED_OFFSET));
+
+        if (feeExecuted > burnAmount) {
+            revert InvalidCCTPMessage();
+        }
+
+        unchecked {
+            mintedAmount = burnAmount - feeExecuted;
+        }
+
+        if (mintedAmount == 0) {
+            revert InsufficientAmount();
+        }
+
+        uint256 beforeBalance = IERC20(_usdc).balanceOf(SELF);
+
+        if (!IMessageTransmitterV2(_messageTransmitter).receiveMessage(message, attestation)) {
+            revert CCTPReceiveFailed();
+        }
+
+        if (IERC20(_usdc).balanceOf(SELF) != beforeBalance + mintedAmount) {
+            revert UnexpectedMintAmount();
+        }
+
+        emit CCTPClaimed(
+            _readBytes32(message, MESSAGE_NONCE_OFFSET),
+            wallet,
+            _readUint32(message, MESSAGE_SOURCE_DOMAIN_OFFSET),
+            burnAmount,
+            feeExecuted,
+            mintedAmount
+        );
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -1440,32 +1310,37 @@ contract NamepassFactory {
 
     /**
      * @dev Tolerates a token that returns nothing instead of a bool.
-     * Native USDC returns one on all four target chains; this costs
-     * a few bytes and removes a class of chain-specific surprise.
+     * Native USDC returns one on all four target chains.
      */
-    function _safeApprove(
-        address token,
-        address spender,
-        uint256 amount
-    )
-        private
-    {
-        (bool ok, bytes memory data) =
-            token.call(
-                abi.encodeCall(
-                    IERC20.approve,
-                    (spender, amount)
-                )
-            );
+    function _safeApprove(address token, address spender, uint256 amount) private {
+        (bool ok, bytes memory data) = token.call(abi.encodeCall(IERC20.approve, (spender, amount)));
 
-        if (
-            !ok ||
-            (
-                data.length != 0 &&
-                !abi.decode(data, (bool))
-            )
-        ) {
+        if (!ok || (data.length != 0 && !abi.decode(data, (bool)))) {
             revert ApprovalFailed();
         }
+    }
+
+    function _safeTransfer(address token, address to, uint256 amount) private {
+        (bool ok, bytes memory data) = token.call(abi.encodeCall(IERC20.transfer, (to, amount)));
+
+        if (!ok || (data.length != 0 && !abi.decode(data, (bool)))) {
+            revert TransferFailed();
+        }
+    }
+
+    function _readBytes32(bytes calldata data, uint256 offset) private pure returns (bytes32 value) {
+        assembly ("memory-safe") {
+            value := calldataload(add(data.offset, offset))
+        }
+    }
+
+    function _readUint32(bytes calldata data, uint256 offset) private pure returns (uint32 value) {
+        assembly ("memory-safe") {
+            value := shr(224, calldataload(add(data.offset, offset)))
+        }
+    }
+
+    function _addressToBytes32(address value) private pure returns (bytes32) {
+        return bytes32(uint256(uint160(value)));
     }
 }

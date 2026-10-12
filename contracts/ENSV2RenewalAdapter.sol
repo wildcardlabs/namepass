@@ -3,12 +3,16 @@ pragma solidity 0.8.24;
 
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IETHRenewer, IENSV2PriceOracle} from "./interfaces/IENSRenewal.sol";
-import {INamepassRenewalHelper} from "./interfaces/INamepassRenewalHelper.sol";
+import {INamepassRenewalAdapter} from "./interfaces/INamepassRenewalAdapter.sol";
 
-/// @notice Immutable ENS adapter. Only the fixed gateway can fund execution.
-contract ENSV2RenewalHelper is INamepassRenewalHelper {
+/// @notice Immutable, view-only ENS adapter. It holds no funds and executes nothing.
+/// @dev The factory asks it for a plan, then approves the returned renewer for exactly the returned
+/// price, executes the returned calldata, and verifies that exactly the price left. The adapter can
+/// therefore direct at most the quoted price of one payment, and only after ENS governance activates it.
+contract ENSV2RenewalAdapter is INamepassRenewalAdapter {
     uint256 private constant MAX_LABEL_BYTES = 255;
-    uint256 public constant interfaceVersion = 1;
+    uint256 public constant interfaceVersion = 2;
+    /// @dev The payer this adapter plans for. The factory is its own gateway.
     address public immutable gateway;
     address public immutable factory;
     address public immutable paymentToken;
@@ -17,24 +21,19 @@ contract ENSV2RenewalHelper is INamepassRenewalHelper {
     IETHRenewer public immutable ethRenewerV1;
     bytes32 public immutable referrer;
 
-    error NotGateway();
     error InvalidAddress();
     error InvalidLabel();
     error InvalidOracleConfig();
     error InsufficientAmount();
-    error ApprovalFailed();
-    error TransferFailed();
     error DurationOverflow();
-    error UnexpectedRenewalPrice();
     error NameNotRenewable();
-    error UnexpectedBalance();
 
-    constructor(address gateway_, address factory_, address usdc_, address registrar_, address v1_, bytes32 referrer_) {
+    constructor(address factory_, address usdc_, address registrar_, address v1_, bytes32 referrer_) {
         if (
-            gateway_.code.length == 0 || factory_.code.length == 0 || usdc_.code.length == 0
-                || registrar_.code.length == 0 || (v1_ != address(0) && v1_.code.length == 0)
+            factory_.code.length == 0 || usdc_.code.length == 0 || registrar_.code.length == 0
+                || (v1_ != address(0) && v1_.code.length == 0)
         ) revert InvalidAddress();
-        gateway = gateway_;
+        gateway = factory_;
         factory = factory_;
         paymentToken = usdc_;
         USDC = IERC20(usdc_);
@@ -68,21 +67,19 @@ contract ENSV2RenewalHelper is INamepassRenewalHelper {
         expiry = reader.ETH_REGISTRY().findExpiry(label);
     }
 
-    /// @notice Spend only this call's budget. Return unused units to the gateway.
-    function execute(string calldata label, uint256 budget) external returns (uint64 duration, uint256 charged) {
-        if (msg.sender != gateway) revert NotGateway();
+    /// @notice Who to pay, for how long, how much, and the exact call that renews.
+    /// @dev View only. The payer approves `renewer` for exactly `price` and executes `data`.
+    function plan(string calldata label, uint256 budget)
+        external
+        view
+        returns (address renewer, uint64 duration, uint256 price, bytes memory data)
+    {
         _validateLabel(label);
-        IETHRenewer renewer = _selectRenewer(label);
-        uint256 needed;
-        (duration, needed) = _quote(renewer, label, budget);
-        if (duration == 0 || needed == 0 || needed > budget) revert InsufficientAmount();
-        uint256 beforeBalance = USDC.balanceOf(address(this));
-        if (!USDC.transferFrom(gateway, address(this), budget)) revert TransferFailed();
-        if (USDC.balanceOf(address(this)) != beforeBalance + budget) revert UnexpectedBalance();
-        charged = _settle(renewer, label, duration, needed);
-        uint256 remainder = budget - charged;
-        if (remainder != 0 && !USDC.transfer(gateway, remainder)) revert TransferFailed();
-        if (USDC.balanceOf(address(this)) != beforeBalance) revert UnexpectedBalance();
+        IETHRenewer selected = _selectRenewer(label);
+        (duration, price) = _quote(selected, label, budget);
+        if (duration == 0 || price == 0 || price > budget) revert InsufficientAmount();
+        renewer = address(selected);
+        data = abi.encodeCall(IETHRenewer.renew, (IETHRenewer.RenewData(label, duration, referrer), USDC));
     }
 
     function _validateLabel(string memory label) private pure {
@@ -90,65 +87,6 @@ contract ENSV2RenewalHelper is INamepassRenewalHelper {
         if (raw.length == 0 || raw.length > MAX_LABEL_BYTES) revert InvalidLabel();
         for (uint256 i; i < raw.length; ++i) {
             if (raw[i] == 0x2e) revert InvalidLabel();
-        }
-    }
-
-    function _settle(IETHRenewer renewer_, string memory label, uint64 duration, uint256 amountNeeded)
-        private
-        returns (uint256 charged)
-    {
-        /*
-         * The invariant: what Namepass thinks ENS will charge must
-         * equal what ENS itself says it will charge.
-         *
-         * `_quote` inverts the oracle's pricing to find the longest
-         * affordable duration. That inversion is this contract's
-         * own work, and the label length feeding it is too. Asking
-         * the registrar for the forward price of the duration just
-         * chosen turns every way that could be wrong — a length
-         * counted differently, a rounding step transcribed wrongly,
-         * an oracle shape this code does not anticipate — into a
-         * revert before any approval exists, rather than a silent
-         * mis-buy.
-         */
-        if (renewer_.getRenewPrice(label, duration, USDC) != amountNeeded) {
-            revert UnexpectedRenewalPrice();
-        }
-
-        /*
-         * Approve only what this specific renewal needs.
-         */
-        if (!USDC.approve(address(renewer_), amountNeeded)) {
-            revert ApprovalFailed();
-        }
-
-        uint256 beforeRenew = USDC.balanceOf(address(this));
-
-        renewer_.renew(IETHRenewer.RenewData(label, duration, referrer), USDC);
-
-        /*
-         * What the registrar actually took, not what it was quoted.
-         *
-         * The registrar prices independently and pulls with
-         * transferFrom, so the only authority on the amount charged
-         * is the balance movement. This is what `Renewed` reports.
-         */
-        unchecked {
-            charged = beforeRenew - USDC.balanceOf(address(this));
-        }
-
-        if (charged != amountNeeded) {
-            revert UnexpectedRenewalPrice();
-        }
-
-        /*
-         * Clear anything the registrar did not pull. Unreachable
-         * while the assertion above holds, and kept because the cost
-         * of being wrong about that is a standing allowance rather
-         * than a one-off.
-         */
-        if (!USDC.approve(address(renewer_), 0)) {
-            revert ApprovalFailed();
         }
     }
 
@@ -163,8 +101,8 @@ contract ENSV2RenewalHelper is INamepassRenewalHelper {
          * anywhere other than the contract about to be called is how
          * the three-way agreement below stops being an invariant. Nothing about the pricing is
          * this contract's own opinion except the inverse search
-         * below, and `_settle` checks that against the registrar
-         * before it approves anything.
+         * below. ENS prices the renewal again inside `renew`, and the
+         * factory requires the charge to equal the plan's price.
          */
         IENSV2PriceOracle oracle_ = renewer_.rentPriceOracle();
 

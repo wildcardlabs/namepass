@@ -26,8 +26,9 @@ Nothing below broadcasts a transaction without your signature.
    settlement invariants and plan constraints.
 2. Rewrite the Foundry suites: factory, renewal, CCTP, governance, pricing, Arc native reception,
    plus fork compatibility tests against live Sepolia ENS.
-3. Benchmark from full transaction receipts on an Anvil fork: direct V1, direct V2, first use, and
-   CCTP with a mocked transmitter. Verify compiled sizes under the pinned settings.
+3. Benchmark from full transaction receipts on an Anvil fork: direct V1, first use, and CCTP
+   with a mocked transmitter; direct V2 when a V2-renewable testnet name is available. Verify
+   compiled sizes under the pinned settings.
 4. Regenerate the adapter fingerprint and commit everything on the `claude/` branch.
 
 Exit: `forge test` green, benchmarks recorded in `test/gas/README.md`, PR open for review.

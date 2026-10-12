@@ -4,22 +4,19 @@ pragma solidity 0.8.24;
 import {Test, console2} from "forge-std/Test.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {NamepassFactory} from "../../contracts/NamepassFactory.sol";
-import {NamepassL1Gateway} from "../../contracts/NamepassL1Gateway.sol";
-import {RenewalHelperPointer} from "../../contracts/RenewalHelperPointer.sol";
-import {ENSV2RenewalHelper} from "../../contracts/ENSV2RenewalHelper.sol";
-import {Dummy} from "../mocks/Mocks.sol";
+import {ENSV2RenewalAdapter} from "../../contracts/ENSV2RenewalAdapter.sol";
 
-/// @notice Opt-in gas measurement of the current five-contract direct path against live Sepolia ENS.
+/// @notice Opt-in gas measurement of the two-contract direct path against live Sepolia ENS.
 /// @dev Set NAMEPASS_FORK_RPC and optionally NAMEPASS_FORK_BLOCK. Prints warm-state execution gas
-/// inside one test; see docs/GAS_REDESIGN_PROPOSAL.md for what a real transaction adds.
-contract CurrentPathGasForkTest is Test {
+/// inside one test; see test/gas/README.md for receipt-level figures and what a real transaction adds.
+contract RenewalGasForkTest is Test {
     address constant REGISTRAR = 0xf633e7FC17e2bbE0D0965D18ec1821dcB754a3d3;
     address constant V1 = 0xf2ece44980778966b8a0FccB3A9E339440f6e045;
     address constant USDC = 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238;
     address constant TRANSMITTER = 0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275;
     address constant MESSENGER = 0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA;
     NamepassFactory internal factory;
-    ENSV2RenewalHelper internal helper;
+    ENSV2RenewalAdapter internal adapter;
     bool internal enabled;
 
     function setUp() public {
@@ -31,14 +28,11 @@ contract CurrentPathGasForkTest is Test {
         else vm.createSelectFork(rpc, forkBlock);
         vm.setEvmVersion("cancun");
         factory = new NamepassFactory(address(this), 11155111);
-        address executor = address(new Dummy());
-        RenewalHelperPointer pointer = new RenewalHelperPointer(address(factory), USDC, executor);
-        NamepassL1Gateway gateway =
-            new NamepassL1Gateway(address(factory), USDC, TRANSMITTER, MESSENGER, address(pointer), address(0xD57));
-        helper = new ENSV2RenewalHelper(address(gateway), address(factory), USDC, REGISTRAR, V1, bytes32(uint256(0x1208)));
+        address executor = address(new GasGovernance());
+        factory.initialize(USDC, MESSENGER, TRANSMITTER, executor);
+        adapter = new ENSV2RenewalAdapter(address(factory), USDC, REGISTRAR, V1, bytes32(uint256(0x1208)));
         vm.prank(executor);
-        pointer.setHelper(address(helper));
-        factory.initialize(USDC, address(0), address(gateway));
+        factory.setHelper(address(adapter));
     }
 
     function _renew(string memory label, string memory tag) internal {
@@ -49,14 +43,16 @@ contract CurrentPathGasForkTest is Test {
         console2.log(tag, before - gasleft());
     }
 
-    function testForkGas_currentPathV1() public {
+    function testForkGas_directPathV1() public {
         if (!enabled) {
             vm.skip(true);
             return;
         }
-        assertEq(helper.renewableBy("vitalik"), V1);
-        _renew("vitalik", "current#1 first use: wallet deploy, executor and residue slots cold");
-        _renew("vitalik", "current#2 steady state");
-        _renew("vitalik", "current#3 steady state");
+        assertEq(adapter.renewableBy("vitalik"), V1);
+        _renew("vitalik", "merged#1 first use: wallet deploy, executor slot cold");
+        _renew("vitalik", "merged#2 steady state");
+        _renew("vitalik", "merged#3 steady state");
     }
 }
+
+contract GasGovernance {}

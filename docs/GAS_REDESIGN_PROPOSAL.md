@@ -11,13 +11,19 @@ payment authority, corrects the figures, defers batching, and adds a testnet cut
 ## Summary
 
 Merge the gateway and the pointer into the factory, and make the ENS helper a view-only adapter
-that never holds funds. Measured on a Sepolia fork, the core of a steady-state Ethereum renewal
-drops from 305,351 gas to 160,363 gas. With the unmeasured factory dispatch added, the estimate is
-about 166k, a reduction of about 45% in execution gas before refunds. Every indexed event keeps its
-signature, fields, and order, so the Goldsky pipeline and the database schema do not change. The
-backend evidence verifiers, discovery, fixtures, and configuration do change; that work is
-scoped below and is doable. The right time to do this is now, before the independent audit and
-before any mainnet deployment.
+that never holds funds. Measured from mined transaction receipts on an Anvil fork of Sepolia,
+against the deployed testnet release, a direct Ethereum renewal drops from 369,700 to 274,508
+gas, a 26% saving, and a CCTP claim drops from 363,931 to 319,886, a 12% saving excluding
+Circle's fixed share. Every indexed event keeps its signature, fields, and order, so the Goldsky
+pipeline and the database schema do not change. The backend evidence verifiers, discovery,
+fixtures, and configuration do change; that work is scoped below and is doable. Two
+configuration trust points are removed. The right time to do this is now, before the independent
+audit and before any mainnet deployment.
+
+An earlier draft claimed about 45%. That figure came from warm-state execution gas inside one
+test, which hides refunds and cold accesses. At transaction level the current design's
+approve-and-clear refunds are realized, so the removed hops cost less than they appeared to. The
+corrected figures are in Benchmarks.
 
 ## Why renewals are expensive today
 
@@ -138,33 +144,32 @@ factory as `msg.sender`; ENS keys nothing on the payer, and the referrer travels
 
 ## Benchmarks
 
-The core of the new direct path was measured with a disposable harness on the same fork block,
-same label, against the real V1 renewer and real USDC. The harness performed exactly the steps
-above and emitted the three events. It omitted the factory's label hashing and the proxy dispatch.
+Receipt-level figures, `gasUsed` from mined transactions on an Anvil fork of Sepolia at block
+11,900,829, renewing `vitalik` through the live V1 renewer with 27.11 USDC. The current column is
+the deployed five-contract testnet release; the merged column is the implemented two-contract
+design from the local artifacts. CCTP claims replace Circle's transmitter with a stand-in that
+pays the minted amount, so Circle's attestation check and mint are excluded from both columns.
+See `test/gas/README.md` for the method.
 
-| Path | Steady state | First use for a name |
-| --- | --- | --- |
-| Current, five contracts, measured | 305,351 | 489,531 |
-| Merged core, measured | 160,363 | 291,562 |
-| Merged, estimated complete | about 166,000 | about 341,000 |
+| Transaction | Current | Merged | Saving |
+| --- | --- | --- | --- |
+| Direct renewal, first use | 404,724 | 318,287 | 86,437 (21%) |
+| Direct renewal, steady state | 369,700 | 274,508 | 95,192 (26%) |
+| CCTP claim, excluding Circle | 363,931 | 319,886 | 44,045 (12%) |
 
-The estimate adds about 6k for label hashing and proxy dispatch. The first-use estimate also adds
-about 41k for the wallet's CREATE2 deployment and about 2.5k for `WalletDeployed`.
+Warm-state execution gas inside one fork test, which is the call-tree comparison the first draft
+used, shows 305,351 against 169,241 steady state and 489,531 against 332,220 first use. The
+difference between the two views is refunds: at transaction level, cold accesses raise `gasUsed`
+and therefore the EIP-3529 refund cap, so the current design's approve-and-clear pattern refunds
+almost all of its approval cost. Each removed hop therefore saves about 10k after refunds rather
+than 50k. The transaction-level savings come from the forward quote, the residue write, the
+pointer and gateway calls, the redundant balance reads, and three fewer contracts touched cold.
 
-Of the estimated 166k, 82k is ENS and 23k is the one unavoidable USDC approval, leaving about 61k
-of Namepass overhead, down from about 220k. About 44k of the ENS figure is the V1 migration
-bridge, which disappears as names migrate; a native V2 renewal is about 38k inside ENS.
-
-These are warm-state execution figures inside one test. A real transaction adds intrinsic gas,
-calldata, cold account and storage accesses, and is subject to the EIP-3529 refund cap. The
-current path sits at that cap; the merged path does not, so its approval refund is fully
-realized. The relative saving is expected to hold or improve, because the merged path touches
-three fewer contracts cold, but the figures remain provisional until the complete implementation
-is benchmarked from full transaction receipts for direct V1, direct V2, first use, and CCTP, with
-the compiled factory size verified under the pinned settings. The CCTP claim was not measured
-end to end because it needs a live Circle attestation; estimated from the measured components,
-Namepass overhead after the mint drops by about 85k to 90k. The harness, adapter copy, and traces
-will be committed as opt-in fork tests so the numbers can be reproduced.
+Of the merged steady-state receipt, ENS's own work is about 82k at warm prices and more when
+cold. About 44k of that is the V1 migration bridge, which disappears as names migrate; a native V2
+renewal is about 38k inside ENS. A native V2 route was not benchmarked because the October
+registrar's registration interface is not vendored; it should be added when a V2-renewable
+testnet name is available.
 
 ## Backend changes
 
