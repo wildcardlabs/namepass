@@ -1,0 +1,120 @@
+diff --git a/contracts/ENSV2RenewalHelper.sol b/contracts/ENSV2RenewalHelper.sol
+index 9df8cf6..7ba19c4 100644
+--- a/contracts/ENSV2RenewalHelper.sol
++++ b/contracts/ENSV2RenewalHelper.sol
+@@ -78,8 +78,9 @@ contract ENSV2RenewalHelper is INamepassRenewalHelper {
+         if (duration == 0 || needed == 0 || needed > budget) revert InsufficientAmount();
+         uint256 beforeBalance = USDC.balanceOf(address(this));
+         if (!USDC.transferFrom(gateway, address(this), budget)) revert TransferFailed();
+-        if (USDC.balanceOf(address(this)) != beforeBalance + budget) revert UnexpectedBalance();
+-        charged = _settle(renewer, label, duration, needed);
++        uint256 funded = USDC.balanceOf(address(this));
++        if (funded != beforeBalance + budget) revert UnexpectedBalance();
++        charged = _settle(renewer, label, duration, needed, funded);
+         uint256 remainder = budget - charged;
+         if (remainder != 0 && !USDC.transfer(gateway, remainder)) revert TransferFailed();
+         if (USDC.balanceOf(address(this)) != beforeBalance) revert UnexpectedBalance();
+@@ -93,7 +94,7 @@ contract ENSV2RenewalHelper is INamepassRenewalHelper {
+         }
+     }
+ 
+-    function _settle(IETHRenewer renewer_, string memory label, uint64 duration, uint256 amountNeeded)
++    function _settle(IETHRenewer renewer_, string memory label, uint64 duration, uint256 amountNeeded, uint256 beforeRenew)
+         private
+         returns (uint256 charged)
+     {
+@@ -111,10 +112,6 @@ contract ENSV2RenewalHelper is INamepassRenewalHelper {
+          * revert before any approval exists, rather than a silent
+          * mis-buy.
+          */
+-        if (renewer_.getRenewPrice(label, duration, USDC) != amountNeeded) {
+-            revert UnexpectedRenewalPrice();
+-        }
+-
+         /*
+          * Approve only what this specific renewal needs.
+          */
+@@ -122,8 +119,6 @@ contract ENSV2RenewalHelper is INamepassRenewalHelper {
+             revert ApprovalFailed();
+         }
+ 
+-        uint256 beforeRenew = USDC.balanceOf(address(this));
+-
+         renewer_.renew(IETHRenewer.RenewData(label, duration, referrer), USDC);
+ 
+         /*
+@@ -147,7 +142,7 @@ contract ENSV2RenewalHelper is INamepassRenewalHelper {
+          * of being wrong about that is a standing allowance rather
+          * than a one-off.
+          */
+-        if (!USDC.approve(address(renewer_), 0)) {
++        if (USDC.allowance(address(this), address(renewer_)) != 0 && !USDC.approve(address(renewer_), 0)) {
+             revert ApprovalFailed();
+         }
+     }
+diff --git a/contracts/NamepassL1Gateway.sol b/contracts/NamepassL1Gateway.sol
+index c0452e0..f155c4d 100644
+--- a/contracts/NamepassL1Gateway.sol
++++ b/contracts/NamepassL1Gateway.sol
+@@ -155,11 +155,12 @@ contract NamepassL1Gateway is ReentrancyGuard {
+          * accounting below, so the delta is checked rather than
+          * assumed.
+          */
+-        if (USDC.balanceOf(address(this)) != beforeBalance + amount) {
++        uint256 funded = USDC.balanceOf(address(this));
++        if (funded != beforeBalance + amount) {
+             revert UnexpectedMintAmount();
+         }
+ 
+-        _renew(label, amount, msg.sender, executor, false, selected);
++        _renew(label, amount, msg.sender, executor, false, selected, funded);
+     }
+ 
+     /*//////////////////////////////////////////////////////////////
+@@ -213,7 +214,8 @@ contract NamepassL1Gateway is ReentrancyGuard {
+         }
+ 
+         address selected = _activeHelper();
+-        _renew(label, _claim(message, attestation, sourceWallet), sourceWallet, msg.sender, true, selected);
++        (uint256 minted, uint256 funded) = _claim(message, attestation, sourceWallet);
++        _renew(label, minted, sourceWallet, msg.sender, true, selected, funded);
+     }
+ 
+     /**
+@@ -255,7 +257,7 @@ contract NamepassL1Gateway is ReentrancyGuard {
+      */
+     function _claim(bytes calldata message, bytes calldata attestation, address wallet)
+         private
+-        returns (uint256 mintedAmount)
++        returns (uint256 mintedAmount, uint256 funded)
+     {
+         uint256 burnAmount = uint256(_readBytes32(message, BURN_AMOUNT_OFFSET));
+ 
+@@ -294,7 +296,8 @@ contract NamepassL1Gateway is ReentrancyGuard {
+          * Verify Circle actually minted exactly the authenticated
+          * amount before permitting the renewal.
+          */
+-        if (USDC.balanceOf(address(this)) != beforeBalance + mintedAmount) {
++        funded = USDC.balanceOf(address(this));
++        if (funded != beforeBalance + mintedAmount) {
+             revert UnexpectedMintAmount();
+         }
+ 
+@@ -314,14 +317,14 @@ contract NamepassL1Gateway is ReentrancyGuard {
+         address wallet,
+         address executor,
+         bool fromCCTP,
+-        address selected
++        address selected,
++        uint256 beforeBalance
+     ) private {
+         if (amount <= GAS_ALLOWANCE) revert InsufficientAmount();
+         uint256 budget = amount - GAS_ALLOWANCE;
+-        uint256 beforeBalance = USDC.balanceOf(address(this));
+         if (!USDC.approve(selected, budget)) revert ApprovalFailed();
+         (uint64 duration, uint256 charged) = INamepassRenewalHelper(selected).execute(label, budget);
+-        if (!USDC.approve(selected, 0)) revert ApprovalFailed();
++        if (USDC.allowance(address(this), selected) != 0 && !USDC.approve(selected, 0)) revert ApprovalFailed();
+         if (
+             duration == 0 || charged == 0 || charged > budget
+                 || USDC.balanceOf(address(this)) != beforeBalance - charged

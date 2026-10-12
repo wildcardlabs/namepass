@@ -79,8 +79,8 @@ The universal-address factory keeps its current role and absorbs the gateway and
 - **Reentrancy guard** in factory storage covering `renew`, `renewWithFee`, and `completeCCTP`.
 - **View shims** so off-chain discovery works through configuration: `pointer()` and `gateway()`
   return the factory, plus `currentHelper`, `GAS_ALLOWANCE`, `paymentToken`, and `quote`.
-- **Executor threaded explicitly** through the internal settlement routine, so a batch entrypoint
-  can be added later without a redesign. The batch entrypoint itself is deferred; see below.
+- **Executor threaded explicitly** through the internal settlement routine. Batching is deferred;
+  see Deferred for what adding it later would require.
 
 The L2 side is unchanged: read the wallet balance, cap at Circle's live burn limit, refuse amounts
 below the minimum, deploy the wallet if needed, burn with the label as hook data, emit
@@ -188,33 +188,54 @@ has existing tests to update.
 ## Testnet migration
 
 Published deposit addresses and outstanding CCTP burns are bound to the current deployment.
-Changing configuration does not redirect them.
+Changing configuration does not redirect them, and nothing can close an old deposit address:
+anyone with a saved address can still send to it after the switch.
 
-1. Stop admitting new deposits to old addresses in the application once the new factory is
+1. Stop displaying old addresses in the application and the resolver once the new factory is
    deployed and verified.
-2. Claim every outstanding burn through the old gateway before switching the hub configuration.
-   Record the drain block.
-3. Process any remaining old-wallet balances through the old factory, or document them as retained
-   on the old deployment.
-4. Reset application data as the September 22 cutover did, or version the verifiers' hash pins
-   by deployment so September 22 evidence stays verifiable. The reset follows precedent and is
-   simpler; choose it unless historical evidence must remain live.
-5. Publish new addresses, regenerate the pipeline, run the canaries, and record the manifest.
+2. Process every remaining old-wallet balance through the old factory. This creates the last
+   burns on the L2s.
+3. Inventory outstanding burns from the old factories' `DepositProcessed` events and claim each
+   through the old gateway.
+4. Record the final reconciliation block per chain, and record any unclaimable message or
+   retained balance as an explicit exception in `docs/DEPLOYMENTS.md`.
+5. Switch configuration, regenerate the pipeline, run the canaries, and record the manifest.
+
+Late deposits to old addresses after the switch stay discoverable and processable:
+
+- The old factory and gateway stay in the pipeline as a legacy source set with their own
+  address filters, so old-address transfers and old-deployment events keep arriving. The
+  generator takes a legacy deployment list beside the active one.
+- `chains.ts` keeps the old deployment as a legacy entry. Processing old balances needs no key:
+  `renew` on the old factory and `completeCCTP` on the old gateway are permissionless, so a
+  scheduled sweep can process late deposits and claim their burns, and the old evidence
+  verifiers' hash pins apply to legacy events.
+- The September 22 style data reset simplifies application history only. It does not remove old
+  balances or outstanding claims. The deployment manifest and the reconciliation evidence live
+  under `docs/deployments/` and are preserved outside any reset.
+
+On mainnet none of this arises, because there is no prior deployment.
 
 ## Deferred
 
 - **`renewMany`.** `parseEthereumRenewalReceipt` requires exactly one event pair per receipt, a
   self-call per name replaces the executor with the factory unless passed explicitly, and guard
-  placement needs its own design. Batching is not a launch requirement. The internal routine
-  takes the executor as a parameter so batching can be added later with receipt processing updated
-  at the same time.
+  placement needs its own design. Batching is not a launch requirement. The factory is immutable,
+  so deferring it means it cannot be added to the deployed factory later. Later batching would
+  need either a separate batching contract that calls `renew` per name and forwards the executor
+  payments it receives, or another factory deployment and address migration. Keeping the executor
+  as an explicit parameter of the internal routine makes the first option cleaner; it does not
+  make batching free. Deferral remains the right decision.
 
 ## Considered and rejected
 
-- **Standing USDC approval from the factory to ENS.** Gross gas falls by 18k, but the relayer pays
-  about 1.6k more. Today's approve-and-clear pattern refunds 19.9k of its 23k, while Circle's USDC
-  decrements a standing allowance on every pull with no refund. It also reaches only the CCTP path,
-  needs re-granting when ENS rotates renewers, and adds a permission surface.
+- **Standing USDC approval from the factory to ENS.** Execution estimate, not a transaction
+  measurement: the per-renewal `approve` measures 23,241 in the fork trace and refunds 19,900
+  under EIP-3529 when the pull clears it, so it nets about 3.4k when the refund is realized. Circle's
+  USDC decrements a standing allowance on every pull, a nonzero-to-nonzero write of about 5k with
+  no refund. Gross gas would fall by about 18k while the net paid rises by about 1.6k, assuming the
+  merged path stays under the refund cap. It also reaches only the CCTP path, needs re-granting
+  when ENS rotates renewers, and adds a permission surface.
 - **Transient-storage reentrancy guard.** Needs Cancun; the compiler target is pinned at Shanghai
   because Arc does not support newer.
 - **Caller-proposed duration verified on-chain.** Costs about the same as computing it.
@@ -226,10 +247,14 @@ Changing configuration does not redirect them.
 
 ## Smaller option if the redesign is declined
 
-Within the current five contracts, two duplicate balance reads can be removed for 3.2k, the two
-allowance clears can become conditional for another 4k, and the forward quote can be dropped for
-another 12.9k, about 6.6% in total. All three passed the full suite. Only the last changes a
-documented check, and the exact approval plus post-call balance check already enforce the charge.
+Within the current five contracts, two duplicate balance reads can be removed for 3,203, the two
+allowance clears can become conditional for another 3,978, and the forward quote can be dropped
+for another 12,939, a cumulative 20,120 or 6.6% of the 305,351 baseline. These are warm-state
+execution measurements of the full current path on the fork, direct V1 route, steady state, from
+`CurrentPathGasForkTest` with the patch in `test/gas/five-contract-trims.patch` applied; they
+exclude intrinsic gas, calldata, and the refund cap, and cover no other scenario. All three passed
+the full suite. Only the last changes a documented check, and the exact approval plus post-call
+balance check already enforce the charge.
 
 ## Decisions
 
@@ -238,10 +263,26 @@ documented check, and the exact approval plus post-call balance check already en
 | Two-contract design | Proceed to implementation with the invariants and backend scope above. |
 | Adapter returns calldata | Accept, with the plan constraints and `interfaceVersion` 2. |
 | Dust goes to executor | Accept; pay only the current payment's remainder. |
-| `renewMany` | Defer; keep the executor parameter so it can be added later. |
+| `renewMany` | Defer. The factory is immutable, so later batching needs a separate batching contract or a new factory; the explicit executor parameter keeps the first option clean. |
 | Forward quote | Drop; keep exact approval, post-call check, pricing tests, and fork compatibility tests. |
 
 ## Method
 
-Foundry 1.5.1 with the pinned compiler settings. Public Sepolia RPC. Fork block 11,900,165.
-Nothing in this proposal is committed to the contract sources.
+Foundry 1.5.1 with the pinned compiler settings. Public Sepolia RPC. Fork block 11,900,165 for
+the figures in this document. The harness is committed as opt-in fork tests that skip without an
+RPC:
+
+```sh
+NAMEPASS_FORK_RPC=https://ethereum-sepolia-rpc.publicnode.com \
+NAMEPASS_FORK_BLOCK=<recent block> \
+  forge test --match-path "test/gas/*" -vv
+```
+
+`test/gas/CurrentPathGasFork.t.sol` measures the current five-contract direct path built from
+source. `test/gas/MergedCoreGasFork.t.sol` measures the merged design's settlement routine with
+`test/gas/MergedCoreAdapter.sol`, a copy of the helper with `execute` replaced by `plan`.
+`test/gas/five-contract-trims.patch` is the smaller option. `test/gas/README.md` records the
+runs. The public node prunes state after a few days, so pass a recent block. All figures are
+warm-state execution gas inside one test and are not acceptance criteria; the acceptance
+benchmark is full transaction receipts from the complete implementation, as listed under
+Benchmarks. Nothing in this proposal is committed to the contract sources.
