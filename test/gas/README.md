@@ -42,11 +42,47 @@ the residue write, the pointer and gateway calls, the balance reads, and three f
 touched cold. The absolute saving is about 95k on a direct renewal and about 43k on a claim on
 either route, so the percentage is higher on the cheaper V2 route.
 
+## Live Sepolia schedule
+
+Sepolia activated Glamsterdam on 2026-10-06, which reprices state access and creation (EIP-8037
+and EIP-8038). Foundry 1.5.1's EVM does not implement it, so the Anvil figures above are on the
+pre-fork schedule. `live-schedule.mjs` measures both designs on the live schedule instead: it
+asks an archive node to trace `renew` with state overrides that place the merged factory and
+adapter, taken from a completed dry run on Anvil, at their deterministic addresses, and give the
+deposit wallet a balance. The root `gasUsed` of the node's call trace is what a transaction pays;
+on a recorded claim it matched the receipt exactly. Nothing is broadcast.
+
+Block 11,900,999, 27.11 USDC per payment:
+
+| Transaction | Current, five contracts | Merged, two contracts | Saving |
+| --- | --- | --- | --- |
+| Direct V1, first use | 656,750 | 578,934 | 77,816 (12%) |
+| Direct V1, steady state | 389,508 | 311,693 | 77,815 (20%) |
+| Direct V2, steady state | 291,126 | 213,267 | 77,859 (27%) |
+| Direct V2, first use, merged only | | 480,508 | |
+
+The current release's `skellat` wallet is already deployed, so it has no first-use row. The
+saving is about 78k per direct renewal on either route, a little below the 95k on the pre-fork
+schedule: the approvals the redesign removes are transient slots whose creation cost is refunded
+when they clear in the same transaction, while the repriced cold state access that remains is
+mostly in ENS and USDC. Wallet creation is much dearer under the new schedule, about 267k on a
+first use against about 44k before, on both designs alike.
+
+CCTP claims cannot be traced live without a Circle attestation. Two recorded claims on the
+current release after the fork, `0x1bfa297b…ba488` and `0xc6074d5b…5cc6c`, paid 586,408 and
+567,397 gas; the Anvil benchmark's pre-fork figure for that path is 363,931 plus Circle's share.
+The merged design's claim saving on the live schedule is estimated at about 40k, not measured.
+
+Mainnet is planned to activate Glamsterdam in the fourth quarter of 2026, so the live-schedule
+figures are the ones to plan around.
+
 ## A real claim on the current release
 
 Transaction `0x1bfa297b…ba488` on Sepolia (block 11,858,547) is a CCTP claim for `farcaster`
-through the current five-contract release, the first claim after the October adapter rotation.
-Its receipt reports 586,408 gas. An archive replay with `cast run` gives this call-level split:
+through the current five-contract release, the first claim after the October adapter rotation
+and the first block hours after Glamsterdam activated. Its receipt reports 586,408 gas. A local
+replay with `cast run`, which uses the pre-fork schedule, gives this call-level split and totals
+445,388; the 141k difference is the repricing:
 
 | Part | Gas |
 | --- | --- |
@@ -55,8 +91,8 @@ Its receipt reports 586,408 gas. An archive replay with `cast run` gives this ca
 | Helper: oracle reads, forward quote, pull, approvals, balance reads | about 148,000 |
 | Gateway: pointer and factory calls, approvals, balance reads, executor transfer, events | about 99,000 |
 
-Circle's share on a real claim is therefore about 117k, which the stand-in benchmark above
-excludes from both columns.
+Circle's share on a real claim is therefore about 117k on the pre-fork schedule, which the
+stand-in benchmark above excludes from both columns.
 
 ## Warm-state execution measurement
 

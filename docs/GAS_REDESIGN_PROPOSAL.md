@@ -11,10 +11,12 @@ payment authority, corrects the figures, defers batching, and adds a testnet cut
 ## Summary
 
 Merge the gateway and the pointer into the factory, and make the ENS helper a view-only adapter
-that never holds funds. Measured from mined transaction receipts on an Anvil fork of Sepolia,
-against the deployed testnet release, a direct Ethereum renewal saves about 95k gas: 26% on the
-V1 route and 33% on the native V2 route. A CCTP claim saves about 43k, 12% and 15% respectively,
-excluding Circle's fixed share. Every indexed event keeps its signature, fields, and order, so the Goldsky
+that never holds funds. Measured on the live Sepolia gas schedule, which has run Glamsterdam's
+state repricing since 2026-10-06, a direct Ethereum renewal saves about 78k gas: 20% on the V1
+route and 27% on the native V2 route. On the pre-fork schedule, from mined receipts on an Anvil
+fork, the saving is about 95k, and a CCTP claim saves about 43k excluding Circle's share. Mainnet
+is planned to adopt the same repricing in the fourth quarter of 2026, so the live figures are the
+ones to plan around. Every indexed event keeps its signature, fields, and order, so the Goldsky
 pipeline and the database schema do not change. The backend evidence verifiers, discovery,
 fixtures, and configuration do change; that work is scoped below and is doable. Two
 configuration trust points are removed. The right time to do this is now, before the independent
@@ -22,8 +24,8 @@ audit and before any mainnet deployment.
 
 An earlier draft claimed about 45%. That figure came from warm-state execution gas inside one
 test, which hides refunds and cold accesses. At transaction level the current design's
-approve-and-clear refunds are realized, so the removed hops cost less than they appeared to. The
-corrected figures are in Benchmarks.
+approve-and-clear refunds are realized, so the removed hops cost less than they appeared to, and
+the live schedule narrows the gap a little further. The corrected figures are in Benchmarks.
 
 ## Why renewals are expensive today
 
@@ -146,35 +148,46 @@ factory as `msg.sender`; ENS keys nothing on the payer, and the referrer travels
 
 ## Benchmarks
 
-Receipt-level figures, `gasUsed` from mined transactions on an Anvil fork of Sepolia at block
-11,900,886, with 27.11 USDC per payment. `vitalik` is a premigrated reservation renewed through
-`ETHRenewerV1`; `skellat` is a migrated name renewed through the V2 registrar. The current column is
-the deployed five-contract testnet release; the merged column is the implemented two-contract
-design from the local artifacts. CCTP claims replace Circle's transmitter with a stand-in that
-pays the minted amount, so Circle's attestation check and mint are excluded from both columns;
-on a real Sepolia claim that share is about 117k, measured by replaying a recorded claim. See
-`test/gas/README.md` for the method and the replay.
+Two schedules matter. Sepolia activated Glamsterdam on 2026-10-06, which reprices state access
+and creation (EIP-8037 and EIP-8038); Foundry's EVM does not implement it yet. Mainnet is planned
+to follow in the fourth quarter of 2026.
+
+**Live schedule.** Traced on an archive node at block 11,900,999 with state overrides that place
+the merged factory and adapter at their deterministic addresses and fund the deposit wallet. The
+node's root `gasUsed` is what a transaction pays; it matched a recorded claim's receipt exactly.
+`vitalik` is a premigrated reservation on the V1 route; `skellat` is a migrated V2 name.
 
 | Transaction | Current | Merged | Saving |
 | --- | --- | --- | --- |
-| Direct V1 (`vitalik`), first use | 404,724 | 318,888 | 85,836 (21%) |
+| Direct V1, first use | 656,750 | 578,934 | 77,816 (12%) |
+| Direct V1, steady state | 389,508 | 311,693 | 77,815 (20%) |
+| Direct V2, steady state | 291,126 | 213,267 | 77,859 (27%) |
+
+**Pre-fork schedule.** `gasUsed` from mined receipts on an Anvil fork at block 11,900,886, with
+CCTP claims using a stand-in transmitter that excludes Circle's share, about 117k on a real claim.
+
+| Transaction | Current | Merged | Saving |
+| --- | --- | --- | --- |
+| Direct V1, first use | 404,724 | 318,888 | 85,836 (21%) |
 | Direct V1, steady state | 369,700 | 275,109 | 94,591 (26%) |
-| Direct V2 (`skellat`), steady state | 289,074 | 194,183 | 94,891 (33%) |
+| Direct V2, steady state | 289,074 | 194,183 | 94,891 (33%) |
 | CCTP claim V1, excluding Circle | 363,931 | 320,487 | 43,444 (12%) |
 | CCTP claim V2, excluding Circle | 283,049 | 239,561 | 43,488 (15%) |
 
-Warm-state execution gas inside one fork test, which is the call-tree comparison the first draft
-used, shows 305,351 against 169,846 steady state on the V1 route, 114,120 on the V2 route, and
-489,531 against 332,821 first use. The
-difference between the two views is refunds: at transaction level, cold accesses raise `gasUsed`
-and therefore the EIP-3529 refund cap, so the current design's approve-and-clear pattern refunds
-almost all of its approval cost. Each removed hop therefore saves about 10k after refunds rather
-than 50k. The transaction-level savings come from the forward quote, the residue write, the
-pointer and gateway calls, the redundant balance reads, and three fewer contracts touched cold.
+The saving is about 78k per direct renewal on the live schedule and about 95k before the fork.
+The approvals the redesign removes are transient slots whose creation cost is refunded when they
+clear within the transaction, so the repricing adds little to them; the repriced cold access that
+remains is mostly in ENS and USDC. Wallet creation becomes much dearer under the new schedule,
+about 267k on a first use, on both designs alike. CCTP claims could not be traced live without an
+attestation; two recorded claims on the current release after the fork paid 586,408 and 567,397
+gas, and the merged design's live claim saving is estimated at about 40k.
 
-ENS's own work is about 82k at warm prices on the V1 route, of which about 44k is the V1
-migration bridge, and about 38k on the V2 route. The absolute saving is the same on both routes,
-so the percentage grows as names migrate.
+Warm-state execution gas inside one fork test, the call-tree comparison the first draft used,
+shows 305,351 against 169,846 steady state on the V1 route, 114,120 on the V2 route, and
+489,531 against 332,821 first use. ENS's own work is about 82k at warm prices on the V1 route,
+of which about 44k is the V1 migration bridge, and about 38k on the V2 route. The absolute saving
+is the same on both routes, so the percentage grows as names migrate. See `test/gas/README.md`
+for every method.
 
 ## Backend changes
 
