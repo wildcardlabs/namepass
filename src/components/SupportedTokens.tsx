@@ -40,7 +40,9 @@ export default function SupportedTokens({ onBack }: { onBack: () => void }) {
 						<div className="flex items-start gap-2.5 inset-panel">
 							<FlaskConical className="w-4 h-4 shrink-0 mt-0.5 text-ink-action" />
 							<p className="text-[13.5px] text-ink-secondary leading-relaxed">
-								Testnet only. This USDC has no real value.
+								Testnet only. This USDC has no real value. Deposit addresses from
+									deployments before October 23, 2026 are retired; use the address shown
+									for the name today.
 							</p>
 						</div>
 					)}

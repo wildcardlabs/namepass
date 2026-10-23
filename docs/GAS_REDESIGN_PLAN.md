@@ -22,7 +22,7 @@ Nothing below broadcasts a transaction without your signature.
 - The existing Sepolia test timelock `0x996cbd179f361B1043Ad1999864eD41496C633c8` is reused as
   the governance executor; it is wallet-controlled with a 60-second delay. No new timelock.
 - Ethereum mainnet ETH for two transactions if the `namepass.eth` wildcard resolver is updated
-  in this round (see Phase 6).
+  in this round (see Phase 7).
 
 ## Phase 1: contracts (Claude, no transactions)
 
@@ -120,8 +120,8 @@ retired in favour of the protocol deployment page.
 Exit: app live on the new addresses with an empty history.
 Done 2026-10-23: reset recorded in `docs/deployments/2026-10-23/reset.json`; pipeline
 re-applied, with the Arc transform rewritten for the hosted engine; pull request 153 merged as
-`7e4477c` and deployed. Step 4, the beta copy about retired addresses, is folded into the
-Phase 6 follow-up.
+`7e4477c` and deployed. Step 4, the beta copy about retired addresses, is on the supported-networks
+page.
 
 ## Phase 6: canaries and fixtures (you fund, Claude verifies)
 
@@ -144,7 +144,8 @@ fresh canary. The relayer processes each deposit and claims each burn. Claude th
 
 Exit: CI fully green, API shapes unchanged, canary evidence recorded.
 Done 2026-10-23: five funded deposits plus two the user sent directly, all settled; captures
-regenerated with `scripts/fixtures`; evidence in `docs/deployments/2026-10-23/canaries.json`.
+regenerated with `scripts/fixtures`; evidence in `docs/deployments/2026-10-23/canaries.json`;
+pull request 154 merged as `182ba41` with CI green.
 
 ## Phase 7: resolver (optional this round, you sign)
 
@@ -153,13 +154,22 @@ the new deposit addresses is wanted now, that is two Ethereum mainnet transactio
 updated resolver and set it on the parent name. This costs real ETH and can wait for the mainnet
 release, when the resolver has to change anyway.
 
+Sepolia first: `namepass.eth` was registered in the ENS V2 ETH registry on Sepolia on
+2026-10-23, so the same two transactions run there through `tools/resolver-deployment`
+(port 5179): deploy `NamepassResolver`, which now compiles in the October 23 factory, then the
+registry's `setResolver`. The page verifies the universal resolver's view and resolves a subname
+through the hosted gateway, which activates the label and must return the factory's address. The
+Anvil dry run of both steps passed on 2026-10-23 with eleven checks and `nick.namepass.eth`
+resolving to the factory's prediction through the live gateway.
+
 ## Your transaction count
 
 | Phase | Signatures |
 | --- | --- |
 | 3 Deployment | 11 |
 | 6 Canaries | 4 |
-| 7 Resolver, optional | 2 on mainnet |
+| 7 Resolver, Sepolia | 2 |
+| 7 Resolver, mainnet, optional | 2 on mainnet |
 
 Everything else is code, read-only verification, or hosted configuration that Claude handles
 with your authorization recorded in the conversation.

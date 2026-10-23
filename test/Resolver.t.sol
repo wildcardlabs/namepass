@@ -147,16 +147,16 @@ contract ResolverTest is Test {
     }
 
     function test_callbackDerivesTheDepositWallet() public view {
-        assertEq(_callback("vitalik"), 0xa61656CA2D2952a46a9d4DA0AAE01d8D7fe988E0);
-        assertEq(_callback("nick"), 0xC25EeEBBf6450b83e16cAE8421B6e143Ae24e450);
-        assertEq(_callback("namepass"), 0x06b77b9219583360ED6BC84ef3da9d8518C51BDe);
-        assertEq(_callback("abc"), 0x7b0309a91585c67C3743202aB85A4f05B4284278);
+        assertEq(_callback("vitalik"), 0x9D21DeE23f5Fe9df32b91AE559530f933Ee9c899);
+        assertEq(_callback("nick"), 0xf14995340060D1538068dADC54c0A2412eeD89A3);
+        assertEq(_callback("namepass"), 0x585Ca5CC4BB1F4ac11eb95d2f78949d608DA47A1);
+        assertEq(_callback("abc"), 0x817ee9E4B03357134a6ca16E229ba8BF66AFE40e);
     }
 
     function test_addressCallbackDerivesTheDepositWallet() public view {
         assertEq(
             abi.decode(resolver.resolveAddressCallback(abi.encode(true), bytes("vitalik")), (address)),
-            0xa61656CA2D2952a46a9d4DA0AAE01d8D7fe988E0
+            0x9D21DeE23f5Fe9df32b91AE559530f933Ee9c899
         );
     }
 

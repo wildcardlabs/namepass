@@ -70,6 +70,7 @@ jobs:
           node --import tsx --test tools/activation-canary/receipt.test.ts
           npx tsc --noEmit -p tools/protocol-deployment/tsconfig.json
           npx tsc --noEmit -p tools/canary-funding/tsconfig.json
+          npx tsc --noEmit -p tools/resolver-deployment/tsconfig.json
 
       - name: Test the server
         run: npm run test:server

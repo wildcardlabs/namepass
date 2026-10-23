@@ -22,8 +22,8 @@ Components do not query Neon or perform public balance polling through RPC.
 
 Normalize labels before derivation and show payment addresses in full. Helper selection and
 configuration reads use one block. Unknown helper code or invalid oracle configuration prevents
-pricing. The gateway provides the fixed executor allowance. Only price-dependent content waits
-for these reads; the rest of the page can render immediately.
+pricing. The factory, which is also the hub gateway, provides the fixed executor allowance. Only
+price-dependent content waits for these reads; the rest of the page can render immediately.
 
 Use integer arithmetic and exact amount formatting where rounding would hide a discount boundary.
 There are no default oracle rates. See [ENGINEERING_CONSTRAINTS.md](ENGINEERING_CONSTRAINTS.md)

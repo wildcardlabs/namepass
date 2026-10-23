@@ -20,8 +20,8 @@ The preview read proxy leaves this route to its own adapter.
 | Deposit `name`, `depositAddress` | Canonical source transfer recipient, current registered normalized label and derived wallet |
 | Deposit `amount`, `logIndex` | Exact source receipt credit in six-decimal units; native Arc public position is null |
 | Deposit `renewals` | Every exact processing call after the credit through its verified full-wallet drain, joined to verified confirmed renewal receipts |
-| `renewalId` | Hub chain, lowercase gateway renewal transaction hash and gateway `Renewed` log index, identical to history |
-| `secondsAdded`, `expiry` | Whole gateway event duration and associated ENS registration expiry; V1 uses its BaseRegistrar event |
+| `renewalId` | Hub chain, lowercase renewal transaction hash and the factory's `Renewed` log index, identical to history |
+| `secondsAdded`, `expiry` | Whole factory `Renewed` event duration and associated ENS registration expiry; V1 uses its BaseRegistrar event |
 
 A repeatable-read snapshot supplies the registry, watched addresses, indexed source members and
 bounded processing/renewal candidate identities. Flow status, amounts and dates do not establish

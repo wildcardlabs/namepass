@@ -14,7 +14,8 @@ function pick(name, source) {
     abi: artifact.abi,
     bytecode: artifact.bytecode.object,
     deployedBytecode: artifact.deployedBytecode.object,
-    immutableReferences: artifact.deployedBytecode.immutableReferences ?? {},
+    // Keyed by position rather than by AST node id, which changes between Foundry versions.
+    immutableReferences: Object.fromEntries(Object.values(artifact.deployedBytecode.immutableReferences ?? {}).map((ranges, i) => [String(i), ranges])),
     compiler: artifact.metadata?.compiler?.version ?? "0.8.24",
     sourceSha256: sha256(read(source)),
   };
@@ -24,13 +25,15 @@ const output = {
   generatedAt: new Date().toISOString(),
   NamepassFactory: pick("NamepassFactory", "contracts/NamepassFactory.sol"),
   ENSV2RenewalAdapter: pick("ENSV2RenewalAdapter", "contracts/ENSV2RenewalAdapter.sol"),
+  /** Used by `tools/resolver-deployment`; the resolver is not part of the CREATE2 set. */
+  NamepassResolver: pick("NamepassResolver", "contracts/NamepassResolver.sol"),
 };
 
 const path = new URL("artifacts.json", import.meta.url);
 const text = `${JSON.stringify(output, null, 2)}\n`;
 if (process.argv.includes("--check")) {
   const current = JSON.parse(readFileSync(path, "utf8"));
-  for (const name of ["NamepassFactory", "ENSV2RenewalAdapter"]) {
+  for (const name of ["NamepassFactory", "ENSV2RenewalAdapter", "NamepassResolver"]) {
     const { generatedAt: _a, ...a } = { generatedAt: 0, ...current[name] };
     const { generatedAt: _b, ...b } = { generatedAt: 0, ...output[name] };
     if (JSON.stringify(a) !== JSON.stringify(b)) throw new Error(`${name} artifact is stale; run build-artifacts.mjs`);
