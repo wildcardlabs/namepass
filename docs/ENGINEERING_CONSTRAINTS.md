@@ -15,8 +15,10 @@ Implementation detail remains in source; this document records constraints that 
   an explicit wallet-only exception; preserve its chain and hub restrictions.
 - Factory payment configuration is initialized once. Do not add an owner-controlled sweep or
   payment destination. Such a change alters the custody model.
-- The fixed gateway authenticates wallet and CCTP funding, settles payments and pays the executor.
-  The pointer selects an immutable ENS helper; the helper's ENS addresses have no setters.
+- The factory authenticates wallet and CCTP funding, settles payments and pays the executor. It
+  is also the hub gateway and the adapter pointer, so `gatewayAddress` and `pointerAddress` name
+  the factory. The timelock-governed executor selects a view-only adapter whose ENS addresses have
+  no setters; the factory approves the adapter's spender for exactly one payment's quoted price.
   ENS DAO governance is the intended mainnet authority. A test-wallet timelock is not that DAO.
 - ENS has two renewal populations: migrated names and premigrated V1 reservations. Preserve both
   paths and select the matching oracle. See [CONTRACTS_V2.md](CONTRACTS_V2.md).
@@ -33,7 +35,7 @@ Implementation detail remains in source; this document records constraints that 
   pricing unavailable until live configuration loads; do not add fallback rates.
 - Use `BigInt` for USDC and rounding. A year is `31_536_000` seconds. Oracle length indexing is
   `length - 1`, clamped. Price display and suggested payment amounts must preserve tier boundaries.
-- The fixed allowance comes from the gateway. Apply it once per flow, not once per deposit.
+- The fixed allowance comes from the factory. Apply it once per flow, not once per deposit.
   Quotes solve from the budget after fees; `fmtUsdcExact` is used where rounding hides a boundary.
 - Quick-select options cover the three discount tiers. The omitted one-year option is a product
   decision; see `DECISIONS.md` if reconsidering it.

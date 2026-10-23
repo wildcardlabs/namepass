@@ -23,7 +23,8 @@ const datasetVersion = (chain, kind) =>
 	chain.key === "arc" ? "1.1.0" : kind === "erc20_transfers" ? "1.2.0" : "1.0.0";
 
 function rawLogAddresses(chain) {
-	return [chain.factoryAddress, ...(chain.gatewayAddress ? [chain.gatewayAddress] : [])];
+	// The hub factory is also the gateway; one address must appear once in the filter.
+	return [...new Set([chain.factoryAddress, chain.gatewayAddress].filter(Boolean).map(lower))];
 }
 
 function renderSources() {

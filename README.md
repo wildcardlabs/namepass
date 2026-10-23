@@ -33,13 +33,11 @@ differ from the previous deployment. Derive addresses from the
 ```mermaid
 flowchart LR
     U[Funder] -->|USDC| W[Name's deposit wallet]
-    W --> F[NamepassFactory]
-    F -->|Sepolia payment| G[Fixed L1 gateway]
-    F -->|Source-chain burn| C[Circle CCTP V2]
-    C -->|Attested claim| G
-    P[Governed helper pointer] -.-> H[Immutable ENS helper]
-    G --> H
-    H --> E[ENS renewal contract]
+    W -->|Sepolia payment| F[NamepassFactory, also the hub gateway]
+    W -->|Source-chain burn| C[Circle CCTP V2]
+    C -->|Attested claim| F
+    F -->|plan| A[View-only ENS adapter, selected by the timelock]
+    F -->|exact approval and call| E[ENS renewal contract]
 ```
 
 1. Normalize the ENS name. Call `NamepassFactory.predictWallet(label)` with the label, such as
@@ -47,10 +45,11 @@ flowchart LR
    deployment set.
 2. Send the configured USDC to that wallet on a supported testnet. Arc Testnet also accepts its
    native USDC through the wallet.
-3. Anyone can call `NamepassFactory.renew` to process the wallet balance. Ethereum Sepolia payments
-   go directly to the gateway. Payments on the other supported chains burn through Circle CCTP V2.
+3. Anyone can call `NamepassFactory.renew` to process the wallet balance. On Ethereum Sepolia the
+   wallet itself pays ENS. On the other supported chains the wallet burns through Circle CCTP V2
+   to the factory's own address on Sepolia.
 4. After Circle attests a burn, anyone can submit its message and attestation to
-   `NamepassL1Gateway.completeCCTP` on Sepolia. The gateway selects the active ENS helper and
+   `NamepassFactory.completeCCTP` on Sepolia. The factory asks the active adapter for a plan and
    settles the renewal.
 
 The executor receives a fixed **0.10 USDC allowance** on successful settlement. Circle's actual
@@ -65,41 +64,39 @@ is separate from payment execution.
 
 | Contract | Role |
 | --- | --- |
-| [NamepassFactory](contracts/NamepassFactory.sol) | Derives wallets and starts direct or cross-chain payments |
-| [NamepassL1Gateway](contracts/NamepassL1Gateway.sol) | Authenticates funding, completes CCTP claims, and settles payments |
-| [RenewalHelperPointer](contracts/RenewalHelperPointer.sol) | Selects the active helper through its governance executor |
-| [ENSV2RenewalHelper](contracts/ENSV2RenewalHelper.sol) | Selects the ENS renewal path and calculates exact duration |
+| [NamepassFactory](contracts/NamepassFactory.sol) | Derives wallets, authenticates funding, completes CCTP claims, settles payments, and selects the adapter through its governance executor |
+| [ENSV2RenewalAdapter](contracts/ENSV2RenewalAdapter.sol) | View-only: selects the ENS renewal path, calculates the exact duration and returns the exact call |
 | [NamepassResolver](contracts/NamepassResolver.sol) | Provides optional ENSIP-10 and CCIP-Read resolution |
 
 ### Verified testnet deployments
 
-Sourcify shows matching deployed bytecode and source for the current September 22 contracts:
+Sourcify shows matching deployed bytecode and source for the October 23 contracts:
 
 | Contract | Network | Verified source |
 | --- | --- | --- |
-| NamepassFactory | Ethereum Sepolia | [Sourcify](https://repo.sourcify.dev/11155111/0x2dCB5CA6b21372b43e37C35Da8D5D15160423150) |
-| NamepassFactory | Base Sepolia | [Sourcify](https://repo.sourcify.dev/84532/0x2dCB5CA6b21372b43e37C35Da8D5D15160423150) |
-| NamepassFactory | Arbitrum Sepolia | [Sourcify](https://repo.sourcify.dev/421614/0x2dCB5CA6b21372b43e37C35Da8D5D15160423150) |
-| NamepassFactory | Arc Testnet | [Sourcify](https://repo.sourcify.dev/5042002/0x2dCB5CA6b21372b43e37C35Da8D5D15160423150) |
-| NamepassL1Gateway | Ethereum Sepolia | [Sourcify](https://repo.sourcify.dev/11155111/0x39351C9f9eAb6093eFB4e865a6330ECd2a756F0f) |
-| RenewalHelperPointer | Ethereum Sepolia | [Sourcify](https://repo.sourcify.dev/11155111/0x774f942194d612e126A05Ce40a3A4D88AfBB6ae6) |
-| ENSV2RenewalHelper | Ethereum Sepolia | [Sourcify](https://repo.sourcify.dev/11155111/0x7Bfee7c257ff48f8D787A61F15925e24743C8F88) |
+| NamepassFactory | Ethereum Sepolia | [Sourcify](https://repo.sourcify.dev/11155111/0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79) |
+| NamepassFactory | Base Sepolia | [Sourcify](https://repo.sourcify.dev/84532/0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79) |
+| NamepassFactory | Arbitrum Sepolia | [Sourcify](https://repo.sourcify.dev/421614/0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79) |
+| NamepassFactory | Arc Testnet | [Sourcify](https://repo.sourcify.dev/5042002/0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79) |
+| ENSV2RenewalAdapter | Ethereum Sepolia | [Sourcify](https://repo.sourcify.dev/11155111/0x4A468177187999F125dCE99a5eBD5F82Ab8D3481) |
 
 These links show source matches, not a security audit. The current release record does not include
-a verified NamepassResolver deployment. See the [source-verification record](docs/deployments/2026-09-22/source-verification.json)
+a verified NamepassResolver deployment. See the [deployment manifest](docs/deployments/2026-10-23/protocol-deployment-manifest.json)
 for the underlying checks.
 
-The factory is not an upgradeable proxy. Its initialized payment route is fixed. The gateway has
-no owner and fixes its payment token, Circle contracts, factory, pointer, and residue recipient at
-construction. Each ENS helper has immutable ENS contract addresses. There is no owner sweep from
-deposit wallets.
+The factory is not an upgradeable proxy. Its initialized payment route is fixed. It fixes its
+payment token and Circle contracts at initialization and holds no funds between calls. The
+adapter is view-only, has no owner and immutable ENS contract addresses. There is no owner sweep
+from deposit wallets.
 
-The pointer's governance executor can activate a new helper after its timelock requirements are
-met. Interface checks cannot prove what future helper code will do. The **testnet timelock is
-wallet-controlled**. Mainnet is designed to use an ENS governance executor, but no mainnet
-deployment has occurred. The factory owner can change CCTP finality settings. A caller supplies a
-fee ceiling for one CCTP call. Neither setting changes the fixed factory payment route.
-Unsupported tokens sent to a wallet can be permanently lost.
+The factory's governance executor can activate a new adapter after its timelock requirements are
+met. The factory then approves that adapter's named spender for exactly the quoted price of one
+payment and requires that exactly that price left, so a replacement adapter can direct at most
+one payment's price. The **testnet timelock is wallet-controlled**. Mainnet is designed to use an
+ENS governance executor, but no mainnet deployment has occurred. The factory owner can change
+CCTP finality settings. A caller supplies a fee ceiling for one CCTP call. Neither setting
+changes the fixed factory payment route. Unsupported tokens sent to a wallet can be permanently
+lost.
 
 Direct renewal is atomic. A CCTP claim mints and renews in one transaction. If settlement fails,
 the claim reverts and the attested message can be submitted again. The route depends on ENS,
@@ -108,23 +105,22 @@ Circle, USDC, and the configured contracts. See [contract boundaries](docs/CONTR
 
 ## Exact ENS pricing
 
-The helper reads the selected ENS renewer's current oracle. It calculates the longest whole-second
-duration that the available USDC can buy after fees. It handles ENS discount tiers and integer
-rounding, checks its inverse quote against ENS's forward quote, and checks the actual token charge.
-A mismatch reverts settlement. The helper supports both migrated ENS V2 names and premigrated V1
-reservations.
+The adapter reads the selected ENS renewer's current oracle. It calculates the longest whole-second
+duration that the available USDC can buy after fees, handling ENS discount tiers and integer
+rounding. ENS prices the renewal again inside its own `renew`, and the factory requires the actual
+token charge to equal the adapter's price. A mismatch reverts settlement. The adapter supports
+both migrated ENS V2 names and premigrated V1 reservations.
 
-The helper performs these checks on-chain. A displayed estimate does not replace the selected
-ENS contract's price at execution.
+These checks run on-chain. A displayed estimate does not replace the selected ENS contract's
+price at execution.
 
 ## Current testnet status
 
-The September 22 release uses one factory address on Ethereum Sepolia, Base Sepolia, Arbitrum
+The October 23 deployment uses one factory address on Ethereum Sepolia, Base Sepolia, Arbitrum
 Sepolia, and Arc Testnet. The [deployment record](docs/DEPLOYMENTS.md) contains the addresses,
-receipts, source verification, and limits of the available evidence. It records a direct Sepolia
-renewal and native Arc deposit and claim canaries. It does not claim a fresh automated canary on
-every source chain after the reset. The wildcard resolver deployment and parent-record update are
-also unverified in that record. None of this evidence is a security audit.
+receipts and source verification. Its canaries on every chain are still to be run; until the
+hosted cutover, the beta application still serves the September 22 deployment. The wildcard
+resolver still names the September 22 factory. None of this evidence is a security audit.
 
 For the protocol's full contract rules, see [contract design](docs/CONTRACTS_V2.md) and
 [engineering constraints](docs/ENGINEERING_CONSTRAINTS.md). For local setup and tests, see

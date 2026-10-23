@@ -35,7 +35,9 @@ Errors suppress provider details and credentials.
 
 Every receipt log must belong to its successful receipt, with ordered unique log indices,
 consistent transaction position and canonical block/hash. The tool pins the reviewed factory
-and gateway runtimes at the receipt blocks and checks the exact wallet proxy. It authenticates
+and gateway runtimes at the receipt blocks and checks the exact wallet proxy. Since the
+2026-10-23 deployment the factory is the gateway, so both pins name one runtime and the
+configured gateway address is the factory. It authenticates
 the helper selected in that renewal segment, verifies its reviewed adapter runtime, then reads
 its immutable ENS configuration at the renewal block. Those addresses and the referrer must
 match the supported deployment. It never selects the current pointer to interpret an older call.

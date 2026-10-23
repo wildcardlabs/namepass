@@ -94,7 +94,7 @@ async function quote(request: Request, signal: AbortSignal) {
 		read(selected, "interfaceVersion"), read(selected, "gateway"), read(selected, "factory"),
 		read(selected, "paymentToken"),
 	]);
-	if (version !== 1n) unavailable();
+	if (version !== 2n) unavailable();
 	same(boundGateway as string, HUB_CHAIN.gatewayAddress!);
 	same(boundFactory as string, HUB_CHAIN.factoryAddress!);
 	same(token as string, HUB_CHAIN.usdcAddress);

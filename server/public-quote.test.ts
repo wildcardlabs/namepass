@@ -70,7 +70,7 @@ function fixture(t: TestContext, options: Options = {}) {
 				const values: Record<string, unknown> = {
 					currentHelper: helper, gateway: options.pointerMismatch ? minter : HUB_CHAIN.gatewayAddress,
 					pointer: HUB_CHAIN.pointerAddress, factory: HUB_CHAIN.factoryAddress, paymentToken: HUB_CHAIN.usdcAddress,
-					interfaceVersion: 1n,
+					interfaceVersion: 2n,
 					GAS_ALLOWANCE: 100000n,
 					quote: [options.zeroDuration ? 0n : 3547790n, options.applied ?? 900000n], usdc: chain.usdcAddress,
 					tokenMessenger: chain.tokenMessengerAddress, l1Helper: HUB_CHAIN.gatewayAddress,

@@ -5,7 +5,7 @@ import { afterEach, beforeEach, expect, test, vi } from "vitest";
 import PassCard from "../components/PassCard";
 import { encodeQR } from "./qr";
 
-const address = "0x5B7516768eD0b04E212041265BB1f11af71841d7";
+const address = "0xd78DF8F827881e34ff0B1B717dc876D880890D50";
 let container: HTMLDivElement;
 let root: Root;
 const originalClipboard = Object.getOwnPropertyDescriptor(navigator, "clipboard");

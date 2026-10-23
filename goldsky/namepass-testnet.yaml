@@ -22,9 +22,8 @@ sources:
     start_at: earliest
     filter: >-
       address IN (
-        '0x2dcb5ca6b21372b43e37c35da8d5d15160423150',
-        '0x39351c9f9eab6093efb4e865a6330ecd2a756f0f'
-      ) AND block_number >= 11754050
+        '0xc4fb9aed5d7b812aa3689aa4b9400671dd665e79'
+      ) AND block_number >= 11976858
 
   base_sepolia_usdc_v2:
     type: dataset
@@ -43,8 +42,8 @@ sources:
     start_at: earliest
     filter: >-
       address IN (
-        '0x2dcb5ca6b21372b43e37c35da8d5d15160423150'
-      ) AND block_number >= 47132212
+        '0xc4fb9aed5d7b812aa3689aa4b9400671dd665e79'
+      ) AND block_number >= 49195833
 
   arbitrum_sepolia_usdc_v2:
     type: dataset
@@ -63,8 +62,8 @@ sources:
     start_at: earliest
     filter: >-
       address IN (
-        '0x2dcb5ca6b21372b43e37c35da8d5d15160423150'
-      ) AND block_number >= 311365500
+        '0xc4fb9aed5d7b812aa3689aa4b9400671dd665e79'
+      ) AND block_number >= 322061526
 
   arc_testnet_usdc_v2:
     type: dataset
@@ -92,8 +91,8 @@ sources:
     start_at: earliest
     filter: >-
       address IN (
-        '0x2dcb5ca6b21372b43e37c35da8d5d15160423150'
-      ) AND block_number >= 63326249
+        '0xc4fb9aed5d7b812aa3689aa4b9400671dd665e79'
+      ) AND block_number >= 68694990
 
 transforms:
   watched_addresses:
@@ -295,7 +294,7 @@ transforms:
         _gs_op
       FROM decoded_logs_v2
       WHERE decoded.event_signature = 'WalletDeployed'
-        AND contract_address = '0x2dcb5ca6b21372b43e37c35da8d5d15160423150'
+        AND contract_address = '0xc4fb9aed5d7b812aa3689aa4b9400671dd665e79'
 
   deposit_processed:
     type: sql
@@ -318,7 +317,7 @@ transforms:
         _gs_op
       FROM decoded_logs_v2
       WHERE decoded.event_signature = 'DepositProcessed'
-        AND contract_address = '0x2dcb5ca6b21372b43e37c35da8d5d15160423150'
+        AND contract_address = '0xc4fb9aed5d7b812aa3689aa4b9400671dd665e79'
 
   cctp_claimed:
     type: sql
@@ -343,7 +342,7 @@ transforms:
         _gs_op
       FROM decoded_logs_v2
       WHERE decoded.event_signature = 'CCTPClaimed'
-        AND contract_address = '0x39351c9f9eab6093efb4e865a6330ecd2a756f0f'
+        AND contract_address = '0xc4fb9aed5d7b812aa3689aa4b9400671dd665e79'
 
   renewed:
     type: sql
@@ -372,7 +371,7 @@ transforms:
         _gs_op
       FROM decoded_logs_v2
       WHERE decoded.event_signature = 'Renewed'
-        AND contract_address = '0x39351c9f9eab6093efb4e865a6330ecd2a756f0f'
+        AND contract_address = '0xc4fb9aed5d7b812aa3689aa4b9400671dd665e79'
 
 sinks:
   deposits_webhook:

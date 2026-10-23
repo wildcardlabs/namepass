@@ -35,7 +35,7 @@ test("ENS reads verify the chain and ABI-encode the normalized label", async () 
 		const helper = "0x1111111111111111111111111111111111111111";
 		let results: string[];
 		if (batch === 1) results = [helper, HUB_CHAIN.gatewayAddress!, HUB_CHAIN.pointerAddress!].map(word);
-		else if (batch === 2) results = [1n, HUB_CHAIN.gatewayAddress!, HUB_CHAIN.factoryAddress!, HUB_CHAIN.usdcAddress].map(word);
+		else if (batch === 2) results = [2n, HUB_CHAIN.gatewayAddress!, HUB_CHAIN.factoryAddress!, HUB_CHAIN.usdcAddress].map(word);
 		else if (batch === 3) results = [HUB_CHAIN.ensRegistrarAddress!, HUB_CHAIN.ensRenewerV1Address!, HUB_CHAIN.ensReferrer!].map(word);
 		else {
 			const encodedLabel = "20".padStart(64, "0") + "7".padStart(64, "0") + Buffer.from("vitalik").toString("hex").padEnd(64, "0");

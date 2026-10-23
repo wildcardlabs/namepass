@@ -20,9 +20,9 @@ const PROCESSED = parseAbi([
 const RENEWED = parseAbi([
 	"event Renewed(bytes32 indexed labelHash,address indexed wallet,address indexed executor,string label,uint64 duration,uint256 amountReceived,uint256 gasAllowance,uint256 amountApplied,uint256 remainder,bool fromCCTP)",
 ]);
-// Reviewed deployment, docs/deployments/2026-09-22/verification.json. Not a generic factory allowlist.
+// Reviewed deployment, docs/deployments/2026-10-23/protocol-deployment-manifest.json. Not a generic factory allowlist.
 const FACTORY_HASH =
-	"0x3822dfc2cbf9fe25fbe5258eb13cf8be999c1b776c361fbd220f9412b96659e1";
+	"0x7ca0a4660909e70cdecc1487e282d82a8cc0825c02cea740e3e58f3603abe08c";
 const SCALE = 1_000_000_000_000n;
 const METHODS = [
 	"eth_chainId",
@@ -342,7 +342,12 @@ export async function inspectAllocation(
 				const m = movement(l);
 				return m?.from === wallet ? [m] : [];
 			});
-			if (debits.length !== 1 || debits[0].amount !== p.amount)
+			// Hub: the wallet pays ENS the applied amount and the executor the rest, two debits.
+			// Source chain: one debit, the burn. Either way the debits consume exactly `amount`.
+			if (
+				debits.length !== (chain.chainId === HUB_CHAIN.chainId ? 2 : 1) ||
+				debits.reduce((sum, m) => sum + m.amount, 0n) !== p.amount
+			)
 				fail("ambiguous_processing_debit");
 			await factoryAt(r.blockNumber);
 			const code = await read<string>("eth_getCode", [wallet, r.blockNumber]);
@@ -354,8 +359,6 @@ export async function inspectAllocation(
 			let directRenewalId: string | null = null,
 				cctpMessageIndex: number | null = null;
 			if (chain.chainId === HUB_CHAIN.chainId) {
-				if (debits[0].to !== address(HUB_CHAIN.gatewayAddress!))
-					fail("unsupported_processing_destination");
 				const renewals = segment.filter(
 					(l) =>
 						address(l.address) === address(HUB_CHAIN.gatewayAddress!) &&
@@ -380,6 +383,18 @@ export async function inspectAllocation(
 						p.amount - renewal.gasAllowance
 				)
 					fail("inconsistent_direct_processing");
+				// The executor's debit is the allowance plus the rounding remainder; the other
+				// debit is ENS's charge. Neither may return to the wallet.
+				const executor = address(renewal.executor),
+					toExecutor = debits.filter((m) => m.to === executor),
+					toPayee = debits.filter((m) => m.to !== executor);
+				if (
+					toExecutor.length !== 1 ||
+					toPayee.length !== 1 ||
+					toExecutor[0].amount !== p.amount - renewal.amountApplied ||
+					toPayee[0].amount !== renewal.amountApplied
+				)
+					fail("unsupported_processing_destination");
 				directRenewalId = `${input.chainId}:${hash(r.transactionHash)}:${position(l.logIndex)}`;
 			} else {
 				const burn = parseOriginBurnReceipt(
@@ -402,21 +417,23 @@ export async function inspectAllocation(
 					fail("inconsistent_processing_remainder");
 				cctpMessageIndex = burn.messageIndex;
 			}
-			const key = logId(debits[0].log);
-			if (calls.has(key)) fail("ambiguous_processing_identity");
-			calls.set(key, {
-				marker,
-				call: {
-					processingId: `${input.chainId}:${hash(r.transactionHash)}:${position(marker.logIndex)}`,
-					transactionHash: hash(r.transactionHash),
-					logIndex: position(marker.logIndex),
-					blockNumber: quantity(r.blockNumber).toString(),
-					amount: p.amount.toString(),
-					remaining: p.remaining.toString(),
-					directRenewalId,
-					cctpMessageIndex,
-				},
-			});
+			const call: Call = {
+				processingId: `${input.chainId}:${hash(r.transactionHash)}:${position(marker.logIndex)}`,
+				transactionHash: hash(r.transactionHash),
+				logIndex: position(marker.logIndex),
+				blockNumber: quantity(r.blockNumber).toString(),
+				amount: p.amount.toString(),
+				remaining: p.remaining.toString(),
+				directRenewalId,
+				cctpMessageIndex,
+			};
+			// Every debit of the call maps to the same marker, so the ledger can prove each one.
+			const pair = { marker, call };
+			for (const debit of debits) {
+				const key = logId(debit.log);
+				if (calls.has(key)) fail("ambiguous_processing_identity");
+				calls.set(key, pair);
+			}
 		}
 	}
 	async function balance(number: bigint) {
@@ -443,7 +460,7 @@ export async function inspectAllocation(
 			movement: m,
 			process: undefined as undefined | Call,
 		})),
-		...[...calls.values()].map((c) => ({
+		...[...new Set(calls.values())].map((c) => ({
 			log: c.marker,
 			movement: undefined,
 			process: c.call,
@@ -476,9 +493,11 @@ export async function inspectAllocation(
 				const pair = calls.get(logId(m.log));
 				if (!pair || m.amount > current) fail("unproven_wallet_debit");
 				current -= m.amount;
-				usedCalls.push(pair.call);
-				for (const d of deposits.filter((d) => !d.windowClosed))
-					d.processingCallIds.push(pair.call.processingId);
+				if (!usedCalls.includes(pair.call)) {
+					usedCalls.push(pair.call);
+					for (const d of deposits.filter((d) => !d.windowClosed))
+						d.processingCallIds.push(pair.call.processingId);
+				}
 			}
 		} else {
 			if (current.toString() !== item.process!.remaining)

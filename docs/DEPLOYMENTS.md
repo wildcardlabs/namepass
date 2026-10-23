@@ -2,11 +2,17 @@
 
 ## Two-contract protocol deployment — 2026-10-23
 
-Phase 3 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md) is complete. The merged
+Phases 3 and 4 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md) are complete. The merged
 `NamepassFactory` and the view-only `ENSV2RenewalAdapter` are deployed and verified on all four
-testnets. The application does not use them yet: `src/lib/chains.ts`, the backend verifiers and
-the Goldsky pipeline still point at the September 22 release below until Phases 4 and 5 run.
-Deposit addresses derived from the new factory are not live deposit addresses until then.
+testnets, and the code on this branch targets them: `src/lib/chains.ts`, helper discovery
+(interface version 2), the allocation and processing verifiers (one runtime hash, two debits on
+a direct call), the regenerated Goldsky pipeline, the runtime fixtures and the documentation.
+The hosted application still serves the September 22 release below until Phase 5 resets the
+data, deploys the pipeline and releases the branch. Deposit addresses derived from the new
+factory are not live deposit addresses until then. Server tests that replay captures recorded
+against the old deployment stay red until Phase 6 records new canaries: the processing-renewal,
+ENS-expiry, public-status, source-deposit and one public-address activation case, 23 tests in
+all; the other 198 pass.
 
 | Contract | Address | Network |
 | --- | --- | --- |

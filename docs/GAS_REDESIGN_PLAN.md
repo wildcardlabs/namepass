@@ -1,9 +1,10 @@
 # Gas redesign: step-by-step migration plan
 
 Companion to [GAS_REDESIGN_PROPOSAL.md](GAS_REDESIGN_PROPOSAL.md). Date: 2026-10-12.
-Status: Phases 1 to 3 complete as of 2026-10-23; the contracts are deployed and verified on all
-four testnets (see `DEPLOYMENTS.md`). Phase 4 is next. The beta deployment is disposable and has
-no flows in progress.
+Status: Phases 1 to 4 complete as of 2026-10-23; the contracts are deployed and verified on all
+four testnets and the branch targets them (see `DEPLOYMENTS.md`). Phase 5 is next and needs
+your authorization for the Neon reset. The beta deployment is disposable and has no flows in
+progress.
 
 Two roles. **Claude** writes code, runs read-only checks, and prepares every transaction.
 **You** sign transactions with the Rainbow browser wallet and authorize hosted-data changes.
@@ -103,6 +104,10 @@ Done 2026-10-23: `docs/deployments/2026-10-23/protocol-deployment-manifest.json`
 
 Exit: `npm run build`, `npm run check:server`, `npm run test:frontend` green. Server tests that
 depend on recorded receipts stay red until Phase 6 replaces the fixtures.
+Done 2026-10-23: 198 of 225 server tests pass; the 23 red ones replay captures from the old
+deployment (`processing-renewal-evidence`, `ens-expiry`, `public-status`,
+`source-deposit-evidence`, one `public-address` activation case). `tools/helper-deployment` is
+retired in favour of the protocol deployment page.
 
 ## Phase 5: hosted cutover (you authorize, Claude executes)
 

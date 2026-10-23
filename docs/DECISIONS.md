@@ -9,17 +9,21 @@ CREATE2 wallets let anyone derive a payment address without trusting the website
 uses the same factory within a deployment set. A factory replacement changes addresses; it is
 not a transparent upgrade. ENSIP-15 normalization happens before hashing the label.
 
-## Fixed gateway and replaceable ENS adapter
+## Fixed factory and replaceable ENS adapter
 
-A stable gateway preserves the wallet destination and CCTP route while ENS integrations change.
-The governance pointer selects an immutable helper instead of mutating ENS addresses inside it.
-The governance authority remains a trust assumption: interface checks cannot prove that arbitrary
-replacement code performs an ENS renewal. Testnet timelock control does not prove ENS DAO control.
+One factory preserves the wallet addresses and the CCTP route while ENS integrations change. Its
+governance executor selects an immutable, view-only adapter instead of mutating ENS addresses
+inside the factory. The adapter plans; the factory executes and verifies, so a replacement adapter
+can direct at most the quoted price of one payment to the spender it names. The governance
+authority remains a trust assumption beyond that bound: interface checks cannot prove that
+replacement code plans an ENS renewal. Testnet timelock control does not prove ENS DAO control.
+The October 2026 merge of the gateway and pointer into the factory removed two contracts and the
+transfers between them; the rationale and measurements are in `GAS_REDESIGN_PROPOSAL.md`.
 
 ## Permissionless execution without a sweep
 
-Anyone can start a renewal or complete an attested claim. The gateway pays a fixed executor
-allowance after settlement. There is no owner-selected recovery destination for wallet funds;
+Anyone can start a renewal or complete an attested claim. The payer pays the executor a fixed
+allowance plus the rounding remainder after settlement. There is no owner-selected recovery destination for wallet funds;
 adding one would change the custody model. Unsupported tokens can be unrecoverable.
 
 ## Exact oracle arithmetic

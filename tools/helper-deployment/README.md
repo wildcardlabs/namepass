@@ -1,29 +1,20 @@
-# Temporary helper deployment page
+# Retired helper deployment page
 
-Run from the repository:
+This page rotated the ENS helper of the September 22 five-contract deployment through its
+`RenewalHelperPointer`. That deployment is retired. The two-contract deployment of
+2026-10-23 has no pointer: the factory at `0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79`
+selects the adapter itself through the timelock-governed `setHelper`, and the adapter is
+view-only. Do not run this page against the current contracts; its embedded artifact,
+addresses and constructor arguments belong to the old design.
+
+Adapter rotation now uses `tools/protocol-deployment`: deploy the replacement
+`ENSV2RenewalAdapter` through the singleton factory with a new salt label, then schedule and
+execute `setHelper(adapter)` on the timelock. The page's readiness checks, verification and
+export apply unchanged. See [DEPLOYMENTS.md](../../docs/DEPLOYMENTS.md) for the active
+addresses and the October 6 rotation record that this page produced.
+
+The source stays for the historical record and still type-checks:
 
 ```bash
-node node_modules/vite/bin/vite.js --config tools/helper-deployment/vite.config.ts
 npx tsc --noEmit -p tools/helper-deployment/tsconfig.json
 ```
-
-Open `http://127.0.0.1:5174/` in Chrome with Rainbow. This is an isolated local Vite
-root, outside the application's production entry point. It loads no server environment
-or signing key. Public Sepolia RPC performs read-only checks; Rainbow signs the three
-explicit deployment, scheduling and activation transactions.
-
-The embedded artifact uses the existing Solidity 0.8.24 compiler and Shanghai settings.
-Its source hash and immutable references accompany the bytecode. A deployed helper must
-match the compiled runtime outside immutable offsets and every constructor getter.
-The disposable `HelperRotationForkTest` passed at Sepolia block 11857705 before the
-deployment controls were enabled. Rebuild and repeat that fork verification if the
-contract source or inputs change; the included artifact is specific to this rotation.
-
-The page saves only public addresses, transaction hashes and timelock operation data
-in local storage. It checks chain, account, contract configuration, roles and readiness
-before each write. Reloading preserves the journal; reconnect to verify progress.
-`Export deployment record` downloads the public journal. No background RPC loop or
-automatic activation runs. An elapsed countdown requires an explicit readiness check.
-
-The user completed the October 6 rotation. The durable deployment and API verification
-record is in [DEPLOYMENTS.md](../../docs/DEPLOYMENTS.md#october-ens-helper-rotation-and-api-canary--2026-10-06).

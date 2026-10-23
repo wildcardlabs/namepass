@@ -27,8 +27,8 @@ pipeline divides native transaction value by `10^12` before it emits the normali
 The workflow then verifies the mined transaction recipient and the same conversion before it uses
 the deposit. Circle applies the configured finality requirement after the origin burn.
 
-The raw-log sources filter the configured Namepass factory and gateway addresses. Gateway renewal
-receipts are enriched with ENS expiry evidence. The pipeline does not index global Circle
+The raw-log sources filter the configured Namepass factory address, which on the hub is also the
+gateway that emits the renewal events. Renewal receipts are enriched with ENS expiry evidence. The pipeline does not index global Circle
 `MessageSent` events. The workflow gets the final CCTP message, nonce and attestation from Iris.
 
 The pipeline needs two Goldsky secrets:
