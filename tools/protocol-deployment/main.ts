@@ -37,11 +37,15 @@ if (!["127.0.0.1", "localhost", "[::1]"].includes(location.hostname)) {
   throw new Error("Localhost required");
 }
 
+/** Optional RPC overrides from the shell that starts Vite, for example a keyed Arc endpoint. The key never enters the repository. */
+const env = (import.meta as unknown as { env: Record<string, string | undefined> }).env;
+const withRpc = (chain: Chain, url: string | undefined): Chain =>
+  url ? { ...chain, rpcUrls: { default: { http: [url] } } } : chain;
 const definitions: Record<number, Chain> = {
-  [sepolia.id]: { ...sepolia, rpcUrls: { default: { http: ["https://ethereum-sepolia-rpc.publicnode.com"] } } },
-  [baseSepolia.id]: baseSepolia,
-  [arbitrumSepolia.id]: arbitrumSepolia,
-  [arcTestnet.id]: arcTestnet,
+  [sepolia.id]: withRpc(sepolia, env.VITE_SEPOLIA_RPC_URL ?? "https://ethereum-sepolia-rpc.publicnode.com"),
+  [baseSepolia.id]: withRpc(baseSepolia, env.VITE_BASE_SEPOLIA_RPC_URL),
+  [arbitrumSepolia.id]: withRpc(arbitrumSepolia, env.VITE_ARBITRUM_SEPOLIA_RPC_URL),
+  [arcTestnet.id]: withRpc(arcTestnet, env.VITE_ARC_TESTNET_RPC_URL),
 };
 const readers: Record<number, PublicClient> = {};
 for (const chain of chains) {

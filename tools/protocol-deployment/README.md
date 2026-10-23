@@ -12,7 +12,11 @@ npx tsc --noEmit -p tools/protocol-deployment/tsconfig.json
 
 Open `http://127.0.0.1:5175/` in Chrome with Rainbow. The page is an isolated Vite root outside
 the application's entry point. It loads no server environment and holds no key. Public RPCs do
-the read-only checks; Rainbow signs the eleven transactions. The wallet must be the factory
+the read-only checks; Rainbow signs the eleven transactions. To read a chain through a different
+endpoint, for example a keyed Arc RPC, set `VITE_ARC_TESTNET_RPC_URL` (or `VITE_SEPOLIA_RPC_URL`,
+`VITE_BASE_SEPOLIA_RPC_URL`, `VITE_ARBITRUM_SEPOLIA_RPC_URL`) in the shell that starts Vite. The
+value stays in that shell and in the wallet's network entry; do not write it to a file in the
+repository. The wallet must be the factory
 owner and timelock operator, `0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6`.
 
 ## What it does
