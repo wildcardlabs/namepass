@@ -12,7 +12,7 @@ import {
 	toHex,
 	type Hex,
 } from "viem";
-import { HUB_CHAIN } from "../src/lib/chains";
+import { HUB_CHAIN, SERVER_CHAINS } from "../src/lib/chains";
 import {
 	inspectProcessingRenewal,
 	type ProcessingRenewalInput,
@@ -94,7 +94,10 @@ function fixture(index = 0, useOctober = false) {
 			return structuredClone(r.result);
 		},
 		async messages(domain, hash) {
-			assert.equal(domain, 26);
+			assert.equal(
+				domain,
+				SERVER_CHAINS.find((c) => String(c.chainId) === input.chainId)!.circleDomain,
+			);
 			assert.equal(hash, input.processingTransactionHash);
 			return structuredClone(reads.find((r) => r.kind === "iris")!.result);
 		},
@@ -152,6 +155,8 @@ test("recorded Arc, direct Sepolia and L2 receipts bind each call to its exact E
 		["2027-12-02T00:33:14.000Z", 334, 19],
 		["2028-01-12T02:03:04.000Z", 312, 19],
 		["2070-10-23T16:43:35.000Z", 224, 14],
+		["2029-12-07T12:33:21.000Z", 91, 19],
+		["2033-09-01T20:01:52.000Z", 347, 20],
 	] as const;
 	assert.equal(stored.cases.length, expected.length);
 	for (let i = 0; i < expected.length; i++) {
