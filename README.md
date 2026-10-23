@@ -80,9 +80,11 @@ Sourcify shows matching deployed bytecode and source for the October 23 contract
 | NamepassFactory | Arc Testnet | [Sourcify](https://repo.sourcify.dev/5042002/0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79) |
 | ENSV2RenewalAdapter | Ethereum Sepolia | [Sourcify](https://repo.sourcify.dev/11155111/0x4A468177187999F125dCE99a5eBD5F82Ab8D3481) |
 
-These links show source matches, not a security audit. The current release record does not include
-a verified NamepassResolver deployment. See the [deployment manifest](docs/deployments/2026-10-23/protocol-deployment-manifest.json)
-for the underlying checks.
+| NamepassResolver, `namepass.eth` on Sepolia | Ethereum Sepolia | [Sourcify](https://repo.sourcify.dev/11155111/0xDa617E9C8c16fAA756CbA0565835c9Ef81B4b092) |
+
+These links show source matches, not a security audit. See the
+[deployment manifest](docs/deployments/2026-10-23/protocol-deployment-manifest.json) and the
+[resolver record](docs/deployments/2026-10-23/resolver-sepolia.json) for the underlying checks.
 
 The factory is not an upgradeable proxy. Its initialized payment route is fixed. It fixes its
 payment token and Circle contracts at initialization and holds no funds between calls. The
@@ -119,9 +121,10 @@ price at execution.
 The October 23 deployment uses one factory address on Ethereum Sepolia, Base Sepolia, Arbitrum
 Sepolia, and Arc Testnet, and the beta application serves it. The
 [deployment record](docs/DEPLOYMENTS.md) contains the addresses, receipts, source verification
-and the canary deposits on every chain, including native and ERC-20 Arc deposits. The mainnet
-`namepass.eth` record predates the October 23 factory; the Sepolia wildcard resolver that names
-it is deployed through `tools/resolver-deployment`. None of this evidence is a security audit.
+and the canary deposits on every chain, including native and ERC-20 Arc deposits. On Sepolia,
+`<label>.namepass.eth` resolves through the wildcard resolver to the same deposit address the
+factory derives, and the first resolution activates the label. The mainnet `namepass.eth` record
+predates the October 23 factory. None of this evidence is a security audit.
 
 For the protocol's full contract rules, see [contract design](docs/CONTRACTS_V2.md) and
 [engineering constraints](docs/ENGINEERING_CONSTRAINTS.md). For local setup and tests, see

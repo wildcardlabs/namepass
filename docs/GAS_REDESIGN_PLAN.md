@@ -161,6 +161,9 @@ registry's `setResolver`. The page verifies the universal resolver's view and re
 through the hosted gateway, which activates the label and must return the factory's address. The
 Anvil dry run of both steps passed on 2026-10-23 with eleven checks and `nick.namepass.eth`
 resolving to the factory's prediction through the live gateway.
+Done on Sepolia 2026-10-23: resolver `0xDa617E9C8c16fAA756CbA0565835c9Ef81B4b092`, set on the
+name at 19:51 UTC; record in `docs/deployments/2026-10-23/resolver-sepolia.json`. Mainnet waits
+for the mainnet release.
 
 ## Your transaction count
 

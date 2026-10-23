@@ -1,0 +1,108 @@
+{
+  "recordedAt": "2026-10-23T19:55:15.022Z",
+  "network": "Ethereum Sepolia",
+  "chainId": 11155111,
+  "name": "namepass.eth",
+  "ensRegistry": {
+    "eth": "0xD4eBcbBdF463C9c45784603Db0dDD499BC44A8B4",
+    "root": "0xB458D6a3a77919449d03e7A6903C26827c1eC43f",
+    "universalResolver": "0xeEeEEEeE14D718C2B47D9923Deab1335E144EeEe"
+  },
+  "registration": {
+    "transactionHash": "0x94b4899045ab8eef4a2dbf8ce2a652eb6217bb4546b9f82f2bc7b48ffe2dcdec",
+    "block": 11978629,
+    "at": "2026-10-23T19:02:24.000Z",
+    "tokenId": "0xe9cc90d595d428aa07c91e6ff64a1eb5ccd8cb9490ebba9e4d30eb2000000000",
+    "owner": "0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6",
+    "expiry": "2027-10-24T01:02:24.000Z",
+    "resolverBefore": "0xCDD3d0f97c0900aBCC0E02c25406CfE977dd3e4a"
+  },
+  "resolver": "0xDa617E9C8c16fAA756CbA0565835c9Ef81B4b092",
+  "plan": {
+    "chainId": 11155111,
+    "name": "namepass.eth",
+    "owner": "0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6",
+    "ethRegistry": "0xD4eBcbBdF463C9c45784603Db0dDD499BC44A8B4",
+    "rootRegistry": "0xB458D6a3a77919449d03e7A6903C26827c1eC43f",
+    "universalResolver": "0xeEeEEEeE14D718C2B47D9923Deab1335E144EeEe",
+    "factory": "0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79",
+    "constructorArgs": {
+      "apexAddr": "0xf80E70eBC4184850f9fBCDC8De7CB4C86C46abF6",
+      "avatar": "",
+      "description": "ENS renewals via universal USDC deposit addresses",
+      "url": "https://beta.namepass.com/",
+      "gatewayUrl": "https://beta.namepass.com/api/ccip"
+    },
+    "contract": {
+      "name": "NamepassResolver",
+      "creationCodeHash": "0x404b834f9b76fef3c25886d7dedd2e88281284641fc07b6072c51c5562d2ae19",
+      "runtimeCodeHash": "0x3a2f090e0ef30cc5b6ec4fb1b06de6e4b77cc95d38f1396e73e1c98f746ad382",
+      "encodedConstructorArgs": "000000000000000000000000f80e70ebc4184850f9fbcdc8de7cb4c86c46abf600000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000000000c00000000000000000000000000000000000000000000000000000000000000120000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000031454e532072656e6577616c732076696120756e6976657273616c2055534443206465706f73697420616464726573736573000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001a68747470733a2f2f626574612e6e616d65706173732e636f6d2f000000000000000000000000000000000000000000000000000000000000000000000000002268747470733a2f2f626574612e6e616d65706173732e636f6d2f6170692f63636970000000000000000000000000000000000000000000000000000000000000",
+      "compiler": "0.8.24+commit.e11b9ed9",
+      "sourceSha256": "0xb4687b9d1be62504b1283c1b7208078b0761087e20932af836a224f056cc1356"
+    }
+  },
+  "transactions": {
+    "deploy": {
+      "hash": "0xee330b7219841a9c79653d5015cc7c2e71fa465da24f3127a1cf0f9268056cde",
+      "block": 11978872,
+      "at": "2026-10-23T19:51:00.000Z",
+      "gasUsed": 6589114,
+      "nonce": 208,
+      "contractAddress": "0xDa617E9C8c16fAA756CbA0565835c9Ef81B4b092"
+    },
+    "setResolver": {
+      "hash": "0x0e474adf499b5d87f3f7dc2dcabcbad29db33680dfe64788550e21a7bd7cb000",
+      "block": 11978873,
+      "at": "2026-10-23T19:51:12.000Z",
+      "gasUsed": 41620,
+      "nonce": 209,
+      "to": "0xD4eBcbBdF463C9c45784603Db0dDD499BC44A8B4",
+      "event": "ResolverUpdated"
+    }
+  },
+  "finalizedAtRecording": 11978812,
+  "verification": [
+    "resolver runtime matches the build",
+    "resolver owner is the name owner",
+    "apex address matches the plan",
+    "gateway URL matches the plan",
+    "url record matches the plan",
+    "description record matches the plan",
+    "resolver supports ENSIP-10",
+    "ETH registry names the resolver",
+    "universal resolver finds the resolver for namepass.eth",
+    "universal resolver finds the same resolver for a subname",
+    "namepass.eth resolves to the apex address through the universal resolver"
+  ],
+  "resolutions": [
+    {
+      "subname": "slobo.namepass.eth",
+      "resolved": "0xf230ec27Fb20d971ffbefA5b6c2Bc373D6d818B4",
+      "factoryPredictWallet": "0xf230ec27Fb20d971ffbefA5b6c2Bc373D6d818B4",
+      "localDerivation": "0xf230ec27Fb20d971ffbefA5b6c2Bc373D6d818B4",
+      "betaActivatedAt": "2026-10-23T19:54:38.004Z",
+      "note": "first resolution; the gateway activated the label"
+    },
+    {
+      "subname": "vitalik.namepass.eth",
+      "resolved": "0x9D21DeE23f5Fe9df32b91AE559530f933Ee9c899",
+      "factoryPredictWallet": "0x9D21DeE23f5Fe9df32b91AE559530f933Ee9c899",
+      "localDerivation": "0x9D21DeE23f5Fe9df32b91AE559530f933Ee9c899",
+      "betaActivatedAt": "2026-10-23T16:04:19.303Z",
+      "note": "label already active since the Phase 6 canary"
+    }
+  ],
+  "dryRun": {
+    "date": "2026-10-23",
+    "resolver": "0xDa617E9C8c16fAA756CbA0565835c9Ef81B4b092",
+    "note": "Anvil fork with the owner impersonated at the same nonce produced the same address; nick.namepass.eth resolved through the live gateway"
+  },
+  "sourcify": {
+    "match": "match",
+    "creationMatch": "match",
+    "runtimeMatch": "match",
+    "url": "https://repo.sourcify.dev/11155111/0xDa617E9C8c16fAA756CbA0565835c9Ef81B4b092"
+  },
+  "note": "Read-only verification from public RPC reads and receipts. Not a security audit."
+}
