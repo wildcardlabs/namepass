@@ -1,7 +1,9 @@
 # Gas redesign: step-by-step migration plan
 
 Companion to [GAS_REDESIGN_PROPOSAL.md](GAS_REDESIGN_PROPOSAL.md). Date: 2026-10-12.
-Status: plan, not started. The beta deployment is disposable and has no flows in progress.
+Status: Phases 1 to 3 complete as of 2026-10-23; the contracts are deployed and verified on all
+four testnets (see `DEPLOYMENTS.md`). Phase 4 is next. The beta deployment is disposable and has
+no flows in progress.
 
 Two roles. **Claude** writes code, runs read-only checks, and prepares every transaction.
 **You** sign transactions with the Rainbow browser wallet and authorize hosted-data changes.
@@ -83,6 +85,8 @@ explorers, runs the fork compatibility test against the deployed addresses, and 
 `docs/deployments/<date>/manifest.json` and `verification.json`.
 
 Exit: identical factory address on four chains, adapter active on the hub, manifest recorded.
+Done 2026-10-23: `docs/deployments/2026-10-23/protocol-deployment-manifest.json` and
+`protocol-deployment-verification.json`.
 
 ## Phase 4: backend (Claude, no transactions)
 

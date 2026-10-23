@@ -1,0 +1,96 @@
+{
+  "recordedAt": "2026-10-23T13:20:06.566Z",
+  "method": "tools/protocol-deployment verifyChain re-run from an independent environment against public RPCs, plus the browser page's own run recorded in the export",
+  "chains": {
+    "84532": {
+      "network": "Base Sepolia",
+      "checks": [
+        "factory runtime matches the build",
+        "factory owner is the deploying wallet",
+        "factory token is this chain's USDC",
+        "factory messenger is Circle's TokenMessenger",
+        "hub settlement address is the factory itself",
+        "gas allowance is $0.10",
+        "finality starts at Standard",
+        "no governance on an L2"
+      ]
+    },
+    "421614": {
+      "network": "Arbitrum Sepolia",
+      "checks": [
+        "factory runtime matches the build",
+        "factory owner is the deploying wallet",
+        "factory token is this chain's USDC",
+        "factory messenger is Circle's TokenMessenger",
+        "hub settlement address is the factory itself",
+        "gas allowance is $0.10",
+        "finality starts at Standard",
+        "no governance on an L2"
+      ]
+    },
+    "5042002": {
+      "network": "Arc Testnet",
+      "checks": [
+        "factory runtime matches the build",
+        "factory owner is the deploying wallet",
+        "factory token is this chain's USDC",
+        "factory messenger is Circle's TokenMessenger",
+        "hub settlement address is the factory itself",
+        "gas allowance is $0.10",
+        "finality starts at Standard",
+        "no governance on an L2"
+      ]
+    },
+    "11155111": {
+      "network": "Sepolia",
+      "checks": [
+        "factory runtime matches the build",
+        "factory owner is the deploying wallet",
+        "factory token is this chain's USDC",
+        "factory messenger is Circle's TokenMessenger",
+        "hub settlement address is the factory itself",
+        "gas allowance is $0.10",
+        "factory transmitter is Circle's MessageTransmitter",
+        "governance executor is the test timelock",
+        "adapter runtime matches the build",
+        "adapter interface version is 2",
+        "adapter factory is the new factory",
+        "adapter gateway is the new factory",
+        "adapter token is USDC",
+        "adapter registrar matches",
+        "adapter V1 renewer matches",
+        "adapter referrer matches",
+        "adapter is active",
+        "a live quote through the factory is valid"
+      ]
+    }
+  },
+  "forkTest": {
+    "suite": "test/SepoliaFork.t.sol",
+    "rpc": "https://sepolia.drpc.org",
+    "block": 11976900,
+    "result": "3 passed, 0 failed: testFork_nativeV2Renewal, testFork_premigratedV1Renewal, testFork_secondRenewalReusesWallet"
+  },
+  "factoryRuntimeIdenticalOnAllChains": true,
+  "explorers": {
+    "sourcify": "Full match (creation and runtime) on every instance; see the manifest.",
+    "forwardedBySourcify": {
+      "11155111": {
+        "routescan": "submitted, https://routescan.io/address/0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79?chainid=11155111 and the adapter address",
+        "etherscan": "not submitted: Sourcify's daily Etherscan submission limit was reached"
+      },
+      "84532": {
+        "blockscout": "submitted, https://base-sepolia.blockscout.com/address/0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79",
+        "etherscan": "not submitted: daily limit"
+      },
+      "421614": {
+        "blockscout": "submitted, https://arbitrum-sepolia.blockscout.com/address/0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79",
+        "etherscan": "not submitted: daily limit"
+      },
+      "5042002": {
+        "blockscout": "submitted to explorer.testnet.arc.io"
+      }
+    },
+    "remaining": "Etherscan, Basescan and Arbiscan show the contracts as unverified until a submission with an explorer API key is made; no key is configured in this environment."
+  }
+}

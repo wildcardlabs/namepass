@@ -1,0 +1,261 @@
+{
+  "recordedAt": "2026-10-23T13:20:06.566Z",
+  "phase": "GAS_REDESIGN_PLAN.md Phase 3",
+  "status": "deployed and verified; not yet the application's active configuration (Phases 4 and 5 pending)",
+  "signer": "0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6",
+  "exportedAt": "2026-10-23T13:15:35.289Z",
+  "plan": {
+    "saltLabel": "namepass-two-contract-2026-10-12",
+    "singletonFactory": "0x914d7Fec6aaC8cd542e72Bca78B30650d45643d7",
+    "owner": "0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6",
+    "hubChainId": 11155111,
+    "timelock": "0x996cbd179f361B1043Ad1999864eD41496C633c8",
+    "contracts": {
+      "NamepassFactory": {
+        "address": "0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79",
+        "salt": "0x18e1de0ae8c3a2097021496f52eb1a4700bab0ed6366fd787bea494272df6981",
+        "creationCodeHash": "0xed8c8aefee047045eeb03ff3526ad9db0e157d788185414b9f9a1d8fd2436714",
+        "runtimeCodeHash": "0x0183d0cf1afc66d42628be8d917358d73543e4f1524b747ea9c1de98e83f7698",
+        "constructorArgs": "0000000000000000000000001208a26faa0f4ac65b42098419eb4daa5e580ac60000000000000000000000000000000000000000000000000000000000aa36a7",
+        "compiler": "0.8.24+commit.e11b9ed9",
+        "sourceSha256": "0xf573be8005ea52f9fd0d855fef6bb61e3969e21cb6749a339bd525d4f499ba84"
+      },
+      "ENSV2RenewalAdapter": {
+        "address": "0x4A468177187999F125dCE99a5eBD5F82Ab8D3481",
+        "salt": "0x36d4c7d5798a2210ae86cf7a8359a94171d4c1d1077993c61a0f2d8b6dc6a274",
+        "creationCodeHash": "0x35752459d6e8eda764d8124ffaff834f61f66f6e4b876c9672ff163d4a088298",
+        "runtimeCodeHash": "0xbe7ca0306f0dedc2f0e9ca1d1fc9aed3a4b5cb82788fb7a4572ec212520cca7c",
+        "constructorArgs": "000000000000000000000000c4fb9aed5d7b812aa3689aa4b9400671dd665e790000000000000000000000001c7d4b196cb0c7b01d743fbc6116a902379c7238000000000000000000000000f633e7fc17e2bbe0d0965d18ec1821dcb754a3d3000000000000000000000000f2ece44980778966b8a0fccb3a9e339440f6e0450000000000000000000000001208a26faa0f4ac65b42098419eb4daa5e580ac6",
+        "compiler": "0.8.24+commit.e11b9ed9",
+        "sourceSha256": "0x31ad1d29536fe9d91f0ce519d54c766d069876e7be3e44c95d93a04207a3c11e"
+      }
+    },
+    "activation": {
+      "calldata": "0x986ccc7f0000000000000000000000004a468177187999f125dce99a5ebd5f82ab8d3481",
+      "salt": "0xeb5951d9fcfcc1a13056796e13ae5e38770d66508fc3a026244f62fd27303ca3"
+    }
+  },
+  "chains": {
+    "84532": {
+      "network": "Base Sepolia",
+      "usdc": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+      "tokenMessenger": "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+      "messageTransmitter": null
+    },
+    "421614": {
+      "network": "Arbitrum Sepolia",
+      "usdc": "0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d",
+      "tokenMessenger": "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+      "messageTransmitter": null
+    },
+    "5042002": {
+      "network": "Arc Testnet",
+      "usdc": "0x3600000000000000000000000000000000000000",
+      "tokenMessenger": "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+      "messageTransmitter": null
+    },
+    "11155111": {
+      "network": "Sepolia",
+      "usdc": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
+      "tokenMessenger": "0x8FE6B999Dc680CcFDD5Bf7EB0974218be2542DAA",
+      "messageTransmitter": "0xE737e5cEBEEBa77EFE34D4aa090756590b1CE275"
+    }
+  },
+  "transactions": [
+    {
+      "step": "deploy-factory-11155111",
+      "title": "Deploy factory on Sepolia",
+      "chainId": 11155111,
+      "hash": "0x10a6eb1b52acb70f4236d07ca83c7ac48f57301408db4ac18521112264cf23af",
+      "status": "success",
+      "block": 11976858,
+      "timestamp": "2026-10-23T13:06:12.000Z",
+      "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+      "to": "0x914d7fec6aac8cd542e72bca78b30650d45643d7",
+      "gasUsed": 21037569,
+      "logs": 1
+    },
+    {
+      "step": "deploy-adapter-11155111",
+      "title": "Deploy adapter on Sepolia",
+      "chainId": 11155111,
+      "hash": "0xeedcdf96ecdd2266896dcb0aef43ce78bc0997ff3e543eb4ab6f058f3a8a652d",
+      "status": "success",
+      "block": 11976862,
+      "timestamp": "2026-10-23T13:07:00.000Z",
+      "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+      "to": "0x914d7fec6aac8cd542e72bca78b30650d45643d7",
+      "gasUsed": 9081901,
+      "logs": 0
+    },
+    {
+      "step": "initialize-11155111",
+      "title": "Initialize factory on Sepolia",
+      "chainId": 11155111,
+      "hash": "0xc09650b0664b5e09fc297f50ff490a6ab0b28d1d112ff8609636a02eb54b9f18",
+      "status": "success",
+      "block": 11976865,
+      "timestamp": "2026-10-23T13:07:36.000Z",
+      "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+      "to": "0xc4fb9aed5d7b812aa3689aa4b9400671dd665e79",
+      "gasUsed": 477888,
+      "logs": 3
+    },
+    {
+      "step": "schedule-11155111",
+      "title": "Schedule adapter activation on the timelock",
+      "chainId": 11155111,
+      "hash": "0xebe98021ab2dc67b8dc3159ab8b9cf87f62797d28d3bb7d63c8c26890a29e6ac",
+      "status": "success",
+      "block": 11976867,
+      "timestamp": "2026-10-23T13:08:00.000Z",
+      "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+      "to": "0x996cbd179f361b1043ad1999864ed41496c633c8",
+      "gasUsed": 138866,
+      "logs": 2
+    },
+    {
+      "step": "activate-11155111",
+      "title": "Execute adapter activation after the delay",
+      "chainId": 11155111,
+      "hash": "0x6ba37bab7cd7d676071185cd26a899df37ba44c68e2cdb196980c91786f98d39",
+      "status": "success",
+      "block": 11976878,
+      "timestamp": "2026-10-23T13:10:12.000Z",
+      "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+      "to": "0x996cbd179f361b1043ad1999864ed41496c633c8",
+      "gasUsed": 165490,
+      "logs": 2
+    },
+    {
+      "step": "deploy-factory-84532",
+      "title": "Deploy factory on Base Sepolia",
+      "chainId": 84532,
+      "hash": "0x9ebab3085208dc6aa6d466470d344c5060ecfe6a49204a2ec46fb2fb663d1c58",
+      "status": "success",
+      "block": 49195833,
+      "timestamp": "2026-10-23T13:10:35.000Z",
+      "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+      "to": "0x914d7fec6aac8cd542e72bca78b30650d45643d7",
+      "gasUsed": 2974085,
+      "logs": 1
+    },
+    {
+      "step": "initialize-84532",
+      "title": "Initialize factory on Base Sepolia",
+      "chainId": 84532,
+      "hash": "0x717edab589e032a40b55ed8f74b81a5d66f3c28a1907074738e8a681d9298c2b",
+      "status": "success",
+      "block": 49195885,
+      "timestamp": "2026-10-23T13:10:45.000Z",
+      "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+      "to": "0xc4fb9aed5d7b812aa3689aa4b9400671dd665e79",
+      "gasUsed": 78451,
+      "logs": 2
+    },
+    {
+      "step": "deploy-factory-421614",
+      "title": "Deploy factory on Arbitrum Sepolia",
+      "chainId": 421614,
+      "hash": "0xad5b34bba562372b91b6d8aed2cb9e18ba3818c512f2cc9d3929f26e9d784bff",
+      "status": "success",
+      "block": 322061526,
+      "timestamp": "2026-10-23T13:11:01.000Z",
+      "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+      "to": "0x914d7fec6aac8cd542e72bca78b30650d45643d7",
+      "gasUsed": 2974085,
+      "logs": 1
+    },
+    {
+      "step": "initialize-421614",
+      "title": "Initialize factory on Arbitrum Sepolia",
+      "chainId": 421614,
+      "hash": "0xd18580662c79e8de9a1c13ac07330292e4835ac6f87aaadb80746d6da67e8aef",
+      "status": "success",
+      "block": 322061572,
+      "timestamp": "2026-10-23T13:11:13.000Z",
+      "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+      "to": "0xc4fb9aed5d7b812aa3689aa4b9400671dd665e79",
+      "gasUsed": 78451,
+      "logs": 2
+    },
+    {
+      "step": "deploy-factory-5042002",
+      "title": "Deploy factory on Arc Testnet",
+      "chainId": 5042002,
+      "hash": "0xe2b56ef979904d2bb5fd951bf993958d50d235bb01e4082300229a87fcf47b3b",
+      "status": "success",
+      "block": 68694990,
+      "timestamp": "2026-10-23T13:13:34.000Z",
+      "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+      "to": "0x914d7fec6aac8cd542e72bca78b30650d45643d7",
+      "gasUsed": 2974085,
+      "logs": 1
+    },
+    {
+      "step": "initialize-5042002",
+      "title": "Initialize factory on Arc Testnet",
+      "chainId": 5042002,
+      "hash": "0x9af4d4efd404b3cd17dd351a1f60f145fca8057c2303e880e6793f3058bd42a8",
+      "status": "success",
+      "block": 68695140,
+      "timestamp": "2026-10-23T13:14:50.000Z",
+      "from": "0x1208a26faa0f4ac65b42098419eb4daa5e580ac6",
+      "to": "0xc4fb9aed5d7b812aa3689aa4b9400671dd665e79",
+      "gasUsed": 78223,
+      "logs": 2
+    }
+  ],
+  "deployedRuntimeKeccak256": {
+    "84532:0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79": "0x7ca0a4660909e70cdecc1487e282d82a8cc0825c02cea740e3e58f3603abe08c",
+    "421614:0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79": "0x7ca0a4660909e70cdecc1487e282d82a8cc0825c02cea740e3e58f3603abe08c",
+    "5042002:0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79": "0x7ca0a4660909e70cdecc1487e282d82a8cc0825c02cea740e3e58f3603abe08c",
+    "11155111:0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79": "0x7ca0a4660909e70cdecc1487e282d82a8cc0825c02cea740e3e58f3603abe08c",
+    "11155111:0x4A468177187999F125dCE99a5eBD5F82Ab8D3481": "0x85c8c2372c2894ca8cbf96d4ea272492fc30c438dc61e6f37ed96c26436d05d2"
+  },
+  "sourcify": {
+    "server": "https://sourcify.dev/server/v2",
+    "matches": [
+      {
+        "chainId": 11155111,
+        "address": "0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79",
+        "contract": "NamepassFactory",
+        "creationMatch": "match",
+        "runtimeMatch": "match",
+        "verifiedAt": "2026-10-23T13:17:17Z"
+      },
+      {
+        "chainId": 84532,
+        "address": "0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79",
+        "contract": "NamepassFactory",
+        "creationMatch": "match",
+        "runtimeMatch": "match",
+        "verifiedAt": "2026-10-23T13:17:32Z"
+      },
+      {
+        "chainId": 421614,
+        "address": "0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79",
+        "contract": "NamepassFactory",
+        "creationMatch": "match",
+        "runtimeMatch": "match",
+        "verifiedAt": "2026-10-23T13:17:34Z"
+      },
+      {
+        "chainId": 5042002,
+        "address": "0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79",
+        "contract": "NamepassFactory",
+        "creationMatch": "match",
+        "runtimeMatch": "match",
+        "verifiedAt": "2026-10-23T13:17:35Z"
+      },
+      {
+        "chainId": 11155111,
+        "address": "0x4A468177187999F125dCE99a5eBD5F82Ab8D3481",
+        "contract": "ENSV2RenewalAdapter",
+        "creationMatch": "match",
+        "runtimeMatch": "match",
+        "verifiedAt": "2026-10-23T13:17:35Z"
+      }
+    ]
+  }
+}

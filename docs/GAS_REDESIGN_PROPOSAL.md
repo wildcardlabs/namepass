@@ -1,7 +1,8 @@
 # Proposal: two-contract protocol for lower renewal gas
 
-Date: 2026-10-12, revised after review. Status: proposal, not implemented. Testnet only; no
-mainnet deployment exists, so addresses are not yet fixed.
+Date: 2026-10-12, revised after review. Status: implemented and deployed on the four testnets on
+2026-10-23 (`DEPLOYMENTS.md`); the application cutover is pending. No mainnet deployment exists,
+so mainnet addresses are not yet fixed.
 
 Revision notes: the first version claimed the backend needed only configuration changes and that
 trust was unchanged. Both were wrong. This version scopes the backend work, states the settlement
