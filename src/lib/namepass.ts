@@ -22,7 +22,7 @@
  * Change any of them and every address this file has ever shown moves.
  *
  * Verified against the chain: `depositAddress("vitalik")` is
- * `0xe045CCEddbdB26F7D6a30DF6e5aa6642dC48Bd3B`, which is what
+ * `0x9D21DeE23f5Fe9df32b91AE559530f933Ee9c899`, which is what
  * `cast call $FACTORY 'predictWallet(string)(address)' vitalik` returns on all
  * four testnets.
  */

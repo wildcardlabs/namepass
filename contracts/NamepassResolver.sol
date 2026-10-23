@@ -2,7 +2,8 @@
 pragma solidity 0.8.24;
 
 contract NamepassResolver {
-    address constant FACTORY = 0x2dCB5CA6b21372b43e37C35Da8D5D15160423150;
+    /// @dev The October 23, 2026 `NamepassFactory`, one address on every chain in the set.
+    address constant FACTORY = 0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79;
     bytes4 constant ADDR = 0x3b3b57de; // addr(bytes32)
     bytes4 constant ADDR_MULTICOIN = 0xf1cb7e06; // addr(bytes32,uint256)
 

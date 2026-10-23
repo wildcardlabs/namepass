@@ -119,8 +119,9 @@ price at execution.
 The October 23 deployment uses one factory address on Ethereum Sepolia, Base Sepolia, Arbitrum
 Sepolia, and Arc Testnet, and the beta application serves it. The
 [deployment record](docs/DEPLOYMENTS.md) contains the addresses, receipts, source verification
-and the canary deposits on every chain, including native and ERC-20 Arc deposits. The wildcard
-resolver still names the September 22 factory. None of this evidence is a security audit.
+and the canary deposits on every chain, including native and ERC-20 Arc deposits. The mainnet
+`namepass.eth` record predates the October 23 factory; the Sepolia wildcard resolver that names
+it is deployed through `tools/resolver-deployment`. None of this evidence is a security audit.
 
 For the protocol's full contract rules, see [contract design](docs/CONTRACTS_V2.md) and
 [engineering constraints](docs/ENGINEERING_CONSTRAINTS.md). For local setup and tests, see

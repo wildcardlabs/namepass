@@ -154,13 +154,22 @@ the new deposit addresses is wanted now, that is two Ethereum mainnet transactio
 updated resolver and set it on the parent name. This costs real ETH and can wait for the mainnet
 release, when the resolver has to change anyway.
 
+Sepolia first: `namepass.eth` was registered in the ENS V2 ETH registry on Sepolia on
+2026-10-23, so the same two transactions run there through `tools/resolver-deployment`
+(port 5179): deploy `NamepassResolver`, which now compiles in the October 23 factory, then the
+registry's `setResolver`. The page verifies the universal resolver's view and resolves a subname
+through the hosted gateway, which activates the label and must return the factory's address. The
+Anvil dry run of both steps passed on 2026-10-23 with eleven checks and `nick.namepass.eth`
+resolving to the factory's prediction through the live gateway.
+
 ## Your transaction count
 
 | Phase | Signatures |
 | --- | --- |
 | 3 Deployment | 11 |
 | 6 Canaries | 4 |
-| 7 Resolver, optional | 2 on mainnet |
+| 7 Resolver, Sepolia | 2 |
+| 7 Resolver, mainnet, optional | 2 on mainnet |
 
 Everything else is code, read-only verification, or hosted configuration that Claude handles
 with your authorization recorded in the conversation.
