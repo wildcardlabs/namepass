@@ -243,7 +243,7 @@ test("status completes a verified renewal before finality and holds a staggered 
 	const f = await database(t);
 	let additional = false;
 	const n = recorded.seed.registry.find(
-		(r: any) => r.normalized_label === "vitalik",
+		(r: any) => r.normalized_label === "steve",
 	);
 	assert.ok(n);
 	const original = recorded.reads.find(
@@ -288,14 +288,16 @@ test("status completes a verified renewal before finality and holds a staggered 
 	).rows;
 	const complete = await body(await route.fetch(request()));
 	assert.equal(complete.status, "complete");
-	assert.equal(complete.deposits[0].amount, "500000");
+	assert.equal(complete.deposits[0].amount, "1000000");
+	// Independent values: the ENS V1 registrar's NameRenewed in the renewal receipt and the
+	// factory's Renewed log position, read from the public chain.
 	assert.deepEqual(complete.deposits[0].renewals, [
 		{
-			renewalId: `11155111:${recorded.seed.candidates[0].renewal_hash}:179`,
+			renewalId: `11155111:${recorded.seed.candidates[0].renewal_hash}:232`,
 			chainId: "11155111",
 			transactionHash: recorded.seed.candidates[0].renewal_hash,
-			secondsAdded: "1576795",
-			expiry: "2032-03-26T03:32:32.000Z",
+			secondsAdded: "3547790",
+			expiry: "2070-10-23T16:43:35.000Z",
 		},
 	]);
 	assert.ok(rpc.calls <= 96);

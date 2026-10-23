@@ -117,9 +117,9 @@ price at execution.
 ## Current testnet status
 
 The October 23 deployment uses one factory address on Ethereum Sepolia, Base Sepolia, Arbitrum
-Sepolia, and Arc Testnet. The [deployment record](docs/DEPLOYMENTS.md) contains the addresses,
-receipts and source verification. Its canaries on every chain are still to be run; until the
-hosted cutover, the beta application still serves the September 22 deployment. The wildcard
+Sepolia, and Arc Testnet, and the beta application serves it. The
+[deployment record](docs/DEPLOYMENTS.md) contains the addresses, receipts, source verification
+and the canary deposits on every chain, including native and ERC-20 Arc deposits. The wildcard
 resolver still names the September 22 factory. None of this evidence is a security audit.
 
 For the protocol's full contract rules, see [contract design](docs/CONTRACTS_V2.md) and

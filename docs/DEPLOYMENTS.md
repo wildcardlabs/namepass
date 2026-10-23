@@ -1,5 +1,29 @@
 # Testnet deployments
 
+## Two-contract protocol canaries — 2026-10-23
+
+Phase 6 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md): the first deposits on the two-contract
+deployment, funded by the user through `tools/canary-funding` and processed by the hosted
+application without intervention. Every flow settled; the
+[canary record](deployments/2026-10-23/canaries.json) holds the funding receipts, the relayer's
+transactions, the indexed event positions, the names' expiries after renewal and the live
+responses of the four public API endpoints.
+
+| Chain | Name | Deposit | Route | Settled |
+| --- | --- | --- | --- | --- |
+| Ethereum Sepolia | vitalik.eth | 1.00 USDC, ERC-20 | direct, V1 renewer, wallet created | 16:12:58 UTC |
+| Base Sepolia | skellat.eth | 1.00 USDC, ERC-20 | burn, Circle attestation, claim, V2 registrar | 16:31:02 UTC |
+| Arbitrum Sepolia | farcaster.eth | 1.00 USDC, ERC-20 | burn, attestation, claim, V1 renewer | 16:35:26 UTC |
+| Arc Testnet | steve.eth | 1.00 USDC, native | burn, attestation, claim, V2 registrar | 16:13:38 UTC |
+| Arc Testnet | steve.eth | 1.00 USDC, ERC-20 | same, second slice of the same wallet | 16:13:51 UTC |
+| Ethereum Sepolia | skellat.eth | 9.00 and 8.00 USDC, ERC-20 | two further direct V2 renewals the user sent outside the page | 16:32 and 16:33 UTC |
+
+Each 1.00 USDC deposit applied 0.90 USDC for 3,547,790 seconds and paid the relayer 0.10 USDC.
+Circle's Standard finality held the Base and Arbitrum claims for about 18 and 22 minutes; Arc
+attested within seconds. Receipt gas is tabulated in `test/gas/README.md`. The recorded captures
+under `test/fixtures/` were regenerated from these receipts with the `scripts/fixtures`
+recorders, and the full server suite passes on them.
+
 ## Two-contract protocol deployment — 2026-10-23
 
 Phases 3 and 4 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md) are complete. The merged
@@ -15,10 +39,17 @@ roles preserved. The Goldsky pipeline `namepass-testnet-v2` was re-applied in pl
 address filters and start blocks; its source names and checkpoints are unchanged, so it indexes
 the new factory from the current head. The re-apply pulled a newer hosted engine image without
 the 256-bit integer functions the Arc native transform used, and the pipeline crash-looped until
-the transform was rewritten to divide on the decimal string; see `goldsky/README.md`. The application release is
-[pull request 153](https://github.com/wildcardlabs/namepass/pull/153); until it merges and
-Vercel deploys, the beta serves the September 22 addresses against an empty database, and
-deposit addresses derived from the new factory are not live. Server tests that replay captures recorded
+the transform was rewritten to divide on the decimal string; see `goldsky/README.md`. The application release,
+[pull request 153](https://github.com/wildcardlabs/namepass/pull/153), merged as `7e4477c` on
+2026-10-23 at 15:58 UTC; Vercel deployment `namepass-v2-fohvew23e` serves `beta.namepass.com`.
+The public address API then activated the four Phase 6 canary names and returned the new
+factory's wallets, equal to `predictWallet` on chain: `vitalik` (V1 route)
+`0x9D21DeE23f5Fe9df32b91AE559530f933Ee9c899`, `skellat` (V2)
+`0x156613E6B845a101DcB5a961028c52BA52F10E5b`, `farcaster` (V1)
+`0xEE8B8e5027d9d829267C59f758673925F499566F`, `steve` (V2)
+`0xd78DF8F827881e34ff0B1B717dc876D880890D50`. The old deposit addresses are retired; the
+old factory still accepts a permissionless `renew`, but the application neither shows nor
+processes them. Server tests that replay captures recorded
 against the old deployment stay red until Phase 6 records new canaries: the processing-renewal,
 ENS-expiry, public-status, source-deposit and one public-address activation case, 23 tests in
 all; the other 198 pass.

@@ -1,18 +1,18 @@
 # Status receipt captures
 
-`october-reads.json` records the real, read-only HTTP adapter inspection of the user's
-October 6 Sepolia `farcaster.eth` payment. The API tests use the current ENS registry.
-Its source transfer is `0xd725d3431622bfc574524ca092564a319efe49e0be2b4798348b582718441533`,
-log 110. Renewal transaction `0xb47311d40dc75d0d2253521fd8e3b0dd8a206b9034694a6d6a0d28701186e99e`
-contains the gateway renewal at log 179 and processing at log 180. Independent receipt
-values are $0.50 received, $0.40 applied, 1,576,795 seconds and expiry 1963884752.
+`october-reads.json` records the read-only HTTP status inspection of the user's
+2026-10-23 Sepolia `vitalik.eth` canary on the two-contract deployment, recorded by
+`scripts/fixtures/record-public-status.ts` with live providers and the route's own SQL
+against a seeded local database. Its source transfer is
+`0xba0a98186a197541cfb883bfce5d73be2b88dcac2478f80029ca107212081bbb`, log 200. Renewal
+transaction `0x950ece3630e8bd89389e8c1d156d0c37f5c2d5d6e24dc21bc75b321cd92037ac` contains
+the factory's renewal at log 232 and processing at log 233. Independent receipt values are
+$1.00 received, $0.90 applied, 3,547,790 seconds and V1 registration expiry 3181308215.
 
 Only database wire transport and provider responses are replaced in the replay.
 Actual adapter SQL and receipt verifiers run. Contract code is deduplicated by hash.
 The recorded capture contains no RPC URL, credential, Workflow ID or signed transaction.
 The current direct CLI regression also uses this capture in a separate process.
 
-`reads.json` is the prior deployment's archived single-deposit capture. The local
-activation/late-delivery regression still uses its source transfer. Archived processing
-and expiry tests explicitly use their recorded ENS configuration; the production API
-does not gain a legacy-contract allowlist. Neither capture proves hosted polling capacity.
+The activation/late-delivery regression replays the same capture with its processing and
+renewal rows absent. The capture does not prove hosted polling capacity.

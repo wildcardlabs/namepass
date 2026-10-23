@@ -12,7 +12,7 @@ import {
 	toHex,
 	type Hex,
 } from "viem";
-import { HUB_CHAIN } from "../src/lib/chains";
+import { HUB_CHAIN, SERVER_CHAINS } from "../src/lib/chains";
 import {
 	inspectProcessingRenewal,
 	type ProcessingRenewalInput,
@@ -29,21 +29,8 @@ const stored = JSON.parse(
 		"utf8",
 	),
 );
-// Keep the archived cross-chain/correction regressions under their recorded September
-// ENS configuration. The current direct CLI case below uses the October capture and
-// executes in a separate process with the real current registry. No legacy addresses
-// are accepted by the production API.
-const currentEns = {
-	ensRegistrarAddress: HUB_CHAIN.ensRegistrarAddress,
-	ensRenewerV1Address: HUB_CHAIN.ensRenewerV1Address,
-};
-test.before(() =>
-	Object.assign(HUB_CHAIN, {
-		ensRegistrarAddress: "0xAbe76F6C8DFcEd81AA5A2bB8034202A7136b94ca",
-		ensRenewerV1Address: "0xd06e726e9bD8ac0f33A2a45F4Cc28fe10d656a36",
-	}),
-);
-test.after(() => Object.assign(HUB_CHAIN, currentEns));
+// The captures were recorded against the current two-contract deployment and the current ENS
+// configuration, so no legacy address is pinned here or accepted by the production API.
 const october = JSON.parse(
 	readFileSync(
 		new URL(
@@ -75,7 +62,7 @@ function fixture(index = 0, useOctober = false) {
 		? {
 				input: {
 					chainId: 11155111,
-					label: "farcaster",
+					label: candidate.label,
 					processingTransactionHash: candidate.processing_hash,
 					processingLogIndex: candidate.processing_index,
 					renewalTransactionHash: candidate.renewal_hash,
@@ -107,7 +94,10 @@ function fixture(index = 0, useOctober = false) {
 			return structuredClone(r.result);
 		},
 		async messages(domain, hash) {
-			assert.equal(domain, 26);
+			assert.equal(
+				domain,
+				SERVER_CHAINS.find((c) => String(c.chainId) === input.chainId)!.circleDomain,
+			);
 			assert.equal(hash, input.processingTransactionHash);
 			return structuredClone(reads.find((r) => r.kind === "iris")!.result);
 		},
@@ -157,15 +147,19 @@ function changeEns(
 	);
 }
 
-test("historical Arc and direct Sepolia receipts bind each call to its exact ENS expiry and history identifier", async () => {
-	// These fixed expiries/durations come from the published chain receipt events, not verifier output.
+test("recorded Arc, direct Sepolia and L2 receipts bind each call to its exact ENS expiry and history identifier", async () => {
+	// Expiry and ENS log position come from the published chain receipt events, not verifier output.
+	// Cases: two equal Arc claims for steve (V2), the direct Sepolia renewal of vitalik (V1), the
+	// Base claim for skellat (V2) and the Arbitrum claim for farcaster (V1).
 	const expected = [
-		["2029-07-02T07:16:26.000Z", 184, 19],
-		["2029-08-12T08:46:16.000Z", 158, 19],
-		["2029-09-22T10:16:06.000Z", 316, 13],
-		["2069-09-12T15:13:35.000Z", 154, 20],
+		["2027-12-02T00:33:14.000Z", 334, 19],
+		["2028-01-12T02:03:04.000Z", 312, 19],
+		["2070-10-23T16:43:35.000Z", 224, 14],
+		["2029-12-07T12:33:21.000Z", 91, 19],
+		["2033-09-01T20:01:52.000Z", 347, 20],
 	] as const;
-	for (let i = 0; i < 4; i++) {
+	assert.equal(stored.cases.length, expected.length);
+	for (let i = 0; i < expected.length; i++) {
 		const f = fixture(i),
 			r = await inspectProcessingRenewal(f.input, f.transport);
 		assert.equal(
@@ -176,8 +170,8 @@ test("historical Arc and direct Sepolia receipts bind each call to its exact ENS
 			r.processingId,
 			`${f.input.chainId}:${f.input.processingTransactionHash}:${f.input.processingLogIndex}`,
 		);
-		assert.equal(r.secondsAdded, i === 3 ? "39025697" : "3547790");
-		assert.equal(r.amountApplied, i === 3 ? "9900000" : "900000");
+		assert.equal(r.secondsAdded, "3547790");
+		assert.equal(r.amountApplied, "900000");
 		assert.equal(r.renewalFee, "100000");
 		assert.equal(r.expiry, expected[i][0]);
 		assert.equal(r.ensLogIndex, expected[i][1]);
@@ -264,8 +258,8 @@ test("two equal burns and renewals inside one transaction keep ordered message a
 	assert.equal(second.cctp!.messageIndex, 1);
 	assert.notEqual(first.processingId, second.processingId);
 	assert.notEqual(first.renewalId, second.renewalId);
-	assert.equal(first.expiry, "2029-07-02T07:16:26.000Z");
-	assert.equal(second.expiry, "2029-08-12T08:46:16.000Z");
+	assert.equal(first.expiry, "2027-12-02T00:33:14.000Z");
+	assert.equal(second.expiry, "2028-01-12T02:03:04.000Z");
 	await assert.rejects(
 		inspectProcessingRenewal(
 			{ ...input(0), renewalLogIndex: input(1).renewalLogIndex },
@@ -361,7 +355,7 @@ test("ENS duration, charged amount, token, referrer and helper runtime cannot be
 		(r) =>
 			r.method === "eth_getCode" &&
 			String(r.params[0]).toLowerCase() ===
-				"0x7bfee7c257ff48f8d787a61f15925e24743c8f88",
+				"0x4a468177187999f125dce99a5ebd5f82ab8d3481",
 	)!;
 	helper.result = "0x1234";
 	await assert.rejects(
@@ -374,9 +368,11 @@ test("ENS duration, charged amount, token, referrer and helper runtime cannot be
 		inspectProcessingRenewal(factory.input, factory.transport),
 		/unsupported_processing_factory/,
 	);
+	// The factory is the gateway, so the hub read is the one whose chain is the hub.
 	const gateway = fixture();
 	gateway.reads.find(
 		(r) =>
+			r.chainId === HUB_CHAIN.chainId &&
 			r.method === "eth_getCode" &&
 			String(r.params[0]).toLowerCase() ===
 				HUB_CHAIN.gatewayAddress!.toLowerCase(),
@@ -590,7 +586,7 @@ test("actual direct CLI uses read-only serialized RPC and suppresses private or 
 		assert.equal(result.code, 0, result.stderr);
 		const report = JSON.parse(result.stdout);
 		assert.equal(report.readOnly, true);
-		assert.equal(report.evidence.expiry, "2032-03-26T03:32:32.000Z");
+		assert.equal(report.evidence.expiry, "2070-10-23T16:43:35.000Z");
 		assert.equal(report.evidence.providerFinalized, true);
 		for (const bad of ["error", "oversized", "wrong-id"] as const) {
 			mode = bad;
