@@ -1,0 +1,47 @@
+{
+  "resetAt": "2026-10-23T15:34:39.772Z",
+  "project": "nameless-paper-91018372",
+  "branch": "br-noisy-bird-avey45an",
+  "authorization": "User authorized the Phase 5 reset in conversation on 2026-10-23 after Phase 4 was pushed.",
+  "writersStopped": "Goldsky pipeline namepass-testnet-v2 paused before the reset; no pending flows or transaction intents existed.",
+  "before": {
+    "public.names": 113,
+    "public.balance_snapshots": 452,
+    "public.balance_scan_requests": 0,
+    "public.chain_events": 433,
+    "public.deposits": 109,
+    "public.flows": 107,
+    "public.flow_transitions": 546,
+    "public.relayer_nonces": 4,
+    "public.transaction_intents": 111,
+    "goldsky.watched_addresses": 113
+  },
+  "flows": [
+    {
+      "status": "settled",
+      "count": 107
+    }
+  ],
+  "intents": [
+    {
+      "status": "confirmed",
+      "count": 111
+    }
+  ],
+  "after": {
+    "public.names": 0,
+    "public.balance_snapshots": 0,
+    "public.balance_scan_requests": 0,
+    "public.chain_events": 0,
+    "public.deposits": 0,
+    "public.flows": 0,
+    "public.flow_transitions": 0,
+    "public.relayer_nonces": 0,
+    "public.transaction_intents": 0,
+    "goldsky.watched_addresses": 0
+  },
+  "allTablesEmpty": true,
+  "migrationsBefore": 9,
+  "migrationsAfter": 9,
+  "preserved": "schema, migrations, roles"
+}

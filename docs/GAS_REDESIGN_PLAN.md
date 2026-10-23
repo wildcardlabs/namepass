@@ -1,10 +1,9 @@
 # Gas redesign: step-by-step migration plan
 
 Companion to [GAS_REDESIGN_PROPOSAL.md](GAS_REDESIGN_PROPOSAL.md). Date: 2026-10-12.
-Status: Phases 1 to 4 complete as of 2026-10-23; the contracts are deployed and verified on all
-four testnets and the branch targets them (see `DEPLOYMENTS.md`). Phase 5 is next and needs
-your authorization for the Neon reset. The beta deployment is disposable and has no flows in
-progress.
+Status: Phases 1 to 4 complete and Phase 5 in progress as of 2026-10-23. The data reset and the
+pipeline re-apply are done (see `DEPLOYMENTS.md`); the application release is pull request 153.
+Phase 6 follows the merge.
 
 Two roles. **Claude** writes code, runs read-only checks, and prepares every transaction.
 **You** sign transactions with the Rainbow browser wallet and authorize hosted-data changes.
@@ -120,6 +119,9 @@ retired in favour of the protocol deployment page.
 4. **Copy.** The beta says old deposit addresses are retired.
 
 Exit: app live on the new addresses with an empty history.
+Progress 2026-10-23: steps 1 and 2 done, recorded in `docs/deployments/2026-10-23/reset.json`
+and `DEPLOYMENTS.md`; step 3 is pull request 153, whose server tests stay red on the old
+captures until Phase 6; step 4 pending.
 
 ## Phase 6: canaries and fixtures (you fund, Claude verifies)
 

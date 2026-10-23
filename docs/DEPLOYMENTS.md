@@ -7,9 +7,16 @@ Phases 3 and 4 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md) are complete. The
 testnets, and the code on this branch targets them: `src/lib/chains.ts`, helper discovery
 (interface version 2), the allocation and processing verifiers (one runtime hash, two debits on
 a direct call), the regenerated Goldsky pipeline, the runtime fixtures and the documentation.
-The hosted application still serves the September 22 release below until Phase 5 resets the
-data, deploys the pipeline and releases the branch. Deposit addresses derived from the new
-factory are not live deposit addresses until then. Server tests that replay captures recorded
+Phase 5 is in progress. The hosted testnet database (Neon project `nameless-paper-91018372`,
+branch `br-noisy-bird-avey45an`) was reset on 2026-10-23 after the pipeline was paused and no
+pending flow or transaction intent remained; the [reset record](deployments/2026-10-23/reset.json)
+holds the row counts before and after, all tables empty afterwards, with schema, migrations and
+roles preserved. The Goldsky pipeline `namepass-testnet-v2` was re-applied in place with the new
+address filters and start blocks; its source names and checkpoints are unchanged, so it indexes
+the new factory from the current head. The application release is
+[pull request 153](https://github.com/wildcardlabs/namepass/pull/153); until it merges and
+Vercel deploys, the beta serves the September 22 addresses against an empty database, and
+deposit addresses derived from the new factory are not live. Server tests that replay captures recorded
 against the old deployment stay red until Phase 6 records new canaries: the processing-renewal,
 ENS-expiry, public-status, source-deposit and one public-address activation case, 23 tests in
 all; the other 198 pass.

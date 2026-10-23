@@ -54,6 +54,11 @@ Validate the pipeline before deployment:
 goldsky turbo validate goldsky/namepass-testnet.yaml
 ```
 
+Turbo CLI extension 0.13.1 rejects the committed definition locally with `Invalid function
+'to_u256'`, which the Arc native-value transform needs and the hosted service supports. With that
+extension, apply with `--skip-validation`; the service validates the definition itself and ran the
+2026-10-23 re-apply without error.
+
 Deploy only after the Neon table, both secrets, and the stable webhook exist:
 
 ```bash
