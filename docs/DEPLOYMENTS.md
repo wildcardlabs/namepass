@@ -13,7 +13,9 @@ pending flow or transaction intent remained; the [reset record](deployments/2026
 holds the row counts before and after, all tables empty afterwards, with schema, migrations and
 roles preserved. The Goldsky pipeline `namepass-testnet-v2` was re-applied in place with the new
 address filters and start blocks; its source names and checkpoints are unchanged, so it indexes
-the new factory from the current head. The application release is
+the new factory from the current head. The re-apply pulled a newer hosted engine image without
+the 256-bit integer functions the Arc native transform used, and the pipeline crash-looped until
+the transform was rewritten to divide on the decimal string; see `goldsky/README.md`. The application release is
 [pull request 153](https://github.com/wildcardlabs/namepass/pull/153); until it merges and
 Vercel deploys, the beta serves the September 22 addresses against an empty database, and
 deposit addresses derived from the new factory are not live. Server tests that replay captures recorded

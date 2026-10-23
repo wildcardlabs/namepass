@@ -184,11 +184,11 @@ transforms:
         '0x3600000000000000000000000000000000000000' AS token_address,
         lower(from_address) AS sender_address,
         lower(to_address) AS recipient_address,
-        u256_to_string(to_u256(value) / to_u256('1000000000000')) AS amount,
+        substr(split_part(CAST(value AS STRING), '.', 1), 1, char_length(split_part(CAST(value AS STRING), '.', 1)) - 12) AS amount,
         _gs_op
       FROM arc_testnet_native_usdc_v2
-      WHERE to_u256(value) >= to_u256('1000000000000')
-        AND to_u256(value) % to_u256('1000000000000') = to_u256('0')
+      WHERE char_length(split_part(CAST(value AS STRING), '.', 1)) > 12
+        AND substr(split_part(CAST(value AS STRING), '.', 1), char_length(split_part(CAST(value AS STRING), '.', 1)) - 11) = '000000000000'
 
   incoming_deposits:
     type: sql

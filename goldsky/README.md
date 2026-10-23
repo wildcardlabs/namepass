@@ -22,8 +22,9 @@ does not emit an ERC-20 `Transfer` log.
 Goldsky verified all nine dataset names, versions, and schemas. The current Turbo CLI validated
 the full pipeline. The `namepass-testnet-v2` pipeline runs in the active `Namepass` project.
 
-Arc transaction `value` has 18 decimals. The Arc USDC system contract uses 6 decimals. The
-pipeline divides native transaction value by `10^12` before it emits the normalized deposit row.
+Arc transaction `value` has 18 decimals and arrives as a decimal column. The Arc USDC system
+contract uses 6 decimals. The pipeline divides native transaction value by `10^12` before it
+emits the normalized deposit row, as an integer string.
 The workflow then verifies the mined transaction recipient and the same conversion before it uses
 the deposit. Circle applies the configured finality requirement after the origin burn.
 
@@ -54,10 +55,12 @@ Validate the pipeline before deployment:
 goldsky turbo validate goldsky/namepass-testnet.yaml
 ```
 
-Turbo CLI extension 0.13.1 rejects the committed definition locally with `Invalid function
-'to_u256'`, which the Arc native-value transform needs and the hosted service supports. With that
-extension, apply with `--skip-validation`; the service validates the definition itself and ran the
-2026-10-23 re-apply without error.
+The Arc native transform divides the 18-decimal transaction value by `10^12` on its decimal
+string: it drops any fractional rendering, requires the last twelve digits to be zero, and keeps
+the digits before them. This is exact for any magnitude and emits an integer amount. It replaced
+`to_u256` arithmetic on 2026-10-23, when the hosted engine image stopped providing the 256-bit
+functions and the running pipeline crash-looped after a re-apply; the CLI validator (Turbo
+extension 0.13.1) rejects the old form the same way. Validate before every apply.
 
 Deploy only after the Neon table, both secrets, and the stable webhook exist:
 
