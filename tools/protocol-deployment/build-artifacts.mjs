@@ -14,7 +14,8 @@ function pick(name, source) {
     abi: artifact.abi,
     bytecode: artifact.bytecode.object,
     deployedBytecode: artifact.deployedBytecode.object,
-    immutableReferences: artifact.deployedBytecode.immutableReferences ?? {},
+    // Keyed by position rather than by AST node id, which changes between Foundry versions.
+    immutableReferences: Object.fromEntries(Object.values(artifact.deployedBytecode.immutableReferences ?? {}).map((ranges, i) => [String(i), ranges])),
     compiler: artifact.metadata?.compiler?.version ?? "0.8.24",
     sourceSha256: sha256(read(source)),
   };
