@@ -3,7 +3,7 @@ import test, { type TestContext } from "node:test";
 import { readFileSync, readdirSync } from "node:fs";
 import { Pool } from "pg";
 import { PGlite } from "@electric-sql/pglite";
-import { decodeFunctionData, encodeFunctionResult, parseAbi, zeroAddress, type Hex } from "viem";
+import { decodeFunctionData, encodeFunctionResult, getAddress, parseAbi, zeroAddress, type Hex } from "viem";
 import Ajv from "ajv/dist/2020.js";
 import route from "../routes/api/v1/address";
 import { depositAddress } from "../src/lib/namepass";
@@ -374,16 +374,17 @@ test("address activation does not replace source indexing; late webhook delivery
 	}
 	t.mock.method(Pool.prototype, "query", query);
 	t.mock.method(Pool.prototype, "connect", async () => ({ query, release() {} }));
-	const recorded = JSON.parse(readFileSync(new URL("../test/fixtures/public-status/reads.json", import.meta.url), "utf8"));
+	// The current status capture: a late delivery of its source transfer, with its processing and
+	// renewal rows absent, must leave the status at "processing".
+	const recorded = JSON.parse(readFileSync(new URL("../test/fixtures/public-status/october-reads.json", import.meta.url), "utf8"));
 	const source = recorded.seed.indexed[0];
+	const label = source.normalized_label as string;
 	const delivery = {
 		event_id: source.event_id, event_family: "deposit", event_type: "Transfer",
 		chain_id: Number(source.chain_id), tx_hash: source.tx_hash, log_index: source.log_index,
 		block_number: Number(source.block_number), block_time: "2026-10-01T00:00:00Z",
 		token_address: source.token_address, sender_address: source.sender_address,
-		// The archived capture predates the two-contract factory; the regression is about late delivery,
-		// so the credit targets the wallet the current factory derives for the same label.
-		recipient_address: depositAddress("steve").toLowerCase(), amount: source.amount, _gs_op: "i",
+		recipient_address: depositAddress(label).toLowerCase(), amount: source.amount, _gs_op: "i",
 	};
 	const scheduled: string[] = [];
 	const webhook = goldskyHandler(postgresGoldskyStore, async (id) => { scheduled.push(id); }, () => "Bearer fixture");
@@ -399,9 +400,9 @@ test("address activation does not replace source indexing; late webhook delivery
 	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM chain_events")).rows[0].n, 0,
 		"a delivery before registration must roll back so it can be retried");
 	const activationRpc = rpcFixture(t);
-	const activated = await route.fetch(request());
+	const activated = await route.fetch(request({ name: `${label.toUpperCase()}.eth` }));
 	assert.equal(activated.status, 200, await activated.clone().text());
-	assert.equal((await activated.json()).depositAddress, "0xd78DF8F827881e34ff0B1B717dc876D880890D50");
+	assert.equal((await activated.json()).depositAddress, getAddress(depositAddress(label)));
 	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM goldsky.watched_addresses")).rows[0].n, 1);
 	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM balance_snapshots WHERE amount=0")).rows[0].n, 4);
 	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM balance_scan_requests")).rows[0].n, 0);
@@ -417,7 +418,7 @@ test("address activation does not replace source indexing; late webhook delivery
 	assert.equal(activationRpc.mock.callCount(), readsBefore, "polling cannot recover a filtered-out source event");
 	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM deposits")).rows[0].n, 0);
 	// This historical receipt predates today's test. Pin only its local activation boundary.
-	await fixture.query("UPDATE names SET activated_at=$1", [recorded.seed.registry.find((n: any) => n.normalized_label === "steve").activated_at]);
+	await fixture.query("UPDATE names SET activated_at=$1", [recorded.seed.registry.find((n: any) => n.normalized_label === label).activated_at]);
 	for (let i = 0; i < 2; i++) {
 		const delivered = await send();
 		assert.equal(delivered.status, 200, await delivered.clone().text());

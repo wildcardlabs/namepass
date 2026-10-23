@@ -14,6 +14,5 @@ Actual adapter SQL and receipt verifiers run. Contract code is deduplicated by h
 The recorded capture contains no RPC URL, credential, Workflow ID or signed transaction.
 The current direct CLI regression also uses this capture in a separate process.
 
-`reads.json` is the September deployment's archived single-deposit capture. The local
-activation/late-delivery regression still uses its source transfer, credited to the wallet
-the current factory derives for the same label. Neither capture proves hosted polling capacity.
+The activation/late-delivery regression replays the same capture with its processing and
+renewal rows absent. The capture does not prove hosted polling capacity.
