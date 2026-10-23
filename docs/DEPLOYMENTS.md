@@ -1,5 +1,27 @@
 # Testnet deployments
 
+## Sepolia wildcard resolver — 2026-10-23
+
+Phase 7 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md) on Sepolia. `namepass.eth` was
+registered in the ENS V2 ETH registry (`0xD4eBcbBdF463C9c45784603Db0dDD499BC44A8B4`) at
+19:02 UTC by the owner wallet `0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6`. The user then
+signed two transactions through `tools/resolver-deployment`: `NamepassResolver`, which compiles
+in the October 23 factory, deployed at `0xDa617E9C8c16fAA756CbA0565835c9Ef81B4b092` (block
+11978872, 6,589,114 gas), and the registry's `setResolver` on the name (block 11978873, 41,620
+gas). Sourcify reports creation and runtime matches. The
+[resolver record](deployments/2026-10-23/resolver-sepolia.json) holds the receipts, the
+registry state, the eleven verification checks and two resolutions.
+
+The universal resolver `0xeEeEEEeE14D718C2B47D9923Deab1335E144EeEe` finds the resolver for the
+apex and for subnames. `namepass.eth` resolves to the apex address
+`0xf80E70eBC4184850f9fBCDC8De7CB4C86C46abF6`, the mainnet addr record. `<label>.namepass.eth`
+reverts `OffchainLookup` to the hosted gateway `https://beta.namepass.com/api/ccip`, which
+activates the label; the callback derives the deposit address. `slobo.namepass.eth` resolved to
+`0xf230ec27Fb20d971ffbefA5b6c2Bc373D6d818B4` at 19:54 UTC, equal to the factory's
+`predictWallet` and the local derivation, and the hosted application activated `slobo` at that
+moment. The public address API still reports `subnameVerified: false`; enabling it is a separate
+product decision.
+
 ## Two-contract protocol canaries — 2026-10-23
 
 Phase 6 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md): the first deposits on the two-contract
@@ -501,14 +523,12 @@ new-generation live test.
 
 ## Resolver and mainnet limits
 
-The `namepass.eth` wildcard resolver deployed with the September 22 release is live, and its
-subnames appear in Name View. It hard-codes the September 22 factory, so `<label>.namepass.eth`
-resolves to that retired factory's deposit addresses, not to the October 23 ones; Phase 7 of
-[GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md) replaces it with the mainnet release. The
-application shows the October 23 addresses. This record does not contain the resolver's mainnet
-deployment and parent-record transaction receipts. The configured testing use case resolves to
-testnet deposit addresses even though the parent ENS record is on Ethereum mainnet. That does
-not enable mainnet USDC funding or mainnet renewal contracts.
+On Sepolia, `<label>.namepass.eth` resolves through the October 23 wildcard resolver recorded
+at the top of this document. On Ethereum mainnet, `namepass.eth` still carries the record set
+before the October 23 factory; the mainnet resolver changes with the mainnet release, Phase 7 of
+[GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md). This record does not contain mainnet
+parent-record transaction receipts. A mainnet record that resolves to testnet deposit addresses
+does not enable mainnet USDC funding or mainnet renewal contracts.
 
 No audited mainnet protocol release is recorded. Ethereum, Base, Arbitrum, and Arc are planned for
 the initial mainnet release; none has a recorded Namepass mainnet deployment. Requirements are in
