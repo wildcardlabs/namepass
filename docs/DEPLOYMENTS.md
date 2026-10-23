@@ -26,12 +26,12 @@ recorders, and the full server suite passes on them.
 
 ## Two-contract protocol deployment — 2026-10-23
 
-Phases 3 and 4 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md) are complete. The merged
-`NamepassFactory` and the view-only `ENSV2RenewalAdapter` are deployed and verified on all four
-testnets, and the code on this branch targets them: `src/lib/chains.ts`, helper discovery
-(interface version 2), the allocation and processing verifiers (one runtime hash, two debits on
-a direct call), the regenerated Goldsky pipeline, the runtime fixtures and the documentation.
-Phase 5 is in progress. The hosted testnet database (Neon project `nameless-paper-91018372`,
+Phases 3, 4 and 5 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md) are complete. This is the
+current release. The merged `NamepassFactory` and the view-only `ENSV2RenewalAdapter` are
+deployed and verified on all four testnets, and the application targets them: `src/lib/chains.ts`,
+helper discovery (interface version 2), the allocation and processing verifiers (one runtime
+hash, two debits on a direct call), the regenerated Goldsky pipeline, the runtime fixtures and
+the documentation. The hosted testnet database (Neon project `nameless-paper-91018372`,
 branch `br-noisy-bird-avey45an`) was reset on 2026-10-23 after the pipeline was paused and no
 pending flow or transaction intent remained; the [reset record](deployments/2026-10-23/reset.json)
 holds the row counts before and after, all tables empty afterwards, with schema, migrations and
@@ -49,10 +49,10 @@ factory's wallets, equal to `predictWallet` on chain: `vitalik` (V1 route)
 `0xEE8B8e5027d9d829267C59f758673925F499566F`, `steve` (V2)
 `0xd78DF8F827881e34ff0B1B717dc876D880890D50`. The old deposit addresses are retired; the
 old factory still accepts a permissionless `renew`, but the application neither shows nor
-processes them. Server tests that replay captures recorded
-against the old deployment stay red until Phase 6 records new canaries: the processing-renewal,
-ENS-expiry, public-status, source-deposit and one public-address activation case, 23 tests in
-all; the other 198 pass.
+processes them. The Phase 6 release, [pull request 154](https://github.com/wildcardlabs/namepass/pull/154),
+merged as `182ba41` on 2026-10-23 at 18:43 UTC with CI green, replaced every capture recorded
+against the old deployment; Vercel deployment `namepass-v2-3dc79s7oj` serves it at
+`beta.namepass.com`. The supported-networks page of the beta names the retired addresses.
 
 | Contract | Address | Network |
 | --- | --- | --- |
@@ -452,11 +452,13 @@ are scoped only to `codex/api-recovery-verification`. Its database uses the exis
 connections and transactions. Protection, firewall, signing credentials and production
 settings are unchanged. The new protected deployment and four-endpoint checks passed; see the confirmed-completion section above.
 
-## Current release — 2026-09-22
+## Previous release — 2026-09-22
 
-The replacement contracts and hosted testnet services are deployed. The application uses the
-addresses below. The September 22 cutover cleared the previous application's data; old deposit
-addresses are not part of the current release.
+Superseded by the two-contract deployment of 2026-10-23 above. The September 22 release deployed
+the five-contract design: factory, hub gateway, helper pointer and an initial ENS helper, with
+the test timelock. The application no longer uses the addresses below, and their deposit
+addresses are retired. The September 22 cutover cleared the previous application's data; the
+October 23 cutover cleared this release's data in turn.
 
 | Contract | Address | Network |
 | --- | --- | --- |
@@ -467,7 +469,8 @@ addresses are not part of the current release.
 | Test timelock | `0x996cbd179f361B1043Ad1999864eD41496C633c8` | Ethereum Sepolia |
 
 The test timelock is wallet-controlled with a 60-second delay. It is not the ENS DAO timelock.
-The active helper can change through the pointer; read `currentHelper()` for live selection.
+It is reused as the governance executor of the October 23 factory. In this release the active
+helper changed through the pointer.
 
 | Network | Chain ID | Factory deployment block |
 | --- | --- | --- |
@@ -480,7 +483,9 @@ Token addresses, Circle domains, RPC configuration names and explorer links are 
 [`src/lib/chains.ts`](../src/lib/chains.ts). Exact deployment parameters and hashes are in the
 [manifest](deployments/2026-09-22/manifest.json).
 
-## Verification evidence
+## September 22 verification evidence
+
+Evidence for the current release is in the two October 23 sections at the top of this document.
 
 | Record | What it establishes |
 | --- | --- |
@@ -496,11 +501,14 @@ new-generation live test.
 
 ## Resolver and mainnet limits
 
-The replacement `namepass.eth` wildcard resolver is live, and its subnames appear in Name View.
-This September 22 release record does not contain its mainnet deployment and parent-record
-transaction receipts. The configured testing use case resolves to testnet deposit addresses even
-though the parent ENS record is on Ethereum mainnet. That does not enable mainnet USDC funding or
-mainnet renewal contracts.
+The `namepass.eth` wildcard resolver deployed with the September 22 release is live, and its
+subnames appear in Name View. It hard-codes the September 22 factory, so `<label>.namepass.eth`
+resolves to that retired factory's deposit addresses, not to the October 23 ones; Phase 7 of
+[GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md) replaces it with the mainnet release. The
+application shows the October 23 addresses. This record does not contain the resolver's mainnet
+deployment and parent-record transaction receipts. The configured testing use case resolves to
+testnet deposit addresses even though the parent ENS record is on Ethereum mainnet. That does
+not enable mainnet USDC funding or mainnet renewal contracts.
 
 No audited mainnet protocol release is recorded. Ethereum, Base, Arbitrum, and Arc are planned for
 the initial mainnet release; none has a recorded Namepass mainnet deployment. Requirements are in

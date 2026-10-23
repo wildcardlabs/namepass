@@ -24,9 +24,9 @@ universal deposit wallet within one deployment set. A funder sends the configure
 wallet. Any executor can then convert its balance into renewal time at ENS's on-chain price.
 The payment route is permissionless: it does not depend on the Namepass website or its automation.
 
-The **September 22, 2026 testnet deployment** replaced an earlier factory. Its deposit addresses
-differ from the previous deployment. Derive addresses from the
-[current factory](docs/DEPLOYMENTS.md) before funding them.
+The **October 23, 2026 testnet deployment** replaced the September 22 factory. Its deposit
+addresses differ from every previous deployment, and the previous addresses are retired. Derive
+addresses from the [current factory](docs/DEPLOYMENTS.md) before funding them.
 
 ## How it works
 

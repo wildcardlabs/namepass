@@ -22,7 +22,7 @@ Nothing below broadcasts a transaction without your signature.
 - The existing Sepolia test timelock `0x996cbd179f361B1043Ad1999864eD41496C633c8` is reused as
   the governance executor; it is wallet-controlled with a 60-second delay. No new timelock.
 - Ethereum mainnet ETH for two transactions if the `namepass.eth` wildcard resolver is updated
-  in this round (see Phase 6).
+  in this round (see Phase 7).
 
 ## Phase 1: contracts (Claude, no transactions)
 
@@ -120,8 +120,8 @@ retired in favour of the protocol deployment page.
 Exit: app live on the new addresses with an empty history.
 Done 2026-10-23: reset recorded in `docs/deployments/2026-10-23/reset.json`; pipeline
 re-applied, with the Arc transform rewritten for the hosted engine; pull request 153 merged as
-`7e4477c` and deployed. Step 4, the beta copy about retired addresses, is folded into the
-Phase 6 follow-up.
+`7e4477c` and deployed. Step 4, the beta copy about retired addresses, is on the supported-networks
+page.
 
 ## Phase 6: canaries and fixtures (you fund, Claude verifies)
 
@@ -144,7 +144,8 @@ fresh canary. The relayer processes each deposit and claims each burn. Claude th
 
 Exit: CI fully green, API shapes unchanged, canary evidence recorded.
 Done 2026-10-23: five funded deposits plus two the user sent directly, all settled; captures
-regenerated with `scripts/fixtures`; evidence in `docs/deployments/2026-10-23/canaries.json`.
+regenerated with `scripts/fixtures`; evidence in `docs/deployments/2026-10-23/canaries.json`;
+pull request 154 merged as `182ba41` with CI green.
 
 ## Phase 7: resolver (optional this round, you sign)
 
