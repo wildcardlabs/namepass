@@ -132,9 +132,10 @@ Phase 6 follow-up.
 | 6.3 | Arbitrum Sepolia | Same | You |
 | 6.4 | Arc Testnet | Send native USDC to the deposit address | You |
 
-Four wallet transfers. The relayer processes each deposit and claims each burn; if you want to
-exercise the permissionless path yourself, the tool offers `renew` and `completeCCTP` buttons
-for one of them. Claude then:
+Four wallet transfers, signed through `tools/canary-funding` (port 5178), which checks the
+destination, the activation and a live quote before each signature and verifies each credit
+after the receipt; a fifth, optional card sends an ERC-20 transfer on Arc so both Arc forms get a
+fresh canary. The relayer processes each deposit and claims each burn. Claude then:
 
 1. records the receipts as the new fixtures under `test/fixtures/`, replacing the old ones;
 2. runs the full server and transaction suites against them;
