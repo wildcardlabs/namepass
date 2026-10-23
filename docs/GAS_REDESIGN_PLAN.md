@@ -1,9 +1,8 @@
 # Gas redesign: step-by-step migration plan
 
 Companion to [GAS_REDESIGN_PROPOSAL.md](GAS_REDESIGN_PROPOSAL.md). Date: 2026-10-12.
-Status: Phases 1 to 4 complete and Phase 5 in progress as of 2026-10-23. The data reset and the
-pipeline re-apply are done (see `DEPLOYMENTS.md`); the application release is pull request 153.
-Phase 6 follows the merge.
+Status: Phases 1 to 5 complete as of 2026-10-23 (see `DEPLOYMENTS.md`). Phase 6 is in progress:
+the four canary names are activated and await funding.
 
 Two roles. **Claude** writes code, runs read-only checks, and prepares every transaction.
 **You** sign transactions with the Rainbow browser wallet and authorize hosted-data changes.
@@ -119,9 +118,10 @@ retired in favour of the protocol deployment page.
 4. **Copy.** The beta says old deposit addresses are retired.
 
 Exit: app live on the new addresses with an empty history.
-Progress 2026-10-23: steps 1 and 2 done, recorded in `docs/deployments/2026-10-23/reset.json`
-and `DEPLOYMENTS.md`; step 3 is pull request 153, whose server tests stay red on the old
-captures until Phase 6; step 4 pending.
+Done 2026-10-23: reset recorded in `docs/deployments/2026-10-23/reset.json`; pipeline
+re-applied, with the Arc transform rewritten for the hosted engine; pull request 153 merged as
+`7e4477c` and deployed. Step 4, the beta copy about retired addresses, is folded into the
+Phase 6 follow-up.
 
 ## Phase 6: canaries and fixtures (you fund, Claude verifies)
 
