@@ -6,6 +6,7 @@ import { PGlite } from "@electric-sql/pglite";
 import { decodeFunctionData, encodeFunctionResult, parseAbi, zeroAddress, type Hex } from "viem";
 import Ajv from "ajv/dist/2020.js";
 import route from "../routes/api/v1/address";
+import { depositAddress } from "../src/lib/namepass";
 import { HUB_CHAIN, SERVER_CHAINS } from "../src/lib/chains";
 import { database } from "./db/client";
 import { activateName } from "./names";
@@ -380,7 +381,9 @@ test("address activation does not replace source indexing; late webhook delivery
 		chain_id: Number(source.chain_id), tx_hash: source.tx_hash, log_index: source.log_index,
 		block_number: Number(source.block_number), block_time: "2026-10-01T00:00:00Z",
 		token_address: source.token_address, sender_address: source.sender_address,
-		recipient_address: source.deposit_address, amount: source.amount, _gs_op: "i",
+		// The archived capture predates the two-contract factory; the regression is about late delivery,
+		// so the credit targets the wallet the current factory derives for the same label.
+		recipient_address: depositAddress("steve").toLowerCase(), amount: source.amount, _gs_op: "i",
 	};
 	const scheduled: string[] = [];
 	const webhook = goldskyHandler(postgresGoldskyStore, async (id) => { scheduled.push(id); }, () => "Bearer fixture");

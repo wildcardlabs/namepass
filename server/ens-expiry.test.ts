@@ -174,8 +174,8 @@ test("a V1 renewal receipt uses the registration event, ignoring later wrapper s
   const expiry = parseEnsRenewalExpiry(logs, expected);
   assert.equal(
     expiry.getTime() / 1000,
-    3146224415,
-    "the BaseRegistrar's observed expiry, not the V2 reservation 3151581215",
+    3181308215,
+    "the BaseRegistrar's observed expiry, not the V2 reservation 3186665015",
   );
   assert.throws(
     () =>
@@ -201,8 +201,9 @@ test("a V1 renewal receipt uses the registration event, ignoring later wrapper s
 });
 
 test("canonical receipt enrichment corrects both gateway and standalone V1 ENS index events", async (t) => {
-  // Replay this archived receipt under its recorded ENS deployment. The live registry
-  // accepts only the October contracts; the gateway path still discovers its helper.
+  // Replay the recorded receipt under its recorded ENS deployment, which is the current one;
+  // the pin keeps the test valid when the configuration moves on. The gateway path still
+  // discovers its adapter.
   const previousV1 = HUB_CHAIN.ensRenewerV1Address;
   Object.assign(HUB_CHAIN, { ensRenewerV1Address: evidence.renewerV1 });
   t.after(() => Object.assign(HUB_CHAIN, { ensRenewerV1Address: previousV1 }));
@@ -280,7 +281,7 @@ test("canonical receipt enrichment corrects both gateway and standalone V1 ENS i
     const log = evidence.canonicalReceipt.logs.find(
       (log: { address: string; logIndex: string }) =>
         log.address.toLowerCase() === emitter.toLowerCase() &&
-        Number(BigInt(log.logIndex)) === (family === "ens" ? 154 : 164),
+        Number(BigInt(log.logIndex)) === (family === "ens" ? 224 : 232),
     );
     const args = decodeEventLog({ abi: renewalAbi, ...log, strict: true })
       .args as any;
@@ -323,7 +324,7 @@ test("canonical receipt enrichment corrects both gateway and standalone V1 ENS i
       payload: {},
       facts,
     };
-    assert.equal(await indexedRenewalExpiry(event), "3146224415");
+    assert.equal(await indexedRenewalExpiry(event), "3181308215");
     const key = family === "ens" ? "new_expiry" : "amount_applied";
     await assert.rejects(
       () => indexedRenewalExpiry({ ...event, facts: { ...facts, [key]: "1" } }),
