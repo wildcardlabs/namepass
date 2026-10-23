@@ -38,11 +38,11 @@ const ENS = parseAbi([
 ]);
 const V1_METADATA = parseAbi(["function BASE_REGISTRAR() view returns (address)"]);
 const MESSAGE = toEventSelector("MessageSent(bytes)");
-// Reviewed runtime hashes in docs/deployments/2026-09-22/verification.json.
+// Reviewed runtime hash in docs/deployments/2026-10-23/protocol-deployment-manifest.json. The
+// factory is also the hub gateway, so both pins name the same runtime.
 const FACTORY_HASH =
-	"0x3822dfc2cbf9fe25fbe5258eb13cf8be999c1b776c361fbd220f9412b96659e1";
-const GATEWAY_HASH =
-	"0x71d0809dabeb74cd5002beb8a6e8fc9357b1e5a84eb90347863b3d8536fcc26e";
+	"0x7ca0a4660909e70cdecc1487e282d82a8cc0825c02cea740e3e58f3603abe08c";
+const GATEWAY_HASH = FACTORY_HASH;
 const METHODS = [
 	"eth_chainId",
 	"eth_getBlockByNumber",

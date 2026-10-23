@@ -74,7 +74,7 @@ test("current expiry uses the V1 registration before migration and the V2 regist
             currentHelper: evidence.helper,
             gateway: HUB_CHAIN.gatewayAddress,
             pointer: HUB_CHAIN.pointerAddress,
-            interfaceVersion: 1n,
+            interfaceVersion: 2n,
             factory: HUB_CHAIN.factoryAddress,
             paymentToken: HUB_CHAIN.usdcAddress,
             ethRegistrar: evidence.registrar,

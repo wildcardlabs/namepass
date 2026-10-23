@@ -100,7 +100,7 @@ function rpcFixture(
 					currentHelper: "0x1111111111111111111111111111111111111111",
 					gateway: HUB_CHAIN.gatewayAddress,
 					pointer: HUB_CHAIN.pointerAddress,
-					interfaceVersion: 1n,
+					interfaceVersion: 2n,
 					factory: HUB_CHAIN.factoryAddress,
 					paymentToken: HUB_CHAIN.usdcAddress,
 					ethRegistrar: HUB_CHAIN.ensRegistrarAddress,
@@ -286,7 +286,7 @@ test(
 			assert.equal(validResponse(body), true, JSON.stringify(validResponse.errors));
 			assert.deepEqual(body, {
 				name: "steve.eth",
-				depositAddress: "0x5B7516768eD0b04E212041265BB1f11af71841d7",
+				depositAddress: "0xd78DF8F827881e34ff0B1B717dc876D880890D50",
 				subname: "steve.namepass.eth",
 				subnameVerified: false,
 				chains: [
@@ -334,7 +334,7 @@ test(
 		rpcFixture(t, { v1: true, balancesUnavailable: true });
 		const v1 = await route.fetch(request({ name: "vitalik.eth" }));
 		assert.equal(v1.status, 200, await v1.clone().text());
-		assert.equal((await v1.json()).depositAddress, "0xa61656CA2D2952a46a9d4DA0AAE01d8D7fe988E0");
+		assert.equal((await v1.json()).depositAddress, "0x9D21DeE23f5Fe9df32b91AE559530f933Ee9c899");
 		assert.equal(
 			(await fixture.query("select renewable_by from names where normalized_label='vitalik'")).rows[0]
 				.renewable_by,
@@ -398,7 +398,7 @@ test("address activation does not replace source indexing; late webhook delivery
 	const activationRpc = rpcFixture(t);
 	const activated = await route.fetch(request());
 	assert.equal(activated.status, 200, await activated.clone().text());
-	assert.equal((await activated.json()).depositAddress, "0x5B7516768eD0b04E212041265BB1f11af71841d7");
+	assert.equal((await activated.json()).depositAddress, "0xd78DF8F827881e34ff0B1B717dc876D880890D50");
 	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM goldsky.watched_addresses")).rows[0].n, 1);
 	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM balance_snapshots WHERE amount=0")).rows[0].n, 4);
 	assert.equal((await fixture.query<{ n: number }>("SELECT count(*)::int AS n FROM balance_scan_requests")).rows[0].n, 0);

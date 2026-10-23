@@ -68,6 +68,7 @@ jobs:
           node --import tsx --test tools/payment-canary/batch.test.ts
           npx tsc --noEmit -p tools/activation-canary/tsconfig.json
           node --import tsx --test tools/activation-canary/receipt.test.ts
+          npx tsc --noEmit -p tools/protocol-deployment/tsconfig.json
 
       - name: Test the server
         run: npm run test:server
@@ -96,3 +97,6 @@ jobs:
 
       - name: Check the helper pricing adapter fingerprint
         run: node scripts/generate-helper-adapter.mjs --check
+
+      - name: Check the embedded deployment artifacts
+        run: node tools/protocol-deployment/build-artifacts.mjs --check

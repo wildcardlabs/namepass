@@ -73,9 +73,10 @@ function fixture(chainId = HUB_CHAIN.chainId) {
 	}
 	function process(amount: bigint, remaining: bigint, index: number): Bare[] {
 		const labelKey = keccak256(stringToHex("steve"));
+		const hub = chainId === HUB_CHAIN.chainId;
 		const marker: Bare = {
 			address: chain.factoryAddress!,
-			index: index + 2,
+			index: index + (hub ? 3 : 2),
 			topics: encodeEventTopics({
 				abi: processedAbi,
 				eventName: "DepositProcessed",
@@ -86,17 +87,14 @@ function fixture(chainId = HUB_CHAIN.chainId) {
 				[amount, remaining],
 			),
 		};
-		if (chainId === HUB_CHAIN.chainId)
+		if (hub)
+			// ENS pulls the applied amount, the executor receives the allowance, then the factory reports.
 			return [
-				transfer(
-					amount,
-					index,
-					wallet,
-					HUB_CHAIN.gatewayAddress!.toLowerCase() as Hex,
-				),
+				transfer(amount - 100000n, index, wallet, other),
+				transfer(100000n, index + 1, wallet, sender),
 				{
 					address: HUB_CHAIN.gatewayAddress!,
-					index: index + 1,
+					index: index + 2,
 					topics: encodeEventTopics({
 						abi: renewalAbi,
 						eventName: "Renewed",
@@ -260,7 +258,7 @@ test("pooled source credits and an existing balance share one exact processing c
 		result.deposits.map((d) => d.amount),
 		["3000000", "5000000"],
 	);
-	const processing = `11155111:${id(2)}:2`;
+	const processing = `11155111:${id(2)}:3`;
 	assert.deepEqual(
 		result.deposits.map((d) => d.processingCallIds),
 		[[processing], [processing]],
@@ -269,7 +267,7 @@ test("pooled source credits and an existing balance share one exact processing c
 	assert.equal(result.processingCalls[0].amount, "15000000");
 	assert.equal(
 		result.processingCalls[0].directRenewalId,
-		`11155111:${id(2)}:1`,
+		`11155111:${id(2)}:2`,
 	);
 	assert.equal("status" in result, false);
 });
@@ -473,16 +471,16 @@ test("same-block ordering excludes an earlier drain and separates drains inside 
 	f.setBalances(2000000n, 0n);
 	f.add(2, 1000, 0, f.process(2000000n, 0n, 0));
 	f.add(1, 1000, 1, [
-		f.transfer(3000000n, 3),
-		...f.process(3000000n, 0n, 4),
-		f.transfer(5000000n, 7),
-		...f.process(5000000n, 0n, 8),
+		f.transfer(3000000n, 4),
+		...f.process(3000000n, 0n, 5),
+		f.transfer(5000000n, 9),
+		...f.process(5000000n, 0n, 10),
 	]);
 	const result = await inspectAllocation(f.input, f.rpc);
 	assert.equal(result.windowClosed, true);
 	assert.deepEqual(
 		result.deposits.map((d) => d.processingCallIds),
-		[[`11155111:${id(1)}:6`], [`11155111:${id(1)}:10`]],
+		[[`11155111:${id(1)}:8`], [`11155111:${id(1)}:13`]],
 	);
 });
 
@@ -559,15 +557,31 @@ test("an unindexed receipt call works, duplicates deduplicate, and unfinished fu
 	};
 	const result = await inspectAllocation(f.input, rpc);
 	assert.equal(result.windowClosed, true);
-	assert.equal(result.movements, 2);
+	assert.equal(result.movements, 3, "one credit, two debits");
 	assert.equal(result.processingCalls.length, 1);
+});
+
+test("a direct call needs ENS's charge and the executor's share as its two wallet debits", async () => {
+	// The two debits must sum to the processed amount and split as the Renewed event reports.
+	const short = fixture();
+	short.add(1, 1000, 1, [short.transfer(3000000n, 0)]);
+	const missing = short.process(3000000n, 0n, 0);
+	missing.splice(1, 1); // drop the executor's debit
+	short.add(2, 1001, 0, missing);
+	await assert.rejects(inspectAllocation(short.input, short.rpc), /ambiguous_processing_debit/);
+	const swapped = fixture();
+	swapped.add(1, 1000, 1, [swapped.transfer(3000000n, 0)]);
+	const call = swapped.process(3000000n, 0n, 0);
+	call[1] = swapped.transfer(100000n, 1, wallet, other); // allowance paid to someone other than the executor
+	swapped.add(2, 1001, 0, call);
+	await assert.rejects(inspectAllocation(swapped.input, swapped.rpc), /unsupported_processing_destination/);
 });
 
 test("global processing order and Arc fractional movements cannot supply a false drain", async () => {
 	const f = fixture();
 	f.add(1, 1000, 1, [f.transfer(3000000n, 0)]);
 	const call = f.process(3000000n, 0n, 0);
-	call[2].index = 10;
+	call[3].index = 10;
 	f.add(2, 1001, 0, call);
 	f.add(3, 1001, 1, [f.transfer(1000000n, 5)]);
 	f.setBalances(0n, 1000000n);
@@ -715,7 +729,7 @@ test("operator CLI verifies serialized provider receipts, permits only reads and
 		assert.equal(report.evidence.deposits[0].amount, "3000000");
 		assert.equal(
 			report.evidence.processingCalls[0].processingId,
-			`11155111:${id(2)}:2`,
+			`11155111:${id(2)}:3`,
 		);
 		assert.equal(report.evidence.rangeMode, "short");
 		const long = await run(true);

@@ -30,7 +30,7 @@ export async function discoverHelper(read: HelperReader) {
 		{ to: helper, signature: "factory()" },
 		{ to: helper, signature: "paymentToken()" },
 	]);
-	if (!/^0{63}1$/.test(version)) throw new Error("Unsupported renewal helper interface.");
+	if (!/^0{63}2$/.test(version)) throw new Error("Unsupported renewal helper interface.");
 	equal(address(gateway), HUB_CHAIN.gatewayAddress);
 	equal(address(factory), HUB_CHAIN.factoryAddress);
 	equal(address(token), HUB_CHAIN.usdcAddress);

@@ -2,13 +2,33 @@
 pragma solidity 0.8.24;
 
 import {Test} from "forge-std/Test.sol";
-import {NamepassFactory} from "../contracts/NamepassFactory.sol";
+import {NamepassFactory, BurnParams, INamepassWallet} from "../contracts/NamepassFactory.sol";
 import {MockUSDC} from "./mocks/Mocks.sol";
 
 contract ArcTestMessenger {
-    function localMinter() external view returns (address) { return address(this); }
-    function burnLimitsPerMessage(address) external pure returns (uint256) { return 1_000_000_000; }
-    function depositForBurnWithHook(uint256 amount, uint32, bytes32, address token, bytes32, uint256, uint32, bytes calldata) external {
+    bytes32 public lastMintRecipient;
+    bytes32 public lastDestinationCaller;
+
+    function localMinter() external view returns (address) {
+        return address(this);
+    }
+
+    function burnLimitsPerMessage(address) external pure returns (uint256) {
+        return 1_000_000_000;
+    }
+
+    function depositForBurnWithHook(
+        uint256 amount,
+        uint32,
+        bytes32 mintRecipient,
+        address token,
+        bytes32 destinationCaller,
+        uint256,
+        uint32,
+        bytes calldata
+    ) external {
+        lastMintRecipient = mintRecipient;
+        lastDestinationCaller = destinationCaller;
         MockUSDC(token).transferFrom(msg.sender, address(this), amount);
     }
 }
@@ -24,7 +44,7 @@ contract ArcDepositTest is Test {
         factory = new NamepassFactory(address(this), 11155111);
         token = new MockUSDC();
         messenger = new ArcTestMessenger();
-        factory.initialize(address(token), address(messenger), address(0x1234));
+        factory.initialize(address(token), address(messenger), address(0), address(0));
         wallet = factory.predictWallet("steve");
         vm.deal(address(this), 10 ether);
     }
@@ -51,6 +71,13 @@ contract ArcDepositTest is Test {
         assertEq(wallet.codehash, codeHash);
     }
 
+    /// @dev Every burn is addressed to the factory's own address on the hub.
+    function test_burnIsAddressedToTheFactory() public {
+        _deployWallet();
+        assertEq(messenger.lastMintRecipient(), bytes32(uint256(uint160(address(factory)))));
+        assertEq(messenger.lastDestinationCaller(), bytes32(uint256(uint160(address(factory)))));
+    }
+
     function _deployWallet() private {
         token.mint(wallet, 1_000_000);
         factory.renew("steve");
@@ -67,7 +94,21 @@ contract ArcDepositTest is Test {
     function test_nativeReceptionDoesNotAuthorizeExecution() public {
         _deployWallet();
         token.mint(wallet, 1_000_000);
-        (bool ok,) = wallet.call(abi.encodeCall(factory.execute, ("steve", 1_000_000, 0, address(this))));
+        (bool ok,) = wallet.call(
+            abi.encodeCall(
+                INamepassWallet.executeL2,
+                (
+                    "steve",
+                    BurnParams({
+                        amount: 1_000_000,
+                        maxFeeBps: 0,
+                        usdc: address(token),
+                        messenger: address(messenger),
+                        minFinalityThreshold: 2000
+                    })
+                )
+            )
+        );
         assertFalse(ok);
         assertEq(token.balanceOf(wallet), 1_000_000);
     }

@@ -1,5 +1,54 @@
 # Testnet deployments
 
+## Two-contract protocol deployment — 2026-10-23
+
+Phases 3 and 4 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md) are complete. The merged
+`NamepassFactory` and the view-only `ENSV2RenewalAdapter` are deployed and verified on all four
+testnets, and the code on this branch targets them: `src/lib/chains.ts`, helper discovery
+(interface version 2), the allocation and processing verifiers (one runtime hash, two debits on
+a direct call), the regenerated Goldsky pipeline, the runtime fixtures and the documentation.
+Phase 5 is in progress. The hosted testnet database (Neon project `nameless-paper-91018372`,
+branch `br-noisy-bird-avey45an`) was reset on 2026-10-23 after the pipeline was paused and no
+pending flow or transaction intent remained; the [reset record](deployments/2026-10-23/reset.json)
+holds the row counts before and after, all tables empty afterwards, with schema, migrations and
+roles preserved. The Goldsky pipeline `namepass-testnet-v2` was re-applied in place with the new
+address filters and start blocks; its source names and checkpoints are unchanged, so it indexes
+the new factory from the current head. The re-apply pulled a newer hosted engine image without
+the 256-bit integer functions the Arc native transform used, and the pipeline crash-looped until
+the transform was rewritten to divide on the decimal string; see `goldsky/README.md`. The application release is
+[pull request 153](https://github.com/wildcardlabs/namepass/pull/153); until it merges and
+Vercel deploys, the beta serves the September 22 addresses against an empty database, and
+deposit addresses derived from the new factory are not live. Server tests that replay captures recorded
+against the old deployment stay red until Phase 6 records new canaries: the processing-renewal,
+ENS-expiry, public-status, source-deposit and one public-address activation case, 23 tests in
+all; the other 198 pass.
+
+| Contract | Address | Network |
+| --- | --- | --- |
+| Factory (gateway and pointer roles merged) | `0xC4Fb9AED5d7b812AA3689aA4B9400671dd665E79` | All four testnets, same address |
+| ENS V2 renewal adapter, interface version 2 | `0x4A468177187999F125dCE99a5eBD5F82Ab8D3481` | Ethereum Sepolia |
+| Test timelock, governance executor | `0x996cbd179f361B1043Ad1999864eD41496C633c8` | Ethereum Sepolia |
+
+The user signed all eleven transactions from `0x1208a26FAa0F4AC65B42098419EB4dAA5e580AC6` with
+Rainbow through `tools/protocol-deployment`. Both contracts went through the Safe singleton
+factory with salt label `namepass-two-contract-2026-10-12`; the adapter was activated through the
+timelock's `setHelper` after its 60-second delay.
+
+| Network | Chain ID | Factory deployment block | Deployment gas |
+| --- | --- | --- | --- |
+| Ethereum Sepolia | 11155111 | 11976858 | 21,037,569 (Glamsterdam schedule) |
+| Base Sepolia | 84532 | 49195833 | 2,974,085 |
+| Arbitrum Sepolia | 421614 | 322061526 | 2,974,085 |
+| Arc Testnet | 5042002 | 68694990 | 2,974,085 |
+
+Evidence: the [manifest](deployments/2026-10-23/protocol-deployment-manifest.json) holds every
+receipt, the deployed runtime hashes (identical on all four chains) and the Sourcify matches;
+the [verification record](deployments/2026-10-23/protocol-deployment-verification.json) holds
+the 42 on-chain checks, re-run from an independent environment, and the Sepolia fork test
+result at block 11976900. Source is a full match on Sourcify for every instance. Sourcify
+forwarded the Sepolia contracts to Routescan and the L2 factories to Blockscout; Etherscan,
+Basescan and Arbiscan still need a keyed submission.
+
 ## Public testnet API pilot — 2026-10-07
 
 All four documented APIs are live anonymously at `https://beta.namepass.com`:

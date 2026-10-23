@@ -11,9 +11,11 @@ libs = ["lib"]
 # address the product has ever published.
 solc_version = "0.8.24"
 
-# Shanghai, not Cancun: it is the newest EVM version all four target
-# chains support. PUSH0 (0.8.20+) is fine on all of them.
-evm_version = "shanghai"
+# Cancun. Transient storage (TSTORE/TLOAD) and MCOPY executed in creation
+# calls on Ethereum Sepolia, Base Sepolia, Arbitrum Sepolia, Arc Testnet and
+# Arc mainnet on 2026-10-12. The factory's reentrancy guard relies on it.
+# The September 22 set was compiled for Shanghai; this is a new set.
+evm_version = "cancun"
 
 optimizer = true
 optimizer_runs = 200

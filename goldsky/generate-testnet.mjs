@@ -23,7 +23,8 @@ const datasetVersion = (chain, kind) =>
 	chain.key === "arc" ? "1.1.0" : kind === "erc20_transfers" ? "1.2.0" : "1.0.0";
 
 function rawLogAddresses(chain) {
-	return [chain.factoryAddress, ...(chain.gatewayAddress ? [chain.gatewayAddress] : [])];
+	// The hub factory is also the gateway; one address must appear once in the filter.
+	return [...new Set([chain.factoryAddress, chain.gatewayAddress].filter(Boolean).map(lower))];
 }
 
 function renderSources() {
@@ -99,6 +100,10 @@ FROM ${chain.goldskyPrefix}_usdc`,
 
 const arc = chains.find((chain) => chain.key === "arc");
 if (!arc) throw new Error("The stable testnet registry has no Arc chain.");
+// Native value is an 18-decimal integer; the normalized amount is six-decimal USDC. The engine
+// has no 256-bit integer functions, so the division by 10^12 is done on the decimal string:
+// drop a fractional part if the column renders one, require the last twelve digits to be zero,
+// and keep the digits before them. Exact for any magnitude; a non-divisible value is not a deposit.
 const arcNativeTransfer = `SELECT
   concat('${arc.chainId}:native:', id) AS event_id,
   'deposit' AS event_family,
@@ -111,11 +116,11 @@ const arcNativeTransfer = `SELECT
   '${lower(arc.usdcAddress)}' AS token_address,
   lower(from_address) AS sender_address,
   lower(to_address) AS recipient_address,
-  u256_to_string(to_u256(value) / to_u256('1000000000000')) AS amount,
+  substr(split_part(CAST(value AS STRING), '.', 1), 1, char_length(split_part(CAST(value AS STRING), '.', 1)) - 12) AS amount,
   _gs_op
 FROM ${arc.goldskyPrefix}_native_usdc
-WHERE to_u256(value) >= to_u256('1000000000000')
-  AND to_u256(value) % to_u256('1000000000000') = to_u256('0')`;
+WHERE char_length(split_part(CAST(value AS STRING), '.', 1)) > 12
+  AND substr(split_part(CAST(value AS STRING), '.', 1), char_length(split_part(CAST(value AS STRING), '.', 1)) - 11) = '000000000000'`;
 const transferUnion = `${erc20TransferUnion}\nUNION ALL\n${arcNativeTransfer}`;
 
 const rawLogsUnion = renderUnion(

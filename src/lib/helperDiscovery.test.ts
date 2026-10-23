@@ -8,7 +8,7 @@ const word = (x: string | number) => BigInt(x).toString(16).padStart(64, "0");
 function reader(helper: string, overrides: Record<string, string | number> = {}): HelperReader {
 	const config: Record<string, string | number> = {
 		"currentHelper()": helper, "gateway()": HUB_CHAIN.gatewayAddress!, "pointer()": HUB_CHAIN.pointerAddress!,
-		"interfaceVersion()": 1, "factory()": HUB_CHAIN.factoryAddress!, "paymentToken()": HUB_CHAIN.usdcAddress,
+		"interfaceVersion()": 2, "factory()": HUB_CHAIN.factoryAddress!, "paymentToken()": HUB_CHAIN.usdcAddress,
 		...overrides,
 	};
 	return async calls => calls.map(call => word(config[call.signature]));
@@ -24,6 +24,6 @@ describe("pointer discovery", () => {
 	});
 	it("rejects an inactive pointer and unknown interface", async () => {
 		await expect(discoverHelper(reader("0x0"))).rejects.toThrow("not configured");
-		await expect(discoverHelper(reader(a, { "interfaceVersion()": 2 }))).rejects.toThrow("Unsupported");
+		await expect(discoverHelper(reader(a, { "interfaceVersion()": 1 }))).rejects.toThrow("Unsupported");
 	});
 });

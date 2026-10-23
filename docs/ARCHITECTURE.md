@@ -11,11 +11,12 @@ An ENSIP-15-normalized label determines an ERC-1167 wallet through CREATE2. The 
 and wallet bytecode are part of the derivation. Each deployment set uses the same factory on
 all supported chains, so a label has one address but independent balances on each chain.
 
-On the hub chain, the factory routes payment to the fixed gateway. On a source chain, it burns
-USDC through Circle CCTP V2. The attested message mints on the hub through the gateway. The
-gateway snapshots the helper selected by the timelock-governed pointer, authenticates payment,
-and settles through that immutable ENS adapter. Mint and renewal succeed or revert together.
-An independent executor can use these contracts without the hosted application.
+On the hub chain, the wallet itself pays ENS inside one factory call. On a source chain, the
+wallet burns USDC through Circle CCTP V2 to the factory's own address on the hub. The attested
+message mints on the hub inside the factory, which is also the gateway. The factory snapshots the
+adapter selected by its timelock-governed executor, asks it for a plan, approves exactly the
+quoted price and requires that exactly that price left. Mint and renewal succeed or revert
+together. An independent executor can use these contracts without the hosted application.
 
 ## Service boundaries
 
@@ -29,7 +30,7 @@ An independent executor can use these contracts without the hosted application.
 | `src/lib/publicApi.ts` | Browser access to application data |
 
 Goldsky delivers events to the authenticated webhook. Native Arc transfers require transaction
-value indexing; they need not emit ERC-20 Transfer logs. Gateway events supply renewal facts,
+value indexing; they need not emit ERC-20 Transfer logs. Factory events supply renewal facts,
 with receipt enrichment for ENS expiry. See [the pipeline reference](../goldsky/README.md).
 
 ## Names and balances

@@ -4,12 +4,9 @@ pragma solidity 0.8.24;
 import {Test} from "forge-std/Test.sol";
 
 import {NamepassFactory} from "../contracts/NamepassFactory.sol";
-import {NamepassL1Gateway} from "../contracts/NamepassL1Gateway.sol";
-import {RenewalHelperPointer} from "../contracts/RenewalHelperPointer.sol";
-import {Dummy} from "./mocks/Mocks.sol";
 
 /**
- * @notice Label derivation and the guards around a burn.
+ * @notice Label derivation and the hub guard.
  *
  * The deposit address is the product's one permanent promise, so the
  * tests here are mostly about what must *not* be derivable: a label
@@ -101,27 +98,23 @@ contract FactoryTest is Test {
 
         assertTrue(f.predictWallet("vitalik") != f.predictWallet("nick"), "different labels collided");
     }
+
+    /// @dev The hub settlement address is the factory itself on every chain.
+    function test_hubSettlementAddressIsTheFactory() public {
+        NamepassFactory f = _deploy(SEPOLIA);
+
+        assertEq(f.l1Helper(), address(f));
+        assertEq(f.gateway(), address(f));
+        assertEq(f.pointer(), address(f));
+    }
 }
 
 /**
- * @notice The gateway's fixed allowance is a pricing policy. The browser
- * checks its configured value against the chain at boot.
+ * @notice The fixed allowance is a pricing policy. The browser checks
+ * its configured value against the chain at boot.
  */
 contract ConstantAgreementTest is Test {
-    function test_helperAllowanceIsTenCents() public {
-        assertEq(_helperAllowance(), 100_000, "GAS_ALLOWANCE changed from $0.10");
-    }
-
-    /**
-     * @dev Read off a live helper. Every constructor argument is a
-     * placeholder — the constructor only checks each is non-zero and
-     * has code, and nothing here calls any of them.
-     */
-    function _helperAllowance() internal returns (uint256) {
-        address d = address(new Dummy());
-
-        vm.chainId(11155111);
-        RenewalHelperPointer pointer = new RenewalHelperPointer(d, d, d);
-        return new NamepassL1Gateway(d, d, d, d, address(pointer), d).GAS_ALLOWANCE();
+    function test_allowanceIsTenCents() public {
+        assertEq(new NamepassFactory(address(this), 11155111).GAS_ALLOWANCE(), 100_000, "GAS_ALLOWANCE changed from $0.10");
     }
 }

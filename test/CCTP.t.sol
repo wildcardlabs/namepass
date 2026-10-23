@@ -1,92 +1,29 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.24;
 
-import {Test} from "forge-std/Test.sol";
-import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-
-import {NamepassL1Gateway} from "../contracts/NamepassL1Gateway.sol";
-import {RenewalHelperPointer} from "../contracts/RenewalHelperPointer.sol";
+import {Vm} from "forge-std/Vm.sol";
 import {TimelockController} from "@openzeppelin/contracts/governance/TimelockController.sol";
-import {ENSV2RenewalHelper} from "../contracts/ENSV2RenewalHelper.sol";
 
-import {StandardRentPriceOracle, DiscountPoint, PaymentRatio} from "./ens/registrar/StandardRentPriceOracle.sol";
-import {IRentPriceOracle} from "./ens/registrar/interfaces/IRentPriceOracle.sol";
+import {NamepassFactory} from "../contracts/NamepassFactory.sol";
+import {ENSV2RenewalAdapter} from "../contracts/ENSV2RenewalAdapter.sol";
 
-import {MockUSDC, MockRenewer, MockFactory, MockMessageTransmitter, Dummy} from "./mocks/Mocks.sol";
+import {HubSetup} from "./HubSetup.sol";
+import {MockRenewer, Dummy} from "./mocks/Mocks.sol";
 
 /**
- * @notice CCTP v2 message parsing and the route checks around it.
+ * @notice CCTP v2 message parsing, the route checks around it, and the
+ * claim settling from the factory's own balance.
  *
- * The offsets are the part of this contract that cannot be reasoned
+ * The offsets are the part of the factory that cannot be reasoned
  * about from the outside — a wrong one reads a plausible-looking value
  * from the wrong field and the failure is silent. `_encode` below builds
  * messages to the published layout so the constants are exercised
  * against a real encoding rather than against themselves.
  */
-contract CCTPTest is Test {
-    NamepassL1Gateway internal helper;
-    ENSV2RenewalHelper internal adapter;
-    RenewalHelperPointer internal pointer;
-    MockRenewer internal renewer;
-    MockUSDC internal usdc;
-    MockFactory internal factory;
-    MockMessageTransmitter internal transmitter;
-
-    address constant GOVERNANCE = address(0xE45);
-    bytes32 constant REFERRER = bytes32(uint256(0x1208));
-    address constant EXECUTOR = address(0xEE);
-    address constant WALLET = address(0xA11E7);
-    address constant TOKEN_MESSENGER = address(0xC1C1E);
-
-    string constant LABEL = "vitalik";
-
-    function setUp() public {
-        vm.chainId(11155111);
-        vm.etch(GOVERNANCE, hex"00");
-        usdc = new MockUSDC();
-
-        uint256[] memory rates = new uint256[](5);
-        rates[2] = 20_294_267;
-        rates[3] = 5_073_567;
-        rates[4] = 253_679;
-
-        DiscountPoint[] memory points = new DiscountPoint[](3);
-        points[0] = DiscountPoint({duration: 63_072_000, numer: 875e35});
-        points[1] = DiscountPoint({duration: 94_608_000, numer: 6875e34});
-        points[2] = DiscountPoint({duration: 189_216_000, numer: 5625e34});
-
-        PaymentRatio[] memory ratios = new PaymentRatio[](1);
-        ratios[0] = PaymentRatio({paymentToken: IERC20(address(usdc)), numer: 1, denom: 1e6});
-
-        StandardRentPriceOracle oracle =
-            new StandardRentPriceOracle(address(this), rates, points, 1e38, 0, 1, 1, ratios);
-
-        renewer = new MockRenewer(IRentPriceOracle(address(oracle)), address(0xB1));
-        factory = new MockFactory();
-        factory.setWallet(LABEL, WALLET);
-
-        transmitter = new MockMessageTransmitter(usdc);
-
-        /* TOKEN_MESSENGER only needs code for the constructor's check. */
-        vm.etch(TOKEN_MESSENGER, hex"00");
-
-        pointer = new RenewalHelperPointer(address(factory), address(usdc), GOVERNANCE);
-        helper = new NamepassL1Gateway(
-            address(factory), address(usdc), address(transmitter), TOKEN_MESSENGER, address(pointer), address(0xD57)
-        );
-        adapter = new ENSV2RenewalHelper(
-            address(helper), address(factory), address(usdc), address(renewer), address(0), REFERRER
-        );
-        vm.prank(GOVERNANCE);
-        pointer.setHelper(address(adapter));
-
-        /*
-         * No `setMint` here on purpose: the transmitter's default
-         * mints `burn.amount - burn.feeExecuted` to its caller, which
-         * is the helper. Overriding is only for the tests that need a
-         * mint disagreeing with the message.
-         */
-    }
+contract CCTPTest is HubSetup {
+    bytes32 constant CLAIMED = keccak256("CCTPClaimed(bytes32,address,uint32,uint256,uint256,uint256)");
+    bytes32 constant HELPER_USED = keccak256("HelperUsed(address,bytes32,address)");
+    bytes32 constant RENEWED = keccak256("Renewed(bytes32,address,address,string,uint64,uint256,uint256,uint256,uint256,bool)");
 
     /*//////////////////////////////////////////////////////////////
                           MESSAGE ENCODING
@@ -143,16 +80,13 @@ contract CCTPTest is Test {
 
     function _validMessage(uint256 amount, uint256 fee) internal view returns (bytes memory) {
         return _encode(
-            6,
-            bytes32(uint256(0xC0FFEE)),
-            TOKEN_MESSENGER,
-            address(helper),
-            address(helper),
-            amount,
-            WALLET,
-            fee,
-            bytes(LABEL)
+            6, bytes32(uint256(0xC0FFEE)), TOKEN_MESSENGER, address(factory), address(factory), amount, wallet, fee, bytes(LABEL)
         );
+    }
+
+    function _claimAs(address executor, bytes memory message) internal {
+        vm.prank(executor);
+        factory.completeCCTP(message, hex"1234");
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -160,37 +94,56 @@ contract CCTPTest is Test {
     //////////////////////////////////////////////////////////////*/
 
     function test_claimsAndRenews() public {
-        bytes memory m = _validMessage(27_110_000, 0);
+        _claimAs(EXECUTOR, _validMessage(27_110_000, 0));
 
-        vm.prank(EXECUTOR);
-        helper.completeCCTP(m, hex"1234");
-
-        assertGt(renewer.lastDuration(), 0, "no renewal happened");
-        assertEq(usdc.balanceOf(EXECUTOR), helper.GAS_ALLOWANCE(), "executor unpaid");
+        uint256 charged = usdc.balanceOf(ethRegistrar.beneficiary());
+        assertGt(ethRegistrar.lastDuration(), 0, "no renewal happened");
+        assertEq(usdc.balanceOf(EXECUTOR), 27_110_000 - charged, "executor was not paid the remainder");
+        assertGe(usdc.balanceOf(EXECUTOR), factory.GAS_ALLOWANCE(), "executor unpaid");
+        assertEq(ethRegistrar.lastPayer(), address(factory), "ENS was not paid by the factory");
+        assertEq(usdc.balanceOf(address(factory)), 0, "the factory kept funds");
+        assertEq(usdc.allowance(address(factory), address(ethRegistrar)), 0, "a standing allowance survived");
     }
 
     /// @dev Whoever submits the claim is paid, not the source wallet.
     function test_submitterIsPaidNotTheWallet() public {
-        bytes memory m = _validMessage(27_110_000, 0);
+        _claimAs(EXECUTOR, _validMessage(27_110_000, 0));
 
-        vm.prank(EXECUTOR);
-        helper.completeCCTP(m, hex"1234");
-
-        assertEq(usdc.balanceOf(WALLET), 0, "the deposit wallet was paid its own money back");
+        assertEq(usdc.balanceOf(wallet), 0, "the deposit wallet was paid its own money back");
     }
 
     /// @dev Only `burn.amount - burn.feeExecuted` may be spent.
     function test_feeIsSubtractedFromTheSpendableAmount() public {
         uint256 fee = 1_000_000;
-        bytes memory withFee = _validMessage(27_110_000 + fee, fee);
+        _claimAs(EXECUTOR, _validMessage(27_110_000 + fee, fee));
 
-        vm.prank(EXECUTOR);
-        helper.completeCCTP(withFee, hex"1234");
+        (uint64 expected,) = factory.quote(LABEL, 27_110_000 - factory.GAS_ALLOWANCE());
+        assertEq(ethRegistrar.lastDuration(), expected, "the CCTP fee was not deducted");
+    }
 
-        uint64 durationWithFee = renewer.lastDuration();
+    /// @dev `CCTPClaimed` before ENS executes, then `HelperUsed`, then `Renewed` with the CCTP flag.
+    function test_eventOrder() public {
+        vm.recordLogs();
+        _claimAs(EXECUTOR, _validMessage(27_110_000, 0));
+        Vm.Log[] memory logs = vm.getRecordedLogs();
 
-        (uint64 expected,) = helper.quote(LABEL, 27_110_000 - helper.GAS_ALLOWANCE());
-        assertEq(durationWithFee, expected, "the CCTP fee was not deducted");
+        uint256 n;
+        bytes32[3] memory order;
+        for (uint256 i; i < logs.length; ++i) {
+            if (logs[i].emitter != address(factory)) continue;
+            bytes32 sig = logs[i].topics[0];
+            if (sig != CLAIMED && sig != HELPER_USED && sig != RENEWED) continue;
+            order[n++] = sig;
+            if (sig == RENEWED) {
+                (,,,,,, bool fromCCTP) =
+                    abi.decode(logs[i].data, (string, uint64, uint256, uint256, uint256, uint256, bool));
+                assertTrue(fromCCTP);
+            }
+        }
+        assertEq(n, 3);
+        assertEq(order[0], CLAIMED);
+        assertEq(order[1], HELPER_USED);
+        assertEq(order[2], RENEWED);
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -199,41 +152,56 @@ contract CCTPTest is Test {
 
     function test_rejectsMessageNotAddressedToTokenMessenger() public {
         bytes memory m = _encode(
-            6, bytes32(0), address(0xBAD), address(helper), address(helper), 27_110_000, WALLET, 0, bytes(LABEL)
+            6, bytes32(0), address(0xBAD), address(factory), address(factory), 27_110_000, wallet, 0, bytes(LABEL)
         );
 
-        vm.expectRevert(NamepassL1Gateway.InvalidCCTPMessage.selector);
-        helper.completeCCTP(m, hex"1234");
+        vm.expectRevert(NamepassFactory.InvalidCCTPMessage.selector);
+        factory.completeCCTP(m, hex"1234");
     }
 
     function test_rejectsForeignDestinationCaller() public {
         bytes memory m = _encode(
-            6, bytes32(0), TOKEN_MESSENGER, address(0xBAD), address(helper), 27_110_000, WALLET, 0, bytes(LABEL)
+            6, bytes32(0), TOKEN_MESSENGER, address(0xBAD), address(factory), 27_110_000, wallet, 0, bytes(LABEL)
         );
 
-        vm.expectRevert(NamepassL1Gateway.InvalidCCTPMessage.selector);
-        helper.completeCCTP(m, hex"1234");
+        vm.expectRevert(NamepassFactory.InvalidCCTPMessage.selector);
+        factory.completeCCTP(m, hex"1234");
     }
 
     function test_rejectsForeignMintRecipient() public {
         bytes memory m = _encode(
-            6, bytes32(0), TOKEN_MESSENGER, address(helper), address(0xBAD), 27_110_000, WALLET, 0, bytes(LABEL)
+            6, bytes32(0), TOKEN_MESSENGER, address(factory), address(0xBAD), 27_110_000, wallet, 0, bytes(LABEL)
         );
 
-        vm.expectRevert(NamepassL1Gateway.InvalidCCTPMessage.selector);
-        helper.completeCCTP(m, hex"1234");
+        vm.expectRevert(NamepassFactory.InvalidCCTPMessage.selector);
+        factory.completeCCTP(m, hex"1234");
     }
 
     function test_rejectsTruncatedMessage() public {
-        vm.expectRevert(NamepassL1Gateway.InvalidCCTPMessage.selector);
-        helper.completeCCTP(new bytes(375), hex"1234");
+        vm.expectRevert(NamepassFactory.InvalidCCTPMessage.selector);
+        factory.completeCCTP(new bytes(375), hex"1234");
     }
 
     function test_rejectsFeeExceedingBurnAmount() public {
         bytes memory m = _validMessage(1_000_000, 2_000_000);
 
-        vm.expectRevert(NamepassL1Gateway.InvalidCCTPMessage.selector);
-        helper.completeCCTP(m, hex"1234");
+        vm.expectRevert(NamepassFactory.InvalidCCTPMessage.selector);
+        factory.completeCCTP(m, hex"1234");
+    }
+
+    function test_rejectsWrongVersionsAndDomain() public {
+        bytes memory message = _validMessage(27_110_000, 0);
+        message[3] = 0x02;
+        vm.expectRevert(NamepassFactory.InvalidCCTPMessage.selector);
+        factory.completeCCTP(message, hex"1234");
+        message[3] = 0x01;
+        message[151] = 0x02;
+        vm.expectRevert(NamepassFactory.InvalidCCTPMessage.selector);
+        factory.completeCCTP(message, hex"1234");
+        message[151] = 0x01;
+        message[11] = 0x06;
+        vm.expectRevert(NamepassFactory.InvalidCCTPMessage.selector);
+        factory.completeCCTP(message, hex"1234");
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -242,151 +210,126 @@ contract CCTPTest is Test {
 
     /**
      * @dev The label in the hook is bound to the wallet that burned.
-     *
-     * This is what makes `completeCCTP` safe to leave permissionless:
-     * rebinding a payment to another name would need a keccak preimage
-     * against `predictWallet`.
+     * This is what makes `completeCCTP` safe to leave permissionless.
      */
     function test_rejectsHookLabelThatDoesNotMatchTheBurner() public {
         bytes memory m = _encode(
-            6,
-            bytes32(0),
-            TOKEN_MESSENGER,
-            address(helper),
-            address(helper),
-            27_110_000,
-            address(0xBAD),
-            0,
-            bytes(LABEL)
+            6, bytes32(0), TOKEN_MESSENGER, address(factory), address(factory), 27_110_000, address(0xBAD), 0, bytes(LABEL)
         );
 
-        vm.expectRevert(NamepassL1Gateway.InvalidWallet.selector);
-        helper.completeCCTP(m, hex"1234");
+        vm.expectRevert(NamepassFactory.InvalidWallet.selector);
+        factory.completeCCTP(m, hex"1234");
     }
 
     function test_rejectsSubstitutedLabel() public {
         bytes memory m = _encode(
-            6,
-            bytes32(0),
-            TOKEN_MESSENGER,
-            address(helper),
-            address(helper),
-            27_110_000,
-            WALLET,
-            0,
-            bytes("someoneelse")
+            6, bytes32(0), TOKEN_MESSENGER, address(factory), address(factory), 27_110_000, wallet, 0, bytes("someoneelse")
         );
 
-        vm.expectRevert(NamepassL1Gateway.InvalidWallet.selector);
-        helper.completeCCTP(m, hex"1234");
+        vm.expectRevert(NamepassFactory.InvalidWallet.selector);
+        factory.completeCCTP(m, hex"1234");
+    }
+
+    function test_rejectsNonCanonicalSenderAndEmptyLabel() public {
+        bytes memory message = _validMessage(27_110_000, 0);
+        message[248] = 0x01;
+        vm.expectRevert(NamepassFactory.InvalidCCTPMessage.selector);
+        factory.completeCCTP(message, hex"1234");
+        message = _encode(6, bytes32(0), TOKEN_MESSENGER, address(factory), address(factory), 27_110_000, wallet, 0, bytes(""));
+        vm.expectRevert(NamepassFactory.EmptyLabel.selector);
+        factory.completeCCTP(message, hex"1234");
     }
 
     /*//////////////////////////////////////////////////////////////
                           THE MINT ASSERTION
     //////////////////////////////////////////////////////////////*/
 
-    /**
-     * @dev A mint that disagrees with the authenticated burn is
-     * refused, so pre-existing dust can never be counted into a flow.
-     */
+    /// @dev A mint that disagrees with the authenticated burn is refused.
     function test_rejectsMintSmallerThanTheAuthenticatedAmount() public {
-        transmitter.setMint(address(helper), 1_000_000);
+        transmitter.setMint(address(factory), 1_000_000);
 
-        bytes memory m = _validMessage(27_110_000, 0);
-
-        vm.expectRevert(NamepassL1Gateway.UnexpectedMintAmount.selector);
-        helper.completeCCTP(m, hex"1234");
+        vm.expectRevert(NamepassFactory.UnexpectedMintAmount.selector);
+        factory.completeCCTP(_validMessage(27_110_000, 0), hex"1234");
     }
 
-    /// @dev Dust already in the helper must not be spendable by a flow.
-    function test_existingDustIsNotCountedIntoTheFlow() public {
-        usdc.mint(address(helper), 5_000_000);
+    /**
+     * @dev Anyone can send USDC to the factory. A claim spends only the
+     * minted amount, and the factory's balance is unchanged afterwards.
+     */
+    function test_existingBalanceIsNotCountedIntoTheFlow() public {
+        usdc.mint(address(factory), 5_000_000);
 
-        bytes memory m = _validMessage(27_110_000, 0);
+        _claimAs(EXECUTOR, _validMessage(27_110_000, 0));
 
-        vm.prank(EXECUTOR);
-        helper.completeCCTP(m, hex"1234");
-
-        (uint64 expected,) = helper.quote(LABEL, 27_110_000 - helper.GAS_ALLOWANCE());
-        assertEq(renewer.lastDuration(), expected, "pre-existing balance leaked into the flow");
+        (uint64 expected,) = factory.quote(LABEL, 27_110_000 - factory.GAS_ALLOWANCE());
+        assertEq(ethRegistrar.lastDuration(), expected, "pre-existing balance leaked into the flow");
+        assertEq(usdc.balanceOf(address(factory)), 5_000_000, "the factory's pre-claim balance changed");
+        uint256 charged = usdc.balanceOf(ethRegistrar.beneficiary());
+        assertEq(usdc.balanceOf(EXECUTOR), 27_110_000 - charged, "the executor was paid from the wrong balance");
     }
 
     function test_revertsWhenReceiveMessageFails() public {
         transmitter.setSucceed(false);
 
-        bytes memory m = _validMessage(27_110_000, 0);
-
-        vm.expectRevert(NamepassL1Gateway.CCTPReceiveFailed.selector);
-        helper.completeCCTP(m, hex"1234");
+        vm.expectRevert(NamepassFactory.CCTPReceiveFailed.selector);
+        factory.completeCCTP(_validMessage(27_110_000, 0), hex"1234");
     }
 
-    function test_messageUsesReplacementHelperAndCannotReplay() public {
+    /*//////////////////////////////////////////////////////////////
+                        REPLACEMENT AND RETRY
+    //////////////////////////////////////////////////////////////*/
+
+    /// @dev A burn addressed to the factory settles through whichever adapter is active when claimed.
+    function test_messageUsesReplacementAdapterAndCannotReplay() public {
         address[] memory actors = new address[](1);
         actors[0] = address(this);
         TimelockController timelock = new TimelockController(1 days, actors, actors, address(0));
         vm.prank(GOVERNANCE);
-        pointer.transferGovernance(address(timelock));
-        bytes memory accept = abi.encodeCall(pointer.acceptGovernance, ());
-        timelock.schedule(address(pointer), 0, accept, bytes32(0), bytes32(0), 1 days);
+        factory.transferGovernance(address(timelock));
+        bytes memory accept = abi.encodeCall(factory.acceptGovernance, ());
+        timelock.schedule(address(factory), 0, accept, bytes32(0), bytes32(0), 1 days);
         vm.warp(block.timestamp + 1 days);
-        timelock.execute(address(pointer), 0, accept, bytes32(0), bytes32(0));
-        // The message records the permanent gateway while adapter A is active.
+        timelock.execute(address(factory), 0, accept, bytes32(0), bytes32(0));
+
         bytes memory message = _validMessage(27_110_000, 0);
-        MockRenewer nextRenewer = new MockRenewer(renewer.rentPriceOracle(), address(0xB2));
-        ENSV2RenewalHelper next = new ENSV2RenewalHelper(
-            address(helper), address(factory), address(usdc), address(nextRenewer), address(0), REFERRER
-        );
-        bytes memory update = abi.encodeCall(pointer.setHelper, (address(next)));
-        timelock.schedule(address(pointer), 0, update, bytes32(0), bytes32(0), 1 days);
+        MockRenewer nextRenewer = new MockRenewer(ethRegistrar.rentPriceOracle(), address(0xB3));
+        ENSV2RenewalAdapter next =
+            new ENSV2RenewalAdapter(address(factory), address(usdc), address(nextRenewer), address(0), REFERRER);
+        bytes memory update = abi.encodeCall(factory.setHelper, (address(next)));
+        timelock.schedule(address(factory), 0, update, bytes32(0), bytes32(0), 1 days);
         vm.warp(block.timestamp + 1 days);
-        timelock.execute(address(pointer), 0, update, bytes32(0), bytes32(0));
-        vm.prank(EXECUTOR);
-        helper.completeCCTP(message, hex"1234");
-        assertEq(renewer.lastDuration(), 0);
+        timelock.execute(address(factory), 0, update, bytes32(0), bytes32(0));
+
+        _claimAs(EXECUTOR, message);
+        assertEq(ethRegistrar.lastDuration(), 0);
         assertGt(nextRenewer.lastDuration(), 0);
-        assertEq(usdc.allowance(address(helper), address(adapter)), 0);
-        assertEq(usdc.allowance(address(helper), address(next)), 0);
+        assertEq(usdc.allowance(address(factory), address(nextRenewer)), 0);
+
         vm.expectRevert(bytes("nonce used"));
-        helper.completeCCTP(message, hex"1234");
+        factory.completeCCTP(message, hex"1234");
     }
 
     function test_failedClaimRollsBackMintAndNonceThenRetriesSameMessage() public {
         bytes memory message = _validMessage(27_110_000, 0);
-        renewer.setRenewable(false);
-        vm.expectRevert(ENSV2RenewalHelper.NameNotRenewable.selector);
-        helper.completeCCTP(message, hex"1234");
+        ethRegistrar.setRenewable(false);
+        vm.expectRevert(ENSV2RenewalAdapter.NameNotRenewable.selector);
+        factory.completeCCTP(message, hex"1234");
         assertFalse(transmitter.usedNonces(bytes32(uint256(0xC0FFEE))));
-        assertEq(usdc.balanceOf(address(helper)), 0);
-        assertEq(usdc.balanceOf(address(adapter)), 0);
-        assertEq(usdc.allowance(address(helper), address(adapter)), 0);
-        renewer.setRenewable(true);
-        helper.completeCCTP(message, hex"1234");
+        assertEq(usdc.balanceOf(address(factory)), 0);
+        assertEq(usdc.allowance(address(factory), address(ethRegistrar)), 0);
+
+        ethRegistrar.setRenewable(true);
+        factory.completeCCTP(message, hex"1234");
         assertTrue(transmitter.usedNonces(bytes32(uint256(0xC0FFEE))));
     }
 
-    function test_rejectsWrongVersionsAndDomain() public {
-        bytes memory message = _validMessage(27_110_000, 0);
-        message[3] = 0x02;
-        vm.expectRevert(NamepassL1Gateway.InvalidCCTPMessage.selector);
-        helper.completeCCTP(message, hex"1234");
-        message[3] = 0x01;
-        message[151] = 0x02;
-        vm.expectRevert(NamepassL1Gateway.InvalidCCTPMessage.selector);
-        helper.completeCCTP(message, hex"1234");
-        message[151] = 0x01;
-        message[11] = 0x06;
-        vm.expectRevert(NamepassL1Gateway.InvalidCCTPMessage.selector);
-        helper.completeCCTP(message, hex"1234");
-    }
+    /// @dev An L2 factory has no transmitter and refuses claims outright.
+    function test_l2FactoryRejectsClaims() public {
+        vm.chainId(84532);
+        NamepassFactory l2 = new NamepassFactory(address(this), 11155111);
+        l2.initialize(address(usdc), address(new Dummy()), address(0), address(0));
 
-    function test_rejectsNonCanonicalSenderAndEmptyLabel() public {
-        bytes memory message = _validMessage(27_110_000, 0);
-        message[248] = 0x01;
-        vm.expectRevert(NamepassL1Gateway.InvalidCCTPMessage.selector);
-        helper.completeCCTP(message, hex"1234");
-        message =
-            _encode(6, bytes32(0), TOKEN_MESSENGER, address(helper), address(helper), 27_110_000, WALLET, 0, bytes(""));
-        vm.expectRevert(NamepassL1Gateway.InvalidLabel.selector);
-        helper.completeCCTP(message, hex"1234");
+        vm.expectRevert(NamepassFactory.NotHub.selector);
+        l2.completeCCTP(_validMessage(27_110_000, 0), hex"1234");
     }
 }

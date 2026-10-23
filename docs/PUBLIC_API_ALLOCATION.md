@@ -135,9 +135,11 @@ These reads support the factory custody assumptions; they do not pin every token
 dependency. Provider range completeness remains a trust prerequisite. A whole omitted transaction
 with offsetting movements cannot be ruled out solely by boundary-balance conservation.
 
-Every debit must match one exact factory call segment and amount. Direct calls must contain the
-matching gateway renewal and transfer destination; cross-chain calls must contain the matching
-source message at its exact ordered index. Balances are replayed in block, transaction and log
+Every debit must match one exact factory call segment, and the debits of a call must sum to its
+processed amount. Since the 2026-10-23 deployment a direct call has two debits, ENS's charge and
+the executor's share, which must equal the applied amount and the received amount minus the
+applied amount from the matching gateway renewal; cross-chain calls have one debit and must
+contain the matching source message at its exact ordered index. Balances are replayed in block, transaction and log
 order, checked against each reported remainder and the historical boundary balances. Both block
 boundaries are rechecked after inspection; a correction prevents a successful proof.
 

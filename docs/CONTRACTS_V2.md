@@ -2,93 +2,114 @@
 
 Deployment addresses and verification evidence are in
 [DEPLOYMENTS.md](DEPLOYMENTS.md). This document describes the
-contract boundaries. The contracts are not externally audited.
+contract boundaries of the two-contract design deployed on 2026-10-23. The design rationale and
+gas measurements are in [GAS_REDESIGN_PROPOSAL.md](GAS_REDESIGN_PROPOSAL.md). The contracts are
+not externally audited.
 
 ## Contract boundary
 
-`NamepassFactory` supports native reception through its deposit wallets on Arc testnet with
-Sepolia as hub. This supersedes the September 18 factory that rejected native deposits after
-wallet deployment. Other networks, direct factory deposits and unknown calldata remain rejected.
-Its fixed `l1Helper` configuration points to the gateway. Exact hashes, addresses and receipts
-are in `deployments/2026-09-22/manifest.json` and its verification files; a changed factory
-address changes derived deposit addresses.
+`NamepassFactory` is one contract at one address on every chain. It derives and deploys the
+ERC-1167 deposit wallets, authenticates funding, completes CCTP claims, settles payments, pays the
+executor, and selects the ENS adapter through its governance executor. It holds no funds between
+calls. The gateway and pointer of the September 22 design are merged into it: `gateway()`,
+`pointer()` and `factory()` return the factory's own address, `currentHelper()` returns the active
+adapter, and `l1Helper()` returns the hub settlement address, which is the factory itself. A
+changed factory address changes derived deposit addresses.
 
-`RenewalHelperPointer` stores the active helper. Its constructor fixes the factory and payment
-token. Only the governance executor can activate a helper. The executor must be an ENS Timelock
-on mainnet. The code check is only a configuration check; it cannot prove DAO control. Use an
-explicit test timelock on Sepolia.
+The factory's payment configuration is initialized once: USDC, Circle TokenMessenger, and on the
+hub the Circle MessageTransmitter and the governance executor. The owner can change the CCTP
+finality threshold and nominate a successor; neither changes the payment route. There is no sweep
+and no owner-controlled payment destination.
 
-On first activation, the pointer binds permanently to the helper's gateway. It verifies that
-the gateway points back to this pointer and uses the same factory and token. Later helpers must
-use that gateway. Each helper must report interface version 1 and the same factory and token.
-`HelperUpdated` includes the previous helper, new helper, and new runtime code hash. Executor
-handover requires nomination by the current executor and acceptance by the successor. The current
-executor can cancel a pending handover. There is no Namepass bypass or immediate rollback role.
+Deposit wallets delegatecall the factory. On the hub, `renew(label)` reads the wallet's USDC
+balance, deploys the wallet when needed, and runs the settlement inside the wallet, so the wallet
+pays ENS directly. On a source chain, the wallet approves Circle's TokenMessenger for the balance
+and burns it to the factory's own address on the hub with the label as hook data. Direct factory
+deposits and unknown calldata are rejected; native Arc reception through wallets is the one
+exception, restricted to Arc with Sepolia as hub.
 
-`NamepassL1Gateway` fixes its pointer, factory, USDC, Circle MessageTransmitter, Circle
-TokenMessenger, and residue recipient at construction. It deploys only on Ethereum or Sepolia.
-It has no owner. Its public payment entrypoints remain `renewFromWallet` and `completeCCTP`.
-Both have a reentrancy guard. Each call snapshots the selected helper before funds arrive.
+`completeCCTP(message, attestation)` verifies message and burn-body version 1, the hub as
+destination domain, a non-hub source domain, Circle TokenMessenger as recipient, and the factory as
+destination caller and mint recipient. It rejects a noncanonical source-wallet encoding. The label
+must be nonempty, at most 255 bytes, and contain no dot. The factory binds the label to its wallet
+and verifies that the observed mint equals the burn amount minus the executed Circle fee. Circle
+authenticates the attestation, remote route, token mapping, and nonce. The factory then runs the
+same settlement with the minted amount as the authenticated payment.
 
-The gateway authenticates each payment and approves only its renewal budget to that helper. It
-checks the actual token balance change against the returned charge. It clears the allowance.
-It pays the original executor `100_000` USDC base units after successful settlement. Rounding
-residue increments `earnedResidue`. Anyone can call `withdrawDust()` to send only that recorded
-amount to the fixed residue recipient. Direct donations do not become withdrawable residue.
+## Settlement
 
-For CCTP, the gateway verifies message and burn-body version 1, Ethereum destination domain 0,
-a non-Ethereum source domain, Circle TokenMessenger as recipient, and itself as destination
-caller and mint recipient. It rejects a noncanonical source-wallet encoding. The label must be
-nonempty, at most 255 bytes, and contain no dot. The factory binds the label to its wallet.
-Circle authenticates the attestation, remote route, token mapping, and nonce. The gateway verifies
-that the observed mint equals the authenticated burn amount minus the executed Circle fee.
+One routine settles both routes, inside the wallet on the direct path and inside the factory on
+the claim path. The authenticated amount is the wallet balance the factory read or the amount
+Circle minted. Nothing else held by the payer is spent. With `GAS_ALLOWANCE` fixed at 100,000
+USDC base units:
 
-`ENSV2RenewalHelper` fixes its gateway, factory, USDC, registrar, V1 renewer, and referrer at
-construction. It has no owner, ENS setters, CCTP entrypoint, fee setting, or sweep. Only the gateway
-can call `execute`. It pulls the supplied budget, checks the received amount, selects the ENS
-renewer, computes the duration, checks ENS's forward quote, and uses the new `RenewData` ABI.
-It verifies the actual charge, clears the ENS allowance, and returns unused budget to the gateway.
-Any pre-existing helper balance stays outside settlement.
+1. The payer asks the adapter for a plan: `(renewer, spender, duration, price, data)` for a budget
+   of `amount - GAS_ALLOWANCE`. The plan must have `duration > 0` and `0 < price <= budget`.
+2. The renewer and the spender must be contracts, and neither may be the payer, the factory, or
+   USDC.
+3. The payer approves the spender for exactly `price`, calls the renewer with `data`, and requires
+   that its USDC balance dropped by exactly `price`. ENS prices the renewal again inside its own
+   `renew`, so a plan that disagrees with ENS fails on the allowance or on the delta.
+4. Any residual allowance is cleared.
+5. The executor receives `amount - price`, which is the allowance plus the rounding remainder.
 
-The stable helper interface exposes `quote`, `renewableBy`, and `nameState` for read operations.
-`nameState` returns expiry and the selected renewer. If neither renewer accepts the label, it
-returns zero as renewer and reads expiry from the registrar's registry. Registry-specific expiry
-calls therefore remain inside replaceable code. The concrete helper also exposes its immutable
-ENS addresses and referrer. The oracle is still read from the selected ENS contract on each quote.
+A reentrancy guard in transient storage protects `renew` and `completeCCTP`. Failed settlement
+reverts the whole call, including a CCTP mint; Circle then accepts the same message on retry.
 
-The September 22 helper reports the V2 registry expiry for both renewal routes. For an
-unmigrated V1 name this is a reservation expiry, not the V1 registration expiry. The backend
-uses the helper's selected renewer, discovers `BASE_REGISTRAR()` through `ETHRenewerV1`, and
-reads `nameExpires(keccak256(label))` at the same block. Migrated and new V2 registrations
-retain their V2 expiry. When neither route is renewable, the V2 registry's `latestOwner`
-distinguishes a former reservation from a former registration. No fixed bonus is subtracted.
+The adapter can therefore direct at most the quoted price of one payment, and only to the spender
+it names, and only after the governance executor activates it. `setHelper` requires the adapter to
+report interface version 2, the factory as both `factory()` and `gateway()`, and USDC as
+`paymentToken()`. `HelperUpdated` includes the previous adapter, new adapter, and new runtime code
+hash. Executor handover requires nomination by the current executor and acceptance by the
+successor. The executor must be an ENS Timelock on mainnet; the code check is only a configuration
+check and cannot prove DAO control. Sepolia uses an explicit test timelock.
+
+## ENS adapter
+
+`ENSV2RenewalAdapter` is view-only. It fixes its factory, USDC, registrar, V1 renewer, and referrer
+at construction and has no owner, setters, balance, or entrypoint that executes. `plan` selects the
+ENS renewer that accepts the label, inverts that renewer's live oracle to find the longest
+whole-second duration the budget buys, and returns the renewer as both target and spender with the
+exact `renew(RenewData, USDC)` calldata. `quote`, `renewableBy`, and `nameState` serve reads;
+`nameState` returns expiry and the selected renewer, and reads expiry from the registrar's registry
+when neither renewer accepts the label. Registry-specific reads therefore stay inside replaceable
+code. The oracle is read from the selected ENS contract on every call.
+
+The adapter reports the V2 registry expiry for both renewal routes. For an unmigrated V1 name this
+is a reservation expiry, not the V1 registration expiry. The backend uses the adapter's selected
+renewer, discovers `BASE_REGISTRAR()` through `ETHRenewerV1`, and reads `nameExpires` at the same
+block. Migrated and new V2 registrations retain their V2 expiry. When neither route is renewable,
+the V2 registry's `latestOwner` distinguishes a former reservation from a former registration.
 
 For a V1 renewal receipt, expiry comes from the V1 BaseRegistrar's `NameRenewed(id, expires)`
 before the V2 renewer event in the same call segment. Later wrapper synchronization can emit
-another V1 event and does not supply the registration extension. The V1 registrar address is
-read from the selected V1 renewer at the receipt block. V2 renewals retain their own event expiry.
-These backend reads do not require a helper replacement or change renewal execution.
+another V1 event and does not supply the registration extension. The V1 registrar address is read
+from the selected V1 renewer at the receipt block. V2 renewals retain their own event expiry.
 
-The gateway emits `CCTPClaimed` before ENS executes and `Renewed` after settlement. `HelperUsed`
-identifies the adapter immediately before `Renewed`. Existing settlement event signatures remain
-unchanged. Event emitters move from the old helper to the new gateway. Failed settlement reverts
-all events and the mint. Circle can then accept the same message on retry.
+## Events
+
+The factory emits every protocol event, so `gatewayAddress` and `pointerAddress` in the
+application configuration name the factory. The signatures are unchanged from the September 22
+design: `WalletDeployed`, `DepositProcessed`, `CCTPClaimed`, `HelperUsed`, `Renewed`, and the
+governance events. Order on the direct path: `HelperUsed`, `Renewed`, then `DepositProcessed`. On
+a claim: `CCTPClaimed` before ENS executes, then `HelperUsed` and `Renewed`. On the hub, a
+direct renewal shows two wallet debits, ENS's charge and the executor's share; on a source chain,
+one debit, the burn.
 
 ## Verified ENS compatibility
 
-The supplied registrar and V1 renewer both use the tuple renewal ABI. Both point to oracle
-`0x9B0b9C65BDAf9794Ff7697E4dCFb1f50581072BB`. At the inspected deployment, that oracle supports
-Sepolia USDC with ratio `(1, 1000000)`. The registry used in the fork is
-`0x657eA849311d3D5823348ddEd7C2AaAFb3EDE09E`.
+The supplied registrar `0xf633e7FC17e2bbE0D0965D18ec1821dcB754a3d3` and V1 renewer
+`0xf2ece44980778966b8a0FccB3A9E339440f6e045` both use the tuple `RenewData` renewal ABI and point
+to oracle `0x8196665D4ca7488B6474a9EC8E7d2719FB42263A`, which supports Sepolia USDC. The adapter's
+ABI comes from the deployed registrar's bytecode, never from a repository branch; ENS's `main`
+branch carries an older flat signature. If ENS redeploys with a different ABI, the response is a new
+adapter activated through the timelock, not a factory change.
 
-The published oracle source differs from the vendored pricing implementation in its compiler
-pragma, StringUtils import path, and interface documentation. Its pricing function bodies are
-unchanged. The deployed source pins Solidity 0.8.25. Keep the vendored 0.8.24-compatible fixture
-for universal pricing tests and use the deployed oracle in fork tests. Do not change the
-factory compiler to compile the new ENS source.
-
-The V1 path also runs the new renewer's real wrapper synchronization on the fork. It is not a
-mock of the new renewal selector alone.
+The vendored oracle source under `test/ens` differs from the deployed one in its compiler pragma,
+StringUtils import path, and interface documentation. Its pricing function bodies are unchanged.
+Keep the vendored 0.8.24-compatible fixture for universal pricing tests and use the deployed oracle
+in fork tests. The factory compiler settings are pinned in `foundry.toml`, with Cancun as the EVM
+target since 2026-10-12, verified by creation calls on all four testnets.
 
 Run universal tests:
 
@@ -100,13 +121,12 @@ forge test
 Run the opt-in, read-only deployment tests:
 
 ```sh
-NAMEPASS_FORK_RPC=https://ethereum-sepolia-rpc.publicnode.com \
-  forge test --match-contract SepoliaForkTest -vv
+NAMEPASS_FORK_RPC=https://sepolia.drpc.org NAMEPASS_FORK_BLOCK=<recent block> \
+  forge test --match-path test/SepoliaFork.t.sol -vv
 ```
 
-The fork block is `11730389`. Tests create a native V2 registration locally and renew the live
-premigrated `vitalik` reservation. They check expiry growth, exact charges, fee payment, residue,
-and cleared allowances through the real factory-wallet-gateway-helper path. They set the test
-execution EVM to Cancun because deployed ENS uses Cancun opcodes. The compilation target stays
-Shanghai. No test broadcasts a transaction. Without the RPC variable, these two tests are marked
-skipped rather than reported as deployment verification.
+They renew the live premigrated `vitalik` reservation through the V1 route and the migrated
+`skellat` name through the V2 route, and reuse a deployed wallet. They check expiry growth, exact
+charges, executor payment, and cleared allowances through the real factory-wallet-adapter path.
+No test broadcasts a transaction. Without the RPC variable the tests are skipped, not reported as
+deployment verification.
