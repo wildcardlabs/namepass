@@ -81,6 +81,32 @@ The merged design's claim saving on the live schedule is estimated at about 40k,
 Mainnet is planned to activate Glamsterdam in the fourth quarter of 2026, so the live-schedule
 figures are the ones to plan around.
 
+## Real receipts on the two-contract deployment
+
+The Phase 6 canaries of 2026-10-23 (`docs/deployments/2026-10-23/canaries.json`) are the first
+mined transactions on the deployed design, on Sepolia's live Glamsterdam schedule. Each figure is
+the receipt's `gasUsed`, so it includes Circle's share on the claims and the wallet creation on
+first use.
+
+| Transaction | Route | Gas | Live-schedule estimate |
+| --- | --- | --- | --- |
+| `0x950ece36…` | Direct, vitalik, V1 renewer, first use (wallet created) | 576,509 | 576,935 |
+| `0xb773f809…` | Direct, skellat, V2 registrar, first use | 478,083 | 478,509 |
+| `0x7959d55f…` | Direct, skellat, V2 registrar, steady state | 210,842 | 211,268 |
+| `0x1f2f2a93…` | Claim from Arc, steve, V2, first use | 438,337 | about 430,000 |
+| `0xe883d5f1…` | Claim from Arc, steve, V2, steady state | 438,325 | about 430,000 |
+| `0xe809f47d…` | Claim from Base, skellat, V2 | 440,312 | about 430,000 |
+| `0x8231048b…` | Claim from Arbitrum, farcaster, V1 | 541,170 | about 530,000 |
+| `0x679cbca4…` | Base Sepolia burn, first use | 179,018 | about 181,000 |
+| `0xae4fd537…` | Arbitrum Sepolia burn, first use | 179,650 | about 181,000 |
+| `0x45806729…` | Arc burn, native deposit, first use | 197,224 | 199,174 |
+| `0xa54caddb…` | Arc burn, ERC-20 deposit, steady state | 153,445 | 155,394 |
+
+The direct and burn figures land within 0.1% of the live-schedule estimates. The claims land
+within 2% of the calibrated estimates, which were built from a stand-in transmitter plus Circle's
+measured share. A claim costs the same on first use as in steady state because the hub wallet is
+never deployed on the claim path.
+
 ## A real claim on the current release
 
 Transaction `0x1bfa297b…ba488` on Sepolia (block 11,858,547) is a CCTP claim for `farcaster`

@@ -1,5 +1,29 @@
 # Testnet deployments
 
+## Two-contract protocol canaries — 2026-10-23
+
+Phase 6 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md): the first deposits on the two-contract
+deployment, funded by the user through `tools/canary-funding` and processed by the hosted
+application without intervention. Every flow settled; the
+[canary record](deployments/2026-10-23/canaries.json) holds the funding receipts, the relayer's
+transactions, the indexed event positions, the names' expiries after renewal and the live
+responses of the four public API endpoints.
+
+| Chain | Name | Deposit | Route | Settled |
+| --- | --- | --- | --- | --- |
+| Ethereum Sepolia | vitalik.eth | 1.00 USDC, ERC-20 | direct, V1 renewer, wallet created | 16:12:58 UTC |
+| Base Sepolia | skellat.eth | 1.00 USDC, ERC-20 | burn, Circle attestation, claim, V2 registrar | 16:31:02 UTC |
+| Arbitrum Sepolia | farcaster.eth | 1.00 USDC, ERC-20 | burn, attestation, claim, V1 renewer | 16:35:26 UTC |
+| Arc Testnet | steve.eth | 1.00 USDC, native | burn, attestation, claim, V2 registrar | 16:13:38 UTC |
+| Arc Testnet | steve.eth | 1.00 USDC, ERC-20 | same, second slice of the same wallet | 16:13:51 UTC |
+| Ethereum Sepolia | skellat.eth | 9.00 and 8.00 USDC, ERC-20 | two further direct V2 renewals the user sent outside the page | 16:32 and 16:33 UTC |
+
+Each 1.00 USDC deposit applied 0.90 USDC for 3,547,790 seconds and paid the relayer 0.10 USDC.
+Circle's Standard finality held the Base and Arbitrum claims for about 18 and 22 minutes; Arc
+attested within seconds. Receipt gas is tabulated in `test/gas/README.md`. The recorded captures
+under `test/fixtures/` were regenerated from these receipts with the `scripts/fixtures`
+recorders, and the full server suite passes on them.
+
 ## Two-contract protocol deployment — 2026-10-23
 
 Phases 3 and 4 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md) are complete. The merged

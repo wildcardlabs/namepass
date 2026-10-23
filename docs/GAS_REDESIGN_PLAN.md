@@ -1,8 +1,8 @@
 # Gas redesign: step-by-step migration plan
 
 Companion to [GAS_REDESIGN_PROPOSAL.md](GAS_REDESIGN_PROPOSAL.md). Date: 2026-10-12.
-Status: Phases 1 to 5 complete as of 2026-10-23 (see `DEPLOYMENTS.md`). Phase 6 is in progress:
-the four canary names are activated and await funding.
+Status: Phases 1 to 6 complete as of 2026-10-23 (see `DEPLOYMENTS.md`). Phase 7, the resolver,
+waits for the mainnet release.
 
 Two roles. **Claude** writes code, runs read-only checks, and prepares every transaction.
 **You** sign transactions with the Rainbow browser wallet and authorize hosted-data changes.
@@ -143,6 +143,8 @@ fresh canary. The relayer processes each deposit and claims each burn. Claude th
 4. records deposit, flow, and renewal evidence per chain in `docs/DEPLOYMENTS.md`.
 
 Exit: CI fully green, API shapes unchanged, canary evidence recorded.
+Done 2026-10-23: five funded deposits plus two the user sent directly, all settled; captures
+regenerated with `scripts/fixtures`; evidence in `docs/deployments/2026-10-23/canaries.json`.
 
 ## Phase 7: resolver (optional this round, you sign)
 
