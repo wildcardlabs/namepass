@@ -112,7 +112,7 @@ function ActiveApp() {
 	}, []);
 
 	/* Pages that quote no price skip the oracle read. */
-	const needsPricing = page !== "monitoring" && page !== "docs" && page !== "test";
+	const needsPricing = page !== "monitoring" && page !== "docs";
 	useEffect(() => { if (needsPricing) loadPricing(); }, [loadPricing, selected, page, needsPricing]);
 	useEffect(() => {
 		const refresh = () => { if (document.visibilityState === "visible" && needsPricing) loadPricing(); };
@@ -339,7 +339,7 @@ function ActiveApp() {
 						<Navbar {...navProps} />
 						<div className="site-secondary-content">
 							<Suspense fallback={<div className="p-12 text-sm text-gray-500">Loading…</div>}>
-								<TestRenew onBack={goHome} />
+								<TestRenew onBack={goHome} priced={boot.status === "ready"} />
 							</Suspense>
 						</div>
 					</>

@@ -12,10 +12,13 @@ import {
 	type Hex,
 } from "viem";
 import { arbitrumSepolia, arcTestnet, baseSepolia, sepolia } from "viem/chains";
-import { Check, ExternalLink, Loader2, Wallet as WalletIcon } from "lucide-react";
+import { ArrowRight, Check, ExternalLink, Loader2, Wallet as WalletIcon } from "lucide-react";
 import { BackButton } from "./BackButton";
+import Tooltip from "./Tooltip";
 import { FUNDING_CHAINS, HUB_CHAIN, IS_TESTNET, chainById, type ChainDefinition } from "../lib/chains";
-import { fmtDate, fmtDurationPrecise, fmtUsdcExact, truncAddress } from "../lib/format";
+import { GAS_ALLOWANCE } from "../lib/fees";
+import { fmtDate, fmtDurationPrecise, fmtUsdc, fmtUsdcExact, truncAddress } from "../lib/format";
+import { ceilToCent, hasRates, labelLength, nextTierHint } from "../lib/pricing";
 import { depositAddress, labelProblem, LABEL_PROBLEM_TEXT, normalizeLabel } from "../lib/namepass";
 import { getPublicConfig } from "../lib/publicApi";
 import { creditLogIndex, parseUsdc, pollStatus, v1, V1Error, type QuoteResponse, type StatusResponse } from "../lib/renewalTest";
@@ -109,12 +112,12 @@ function friendly(error: unknown): string {
 
 const txUrl = (chainId: number | string, hash: string) => `${chainById(Number(chainId))?.explorerUrl ?? ""}/tx/${hash}`;
 
-export default function TestRenew({ onBack }: { onBack: () => void }) {
+export default function TestRenew({ onBack, priced }: { onBack: () => void; priced: boolean }) {
 	return (
 		<div className="w-full px-5 md:px-10 pt-4 pb-20 md:pb-28">
 			<div className="max-w-[520px] mx-auto">
 				<BackButton onClick={onBack} label="Back to Namepass" />
-				{IS_TESTNET ? <RenewApp /> : (
+				{IS_TESTNET ? <RenewApp priced={priced} /> : (
 					<>
 						<h1 className="mt-8 text-ink-primary">Renew a name</h1>
 						<p className="mt-4 text-ink-secondary">This page is only available on the testnet.</p>
@@ -125,7 +128,7 @@ export default function TestRenew({ onBack }: { onBack: () => void }) {
 	);
 }
 
-function RenewApp() {
+function RenewApp({ priced }: { priced: boolean }) {
 	/* Wallet */
 	const [wallets, setWallets] = useState<Wallet[]>([]);
 	const [choosing, setChoosing] = useState(false);
@@ -164,6 +167,17 @@ function RenewApp() {
 	const amount = parseUsdc(amountInput);
 	const chain = chainById(chainId) as ChainDefinition;
 	const nameIssue = nameInput.trim() && !label ? LABEL_PROBLEM_TEXT[labelProblem(nameInput) ?? "not-normalizable"] : null;
+	/* The homepage simulator's suggestion: a small top-up that reaches ENS's next multi-year
+	   discount. ENS prices the amount after the fixed allowance; the quote confirms the result. */
+	const hint = useMemo(() => {
+		if (!priced || !hasRates() || !label || amount === null || amount <= GAS_ALLOWANCE) return null;
+		return nextTierHint(amount - GAS_ALLOWANCE, labelLength(label));
+	}, [priced, label, amount]);
+	const applyHint = () => {
+		if (!hint) return;
+		const total = ceilToCent(hint.payable + GAS_ALLOWANCE);
+		setAmountInput(`${total / 1_000_000n}.${(total % 1_000_000n / 10_000n).toString().padStart(2, "0")}`);
+	};
 
 	/* Page setup and wallet discovery (EIP-6963, with an injected-provider fallback). */
 	useEffect(() => {
@@ -395,7 +409,7 @@ function RenewApp() {
 			<div className="mt-8 flex items-start justify-between gap-4">
 				<div>
 					<h1 className="text-ink-primary">Renew a name</h1>
-					<p className="mt-3 text-ink-secondary">Add time to any ENS name with USDC. You don't need to own it.</p>
+					<p className="mt-3 text-ink-secondary">Add time to any name. No token approvals. Just send USDC to the name's renewal address.</p>
 				</div>
 			</div>
 
@@ -483,6 +497,22 @@ function RenewApp() {
 					))}
 				</div>
 				{amountInput && amount === null && <p className="mt-1.5 text-[13px] text-red-700">Enter an amount like 5 or 2.50.</p>}
+				{hint && !paying && (
+					<div className="mt-2.5 flex items-center gap-1.5">
+						<button type="button" className="site-amount-suggestion !min-h-0 !border-0 !p-0" onClick={applyHint}>
+							<span className="site-amount-hint">
+								<span>Add {fmtUsdc(hint.delta)}</span>
+								<ArrowRight aria-hidden="true" size={14} />
+								<span className="site-amount-gain">{fmtDurationPrecise(hint.gain)} more</span>
+								<span className="site-amount-benefit">· {hint.years}-year rate, {hint.off} off</span>
+							</span>
+						</button>
+						<Tooltip
+							label="Why add more"
+							text={`ENS charges less per year for longer renewals. Adding ${fmtUsdc(hint.delta)} reaches the ${hint.years}-year rate, so every year costs ${hint.off} less.`}
+						/>
+					</div>
+				)}
 
 				<div className="mt-5 rounded-[12px] bg-[var(--site-subtle)] p-4 text-[14px]">
 					<div className="flex items-center justify-between">
@@ -499,7 +529,13 @@ function RenewApp() {
 					)}
 					{quote && (
 						<div className="mt-2 flex items-center justify-between">
-							<span className="text-ink-secondary">Network fee</span>
+							<span className="inline-flex items-center gap-1.5 text-ink-secondary">
+								Network fee
+								<Tooltip
+									label="What the network fee covers"
+									text="Goes toward network fees for moving the USDC and renewing on Ethereum. Same on every chain."
+								/>
+							</span>
 							<span className="text-ink-primary">{fmtUsdcExact(BigInt(quote.renewalFee) + BigInt(quote.bridgeFee))}</span>
 						</div>
 					)}
@@ -534,7 +570,7 @@ function RenewApp() {
 				)}
 				{name && label && (
 					<p className="mt-4 text-[12px] leading-5 text-ink-secondary">
-						Your USDC goes to {name}'s Namepass deposit address <span className="break-all font-mono">{depositAddress(label)}</span>. Testnet USDC only.
+						Your USDC goes to {name}'s renewal address <span className="break-all font-mono">{depositAddress(label)}</span>. Testnet USDC only.
 					</p>
 				)}
 			</section>

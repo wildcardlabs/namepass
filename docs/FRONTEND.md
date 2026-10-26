@@ -53,15 +53,15 @@ This indexed display evidence does not establish public API completion or chain 
 `/test` (`src/components/TestRenew.tsx`, `src/lib/renewalTest.ts`) is a user-facing renewal app on
 the public API. One card takes the name, the funding network and the amount, and shows a live,
 debounced quote with the added time, an estimated new expiry and the network fee. Quotes do not
-activate a name. One button advances from Connect wallet (EIP-6963) to Switch network to Renew;
+activate a name. Under the amount it shows the homepage simulator's suggestion, from the live ENS
+rates, when a small top-up reaches the next multi-year discount; choosing it sets the amount. One button advances from Connect wallet (EIP-6963) to Switch network to Renew;
 the wallet's balance is read through the wallet on the selected network, and minimums come from
 the public configuration. Renew calls `POST /api/v1/address`, requires its deposit address to
 equal the local derivation and its token to equal the registry's USDC, then asks the wallet to
 sign one USDC `transfer`. After the receipt it requires exactly one matching credit, then follows
 `GET /api/v1/status/{chainId}` through a four-stage progress view to a success view with the new
 expiry and transaction links. The payment in flight is kept in local storage, so a reload
-resumes the progress view. The page is unlinked, sets `noindex`, skips the oracle read and renders
-only when `IS_TESTNET`. Preview deployments reject API writes, so it works on
+resumes the progress view. The page is unlinked, sets `noindex` and renders only when `IS_TESTNET`. Preview deployments reject API writes, so it works on
 `beta.namepass.com` and locally.
 
 ## Read-only branch previews
