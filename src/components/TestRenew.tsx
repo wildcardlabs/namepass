@@ -530,10 +530,10 @@ function RenewApp({ priced }: { priced: boolean }) {
 					{quote && (
 						<div className="mt-2 flex items-center justify-between">
 							<span className="inline-flex items-center gap-1.5 text-ink-secondary">
-								Network fee
+								Processing fee (included)
 								<Tooltip
-									label="What the network fee covers"
-									text="Goes toward network fees for moving the USDC and renewing on Ethereum. Same on every chain."
+									label="What the processing fee covers"
+									text="Taken from the USDC you send, not charged on top. It pays for moving the USDC and renewing the name on Ethereum. Your wallet separately pays the usual small gas fee to send the transfer."
 								/>
 							</span>
 							<span className="text-ink-primary">{fmtUsdcExact(BigInt(quote.renewalFee) + BigInt(quote.bridgeFee))}</span>

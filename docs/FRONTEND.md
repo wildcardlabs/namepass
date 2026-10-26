@@ -52,7 +52,7 @@ This indexed display evidence does not establish public API completion or chain 
 
 `/test` (`src/components/TestRenew.tsx`, `src/lib/renewalTest.ts`) is a user-facing renewal app on
 the public API. One card takes the name, the funding network and the amount, and shows a live,
-debounced quote with the added time, an estimated new expiry and the network fee. Quotes do not
+debounced quote with the added time, an estimated new expiry and the processing fee taken from the payment. Quotes do not
 activate a name. Under the amount it shows the homepage simulator's suggestion, from the live ENS
 rates, when a small top-up reaches the next multi-year discount; choosing it sets the amount. One button advances from Connect wallet (EIP-6963) to Switch network to Renew;
 the wallet's balance is read through the wallet on the selected network, and minimums come from
