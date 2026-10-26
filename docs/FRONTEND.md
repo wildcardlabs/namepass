@@ -48,6 +48,19 @@ color, weight, spacing and hover behavior. Missing credits,
 partial processing or ambiguous native ordering return `null` and display unavailable evidence.
 This indexed display evidence does not establish public API completion or chain finality.
 
+## Test renewal page
+
+`/test` (`src/components/TestRenew.tsx`, `src/lib/renewalTest.ts`) renews a name through the four
+public endpoints with a browser wallet, as an integrator would. It is unlinked, sets `noindex`,
+skips the oracle read and renders only when `IS_TESTNET`. The steps: connect an EIP-6963 wallet;
+`POST /api/v1/address`; `POST /api/v1/quote` for a chain and exact six-decimal amount; one USDC
+`transfer` signed by the wallet; `GET /api/v1/status/{chainId}` polled as the quickstart
+describes; `GET /api/v1/names/{name}/renewals`. Before funding, the page requires the API's
+deposit address to equal the local derivation and each returned token to equal the registry's
+USDC. After the receipt it requires exactly one matching USDC credit to the deposit address and
+shows its log index. The last transfer is kept in local storage so tracking can resume. Preview
+deployments reject the API writes, so the page works on `beta.namepass.com` and locally only.
+
 ## Read-only branch previews
 
 Vercel preview deployments use `server/previewReadProxy.ts` as Nitro API middleware.
