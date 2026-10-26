@@ -20,8 +20,9 @@ import { IS_TESTNET } from "./lib/chains";
 
 const Docs = lazy(() => import("./components/Docs"));
 const Monitoring = lazy(() => import("./components/Monitoring"));
+const TestRenew = lazy(() => import("./components/TestRenew"));
 
-type Page = "docs" | "monitoring" | "home" | "leaderboard" | "supported" | "terms" | "privacy";
+type Page = "docs" | "monitoring" | "home" | "leaderboard" | "supported" | "terms" | "privacy" | "test";
 
 const BASE = import.meta.env.BASE_URL;
 const NAME_HISTORY_KEY = "__namepassName";
@@ -42,6 +43,7 @@ function pathToPage(pathname: string): Page {
 	if (rel.startsWith("supported")) return "supported";
 	if (rel.startsWith("terms")) return "terms";
 	if (rel.startsWith("privacy")) return "privacy";
+	if (rel === "test" || rel.startsWith("test/")) return "test";
 	return "home";
 }
 
@@ -109,12 +111,14 @@ function ActiveApp() {
 			});
 	}, []);
 
-	useEffect(() => { if (page !== "monitoring" && page !== "docs") loadPricing(); }, [loadPricing, selected, page]);
+	/* Pages that quote no price skip the oracle read. */
+	const needsPricing = page !== "monitoring" && page !== "docs";
+	useEffect(() => { if (needsPricing) loadPricing(); }, [loadPricing, selected, page, needsPricing]);
 	useEffect(() => {
-		const refresh = () => { if (document.visibilityState === "visible" && page !== "monitoring" && page !== "docs") loadPricing(); };
+		const refresh = () => { if (document.visibilityState === "visible" && needsPricing) loadPricing(); };
 		window.addEventListener("focus", refresh);
 		return () => { window.removeEventListener("focus", refresh); pricingRequest.current++; };
-	}, [loadPricing, page]);
+	}, [loadPricing, page, needsPricing]);
 
 	useEffect(() => {
 		if ("scrollRestoration" in window.history) {
@@ -325,6 +329,18 @@ function ActiveApp() {
 						<Navbar {...navProps} />
 						<div className="site-secondary-content">
 							<Privacy onBack={goHome} />
+						</div>
+					</>
+				)}
+
+				{/* Unlinked testnet harness for the public API; see docs/FRONTEND.md. */}
+				{page === "test" && (
+					<>
+						<Navbar {...navProps} />
+						<div className="site-secondary-content">
+							<Suspense fallback={<div className="p-12 text-sm text-gray-500">Loading…</div>}>
+								<TestRenew onBack={goHome} priced={boot.status === "ready"} />
+							</Suspense>
 						</div>
 					</>
 				)}
