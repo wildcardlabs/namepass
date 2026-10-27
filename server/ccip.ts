@@ -63,7 +63,8 @@ export function decodeCcipLabel(dataHex: string): string {
 
 	let text: string;
 	try {
-		text = new TextDecoder("utf-8", { fatal: true }).decode(raw);
+		// Keep a leading BOM so normalization cannot hide submitted bytes.
+		text = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(raw);
 	} catch {
 		throw new ApiError(400, "invalid_label", "The label is not valid UTF-8 text.");
 	}
@@ -81,7 +82,10 @@ export function decodeCcipLabel(dataHex: string): string {
 	/* The resolver derives the deposit address from these exact bytes. A
 	   non-canonical label would make that address differ from the one this
 	   gateway watches, so refuse it rather than track a mismatch. */
-	if (normalized !== text) {
+	const canonicalBytes = new TextEncoder().encode(normalized);
+	if (normalized !== text
+		|| canonicalBytes.length !== raw.length
+		|| canonicalBytes.some((byte, index) => byte !== raw[index])) {
 		throw new ApiError(400, "label_not_normalized", "The label is not ENS-normalized.");
 	}
 	return normalized;
@@ -103,6 +107,9 @@ export interface CcipGatewayDeps {
 export async function handleCcipGateway(dataHex: string, deps: CcipGatewayDeps): Promise<string> {
 	const label = decodeCcipLabel(dataHex);
 	if (!(await deps.isRegistered(label))) {
+		if (process.env.NAMEPASS_MAINTENANCE === "1") {
+			throw new ApiError(503, "maintenance", "Namepass is being upgraded. Please return shortly.");
+		}
 		try {
 			await deps.register(label);
 		} catch (error) {

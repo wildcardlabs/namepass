@@ -91,6 +91,11 @@ Sessions expire after 12 hours. Both monitoring endpoints enforce the session an
 Without configuration, access fails closed. GitHub login has not been verified against a configured
 OAuth app; tests cover mocked GitHub responses and session validation.
 
+`POST /api/auth/logout` requires an `Origin` header that exactly matches the request URL's
+origin. Other methods and missing or untrusted origins are rejected without changing cookies.
+Successful logout expires the session cookie and returns a non-cacheable `303` redirect to
+`/monitoring`.
+
 - `GET /api/monitoring?days=30&page=1&status=all`: one read-only SQL statement provides a consistent
   database snapshot. Optional `chain` is a chain ID; `search` matches a name substring. Queue pages
   contain 50 rows. Filters search all open flows. Global review counts do not depend on pagination.

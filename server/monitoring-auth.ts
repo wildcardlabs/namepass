@@ -86,8 +86,11 @@ export function requireMonitoringSession(request: Request) {
 	return session;
 }
 
-export function logout() {
-	return new Response(null, { status: 302, headers: { location: "/monitoring", "set-cookie": cookie(COOKIE, "", 0) } });
+export function logout(request: Request) {
+	if (request.headers.get("origin") !== new URL(request.url).origin) {
+		throw new ApiError(403, "invalid_origin", "Sign out from the monitoring dashboard.");
+	}
+	return new Response(null, { status: 303, headers: { location: "/monitoring", "cache-control": "no-store", "set-cookie": cookie(COOKIE, "", 0) } });
 }
 
 export { COOKIE };
