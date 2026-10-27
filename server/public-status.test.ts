@@ -8,6 +8,7 @@ import Ajv from "ajv/dist/2020.js";
 import addFormats from "ajv-formats";
 import route from "../routes/api/v1/status/[chainId]";
 import { SERVER_CHAINS } from "../src/lib/chains";
+import { depositAddress } from "../src/lib/namepass";
 
 const recorded = JSON.parse(
 	readFileSync(
@@ -238,9 +239,24 @@ test("status gate, validation and unknown transaction do not consume provider re
 	assert.equal(rpc.mock.callCount(), 0);
 });
 
-test("status completes a verified renewal before finality and holds a staggered second deposit", async (t) => {
+test("status survives registry growth, completes before finality and holds a staggered second deposit", async (t) => {
 	setup(t);
 	const f = await database(t);
+	const unrelated = Array.from({ length: 1001 }, (_, i) => {
+		const label = `unrelated-status-${i}`;
+		return {
+			label,
+			label_hash: keccak256(stringToHex(label)),
+			namehash: keccak256(stringToHex(label + ".eth")),
+			address: depositAddress(label).toLowerCase(),
+		};
+	});
+	await f.db.query(
+		`INSERT INTO names(normalized_label,display_name,label_hash,namehash,deposit_address,activated_at,ens_synced_at)
+		 SELECT label,label || '.eth',label_hash,namehash,address,'2026-01-01',now()
+		 FROM jsonb_to_recordset($1::jsonb) AS n(label text,label_hash text,namehash text,address text)`,
+		[JSON.stringify(unrelated)],
+	);
 	let additional = false;
 	const n = recorded.seed.registry.find(
 		(r: any) => r.normalized_label === "steve",
@@ -301,12 +317,12 @@ test("status completes a verified renewal before finality and holds a staggered 
 		},
 	]);
 	assert.ok(rpc.calls <= 96);
-	assert.equal(f.connect.mock.callCount(), 2);
+	assert.equal(f.connect.mock.callCount(), 3);
 	assert.equal(
 		f.queries.filter((q) =>
 			q.includes("current_setting('transaction_read_only')"),
 		).length,
-		2,
+		3,
 	);
 	assert.ok(f.queries.every((q) => /^(SELECT|BEGIN|COMMIT|ROLLBACK|SET LOCAL)/.test(q)));
 	assert.deepEqual(

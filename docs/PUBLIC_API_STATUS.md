@@ -23,7 +23,8 @@ The preview read proxy leaves this route to its own adapter.
 | `renewalId` | Hub chain, lowercase renewal transaction hash and the factory's `Renewed` log index, identical to history |
 | `secondsAdded`, `expiry` | Whole factory `Renewed` event duration and associated ENS registration expiry; V1 uses its BaseRegistrar event |
 
-A repeatable-read snapshot supplies the registry, watched addresses, indexed source members and
+A preliminary read-only snapshot rejects unknown transactions before RPC work. After receipt
+discovery, a repeatable-read snapshot supplies matching registry names, watched addresses, indexed source members and
 bounded processing/renewal candidate identities. Flow status, amounts and dates do not establish
 completion. Candidates only locate receipts. Their canonical event family, type, source/hub chain,
 name and source-block range are constrained in SQL. The underlying verifiers authenticate
@@ -56,7 +57,7 @@ response. There is no completed-result cache; a correction can revoke prior comp
 | Database concurrency | Separate attached pool, two connections; two admitted requests per process |
 | Database access | Read-only startup default and explicit repeatable-read READ ONLY transactions with local timeouts, released before RPC |
 | Database timeouts | Connection 5 seconds, statement 5 seconds, client query 7 seconds, lock 1.5 seconds, idle transaction 10 seconds |
-| Current registry / indexed members | 1,000 registered names, 16 indexed members; overflow fails rather than truncates proof |
+| Transaction registry / indexed members | 1,000 names matching receipt recipients or indexed members, 16 indexed members; overflow fails rather than truncates proof. Total registry size does not limit status. |
 | Source members / wallets | 16 / 8 |
 | Candidate discovery | At most 32 canonical processing rows within 32,768 blocks from the earliest indexed source block |
 | Allocation range | At most 32,768 blocks; incoming/outgoing 4,096-block chunks, 64 RPC reads per wallet |
