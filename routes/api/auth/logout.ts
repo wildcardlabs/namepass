@@ -1,2 +1,3 @@
 import { logout } from "../../../server/monitoring-auth";
-export default { fetch: () => logout() };
+import { handler } from "../../../server/http";
+export default handler("POST", async (request) => logout(request));

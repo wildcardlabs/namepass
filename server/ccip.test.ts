@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import ccipRoute from "../routes/api/ccip";
-import { GATEWAY_TRUE, ccipRespond, decodeCcipLabel, handleCcipGateway } from "./ccip";
+import ccipGetRoute from "../routes/api/ccip/[sender]/[data]";
+import { GATEWAY_TRUE, ccipRespond, decodeCcipLabel, defaultCcipDeps, handleCcipGateway } from "./ccip";
 import type { CcipGatewayDeps } from "./ccip";
 
 /** Encode a label the way the resolver's call data carries it: raw UTF-8 bytes. */
@@ -126,4 +127,41 @@ test("the gateway rejects a non-normalized label before any database work", asyn
 	);
 	assert.equal(response.status, 400);
 	assert.equal(response.headers.get("access-control-allow-origin"), "*");
+});
+
+test("both gateway routes reject changed label bytes before checking tracking", async (t) => {
+	const lookup = t.mock.method(defaultCcipDeps, "isRegistered", async () => true);
+	const register = t.mock.method(defaultCcipDeps, "register", async () => {});
+	for (const label of ["\uFEFFvitalik", "\uFEFF\uFEFFvitalik", "vitalik\uFEFF", "e\u0301cole"]) {
+		const data = labelData(label);
+		const post = await ccipRoute.fetch(new Request("https://namepass.test/api/ccip", {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ data }),
+		}));
+		const get = await ccipGetRoute.fetch(new Request(`https://namepass.test/api/ccip/0x01/${data}`));
+		for (const response of [post, get]) {
+			assert.equal(response.status, 400, `${label}: ${response.url}`);
+			assert.deepEqual(await response.json(), { message: "The label is not ENS-normalized." });
+			assert.equal(response.headers.get("access-control-allow-origin"), "*");
+		}
+	}
+	assert.equal(lookup.mock.callCount(), 0);
+	assert.equal(register.mock.callCount(), 0);
+});
+
+test("both gateway routes confirm canonical Unicode label bytes", async (t) => {
+	const lookup = t.mock.method(defaultCcipDeps, "isRegistered", async () => true);
+	const data = labelData("école");
+	const post = await ccipRoute.fetch(new Request("https://namepass.test/api/ccip", {
+		method: "POST",
+		headers: { "content-type": "application/json" },
+		body: JSON.stringify({ data }),
+	}));
+	const get = await ccipGetRoute.fetch(new Request(`https://namepass.test/api/ccip/0x01/${data}`));
+	for (const response of [post, get]) {
+		assert.equal(response.status, 200);
+		assert.deepEqual(await response.json(), { data: GATEWAY_TRUE });
+	}
+	assert.deepEqual(lookup.mock.calls.map((call) => call.arguments), [["école"], ["école"]]);
 });

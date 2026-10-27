@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import { fileURLToPath } from "node:url";
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync } from "node:fs";
+import { writeJournal } from "../journal";
 
 export default defineConfig({
   root: fileURLToPath(new URL(".", import.meta.url)),
@@ -10,7 +11,7 @@ export default defineConfig({
       let body = "";
       request.on("data", chunk => { body += chunk; if (body.length > 50000) request.destroy(); });
       request.on("end", () => {
-        try { const data = JSON.parse(body); if (!Array.isArray(data.entries)) throw Error(); writeFileSync("/private/tmp/namepass-october-payment-journal.json", JSON.stringify(data, null, 2) + "\n", { mode: 0o600 }); response.end("saved"); }
+        try { const data = JSON.parse(body); if (!Array.isArray(data.entries)) throw Error(); writeJournal("/private/tmp/namepass-october-payment-journal.json", data); response.end("saved"); }
         catch { response.statusCode = 400; response.end(); }
       });
     });

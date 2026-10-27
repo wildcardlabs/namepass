@@ -10,9 +10,11 @@ The new read-only inspector compares that enumeration with the existing database
 missing members even when every delivered row is finalized. It does not decide whether the
 funds were processed or renewed.
 
-The inspector reads the full **current activated-name registry**, with a hard limit rather
-than a truncated query. It verifies each stored address against its normalized ENS label's
-CREATE2 derivation. This establishes the address universe used by this inspection; it does not
+The inspector resolves every relevant receipt recipient and indexed member against the
+**current activated-name registry** through indexed address lookups. The hard limit applies
+to matching names for this transaction, so unrelated enrollments cannot exhaust it. It verifies
+each matching address against its normalized ENS label's CREATE2 derivation. This establishes
+the registered recipients used by this inspection; it does not
 establish coverage of every possible unregistered, counterfactual ENS deposit address.
 `unregisteredRecipients` preserves receipt recipients outside that universe for review.
 
@@ -67,8 +69,9 @@ node --import tsx scripts/public-api/source-deposits.ts 5042002 '<transaction-ha
 
 The CLI validates arguments before connecting. It overrides database-URL connection options
 with read-only and timeout settings, checks PostgreSQL's actual `transaction_read_only` state,
-and selects names, watches and deposit/event candidates in one repeatable-read transaction.
-It rolls back and releases the database before RPC reads. It has no write query, activation,
+and checks indexed candidates before RPC reads. After discovering receipt recipients, it selects
+matching names, watches and deposit/event candidates in one repeatable-read transaction.
+It rolls back and releases each database snapshot before further RPC reads. It has no write query, activation,
 Workflow, signing, ingestion or broadcast path.
 
 Each invocation permits seven raw RPC reads: chain ID, receipt, transaction, source block,
@@ -77,7 +80,8 @@ one MiB; the CLI aborts rather than decoding excess data.
 They are sequential, with no retries and one 15-second RPC deadline. Raw reads avoid the
 previous Arc receipt formatter failure observed during baseline discovery. Provider credentials
 and database/provider errors are never printed. The output contains public evidence only.
-The database limits are 1,000 names and 1,000 candidate rows; receipt limits are 10,000 logs.
+The database limits are 1,000 matching names and 1,000 candidate rows for the requested
+transaction; receipt limits are 10,000 logs. Total registry size does not limit inspection.
 Exceeding a limit fails inspection rather than silently narrowing the deposit set.
 
 ## Verification and remaining gates

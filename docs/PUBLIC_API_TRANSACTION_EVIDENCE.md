@@ -73,7 +73,7 @@ The pure join function assembles results; its production CLI performs the final 
 | Manifest / HTTP response / source-child output | One MiB each |
 
 All reads are sequential and have no retries. Source inspections retain their enforced read-only
-repeatable-read snapshots and release the database before RPC. Allocation and renewal reads keep
+repeatable-read snapshots and release each database snapshot before further RPC. Allocation and renewal reads keep
 their existing range, receipt and local deadline caps. The caller reserves each inspector's maximum
 RPC budget before starting it; individual transport calls also enforce the transaction-wide cap.
 The global deadline cancels both transports and source children. Partial evidence is not printed

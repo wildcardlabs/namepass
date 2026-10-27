@@ -64,6 +64,7 @@ jobs:
 
       - name: Check temporary payment canary
         run: |
+          node --import tsx --test tools/journal.test.ts
           npx tsc --noEmit -p tools/payment-canary/tsconfig.json
           node --import tsx --test tools/payment-canary/batch.test.ts
           npx tsc --noEmit -p tools/activation-canary/tsconfig.json

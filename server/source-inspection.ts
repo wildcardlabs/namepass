@@ -14,6 +14,7 @@ export async function readSourceSnapshot(
 	client: Pick<PoolClient, "query">,
 	chainId: string,
 	transactionHash: string,
+	recipients: string[] = [],
 ) {
 	const state = (
 		await client.query(
@@ -22,18 +23,6 @@ export async function readSourceSnapshot(
 	).rows[0];
 	if (state.read_only !== "on") throw new Error("inspection_not_read_only");
 	const snapshotAt = state.snapshot_at.toISOString();
-	const names = (
-		await client.query(
-			`SELECT n.normalized_label,n.deposit_address,n.activated_at,w.value AS watch FROM names n LEFT JOIN goldsky.watched_addresses w ON lower(w.value)=lower(n.deposit_address) ORDER BY n.normalized_label LIMIT 1001`,
-		)
-	).rows;
-	if (names.length > 1000) throw new Error("source_evidence_limit");
-	const registry = names.map((n) => ({
-		label: n.normalized_label,
-		address: n.deposit_address,
-		activatedAt: n.activated_at.toISOString(),
-	}));
-	const watchedAddresses = names.flatMap((n) => (n.watch ? [n.watch] : []));
 	const rows = (
 		await client.query(
 			`SELECT d.event_id,d.chain_id,d.tx_hash,d.log_index,d.block_number,d.sender_address,d.amount,d.token_address,d.source,d.status,e.canonical,e.facts,e.event_family,e.event_type,e.log_index AS event_log_index,e.chain_id AS event_chain_id,e.tx_hash AS event_tx_hash,e.block_number AS event_block_number,n.normalized_label,n.deposit_address FROM deposits d JOIN names n ON n.id=d.name_id JOIN chain_events e ON e.event_id=d.event_id WHERE d.chain_id=$1 AND lower(d.tx_hash)=$2 ORDER BY d.log_index,d.event_id LIMIT 1001`,
@@ -53,6 +42,27 @@ export async function readSourceSnapshot(
 		)
 	)
 		throw new Error("inconsistent_index_event");
+	// Activation stores lowercase addresses in both indexed registry tables.
+	// Include indexed members even when a corrected/reverted receipt omits them.
+	const addresses = [
+		...new Set([
+			...recipients.map((a) => a.toLowerCase()),
+			...rows.map((r) => r.deposit_address.toLowerCase()),
+		]),
+	];
+	const names = (
+		await client.query(
+			`SELECT n.normalized_label,n.deposit_address,n.activated_at,w.value AS watch FROM names n LEFT JOIN goldsky.watched_addresses w ON w.value=n.deposit_address WHERE n.deposit_address=ANY($1::text[]) ORDER BY n.normalized_label LIMIT 1001`,
+			[addresses],
+		)
+	).rows;
+	if (names.length > 1000) throw new Error("source_evidence_limit");
+	const registry = names.map((n) => ({
+		label: n.normalized_label,
+		address: n.deposit_address,
+		activatedAt: n.activated_at.toISOString(),
+	}));
+	const watchedAddresses = names.flatMap((n) => (n.watch ? [n.watch] : []));
 	const indexed = rows.map((r) => ({
 		eventId: r.event_id,
 		label: r.normalized_label,
@@ -77,7 +87,7 @@ export type SourceSnapshot = Awaited<ReturnType<typeof readSourceSnapshot>>;
 export async function inspectSource(
 	chainId: string,
 	transactionHash: string,
-	snapshot: SourceSnapshot,
+	readSnapshot: (recipients: string[]) => Promise<SourceSnapshot>,
 	rpc: (
 		method: string,
 		params: unknown[],
@@ -116,6 +126,27 @@ export async function inspectSource(
 		transaction,
 		block,
 	});
+	// Use the same receipt verifier to discover recipients without trusting indexed
+	// membership. A late-indexed transfer must still prevent receipt-set closure.
+	const recipients = identity.reverted
+		? []
+		: sourceDepositEvidence({
+				chainId,
+				transactionHash,
+				receipt,
+				transaction,
+				block,
+				registry: [],
+				watchedAddresses: [],
+				indexed: [],
+			}).unregisteredRecipients;
+	// An Arc native destination also needs lookup when its required system log is missing.
+	if (
+		!identity.reverted && transaction.to && BigInt(transaction.value) > 0n &&
+		SERVER_CHAINS.find((c) => String(c.chainId) === chainId)?.nativeUsdcTransfer
+	)
+		recipients.push(transaction.to);
+	const snapshot = await readSnapshot(recipients);
 	const evidence = identity.reverted
 		? null
 		: sourceDepositEvidence({

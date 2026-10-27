@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { encodeAbiParameters, encodeEventTopics, parseAbi, parseAbiParameters, toHex } from "viem";
+import { inspectSource } from "./source-inspection";
 import {
 	sourceDepositEvidence,
 	sourceFinalityEvidence,
@@ -187,6 +188,35 @@ test("Arc native receipt identity is separate from its stored top-level transact
 		"a system log position cannot masquerade as the stored transaction position",
 	);
 });
+test("source inspection looks up an Arc native destination even when its system log is missing", async () => {
+	const f = fixture("5042002");
+	f.transaction.to = steve;
+	f.transaction.value = toHex(1000000000000000000n);
+	let lookedUp = false;
+	await assert.rejects(
+		inspectSource(
+			f.chainId,
+			f.transactionHash,
+			async (recipients) => {
+				assert.ok(recipients.includes(steve));
+				lookedUp = true;
+				return { ...f, snapshotAt: "2026-01-01T00:00:00.000Z" };
+			},
+			async (method) => {
+				switch (method) {
+					case "eth_chainId": return toHex(Number(f.chainId));
+					case "eth_getTransactionReceipt": return f.receipt;
+					case "eth_getTransactionByHash": return f.transaction;
+					case "eth_getBlockByNumber": return f.block;
+					default: throw new Error("unexpected_rpc");
+				}
+			},
+		),
+		/missing_native_top_level_transfer/,
+	);
+	assert.ok(lookedUp);
+});
+
 test("Base and Arbitrum use their own USDC emitters and reject truncated registry evidence", () => {
 	for (const [chainId, token] of [
 		["84532", "0x036cbd53842c5426634e7929541ec2318f3dcf7e"],
@@ -505,7 +535,7 @@ try {const response=await route.fetch(new Request('https://status.test/api/v1/st
 		assert.ok(JSON.parse(combinedPending.out).evidence.reasons.includes("source_set_open"));
 		const httpPending = await runStatus();
 		assert.equal(httpPending.httpStatus, 200);
-		assert.equal(httpPending.reads, 2, "the actual HTTP adapter overrides writable URL options for both PostgreSQL snapshots");
+		assert.equal(httpPending.reads, 3, "the actual HTTP adapter overrides writable URL options for admission and both PostgreSQL snapshots");
 		assert.equal(httpPending.body.status, "pending");
 		assert.equal(httpPending.body.deposits.length, 2);
 		correctDuringSourceRead = true;
