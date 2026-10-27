@@ -259,7 +259,7 @@ test(
 			await admin.end();
 		});
 		for (const file of readdirSync(new URL("../drizzle/", import.meta.url))
-			.filter((file) => /^000[0-8]_.*\.sql$/.test(file))
+			.filter((file) => /^\d{4}_.*\.sql$/.test(file))
 			.sort()) {
 			await fixture.query(readFileSync(new URL(`../drizzle/${file}`, import.meta.url), "utf8"));
 		}
@@ -358,7 +358,7 @@ test("address activation does not replace source indexing; late webhook delivery
 		await fixture.close();
 	});
 	for (const file of readdirSync(new URL("../drizzle/", import.meta.url))
-		.filter((file) => /^000[0-8]_.*\.sql$/.test(file)).sort()) {
+		.filter((file) => /^\d{4}_.*\.sql$/.test(file)).sort()) {
 		await fixture.exec(readFileSync(new URL(`../drizzle/${file}`, import.meta.url), "utf8"));
 	}
 	// Replace only PostgreSQL transport: activation and webhook transactions use the real store.

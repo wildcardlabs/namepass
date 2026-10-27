@@ -14,7 +14,7 @@ test("real activity query preserves pooled deposit identities and withholds inco
   url.pathname = `/${fixture}`;
   const db = new Pool({ connectionString: url.toString() });
   t.after(async () => { await db.end(); await admin.query(`DROP DATABASE "${fixture}"`); await admin.end(); });
-  for (const file of readdirSync(new URL("../drizzle/", import.meta.url)).filter(file => /^000[0-8]_.*\.sql$/.test(file)).sort())
+  for (const file of readdirSync(new URL("../drizzle/", import.meta.url)).filter(file => /^\d{4}_.*\.sql$/.test(file)).sort())
     await db.query(readFileSync(new URL(`../drizzle/${file}`, import.meta.url), "utf8"));
   // Exercise the actual query and renewal mapper in a fresh process/database.
   const script = String.raw`

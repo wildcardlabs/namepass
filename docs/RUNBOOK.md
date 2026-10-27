@@ -42,7 +42,7 @@ balance, raw Goldsky payload, or signed transaction.
 
 | Endpoint | Schedule | Action |
 |---|---|---|
-| `/api/cron/recover` | Every minute | Restarts safe unowned work, scans activation failures, and monitors the lowest transaction nonce in each sender and chain queue. |
+| `/api/cron/recover` | Every minute | Restarts safe unowned work, scans activation failures, monitors the lowest transaction nonce in each sender and chain queue, and projects at most 25 stored renewals. |
 | `/api/cron/retention` | Daily at 03:17 UTC | Clears at most 500 expired raw payloads. It keeps normalized chain-event data. |
 
 The recovery job has a transaction-scoped PostgreSQL advisory lock. It takes at most 10 rows from

@@ -11,7 +11,6 @@ import type { ActivityCursor } from "./http";
 import { logOperation } from "./log";
 import { recheckHeldNameFlow } from "./operations";
 import { publicBalances, publicFlowView, publicNameView, renewalActivity } from "./reads";
-import { reconcileStoredRenewals } from "./goldsky";
 import { SERVER_CHAINS } from "../src/lib/chains";
 import { depositAddress, InvalidLabelError, normalizeLabel } from "../src/lib/namepass";
 import { STOPPED_FLOW_STATUSES, stoppedFlowReason } from "./stopped-flows";
@@ -214,7 +213,6 @@ export async function activateName(input: string, options: { requireRenewable?: 
 		}
 		return flowIds;
 	});
-	await reconcileStoredRenewals(address);
 	const starts = await Promise.allSettled(recoveryFlowIds.map((flowId) => startRenewalWorkflow(flowId)));
 	for (const [index, result] of starts.entries()) {
 		if (result.status === "rejected") {

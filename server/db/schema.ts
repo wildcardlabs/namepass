@@ -194,6 +194,7 @@ export const chainEvents = pgTable(
 		facts: jsonb("facts").notNull(),
 		payload: jsonb("payload"),
 		payloadExpiresAt: instant("payload_expires_at"),
+		renewalReconciledAt: instant("renewal_reconciled_at"),
 		firstSeenAt: instant("first_seen_at").defaultNow().notNull(),
 		lastSeenAt: instant("last_seen_at").defaultNow().notNull(),
 	},
@@ -209,6 +210,10 @@ export const chainEvents = pgTable(
 			table.blockTime,
 		),
 		index("chain_events_payload_expiry_idx").on(table.payloadExpiresAt),
+		index("chain_events_pending_renewals_idx").on(table.eventId).where(sql`
+			${table.canonical} = true and ${table.eventFamily} = 'namepass'
+			and ${table.eventType} = 'Renewed' and ${table.renewalReconciledAt} is null
+		`),
 	],
 );
 
