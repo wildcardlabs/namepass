@@ -107,6 +107,9 @@ export interface CcipGatewayDeps {
 export async function handleCcipGateway(dataHex: string, deps: CcipGatewayDeps): Promise<string> {
 	const label = decodeCcipLabel(dataHex);
 	if (!(await deps.isRegistered(label))) {
+		if (process.env.NAMEPASS_MAINTENANCE === "1") {
+			throw new ApiError(503, "maintenance", "Namepass is being upgraded. Please return shortly.");
+		}
 		try {
 			await deps.register(label);
 		} catch (error) {

@@ -3,7 +3,7 @@ import test from "node:test";
 
 import ccipRoute from "../routes/api/ccip";
 import ccipGetRoute from "../routes/api/ccip/[sender]/[data]";
-import { GATEWAY_TRUE, decodeCcipLabel, defaultCcipDeps, handleCcipGateway } from "./ccip";
+import { GATEWAY_TRUE, ccipRespond, decodeCcipLabel, defaultCcipDeps, handleCcipGateway } from "./ccip";
 import type { CcipGatewayDeps } from "./ccip";
 
 /** Encode a label the way the resolver's call data carries it: raw UTF-8 bytes. */
@@ -47,6 +47,40 @@ test("the gateway registers a new label once and confirms with abi-encoded true"
 	// A second resolution of a known name takes the fast path — no second register.
 	assert.equal(await handleCcipGateway(labelData("vitalik"), deps), GATEWAY_TRUE);
 	assert.deepEqual(registered, ["vitalik"]);
+});
+
+test("maintenance blocks new CCIP registrations but keeps tracked names resolvable", async (t) => {
+	const savedMaintenance = process.env.NAMEPASS_MAINTENANCE;
+	t.after(() => {
+		if (savedMaintenance === undefined) delete process.env.NAMEPASS_MAINTENANCE;
+		else process.env.NAMEPASS_MAINTENANCE = savedMaintenance;
+	});
+	delete process.env.NAMEPASS_MAINTENANCE;
+	const { deps, registered } = trackingDeps();
+	await handleCcipGateway(labelData("vitalik"), deps);
+	const resolve = (label: string) => ccipRespond(
+		new Request("https://namepass.test/api/ccip"),
+		() => labelData(label),
+		deps,
+	);
+
+	process.env.NAMEPASS_MAINTENANCE = "1";
+	const blocked = await resolve("newname");
+	assert.equal(blocked.status, 503);
+	assert.deepEqual(await blocked.json(), { message: "Namepass is being upgraded. Please return shortly." });
+	assert.equal(blocked.headers.get("access-control-allow-origin"), "*");
+	assert.deepEqual(registered, ["vitalik"]);
+
+	const known = await resolve("vitalik");
+	assert.equal(known.status, 200);
+	assert.deepEqual(await known.json(), { data: GATEWAY_TRUE });
+	assert.deepEqual(registered, ["vitalik"]);
+
+	process.env.NAMEPASS_MAINTENANCE = "0";
+	const resumed = await resolve("newname");
+	assert.equal(resumed.status, 200);
+	assert.deepEqual(await resumed.json(), { data: GATEWAY_TRUE });
+	assert.deepEqual(registered, ["vitalik", "newname"]);
 });
 
 test("the gateway still confirms when the balance scan fails but the label is tracked", async () => {
