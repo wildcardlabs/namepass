@@ -71,13 +71,20 @@ test("activation never replays history; recovery bounds work, skips settled even
 		const checkpointCount = async () => (await pg.query<{ n: number }>(
 			"select count(*)::int as n from chain_events where renewal_reconciled_at is not null",
 		)).rows[0].n;
+		// The webhook checkpoints its own projection, so recovery never revisits it.
+		expect(await checkpointCount()).toBe(1);
+		// A settled event from before the checkpoint column still leaves the pending set.
+		await pg.exec("update chain_events set renewal_reconciled_at = null where event_id = 'already-settled'");
 		await reconcileStoredRenewals();
-		expect(await checkpointCount()).toBe(25);
+		expect(await checkpointCount()).toBe(26);
 		expect((await pg.query<{ n: number }>("select count(*)::int as n from flows")).rows[0].n).toBe(25);
 		expect((await pg.query("select * from history_writes where kind='names'")).rows).toHaveLength(1);
 		expect((await pg.query("select * from history_writes where kind='flows'")).rows).toHaveLength(0);
 		await reconcileStoredRenewals();
-		expect(await checkpointCount()).toBe(33);
+		expect(await checkpointCount()).toBe(34);
+		// Only the unactivated name's renewal stays pending.
+		expect((await pg.query("select event_id from chain_events where canonical and event_type='Renewed' and renewal_reconciled_at is null")).rows)
+			.toEqual([{ event_id: "unactivated" }]);
 		expect((await pg.query<{ n: number }>("select count(*)::int as n from flows")).rows[0].n).toBe(33);
 		const totals = await pg.query("select normalized_label, lifetime_received::text, lifetime_applied::text, renewal_count::int from names order by normalized_label");
 		expect(totals.rows).toEqual([

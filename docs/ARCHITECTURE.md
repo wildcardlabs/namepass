@@ -37,9 +37,11 @@ with receipt enrichment for ENS expiry. See [the pipeline reference](../goldsky/
 
 Activation normalizes a label, derives its wallet, reads ENS state and records block-pinned
 balances. The watched-address table enables deposit detection. Failed scans remain recoverable.
-Historical renewal projection runs in recovery batches of at most 25 events. Settled projections
-are skipped. Each batch commits event checkpoints and one aggregate refresh per affected name.
-Activation does not replay history; historical activity becomes available after recovery.
+Historical renewal projection runs in recovery batches of at most 25 events. Each batch commits
+event checkpoints and one aggregate refresh per affected name. The webhook checkpoints each
+renewal it projects for an activated name. Recovery checkpoints settled projections without
+replaying them, so only renewals for names not yet activated stay pending. Activation does not
+replay history; historical activity becomes available after recovery.
 
 Public balances start from a snapshot and apply canonical events after its block. Public
 activity polling does not call chain RPC. Missing or inconsistent evidence is unavailable,

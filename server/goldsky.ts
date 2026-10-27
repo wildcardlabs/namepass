@@ -1,6 +1,6 @@
 import { indexedRenewalExpiry } from "./indexed-renewal";
 import { createHash, timingSafeEqual } from "node:crypto";
-import { and, eq, gt, inArray, isNotNull, isNull, ne, notExists, sql } from "drizzle-orm";
+import { and, eq, exists, gt, inArray, isNotNull, isNull, ne, notExists, sql } from "drizzle-orm";
 
 import { HUB_CHAIN, SERVER_CHAINS } from "../src/lib/chains";
 import { normalizeLabel } from "../src/lib/namepass";
@@ -931,6 +931,10 @@ function postgresGoldskyTransaction(
 					) {
 						throw new Error("The exact renewal event does not match the activated name.");
 					}
+					// Projected for an activated name: history recovery need not replay it.
+					// The transaction rolls this back if projection fails below.
+					await tx.update(chainEvents).set({ renewalReconciledAt: new Date() })
+						.where(eq(chainEvents.eventId, renewal.eventId));
 					const fromCctp = facts.from_cctp === "true";
 					if (fromCctp && !bundle.claim) return name.id;
 					assertCctpSettlementPair(bundle);
@@ -1569,18 +1573,27 @@ export async function reconcileStoredRenewals(): Promise<void> {
 			select pg_try_advisory_xact_lock(1314017362) as locked
 		`);
 		if (!lease.rows[0]?.locked) return;
+		const pending = and(
+			eq(chainEvents.canonical, true),
+			eq(chainEvents.eventFamily, "namepass"),
+			eq(chainEvents.eventType, "Renewed"),
+			isNull(chainEvents.renewalReconciledAt),
+		);
+		const settledFlow = tx.select({ id: flows.id }).from(flows).where(and(
+			eq(flows.renewalEventId, chainEvents.eventId),
+			eq(flows.status, "settled"),
+		));
+		// A settled projection needs no replay, but skipping it alone would keep it pending.
+		await tx.update(chainEvents).set({ renewalReconciledAt: new Date() }).where(inArray(
+			chainEvents.eventId,
+			tx.select({ eventId: chainEvents.eventId }).from(chainEvents)
+				.where(and(pending, exists(settledFlow)))
+				.orderBy(chainEvents.eventId)
+				.limit(500),
+		));
 		const stored = await tx.select({ event: chainEvents }).from(chainEvents)
 			.innerJoin(names, sql`lower(${chainEvents.facts}->>'wallet_address') = ${names.depositAddress}`)
-			.where(and(
-				eq(chainEvents.canonical, true),
-				eq(chainEvents.eventFamily, "namepass"),
-				eq(chainEvents.eventType, "Renewed"),
-				isNull(chainEvents.renewalReconciledAt),
-				notExists(tx.select({ id: flows.id }).from(flows).where(and(
-					eq(flows.renewalEventId, chainEvents.eventId),
-					eq(flows.status, "settled"),
-				))),
-			))
+			.where(and(pending, notExists(settledFlow)))
 			.orderBy(chainEvents.eventId)
 			.limit(25);
 		if (!stored.length) return;
