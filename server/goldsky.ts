@@ -1,12 +1,12 @@
 import { indexedRenewalExpiry } from "./indexed-renewal";
 import { createHash, timingSafeEqual } from "node:crypto";
-import { and, eq, gt, inArray, isNotNull, isNull, ne, sql } from "drizzle-orm";
+import { and, eq, exists, gt, inArray, isNotNull, isNull, ne, notExists, sql } from "drizzle-orm";
 
 import { HUB_CHAIN, SERVER_CHAINS } from "../src/lib/chains";
 import { normalizeLabel } from "../src/lib/namepass";
 import { readNativeUsdcBalances } from "./chain";
 import { minimumTriggerAmount } from "./config";
-import { database } from "./db/client";
+import { database, type Database } from "./db/client";
 import { chainEvents, deposits, flows, flowTransitions, names, transactionIntents } from "./db/schema";
 import { cctpFlowRowsLockSql, cctpIdentityLockSql, hasCctpSourceEvidence } from "./cctp-identity";
 import { ApiError, handler, json } from "./http";
@@ -548,8 +548,13 @@ export function goldskyHandler(
 
 export const postgresGoldskyStore: GoldskyStore = {
 	transaction: (work) =>
-		database().transaction(async (tx) =>
-			work({
+		database().transaction(async (tx) => work(postgresGoldskyTransaction(tx))),
+};
+
+function postgresGoldskyTransaction(
+	tx: Parameters<Parameters<Database["transaction"]>[0]>[0],
+): GoldskyTransaction {
+	return {
 				async upsertEvent(event) {
 					const now = new Date();
 					await tx
@@ -926,6 +931,10 @@ export const postgresGoldskyStore: GoldskyStore = {
 					) {
 						throw new Error("The exact renewal event does not match the activated name.");
 					}
+					// Projected for an activated name: history recovery need not replay it.
+					// The transaction rolls this back if projection fails below.
+					await tx.update(chainEvents).set({ renewalReconciledAt: new Date() })
+						.where(eq(chainEvents.eventId, renewal.eventId));
 					const fromCctp = facts.from_cctp === "true";
 					if (fromCctp && !bundle.claim) return name.id;
 					assertCctpSettlementPair(bundle);
@@ -1553,26 +1562,45 @@ export const postgresGoldskyStore: GoldskyStore = {
 						});
 					}
 				},
-			}),
-		),
-};
+	};
+}
 
-/** Project canonical renewals that arrived before a name was activated. */
-export async function reconcileStoredRenewals(walletAddress: string): Promise<void> {
-	const stored = await database()
-		.select()
-		.from(chainEvents)
-		.where(
-			and(
-				eq(chainEvents.canonical, true),
-				eq(chainEvents.eventFamily, "namepass"),
-				eq(chainEvents.eventType, "Renewed"),
-				sql`lower(${chainEvents.facts}->>'wallet_address') = lower(${walletAddress})`,
-			),
+/** Repair one bounded batch. The recovery cron owns scheduling, never activation. */
+export async function reconcileStoredRenewals(): Promise<void> {
+	await database().transaction(async (tx) => {
+		// Also protect direct invocations from replaying the same pending batch.
+		const lease = await tx.execute<{ locked: boolean }>(sql`
+			select pg_try_advisory_xact_lock(1314017362) as locked
+		`);
+		if (!lease.rows[0]?.locked) return;
+		const pending = and(
+			eq(chainEvents.canonical, true),
+			eq(chainEvents.eventFamily, "namepass"),
+			eq(chainEvents.eventType, "Renewed"),
+			isNull(chainEvents.renewalReconciledAt),
 		);
-	for (const row of stored) {
-		await postgresGoldskyStore.transaction(async (tx) => {
-			const nameId = await tx.reconcileRenewal({
+		const settledFlow = tx.select({ id: flows.id }).from(flows).where(and(
+			eq(flows.renewalEventId, chainEvents.eventId),
+			eq(flows.status, "settled"),
+		));
+		// A settled projection needs no replay, but skipping it alone would keep it pending.
+		await tx.update(chainEvents).set({ renewalReconciledAt: new Date() }).where(inArray(
+			chainEvents.eventId,
+			tx.select({ eventId: chainEvents.eventId }).from(chainEvents)
+				.where(and(pending, exists(settledFlow)))
+				.orderBy(chainEvents.eventId)
+				.limit(500),
+		));
+		const stored = await tx.select({ event: chainEvents }).from(chainEvents)
+			.innerJoin(names, sql`lower(${chainEvents.facts}->>'wallet_address') = ${names.depositAddress}`)
+			.where(and(pending, notExists(settledFlow)))
+			.orderBy(chainEvents.eventId)
+			.limit(25);
+		if (!stored.length) return;
+		const projection = postgresGoldskyTransaction(tx);
+		const affectedNames = new Set<string>();
+		for (const { event: row } of stored) {
+			const event: GoldskyEvent = {
 				payload: {},
 				facts: row.facts as Record<string, unknown>,
 				eventId: row.eventId,
@@ -1584,8 +1612,18 @@ export async function reconcileStoredRenewals(walletAddress: string): Promise<vo
 				txHash: row.txHash,
 				logIndex: row.logIndex,
 				gsOp: "c",
-			});
-			if (nameId) await tx.refreshRenewalAggregates(nameId);
-		});
-	}
+			};
+			await projection.lockSettlementTransaction(event);
+			// Reconciliation reads current canonical bundle members under this lock.
+			const nameId = await projection.reconcileRenewal(event);
+			if (nameId) affectedNames.add(nameId);
+		}
+		for (const nameId of [...affectedNames].sort()) {
+			await projection.refreshRenewalAggregates(nameId);
+		}
+		// A missing CCTP claim must not stall later history. Its eventual webhook
+		// reconciles the bundle independently of this historical checkpoint.
+		await tx.update(chainEvents).set({ renewalReconciledAt: new Date() })
+			.where(inArray(chainEvents.eventId, stored.map(({ event }) => event.eventId)));
+	});
 }

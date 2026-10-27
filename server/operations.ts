@@ -8,6 +8,7 @@ import { balanceScanRequests, balanceSnapshots, chainEvents, flows, flowTransiti
 import { NAME_RECHECK_MS } from "./flow-state";
 import { ORIGIN_WALLET_ACTIVE_STATUSES } from "./flow-state";
 import { logOperation } from "./log";
+import { reconcileStoredRenewals } from "./goldsky";
 import { monitorTransactionIntent } from "./transactions";
 import { startRenewalWorkflow } from "./workflows";
 import { SERVER_CHAINS } from "../src/lib/chains";
@@ -398,6 +399,12 @@ export async function recoverOperations(now = new Date()): Promise<RecoveryRepor
 			scanName: scanUnscannedName,
 			monitorIntent: monitorTransactionIntent,
 		});
+		try {
+			await reconcileStoredRenewals();
+		} catch {
+			repaired.failed += 1;
+			logOperation("recovery.renewals_failed", { step: "renewal_history", errorCode: "renewal_history_failed" });
+		}
 		return { skipped: false, ...repaired };
 	});
 	return report ?? {

@@ -330,7 +330,7 @@ async function fixture(t: TestContext) {
 	const db = new PGlite();
 	t.after(() => db.close());
 	for (const file of readdirSync(new URL("../drizzle/", import.meta.url))
-		.filter((file) => /^000[0-8]_.*\.sql$/.test(file))
+		.filter((file) => /^\d{4}_.*\.sql$/.test(file))
 		.sort())
 		await db.exec(readFileSync(new URL(`../drizzle/${file}`, import.meta.url), "utf8"));
 	const queries: string[] = [];
@@ -574,7 +574,7 @@ test(
 			await admin.end();
 		});
 		for (const file of readdirSync(new URL("../drizzle/", import.meta.url))
-			.filter((file) => /^000[0-8]_.*\.sql$/.test(file))
+			.filter((file) => /^\d{4}_.*\.sql$/.test(file))
 			.sort())
 			await db.query(readFileSync(new URL(`../drizzle/${file}`, import.meta.url), "utf8"));
 		await db.query(

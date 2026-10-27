@@ -40,7 +40,7 @@ test.skipIf(!process.env.TEST_DATABASE_URL)(
 		const fetchGuard = vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("unexpected network or signing work"));
 		try {
 			for (const file of readdirSync(new URL("../../drizzle/", import.meta.url))
-				.filter(file => /^000[0-8]_.*\.sql$/.test(file)).sort()) {
+				.filter(file => /^\d{4}_.*\.sql$/.test(file)).sort()) {
 				await fixture.query(readFileSync(new URL(`../../drizzle/${file}`, import.meta.url), "utf8"));
 			}
 			const { database } = await import("../../server/db/client");
@@ -93,6 +93,23 @@ test.skipIf(!process.env.TEST_DATABASE_URL)(
 			for (const key of ["active_owner", "fresh_marker", "cancelled"]) expect(sdk.attempts).not.toContain(ids.get(key));
 			expect((await fixture.query("SELECT count(*)::int AS n FROM flows")).rows[0].n).toBe(cases.length);
 			expect((await fixture.query("SELECT count(*)::int AS n FROM transaction_intents")).rows[0].n).toBe(0);
+			// The authenticated recovery path must drain history in bounded batches too.
+			await fixture.query(`INSERT INTO chain_events
+				(event_id,event_family,event_type,chain_id,tx_hash,log_index,block_number,block_time,gs_op,canonical,facts)
+				SELECT 'history-' || n, 'namepass', 'Renewed', 11155111,
+					'0x' || lpad(n::text, 64, '0'), 2, n, now(), 'c', true,
+					jsonb_build_object('label', name.normalized_label, 'label_hash', name.label_hash,
+						'wallet_address', name.deposit_address, 'from_cctp', 'false',
+						'duration', '100', 'amount_received', '1000000', 'amount_applied', '900000',
+						'gas_allowance', '100000', 'remainder', '0')
+				FROM names name, generate_series(1, 30) n
+				WHERE name.id = (SELECT name_id FROM flows WHERE id = $1)`, [ids.get("cancelled")]);
+			expect((await recoverOperations()).failed).toBe(0);
+			expect((await fixture.query("SELECT count(*)::int AS n FROM flows WHERE trigger='external'")).rows[0].n).toBe(25);
+			expect((await fixture.query("SELECT count(*)::int AS n FROM chain_events WHERE renewal_reconciled_at IS NOT NULL")).rows[0].n).toBe(25);
+			expect((await recoverOperations()).failed).toBe(0);
+			expect((await fixture.query("SELECT count(*)::int AS n FROM flows WHERE trigger='external'")).rows[0].n).toBe(30);
+			expect((await fixture.query("SELECT count(*)::int AS n FROM chain_events WHERE renewal_reconciled_at IS NOT NULL")).rows[0].n).toBe(30);
 			expect(fetchGuard).not.toHaveBeenCalled();
 		} finally {
 			fetchGuard.mockRestore();
