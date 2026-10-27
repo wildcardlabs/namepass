@@ -102,8 +102,8 @@ OAuth app; tests cover mocked GitHub responses and session validation.
 - `GET /api/monitoring/gas`: manual balance checks only, with an eight-second RPC timeout and no
   retries. The in-process cache lasts 60 seconds; HTTP responses are private and not cached. Concurrent checks in one process share a
   request. No scheduler calls this route. External gas alerts remain required.
-- The gas route requires the existing `RELAYER_ADDRESS` or `RELAYER_PRIVATE_KEY` and chain RPC
-  environment variables. Only the public address and balance result leave the server.
+- The gas route requires the relayer address, from `RELAYER_ADDRESS` or `RELAYER_PRIVATE_KEY`,
+  and the chain RPC environment variables. It does not call KMS. Only the public address and balance result leave the server.
 - The database route needs `DATABASE_URL` and the existing migrations. No new schema or service is
   required. Flow evidence links to the origin transaction when recorded, or to the exact linked canonical
   deposit transaction before execution. A recovered balance without a linked deposit has no

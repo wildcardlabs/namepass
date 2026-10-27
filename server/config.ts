@@ -2,7 +2,7 @@ import type { ChainKey } from "../src/lib/chains";
 import { SERVER_CHAINS } from "../src/lib/chains";
 import { checksumAddress } from "../src/lib/namepass";
 import { privateKeyToAccount } from "viem/accounts";
-import type { Hex } from "viem";
+import { relayerSigner } from "./relayer-signer";
 
 const MINIMUM_TRIGGER_BY_CHAIN: Record<ChainKey, bigint> = {
 	ethereum: 500_000n,
@@ -29,12 +29,9 @@ export function configuredRelayerAddress(): string | null {
 		throw new Error("RELAYER_ADDRESS is not a valid address.");
 	}
 	const configuredAddress = configured ? checksumAddress(configured) : null;
-	const key = process.env.RELAYER_PRIVATE_KEY;
-	if (!key) return configuredAddress;
-	if (!/^0x[0-9a-f]{64}$/i.test(key)) {
-		throw new Error("RELAYER_PRIVATE_KEY is not configured correctly.");
-	}
-	const derivedAddress = privateKeyToAccount(key as Hex).address;
+	const signer = relayerSigner();
+	if (signer?.kind !== "private_key") return signer?.address ?? configuredAddress;
+	const derivedAddress = privateKeyToAccount(signer.key).address;
 	if (configuredAddress && configuredAddress !== derivedAddress) {
 		throw new Error("RELAYER_ADDRESS does not match RELAYER_PRIVATE_KEY.");
 	}

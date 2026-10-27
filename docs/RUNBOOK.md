@@ -18,6 +18,42 @@ evidence are in [DEPLOYMENTS.md](DEPLOYMENTS.md).
 5. Fund the dedicated relayer with native gas on each supported chain. Use the authenticated
    monitoring page to inspect stored state and request gas checks.
 
+### Relayer signer
+
+The relayer signs with one of two sources. The server refuses a configuration that sets both.
+
+| Source | Variables | Key location |
+|---|---|---|
+| AWS KMS (preferred) | `RELAYER_KMS_KEY_ARN`, `RELAYER_KMS_ROLE_ARN`, `RELAYER_ADDRESS` | Non-exportable secp256k1 key in AWS KMS |
+| Private key | `RELAYER_PRIVATE_KEY`, optional `RELAYER_ADDRESS` | Vercel environment variable |
+
+With KMS, the function exchanges its Vercel OIDC token for a short role session and calls
+`kms:Sign` on a transaction digest. `server/relayer-signer.ts` converts the DER signature to
+Ethereum form and requires it to recover to `RELAYER_ADDRESS`. Vercel holds no private key and no
+long-lived AWS credential.
+
+[`infra/aws/relayer-signer.yaml`](../infra/aws/relayer-signer.yaml) creates the key, its alias,
+the Vercel OIDC provider and the signing role. The role trusts only
+`owner:<team>:project:<project>:environment:<environment>` and may only sign digests and read the
+public key. Use one stack and one key for each deployment set. A second stack in the same account
+passes `ExistingOidcProviderArn`. The stack retains the key on update and on stack deletion.
+Deleting the key loses the relayer address.
+
+To set up or rotate the signer:
+
+1. Deploy the stack with `CAPABILITY_IAM`. Read `KeyArn` and `RoleArn` from its outputs.
+2. Derive the address from `aws kms get-public-key`: the last 20 bytes of the keccak-256 hash
+   of the uncompressed public key without its `0x04` prefix.
+3. Fund the new address with native gas on each supported chain.
+4. Wait until no transaction intent for the old address is pending or reverted. Replacements and
+   retries must be signed by the address recorded on the intent.
+5. In the production environment only, set the three KMS variables and remove
+   `RELAYER_PRIVATE_KEY` in the same change. Redeploy.
+6. Confirm one relayed transaction from the new address. Then move or retire the old key's funds.
+
+To roll back, restore `RELAYER_PRIVATE_KEY` and `RELAYER_ADDRESS` for the old key and remove
+the KMS variables. CloudTrail records each `Sign` call with the role session.
+
 UI-only Vercel previews use the read-only public API proxy described in
 [FRONTEND.md](FRONTEND.md#read-only-branch-previews). They read existing testnet data
 from `beta.namepass.com` and do not need database, relayer or operational credentials.

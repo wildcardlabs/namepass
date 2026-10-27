@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Namepass relayer signer. A non-exportable secp256k1 KMS key signs relayer
+  transactions. Only the named Vercel project environment can use it, through
+  Vercel OIDC federation. No long-lived AWS credentials are stored in Vercel.
+
+Parameters:
+  VercelTeamSlug:
+    Type: String
+    Default: wildcard-labs
+    Description: Vercel team slug. The project must use the team OIDC issuer mode.
+  VercelProjectName:
+    Type: String
+    Default: namepass-v2
+  VercelEnvironment:
+    Type: String
+    Default: production
+    AllowedValues: [production, preview, development]
+  KeyAlias:
+    Type: String
+    Default: namepass-relayer-testnet
+    AllowedPattern: "^[a-zA-Z0-9/_-]+$"
+    Description: Alias name without the alias/ prefix. Use one stack and one key per deployment set.
+  ExistingOidcProviderArn:
+    Type: String
+    Default: ""
+    Description: >-
+      ARN of an IAM OIDC provider that already exists for the Vercel team issuer.
+      Leave empty to create it. An account holds only one provider per issuer URL.
+
+Conditions:
+  CreateOidcProvider: !Equals [!Ref ExistingOidcProviderArn, ""]
+
+Resources:
+  VercelOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Condition: CreateOidcProvider
+    Properties:
+      Url: !Sub https://oidc.vercel.com/${VercelTeamSlug}
+      ClientIdList:
+        - !Sub https://vercel.com/${VercelTeamSlug}
+
+  # The key holds the relayer address. Deleting it loses that address, so the
+  # stack never deletes or replaces it.
+  RelayerKey:
+    Type: AWS::KMS::Key
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      Description: !Sub Namepass relayer transaction signer (${KeyAlias})
+      KeySpec: ECC_SECG_P256K1
+      KeyUsage: SIGN_VERIFY
+      PendingWindowInDays: 30
+      KeyPolicy:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AccountAdministration
+            Effect: Allow
+            Principal:
+              AWS: !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:root
+            Action: kms:*
+            Resource: "*"
+
+  RelayerKeyAlias:
+    Type: AWS::KMS::Alias
+    Properties:
+      AliasName: !Sub alias/${KeyAlias}
+      TargetKeyId: !Ref RelayerKey
+
+  RelayerSignerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      Description: !Sub Signs Namepass relayer transactions from Vercel ${VercelProjectName} ${VercelEnvironment}
+      MaxSessionDuration: 3600
+      # Condition keys contain the issuer, and CloudFormation cannot substitute map keys.
+      AssumeRolePolicyDocument: !Sub
+        - |
+          {
+            "Version": "2012-10-17",
+            "Statement": [{
+              "Effect": "Allow",
+              "Principal": { "Federated": "${ProviderArn}" },
+              "Action": "sts:AssumeRoleWithWebIdentity",
+              "Condition": {
+                "StringEquals": {
+                  "oidc.vercel.com/${VercelTeamSlug}:aud": "https://vercel.com/${VercelTeamSlug}",
+                  "oidc.vercel.com/${VercelTeamSlug}:sub": "owner:${VercelTeamSlug}:project:${VercelProjectName}:environment:${VercelEnvironment}"
+                }
+              }
+            }]
+          }
+        - ProviderArn: !If [CreateOidcProvider, !Ref VercelOidcProvider, !Ref ExistingOidcProviderArn]
+      Policies:
+        - PolicyName: relayer-sign
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: SignTransactionDigests
+                Effect: Allow
+                Action: kms:Sign
+                Resource: !GetAtt RelayerKey.Arn
+                Condition:
+                  StringEquals:
+                    kms:SigningAlgorithm: ECDSA_SHA_256
+                    kms:MessageType: DIGEST
+              - Sid: ReadPublicKey
+                Effect: Allow
+                Action: kms:GetPublicKey
+                Resource: !GetAtt RelayerKey.Arn
+
+Outputs:
+  KeyArn:
+    Description: Set as RELAYER_KMS_KEY_ARN.
+    Value: !GetAtt RelayerKey.Arn
+  RoleArn:
+    Description: Set as RELAYER_KMS_ROLE_ARN.
+    Value: !GetAtt RelayerSignerRole.Arn
+  OidcProviderArn:
+    Value: !If [CreateOidcProvider, !Ref VercelOidcProvider, !Ref ExistingOidcProviderArn]

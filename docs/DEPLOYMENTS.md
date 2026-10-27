@@ -1,5 +1,25 @@
 # Testnet deployments
 
+## KMS relayer signer staged — 2026-10-27
+
+The CloudFormation stack `namepass-relayer-signer-testnet` (`us-east-1`) from
+[`infra/aws/relayer-signer.yaml`](../infra/aws/relayer-signer.yaml) holds a secp256k1 KMS key
+with alias `alias/namepass-relayer-testnet`. Its relayer address is
+`0x4255610b8404dC50d7572346BB79bCa7d8b6C59E`. The signing role trusts only Vercel OIDC tokens
+for `namepass-v2` production.
+
+Verification on 2026-10-27:
+
+- Twelve EIP-1559 transactions and one message, signed by real KMS calls through
+  `server/relayer-signer.ts`, recover to the address. Both y-parity values occurred.
+- With the role's trust temporarily set to `development`, a Vercel development OIDC token
+  assumed the role and signed a transaction that recovers to the address. The trust was then
+  restored to `production`. A development token is now refused with `AccessDenied`.
+
+Status: not active. Production still signs with `RELAYER_PRIVATE_KEY`. Activation follows the
+[relayer signer runbook](RUNBOOK.md#relayer-signer): fund the address on all four testnets,
+drain pending intents, then switch the production variables.
+
 ## Sepolia wildcard resolver — 2026-10-23
 
 Phase 7 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md) on Sepolia. `namepass.eth` was
