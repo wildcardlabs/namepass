@@ -18,6 +18,25 @@ evidence are in [DEPLOYMENTS.md](DEPLOYMENTS.md).
 5. Fund the dedicated relayer with native gas on each supported chain. Use the authenticated
    monitoring page to inspect stored state and request gas checks.
 
+### Database migrations
+
+The Vercel production deployment, `beta.namepass.com`, uses the Neon branch named `testnet`.
+The Neon branch named `production` has no tables; it is reserved for the mainnet release. Do
+not migrate it before that release. [DEPLOYMENTS.md](DEPLOYMENTS.md) records the branch IDs.
+
+Apply a migration before merging code that uses it. Drizzle selects every column of a table
+row, so code that knows a column the database lacks fails on reads as well as writes. Run the
+migrator with the migration role's unpooled connection string:
+
+```sh
+DATABASE_URL_UNPOOLED='<migration role URL>' node --import tsx server/db/migrate.ts
+```
+
+Do not paste migration SQL into the Neon console. The migrator records each migration in
+`drizzle.__drizzle_migrations`; a manual change leaves the ledger behind, and the next run
+then fails on the existing object. After a run, compare that table's row count with the
+migration files in `drizzle/`.
+
 UI-only Vercel previews use the read-only public API proxy described in
 [FRONTEND.md](FRONTEND.md#read-only-branch-previews). They read existing testnet data
 from `beta.namepass.com` and do not need database, relayer or operational credentials.
@@ -179,17 +198,27 @@ loaded. Do not paste it into chat or a repository file:
 curl -fsS -H "Authorization: Bearer $CRON_SECRET" https://<stable-domain>/api/cron/recover
 ```
 
-## Public API status
+## Public API controls
 
-The previous public API handlers, verification worker, schema extension and release flag have
-been removed from the application. There is no API activation command for this reset.
-The published docs are interface requirements. Implementation and deployment must follow
-[PUBLIC_API_PLAN.md](PUBLIC_API_PLAN.md).
+The public testnet API is live on `beta.namepass.com`; [DEPLOYMENTS.md](DEPLOYMENTS.md) records
+its release. Each endpoint returns `503 api_unavailable` unless its flag is `1`:
 
-The reset does not run SQL against any hosted database. Before a future backend release, inspect
-the deployed migration ledger and schema. Do not apply or recreate the retired API migration.
-If a hosted database contains artifacts from the prior attempt, inspect their dependencies and
-prepare a separately reviewed cleanup; deleting repository files does not remove hosted objects.
+| Flag | Endpoint |
+|---|---|
+| `NAMEPASS_PUBLIC_ADDRESS_ENABLED` | `POST /api/v1/address` |
+| `NAMEPASS_PUBLIC_QUOTE_ENABLED` | `POST /api/v1/quote` |
+| `NAMEPASS_PUBLIC_STATUS_ENABLED` | `GET /api/v1/status/{chainId}` |
+| `NAMEPASS_PUBLIC_HISTORY_ENABLED` | `GET /api/v1/names/{name}/renewals` |
+
+On Vercel, `NAMEPASS_PUBLIC_LIMITS_ENABLED=1` is also required. Without it, or when the Vercel
+rate-limit counters are unavailable, hosted endpoints refuse requests before any database or
+chain work. To stop one endpoint, set its flag to a value other than `1` and redeploy.
+`NAMEPASS_MAINTENANCE=1` stops the application routes, address activation, status, history and
+new CCIP registrations. The quote endpoint does not check it.
+
+An earlier API attempt was removed before the current release. Do not apply or recreate its
+retired migration. If a hosted database still holds objects from that attempt, review a separate
+cleanup; deleting repository files does not remove hosted objects.
 
 ## Mainnet release requirements
 
