@@ -184,13 +184,13 @@ and tracked-name label visible. The informational pill shows the live count of a
 names with deposit addresses as “N+ names tracked” when stats are available, alongside up to four
 avatars from recent completed renewals. It has the Built for ENS v2 badge's faint green border and
 white-to-pale-green background. Text is 13px, with medium-weight green emphasis.
-The marquee uses eight exact user-supplied SVG wordmarks in their supplied
-order: Arc, Goldsky, Arbitrum, Circle, ENS, Ethereum, Base and USDC. They are stored
+The marquee uses nine user-supplied SVG wordmarks in their supplied
+order: Arc, Goldsky, Arbitrum, Circle, ENS, Ethereum, Base, USDC and bigname. They are stored
 locally in `public/logos/infrastructure`; its README records the source URLs.
-The statement “Built on trusted infrastructure” encompasses all eight. Wordmarks
+The statement “Built on trusted infrastructure” encompasses all nine. Wordmarks
 replace the previous icon-plus-text treatments. Sizing uses measured lettering
 bounds: a 16px target for capitals and short lowercase marks, with optical adjustments
-to 18px for Arc and 20px for Ethereum and Base to account for their thin lettering
+to 18px for Arc and 20px for Ethereum, Base and bigname to account for their thin lettering
 or taller ascenders. Goldsky uses 15.2px (a 5% reduction) and Arbitrum uses 11.2px
 (a 30% reduction). All wordmarks align their main letter bodies' vertical midpoint at 32px
 in a 64px track row. Mixed-case marks use the lowercase body bounds rather than

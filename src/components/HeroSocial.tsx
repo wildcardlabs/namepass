@@ -84,6 +84,16 @@ const ecosystem = [
     wordCenterY: 70.1861,
     target: 16,
   },
+  {
+    name: "bigname",
+    key: "bigname",
+    canvas: [433.223, 87.598],
+    left: 0,
+    width: 433.223,
+    textHeight: 62.568,
+    wordCenterY: 43.2704,
+    target: 20,
+  },
 ];
 export function HeroCommunity({
   names,

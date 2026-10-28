@@ -13,14 +13,18 @@ The cover applies monochrome styling and optical sizing in CSS.
 | ethereum.svg | https://cdn.brandfetch.io/idhZINDHvW/theme/dark/id9VvSS_lP.svg?c=1dxbfHSJFAPEGdCLU4o5B |
 | base.svg | https://cdn.brandfetch.io/id6XsSOVVS/theme/dark/logo.svg?c=1dxbfHSJFAPEGdCLU4o5B |
 | usdc.svg | https://cdn.brandfetch.io/idVdsaOxtz/theme/dark/logo.svg?c=1dxbfHSJFAPEGdCLU4o5B |
+| bigname.svg | https://raw.githubusercontent.com/ensdomains/bigname/main/docs/assets/bigname-lockup-capheight.svg |
 
 The four Brandfetch assets were exported from the browser's observed image assets
-because their CDN rejects automated downloads. All eight are served locally.
+because their CDN rejects automated downloads. All nine are served locally.
+bigname.svg keeps the source icon rectangles unchanged. Its wordmark text is converted to
+outlines from the font embedded in the source (Inter Tight, weight 500, 86px, letter spacing
+-3.01px), the background rectangle is removed, and the artboard is cropped to the artwork.
 Lettering bounds were measured from the rendered SVGs. The cover scales each asset
 using its wordmark rather than symbol height, aligns the main letter bodies' vertical midpoints, and
 clips transparent artboard padding using CSS without editing the SVG.
 
 For mixed-case marks, the alignment uses the lowercase body bounds (x-height),
-excluding tall ascenders and dots. This keeps Ethereum, Base and Arc
+excluding tall ascenders and dots. This keeps Ethereum, Base, Arc and bigname
 visually centred with the capital-only marks. Scaling retains each full wordmark
 height and the original symbol-to-letter proportions.
