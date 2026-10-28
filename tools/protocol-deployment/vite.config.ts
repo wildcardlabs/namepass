@@ -9,7 +9,7 @@ export default defineConfig({
     fs: { allow: [fileURLToPath(new URL("../..", import.meta.url))] },
   },
   build: {
-    outDir: "/private/tmp/namepass-protocol-deployment-build",
+    outDir: "dist",
     emptyOutDir: true,
   },
 });

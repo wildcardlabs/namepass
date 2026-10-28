@@ -1,9 +1,10 @@
 import assert from "node:assert/strict";
 import { chmodSync, linkSync, lstatSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { execFileSync, spawnSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { writeJournal } from "./journal";
+import { readJournal, writeJournal } from "./journal";
 
 test("journals replace operator-owned files and keep private permissions", t => {
   const dir = mkdtempSync(join(tmpdir(), "namepass-journal-"));
@@ -54,4 +55,37 @@ test("foreign-owned files and directories are rejected before modification", t =
   mkdirSync(directory);
   assert.throws(() => writeJournal(directory, { entries: [] }));
   assert.ok(lstatSync(directory).isDirectory());
+});
+
+test("journal reads accept operator files and reject links, FIFOs and oversized files", t => {
+  const dir = mkdtempSync(join(tmpdir(), "namepass-journal-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const path = join(dir, "progress.json");
+  writeFileSync(path, '{"captureState":"receiving"}');
+  assert.deepEqual(readJournal(path), { captureState: "receiving" });
+  const symlink = join(dir, "symlink.json");
+  const hardlink = join(dir, "hardlink.json");
+  symlinkSync(path, symlink);
+  linkSync(path, hardlink);
+  for (const link of [symlink, hardlink]) assert.throws(() => readJournal(link));
+  const large = join(dir, "large.json");
+  writeFileSync(large, JSON.stringify("x".repeat(100)));
+  assert.throws(() => readJournal(large, 64), /read limit/);
+  const uid = process.geteuid!();
+  t.mock.method(process as typeof process & { geteuid: () => number }, "geteuid", () => uid + 1);
+  assert.throws(() => readJournal(large), /operator-owned regular file/);
+});
+
+test("a planted FIFO is rejected without blocking the reader", t => {
+  const dir = mkdtempSync(join(tmpdir(), "namepass-journal-"));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  const fifo = join(dir, "progress.json");
+  execFileSync("mkfifo", [fifo]);
+  // A blocking open would hang the process, so the read runs in a child with a deadline.
+  const module = JSON.stringify(new URL("./journal.ts", import.meta.url).href);
+  const child = spawnSync(process.execPath, ["--import", "tsx", "--input-type=module", "-e",
+    `const { readJournal } = await import(${module}); try { readJournal(${JSON.stringify(fifo)}); } catch { process.exit(3); }`,
+  ], { timeout: 10_000 });
+  assert.equal(child.signal, null, "the FIFO read blocked");
+  assert.equal(child.status, 3, child.stderr.toString());
 });

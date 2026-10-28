@@ -13,7 +13,7 @@ export default defineConfig({
     proxy: { "/api/names": { target: "https://beta.namepass.com", changeOrigin: true, secure: true } },
   },
   build: {
-    outDir: "/private/tmp/namepass-resolver-deployment-build",
+    outDir: "dist",
     emptyOutDir: true,
   },
 });
