@@ -24,6 +24,7 @@ Local changes adapt imports and styling. Chart uses the compatible Recharts 2 de
 | Pending transactions | Prepared or broadcast transaction intents, by chain | Pending warnings come from the existing transaction monitor |
 | Pending scans | Count of versioned balance scan requests | A request can wait normally behind an origin transaction |
 | Upcoming expiry | Stored name expiry in the next 30 days | ENS state can be stale. This is not a current chain read |
+| Renewal history backlog | Canonical `Renewed` events for activated names with no `renewal_reconciled_at`; stalled when waiting over 10 minutes since the later of first storage and activation | Recovery retries failed events each run. The failure reason is in the `recovery.renewal_event_failed` log |
 | Relayer gas | Explicit native `eth_getBalance` read per active chain | Cached for 60 seconds; no claim of sufficient runway or delivered alerts |
 
 USDC sums and counts remain decimal strings. Summary USDC values retain six decimal places.
@@ -79,7 +80,8 @@ later canonical events. Flow amounts are not another balance aggregate.
 
 ## API and operations
 
-The public testnet API is live, but this page has no API-specific panels. API 5xx and p95
+The public testnet API is live. The Monitoring coverage view shows each endpoint switch and the
+admission-limit switch as this server reads them. It does not measure API traffic: API 5xx and p95
 latency alerts belong to the provider alerts in
 [Required external monitoring](#required-external-monitoring). Endpoint flags and admission
 limits are in [RUNBOOK.md](RUNBOOK.md#public-api-controls). Existing renewal monitoring remains

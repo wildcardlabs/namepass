@@ -15,10 +15,25 @@ export async function monitoring(
   days: number,
   filters: MonitorFilters = {},
 ): Promise<MonitorRead> {
-  const result = await database().execute<{ data: MonitorRead }>(
+  const result = await database().execute<{ data: Omit<MonitorRead, "controls"> }>(
     monitoringQuery(days, filters),
   );
-  return result.rows[0].data;
+  return { ...result.rows[0].data, controls: serviceControls() };
+}
+
+/** Public API switches as this server reads them. Each route checks the same variable.
+    Maintenance mode is not listed: it also stops this route, which then returns 503. */
+export function serviceControls(): MonitorRead["controls"] {
+  const on = (name: string) => process.env[name] === "1";
+  return {
+    publicApi: {
+      address: on("NAMEPASS_PUBLIC_ADDRESS_ENABLED"),
+      quote: on("NAMEPASS_PUBLIC_QUOTE_ENABLED"),
+      status: on("NAMEPASS_PUBLIC_STATUS_ENABLED"),
+      history: on("NAMEPASS_PUBLIC_HISTORY_ENABLED"),
+      limits: on("NAMEPASS_PUBLIC_LIMITS_ENABLED"),
+    },
+  };
 }
 
 export function monitoringQuery(days: number, filters: MonitorFilters = {}) {
@@ -30,6 +45,12 @@ export function monitoringQuery(days: number, filters: MonitorFilters = {}) {
   return sql`
  with renewal as (
   select * from chain_events where canonical and event_family = 'namepass' and event_type = 'Renewed'
+ ), history_backlog as (
+  -- Renewals for activated names that history recovery has not projected yet. Recovery
+  -- runs every minute, so a renewal still waiting after ten minutes is failing or stuck.
+  select greatest(r.first_seen_at, n.activated_at) as waiting_since
+  from renewal r join names n on n.deposit_address = lower(r.facts->>'wallet_address')
+  where r.renewal_reconciled_at is null
  ), inbound as (
   select d.* from deposits d join chain_events e on e.event_id = d.event_id
   where e.canonical and d.status <> 'orphaned'
@@ -64,7 +85,9 @@ export function monitoringQuery(days: number, filters: MonitorFilters = {}) {
    'applied', (select coalesce(sum((facts->>'amount_applied')::numeric),0)::text from renewal),
    'seconds', (select coalesce(sum((facts->>'duration')::numeric),0)::text from renewal),
    'scans', (select count(*)::text from balance_scan_requests),
-   'expiring', (select count(*)::text from names where current_expiry between now() and now() + interval '30 days')
+   'expiring', (select count(*)::text from names where current_expiry between now() and now() + interval '30 days'),
+   'historyPending', (select count(*)::text from history_backlog),
+   'historyStalled', (select count(*)::text from history_backlog where waiting_since < now() - interval '10 minutes')
   ),
   'states', (select coalesce(json_agg(s),'[]'::json) from (
    select status, count(*)::text as count, coalesce(sum(coalesce(amount_processed,amount_detected)),0)::text as amount from flows group by status

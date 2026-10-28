@@ -229,14 +229,13 @@ function ActiveApp() {
 		onPrivacy={goPrivacy}
 	/>;
 
+	/* The dashboard has its own fixed sidebar and "Back to Namepass" links, so it omits the
+	   public footer, which the sidebar would otherwise cover. */
 	if (page === "monitoring") {
 		return (
-			<>
-				<Suspense fallback={<Skeleton role="status" aria-label="Loading dashboard" className="min-h-[100dvh] w-full animate-none rounded-none bg-[#f7f8fb]" />}>
-					<Monitoring onBack={goHome} />
-				</Suspense>
-				<div className="public-ui">{footer}</div>
-			</>
+			<Suspense fallback={<Skeleton role="status" aria-label="Loading dashboard" className="min-h-[100dvh] w-full animate-none rounded-none bg-[#f7f8fb]" />}>
+				<Monitoring onBack={goHome} />
+			</Suspense>
 		);
 	}
 

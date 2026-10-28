@@ -80,6 +80,22 @@ test("monitoring SQL excludes reorgs, deduplicates senders, preserves amounts an
     assert.equal(page.matchingFlowCount, "56");
     assert.equal(page.flows.length, 6);
     assert.equal(page.reviewCount, "56");
+
+    // History backlog: unprojected renewals for activated names, measured from when both
+    // the event and the activation exist. Projected events and unactivated wallets do not count.
+    await db.exec(`
+   update names set activated_at = now() - interval '1 hour' where normalized_label = 'example';
+   insert into chain_events (event_id,event_family,event_type,chain_id,tx_hash,log_index,block_number,block_time,gs_op,canonical,facts,first_seen_at,renewal_reconciled_at)
+   values ('h1','namepass','Renewed',11155111,'tx6',0,6,now(),'c',true,'{"wallet_address":"WALLET"}',now()-interval '20 minutes',null),
+   ('h2','namepass','Renewed',11155111,'tx7',0,7,now(),'c',true,'{"wallet_address":"wallet"}',now()-interval '2 minutes',null),
+   ('h3','namepass','Renewed',11155111,'tx8',0,8,now(),'c',true,'{"wallet_address":"other"}',now()-interval '20 minutes',null),
+   ('h4','namepass','Renewed',11155111,'tx9',0,9,now(),'c',true,'{"wallet_address":"wallet"}',now()-interval '20 minutes',now());
+  `);
+    const backlog = await read();
+    assert.equal(backlog.totals.historyPending, "2");
+    assert.equal(backlog.totals.historyStalled, "1");
+    await db.exec(`update names set activated_at = now() where normalized_label = 'example'`);
+    assert.equal((await read()).totals.historyStalled, "0");
   } finally {
     await db.close();
   }
