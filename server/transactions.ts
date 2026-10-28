@@ -8,13 +8,13 @@ import {
 	type Hex,
 	type TransactionReceipt,
 } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
 
 import { chainById, type ChainDefinition } from "../src/lib/chains";
 import { database } from "./db/client";
 import { flows, flowTransitions, relayerNonces, transactionIntents } from "./db/schema";
 import { setFlowStatus } from "./flow-state";
 import { logOperation, logWarning } from "./log";
+import { relayerAccount } from "./relayer-signer";
 
 export function chainClient(chain: ChainDefinition) {
 	const url = process.env[chain.rpcEnv];
@@ -39,18 +39,12 @@ export async function withVerifiedChainClient<T>(
 	return work(await verifiedChainClient(chain));
 }
 
-export function relayerAccount() {
-	const key = process.env.RELAYER_PRIVATE_KEY;
-	if (!key || !/^0x[0-9a-f]{64}$/i.test(key)) {
-		throw new Error("RELAYER_PRIVATE_KEY is not configured.");
-	}
-	return privateKeyToAccount(key as Hex);
-}
+export { relayerAccount };
 
 export function relayerAccountForAddress(address: string) {
 	const account = relayerAccount();
 	if (account.address.toLowerCase() !== address.toLowerCase()) {
-		throw new Error("The transaction relayer does not match RELAYER_PRIVATE_KEY.");
+		throw new Error("The transaction relayer does not match the configured relayer signer.");
 	}
 	return account;
 }

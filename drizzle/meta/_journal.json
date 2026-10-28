@@ -71,6 +71,13 @@
       "when": 1793145600000,
       "tag": "0009_bounded_renewal_history",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1793149200000,
+      "tag": "0010_lowercase_wallet_addresses",
+      "breakpoints": true
     }
   ]
 }

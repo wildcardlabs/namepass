@@ -51,8 +51,10 @@ beforeEach(() => {
 	acceptUpdate = () => true;
 	updates = [];
 	vi.stubEnv(HUB_CHAIN.rpcEnv, "https://rpc.invalid");
-	// A generated test-only key. No signer operation occurs in these polling tests.
-	vi.stubEnv("RELAYER_PRIVATE_KEY", `0x${"1".repeat(64)}`);
+	// No signer operation occurs in these polling tests; the relayer only needs an address.
+	vi.stubEnv("RELAYER_KMS_KEY_ARN", "arn:aws:kms:us-east-1:123456789012:key/00000000-0000-0000-0000-000000000000");
+	vi.stubEnv("RELAYER_KMS_ROLE_ARN", "arn:aws:iam::123456789012:role/test-relayer-signer");
+	vi.stubEnv("RELAYER_ADDRESS", intent.fromAddress);
 	mocks.rpc.getChainId.mockResolvedValue(HUB_CHAIN.chainId);
 	mocks.rpc.sendRawTransaction.mockResolvedValue(hash);
 	mocks.rpc.getTransactionReceipt.mockImplementation(async ({ hash: requested }) => {

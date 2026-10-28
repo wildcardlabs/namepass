@@ -16,7 +16,8 @@ evidence are in [DEPLOYMENTS.md](DEPLOYMENTS.md).
 4. Generate and validate the Goldsky Turbo pipeline using [its README](../goldsky/README.md).
    Configure its reader and webhook secrets before applying it to the stable service URL.
 5. Fund the dedicated relayer with native gas on each supported chain. Use the authenticated
-   monitoring page to inspect stored state and request gas checks.
+   monitoring page to inspect stored state and request gas checks. Relayer signer setup and
+   rotation are in the private operator runbook.
 
 ### Database migrations
 

@@ -124,6 +124,8 @@ export const names = pgTable(
 		unique("names_normalized_label_unique").on(table.normalizedLabel),
 		unique("names_label_hash_unique").on(table.labelHash),
 		unique("names_deposit_address_unique").on(table.depositAddress),
+		// Address lookups match exactly, so stored addresses must be lowercase.
+		check("names_deposit_address_lowercase", sql`${table.depositAddress} = lower(${table.depositAddress})`),
 		index("names_lifetime_received_idx").on(table.lifetimeReceived),
 		index("names_time_delivered_seconds_idx").on(table.timeDeliveredSeconds),
 	],
@@ -134,7 +136,9 @@ export const goldsky = pgSchema("goldsky");
 export const watchedAddresses = goldsky.table("watched_addresses", {
 	value: varchar("value", { length: 42 }).primaryKey(),
 	updatedAt: instant("updated_at").defaultNow().notNull(),
-});
+}, (table) => [
+	check("watched_addresses_value_lowercase", sql`${table.value} = lower(${table.value})`),
+]);
 
 /**
  * One authoritative chain snapshot per activated name and chain. Public reads

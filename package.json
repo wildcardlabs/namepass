@@ -18,6 +18,8 @@
   },
   "dependencies": {
     "@adraffy/ens-normalize": "^1.11.1",
+    "@aws-sdk/client-kms": "3.1151.0",
+    "@aws-sdk/credential-provider-web-identity": "3.972.80",
     "@fontsource-variable/geist": "^5.3.0",
     "@noble/hashes": "^1.8.0",
     "@radix-ui/react-accordion": "^1.2.20",
@@ -42,6 +44,7 @@
     "@vercel/analytics": "^2.0.1",
     "@vercel/firewall": "1.2.6",
     "@vercel/functions": "^3.9.3",
+    "@vercel/oidc": "3.8.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
