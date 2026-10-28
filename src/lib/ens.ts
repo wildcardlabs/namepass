@@ -1,36 +1,28 @@
 /**
  * ENS profile client.
  *
- * Source: https://api.resolvio.xyz/ens/v2/profile/<name>
+ * Source: https://api.bigname.sh/v1/names/<name> (Ethereum mainnet ENS).
  *
- * The API returns every record slot it knows about, most of them with
- * `exists: false`. We keep only the records a person reads, and drop the
- * `addresses` array entirely — coin types like 2147492101 are noise for
- * someone who just wants to know whose name this is. The one address worth
- * showing is coin 60 (ETH), which we lift out as `addr`.
+ * The API returns every record the resolver has set. We keep only the records a
+ * person reads, and drop the other address coin types — coin types like
+ * 2147492101 are noise for someone who just wants to know whose name this is.
+ * The one address worth showing is coin 60 (ETH), which we lift out as `addr`.
  */
 
-const BASE = "https://api.resolvio.xyz/ens/v2/profile";
+import { checksumAddress } from "./namepass";
 
-interface ApiTextRecord {
-	key: string;
-	value?: string;
-	exists: boolean;
-}
+const BASE = "https://api.bigname.sh/v1/names";
 
-interface ApiAddress {
-	coin: number;
-	chain: string;
-	value?: string;
-	exists: boolean;
-}
-
-interface ApiProfile {
-	name: string;
-	texts?: ApiTextRecord[];
-	addresses?: ApiAddress[];
-	contenthash?: { value?: string; exists: boolean };
-	resolver?: string;
+interface ApiName {
+	data: {
+		name: string;
+		resolver?: { chain_id: number; address: string } | null;
+		records?: {
+			texts?: Record<string, string | null>;
+			addresses?: Record<string, string | null>;
+			contenthash?: string | null;
+		} | null;
+	};
 }
 
 /** Records we surface, in display order. Everything else is ignored. */
@@ -115,27 +107,24 @@ export interface EnsProfile {
 const cache = new Map<string, EnsProfile | null>();
 const inflight = new Map<string, Promise<EnsProfile | null>>();
 
-function shape(raw: ApiProfile): EnsProfile {
-	const texts = raw.texts ?? [];
-	const byKey = new Map(
-		texts.filter((t) => t.exists && t.value).map((t) => [t.key, t.value as string]),
-	);
-
+function shape({ data }: ApiName): EnsProfile {
+	const texts = data.records?.texts ?? {};
 	const text: Record<string, string> = {};
 	for (const key of DISPLAY_KEYS) {
-		const value = byKey.get(key);
+		const value = texts[key];
 		if (value) text[key] = value;
 	}
 
-	const eth = (raw.addresses ?? []).find((a) => a.coin === 60 && a.exists);
+	const eth = data.records?.addresses?.["60"];
+	const contenthash = data.records?.contenthash;
 
 	return {
-		name: raw.name,
-		addr: eth?.value,
-		avatar: byKey.get("avatar"),
+		name: data.name,
+		addr: eth && /^0x[0-9a-f]{40}$/i.test(eth) ? checksumAddress(eth) : undefined,
+		avatar: texts.avatar || undefined,
 		text,
-		contenthash: raw.contenthash?.exists ? raw.contenthash.value : undefined,
-		resolver: raw.resolver,
+		contenthash: contenthash && contenthash !== "0x" ? contenthash : undefined,
+		resolver: data.resolver?.address,
 	};
 }
 
@@ -170,7 +159,7 @@ export async function fetchProfile(name: string): Promise<EnsProfile | null> {
 				cache.set(key, null);
 				return null;
 			}
-			const raw = (await res.json()) as ApiProfile;
+			const raw = (await res.json()) as ApiName;
 			const profile = shape(raw);
 			cache.set(key, profile);
 			return profile;
