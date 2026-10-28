@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { createHmac } from "node:crypto";
 import test from "node:test";
+import logoutRoute from "../routes/api/auth/logout";
 import { COOKIE, githubCallback, githubLogin, monitoringSession } from "./monitoring-auth";
 
 test("GitHub callback issues separate cookies and sessions reject tampering, expiry and removed users", async () => {
@@ -35,5 +36,35 @@ test("GitHub callback issues separate cookies and sessions reject tampering, exp
  } finally {
   globalThis.fetch = originalFetch;
   keys.forEach((key, i) => { if (previous[i] === undefined) delete process.env[key]; else process.env[key] = previous[i]; });
+ }
+});
+
+test("logout rejects unsupported methods and untrusted origins without changing cookies", async () => {
+ for (const method of ["GET", "HEAD", "PUT", "PATCH", "DELETE", "OPTIONS"]) {
+  const response = await logoutRoute.fetch(new Request("https://example.com/api/auth/logout", {
+   method, headers: { origin: "https://example.com", cookie: `${COOKIE}=existing-session` },
+  }));
+  assert.equal(response.status, 405, method);
+  assert.equal(response.headers.get("allow"), "POST", method);
+  assert.equal(response.headers.get("set-cookie"), null, method);
+ }
+ for (const origin of [undefined, "null", "https://attacker.test", "https://other.example.com", "https://example.com.attacker.test", "http://example.com", "https://example.com:8443", "https://example.com/path", "invalid"]) {
+  const response = await logoutRoute.fetch(new Request("https://example.com/api/auth/logout", {
+   method: "POST", headers: { cookie: `${COOKIE}=existing-session`, ...(origin === undefined ? {} : { origin }) },
+  }));
+  assert.equal(response.status, 403, origin ?? "missing origin");
+  assert.equal(response.headers.get("set-cookie"), null, origin ?? "missing origin");
+ }
+});
+
+test("same-origin POST logout expires the session and redirects to monitoring with GET", async () => {
+ for (const origin of ["https://example.com", "https://preview.example.com:8443"]) {
+  const response = await logoutRoute.fetch(new Request(`${origin}/api/auth/logout`, {
+   method: "POST", headers: { origin, cookie: `${COOKIE}=existing-session` },
+  }));
+  assert.equal(response.status, 303);
+  assert.equal(response.headers.get("location"), "/monitoring");
+  assert.equal(response.headers.get("cache-control"), "no-store");
+  assert.deepEqual(response.headers.getSetCookie(), [`${COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`]);
  }
 });

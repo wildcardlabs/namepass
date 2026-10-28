@@ -37,6 +37,11 @@ with receipt enrichment for ENS expiry. See [the pipeline reference](../goldsky/
 
 Activation normalizes a label, derives its wallet, reads ENS state and records block-pinned
 balances. The watched-address table enables deposit detection. Failed scans remain recoverable.
+Historical renewal projection runs in recovery batches of at most 25 events. Each batch commits
+event checkpoints and one aggregate refresh per affected name. The webhook checkpoints each
+renewal it projects for an activated name. Recovery checkpoints settled projections without
+replaying them, so only renewals for names not yet activated stay pending. Activation does not
+replay history; historical activity becomes available after recovery.
 
 Public balances start from a snapshot and apply canonical events after its block. Public
 activity polling does not call chain RPC. Missing or inconsistent evidence is unavailable,
@@ -82,13 +87,15 @@ remain permissionless. Service health dashboards require GitHub authentication a
 health RPC polling. They do not replace provider alerts. Recovery and retention jobs are documented in
 [RUNBOOK.md](RUNBOOK.md); metric definitions are in [MONITORING.md](MONITORING.md).
 
-## Planned public API
+## Public API
 
-The public API backend has been removed. The published `/docs` guides and
-`docs/api/openapi.json` describe the proposed interface, not deployed endpoint behavior.
-The fresh implementation plan is [PUBLIC_API_PLAN.md](PUBLIC_API_PLAN.md).
-Existing application routes, Goldsky ingestion and renewal Workflows remain the core backend.
-The public API reset adds no database migration or hosted configuration change.
+`routes/api/v1/` serves the public testnet API: address activation, renewal quotes, transaction
+status and name renewal history. Each endpoint has its own enable flag, and admission limits
+apply to anonymous callers. Address activation reuses name activation. Status and history read
+the indexed event projection and verify receipts. Quotes use block-pinned contract reads. The
+endpoints add no worker, ledger or signing path. `docs/api/openapi.json` and the
+`/docs` guides describe the interface. Release status is in [DEPLOYMENTS.md](DEPLOYMENTS.md), and
+the evidence rules are in the `PUBLIC_API_*.md` references.
 
 ## Documentation and agent skill
 
@@ -96,5 +103,4 @@ The public API reset adds no database migration or hosted configuration change.
 Markdown, `llms.txt`, `llms-full.txt` and the downloadable integration skill. Run
 `npm run generate:docs` after editing inputs; CI checks freshness with `npm run check:docs`.
 OpenAPI is a documentation input; it does not generate a server implementation or client types.
-The short skill describes the proposed send-and-poll sequence. The API is unavailable until the
-new implementation passes its release gates.
+The short skill describes the send-and-poll sequence that the public API serves.

@@ -30,18 +30,17 @@ async function inspect() {
 		connectionTimeoutMillis: 5000,
 		query_timeout: 7000,
 	});
-	let snapshot: Awaited<ReturnType<typeof readSourceSnapshot>>;
-	try {
+	let snapshot!: Awaited<ReturnType<typeof readSourceSnapshot>>;
+	async function readSnapshot(recipients: string[]) {
 		const client = await pool.connect();
 		try {
 			await client.query("BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY");
-			snapshot = await readSourceSnapshot(client, chainId, transactionHash);
+			snapshot = await readSourceSnapshot(client, chainId, transactionHash, recipients);
 			await client.query("ROLLBACK");
+			return snapshot;
 		} finally {
 			client.release();
 		}
-	} finally {
-		await pool.end();
 	}
 	const signal = AbortSignal.timeout(15000);
 	let operations = 0;
@@ -88,13 +87,19 @@ async function inspect() {
 			throw new Error("source_rpc_unavailable");
 		return payload.result;
 	}
-	const inspected = await inspectSource(
-		chainId,
-		transactionHash,
-		snapshot,
-		(method, params) => rpc(method, params),
-		signal,
-	);
+	let inspected: Awaited<ReturnType<typeof inspectSource>>;
+	try {
+		await readSnapshot([]);
+		inspected = await inspectSource(
+			chainId,
+			transactionHash,
+			readSnapshot,
+			(method, params) => rpc(method, params),
+			signal,
+		);
+	} finally {
+		await pool.end();
+	}
 	if (!inspected.evidence) throw new Error("reverted_source");
 	const { evidence, sourceFinality } = inspected;
 	console.log(

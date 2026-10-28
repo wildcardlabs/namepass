@@ -79,9 +79,11 @@ later canonical events. Flow amounts are not another balance aggregate.
 
 ## API and operations
 
-The public API backend is not available. Its previous worker and job tables are not part of the
-application schema. Planned API observability and release checks belong in
-[PUBLIC_API_PLAN.md](PUBLIC_API_PLAN.md). Existing renewal monitoring remains unchanged.
+The public testnet API is live, but this page has no API-specific panels. API 5xx and p95
+latency alerts belong to the provider alerts in
+[Required external monitoring](#required-external-monitoring). Endpoint flags and admission
+limits are in [RUNBOOK.md](RUNBOOK.md#public-api-controls). Existing renewal monitoring remains
+unchanged.
 
 GitHub login requires `MONITORING_GITHUB_CLIENT_ID`, `MONITORING_GITHUB_CLIENT_SECRET`,
 `MONITORING_GITHUB_USERS` (two distinct usernames separated by a comma), and
@@ -90,6 +92,11 @@ variables. Configure the OAuth callback as `https://<deployment-host>/api/auth/g
 Sessions expire after 12 hours. Both monitoring endpoints enforce the session and current allowlist.
 Without configuration, access fails closed. GitHub login has not been verified against a configured
 OAuth app; tests cover mocked GitHub responses and session validation.
+
+`POST /api/auth/logout` requires an `Origin` header that exactly matches the request URL's
+origin. Other methods and missing or untrusted origins are rejected without changing cookies.
+Successful logout expires the session cookie and returns a non-cacheable `303` redirect to
+`/monitoring`.
 
 - `GET /api/monitoring?days=30&page=1&status=all`: one read-only SQL statement provides a consistent
   database snapshot. Optional `chain` is a chain ID; `search` matches a name substring. Queue pages

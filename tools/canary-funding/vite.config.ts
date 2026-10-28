@@ -1,6 +1,6 @@
 import { defineConfig } from "vite";
 import { fileURLToPath } from "node:url";
-import { writeFileSync } from "node:fs";
+import { writeJournal } from "../journal";
 
 const port = 5178;
 export default defineConfig({
@@ -12,7 +12,7 @@ export default defineConfig({
       let body = "";
       request.on("data", chunk => { body += chunk; if (body.length > 50000) request.destroy(); });
       request.on("end", () => {
-        try { const data = JSON.parse(body); if (!Array.isArray(data.entries)) throw Error(); writeFileSync("/private/tmp/namepass-canary-funding-journal.json", JSON.stringify(data, null, 2) + "\n", { mode: 0o600 }); response.end("saved"); }
+        try { const data = JSON.parse(body); if (!Array.isArray(data.entries)) throw Error(); writeJournal("/private/tmp/namepass-canary-funding-journal.json", data); response.end("saved"); }
         catch { response.statusCode = 400; response.end(); }
       });
     });
@@ -21,5 +21,5 @@ export default defineConfig({
     fs: { allow: [fileURLToPath(new URL("../..", import.meta.url))] },
     proxy: { "/api/names": { target: "https://beta.namepass.com", changeOrigin: true, secure: true } },
   },
-  build: { outDir: "/private/tmp/namepass-canary-funding-build", emptyOutDir: true },
+  build: { outDir: "dist", emptyOutDir: true },
 });

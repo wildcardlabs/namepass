@@ -73,7 +73,7 @@ function input(request: Request) {
 		);
 	return { chain, chainId, transactionHash: hash.toLowerCase() };
 }
-async function snapshot(chainId: string, hash: string) {
+async function snapshot(chainId: string, hash: string, recipients: string[] = []) {
 	const client = await statusPool().connect();
 	let discard = false;
 	try {
@@ -86,7 +86,7 @@ async function snapshot(chainId: string, hash: string) {
 		await client.query(
 			"SET LOCAL idle_in_transaction_session_timeout = '10000ms'",
 		);
-		const source = await readSourceSnapshot(client, chainId, hash);
+		const source = await readSourceSnapshot(client, chainId, hash, recipients);
 		if (!source.indexed.length)
 			throw new ApiError(
 				404,
@@ -130,7 +130,9 @@ async function snapshot(chainId: string, hash: string) {
 
 async function status(request: Request, signal: AbortSignal) {
 	const { chain, chainId, transactionHash } = input(request);
-	const initial = await snapshot(chainId, transactionHash);
+	// Reject unknown transactions and inconsistent indexed identities before RPC work.
+	await snapshot(chainId, transactionHash);
+	let initial!: Awaited<ReturnType<typeof snapshot>>;
 	let calls = 0,
 		circleReads = 0,
 		id = 0;
@@ -202,7 +204,10 @@ async function status(request: Request, signal: AbortSignal) {
 	const source = await inspectSource(
 		chainId,
 		transactionHash,
-		initial.source,
+		async (recipients) => {
+			initial = await snapshot(chainId, transactionHash, recipients);
+			return initial.source;
+		},
 		(method, params, s) => rpc(chain.chainId, method, params, s),
 		signal,
 	);
@@ -292,11 +297,14 @@ async function status(request: Request, signal: AbortSignal) {
 				"confirmed",
 			)
 		: null;
-	const final = await snapshot(chainId, transactionHash);
+	let final!: Awaited<ReturnType<typeof snapshot>>;
 	const checked = await inspectSource(
 		chainId,
 		transactionHash,
-		final.source,
+		async (recipients) => {
+			final = await snapshot(chainId, transactionHash, recipients);
+			return final.source;
+		},
 		(method, params, s) => rpc(chain.chainId, method, params, s),
 		signal,
 	);

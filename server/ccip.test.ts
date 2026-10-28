@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import ccipRoute from "../routes/api/ccip";
-import { GATEWAY_TRUE, decodeCcipLabel, handleCcipGateway } from "./ccip";
+import ccipGetRoute from "../routes/api/ccip/[sender]/[data]";
+import { GATEWAY_TRUE, ccipRespond, decodeCcipLabel, defaultCcipDeps, handleCcipGateway } from "./ccip";
 import type { CcipGatewayDeps } from "./ccip";
 
 /** Encode a label the way the resolver's call data carries it: raw UTF-8 bytes. */
@@ -46,6 +47,40 @@ test("the gateway registers a new label once and confirms with abi-encoded true"
 	// A second resolution of a known name takes the fast path — no second register.
 	assert.equal(await handleCcipGateway(labelData("vitalik"), deps), GATEWAY_TRUE);
 	assert.deepEqual(registered, ["vitalik"]);
+});
+
+test("maintenance blocks new CCIP registrations but keeps tracked names resolvable", async (t) => {
+	const savedMaintenance = process.env.NAMEPASS_MAINTENANCE;
+	t.after(() => {
+		if (savedMaintenance === undefined) delete process.env.NAMEPASS_MAINTENANCE;
+		else process.env.NAMEPASS_MAINTENANCE = savedMaintenance;
+	});
+	delete process.env.NAMEPASS_MAINTENANCE;
+	const { deps, registered } = trackingDeps();
+	await handleCcipGateway(labelData("vitalik"), deps);
+	const resolve = (label: string) => ccipRespond(
+		new Request("https://namepass.test/api/ccip"),
+		() => labelData(label),
+		deps,
+	);
+
+	process.env.NAMEPASS_MAINTENANCE = "1";
+	const blocked = await resolve("newname");
+	assert.equal(blocked.status, 503);
+	assert.deepEqual(await blocked.json(), { message: "Namepass is being upgraded. Please return shortly." });
+	assert.equal(blocked.headers.get("access-control-allow-origin"), "*");
+	assert.deepEqual(registered, ["vitalik"]);
+
+	const known = await resolve("vitalik");
+	assert.equal(known.status, 200);
+	assert.deepEqual(await known.json(), { data: GATEWAY_TRUE });
+	assert.deepEqual(registered, ["vitalik"]);
+
+	process.env.NAMEPASS_MAINTENANCE = "0";
+	const resumed = await resolve("newname");
+	assert.equal(resumed.status, 200);
+	assert.deepEqual(await resumed.json(), { data: GATEWAY_TRUE });
+	assert.deepEqual(registered, ["vitalik", "newname"]);
 });
 
 test("the gateway still confirms when the balance scan fails but the label is tracked", async () => {
@@ -92,4 +127,41 @@ test("the gateway rejects a non-normalized label before any database work", asyn
 	);
 	assert.equal(response.status, 400);
 	assert.equal(response.headers.get("access-control-allow-origin"), "*");
+});
+
+test("both gateway routes reject changed label bytes before checking tracking", async (t) => {
+	const lookup = t.mock.method(defaultCcipDeps, "isRegistered", async () => true);
+	const register = t.mock.method(defaultCcipDeps, "register", async () => {});
+	for (const label of ["\uFEFFvitalik", "\uFEFF\uFEFFvitalik", "vitalik\uFEFF", "e\u0301cole"]) {
+		const data = labelData(label);
+		const post = await ccipRoute.fetch(new Request("https://namepass.test/api/ccip", {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ data }),
+		}));
+		const get = await ccipGetRoute.fetch(new Request(`https://namepass.test/api/ccip/0x01/${data}`));
+		for (const response of [post, get]) {
+			assert.equal(response.status, 400, `${label}: ${response.url}`);
+			assert.deepEqual(await response.json(), { message: "The label is not ENS-normalized." });
+			assert.equal(response.headers.get("access-control-allow-origin"), "*");
+		}
+	}
+	assert.equal(lookup.mock.callCount(), 0);
+	assert.equal(register.mock.callCount(), 0);
+});
+
+test("both gateway routes confirm canonical Unicode label bytes", async (t) => {
+	const lookup = t.mock.method(defaultCcipDeps, "isRegistered", async () => true);
+	const data = labelData("école");
+	const post = await ccipRoute.fetch(new Request("https://namepass.test/api/ccip", {
+		method: "POST",
+		headers: { "content-type": "application/json" },
+		body: JSON.stringify({ data }),
+	}));
+	const get = await ccipGetRoute.fetch(new Request(`https://namepass.test/api/ccip/0x01/${data}`));
+	for (const response of [post, get]) {
+		assert.equal(response.status, 200);
+		assert.deepEqual(await response.json(), { data: GATEWAY_TRUE });
+	}
+	assert.deepEqual(lookup.mock.calls.map((call) => call.arguments), [["école"], ["école"]]);
 });
