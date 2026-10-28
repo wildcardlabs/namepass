@@ -53,6 +53,8 @@ export interface MonitorRead {
     seconds: string;
     scans: string;
     expiring: string;
+    historyPending: string;
+    historyStalled: string;
   };
   states: { status: FlowStatus; count: string; amount: string }[];
   daily: {
@@ -74,6 +76,9 @@ export interface MonitorRead {
   matchingFlowCount: string;
   latency: { chainId: number; samples: number; p50: number; p95: number }[];
   intents: { chainId: number; pending: string; warned: string }[];
+  controls: {
+    publicApi: { address: boolean; quote: boolean; status: boolean; history: boolean; limits: boolean };
+  };
 }
 export interface GasRead {
   checkedAt: string;

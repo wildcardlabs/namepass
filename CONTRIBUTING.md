@@ -55,6 +55,9 @@ fork tests are distinct from signed live canaries. Documentation-only changes do
 ## Changes
 
 Use a feature branch and pull request. Explain the resulting behavior and relevant verification.
+The repository is public: keep PR text, review replies and commit messages short and precise.
+Do not describe key custody, signer or wallet setup, account or resource identifiers, operator
+procedures or security posture beyond what the diff itself shows.
 Preserve exact amounts, canonical evidence and contract trust boundaries described in
 [engineering constraints](docs/ENGINEERING_CONSTRAINTS.md). Update the reference that owns a
 changed fact rather than adding a session log. Keep deployment manifests and third-party notices.

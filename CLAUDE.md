@@ -101,6 +101,10 @@ Prefer a smaller suite that protects distinct behavior over a larger count of te
 - Use `goldsky turbo` for the Turbo pipeline. Do not add background health RPC polling.
 - Keep credentials out of output, git and PRs. Preserve contract compiler settings and payment
   trust boundaries; see the targeted engineering reference before changing them.
+- The repository is public. PR titles, descriptions, review replies and commit messages state
+  the change and its verification in a few precise sentences. Do not describe key custody,
+  signer or wallet setup, account or resource identifiers, operator procedures or security
+  posture beyond what the diff itself shows. Keep that detail in private operator docs.
 
 Use ASD-STE100-style technical English: short, direct sentences, consistent terms and exact code
 identifiers. Preserve necessary detail and approved product copy. Report what changed, the
