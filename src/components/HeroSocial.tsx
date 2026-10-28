@@ -84,16 +84,6 @@ const ecosystem = [
     wordCenterY: 70.1861,
     target: 16,
   },
-  {
-    name: "Resolvio",
-    key: "resolvio",
-    canvas: [1112, 193],
-    left: 0,
-    width: 1112,
-    textHeight: 167.67,
-    wordCenterY: 117.8226,
-    target: 20,
-  },
 ];
 export function HeroCommunity({
   names,
