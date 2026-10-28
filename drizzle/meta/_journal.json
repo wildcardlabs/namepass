@@ -75,7 +75,7 @@
     {
       "idx": 10,
       "version": "7",
-      "when": 1793232000000,
+      "when": 1793149200000,
       "tag": "0010_lowercase_wallet_addresses",
       "breakpoints": true
     }

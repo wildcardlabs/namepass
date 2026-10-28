@@ -64,7 +64,10 @@ function kmsAccount(signer: RelayerSigner): LocalAccount {
 	});
 }
 
-/* One client per function instance. The SDK caches the role session until it expires. */
+/* One client per function instance. The SDK caches the role session until it expires.
+   Signing runs while the relayer nonce lock is held, so STS and KMS requests are bounded:
+   at most two attempts of 1 s to connect and 3 s to respond. */
+const AWS_REQUESTS = { maxAttempts: 2, requestHandler: { connectionTimeout: 1_000, requestTimeout: 3_000 } };
 let kmsClient: { cacheKey: string; client: import("@aws-sdk/client-kms").KMSClient } | null = null;
 
 async function kmsSign(signer: RelayerSigner, hash: Hex): Promise<Uint8Array> {
@@ -78,12 +81,13 @@ async function kmsSign(signer: RelayerSigner, hash: Hex): Promise<Uint8Array> {
 		kmsClient = {
 			cacheKey: clientKey,
 			client: new KMSClient({
+				...AWS_REQUESTS,
 				region: signer.region,
 				credentials: async () => fromWebToken({
 					roleArn: signer.roleArn,
 					roleSessionName: "namepass-relayer",
 					webIdentityToken: await getVercelOidcToken(),
-					clientConfig: { region: signer.region },
+					clientConfig: { ...AWS_REQUESTS, region: signer.region },
 				})(),
 			}),
 		};
