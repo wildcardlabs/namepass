@@ -91,8 +91,9 @@ health RPC polling. They do not replace provider alerts. Recovery and retention 
 
 `routes/api/v1/` serves the public testnet API: address activation, renewal quotes, transaction
 status and name renewal history. Each endpoint has its own enable flag, and admission limits
-apply to anonymous callers. The endpoints reuse name activation, the indexed event projection and
-receipt verification; they add no worker, ledger or signing path. `docs/api/openapi.json` and the
+apply to anonymous callers. Address activation reuses name activation. Status and history read
+the indexed event projection and verify receipts. Quotes use block-pinned contract reads. The
+endpoints add no worker, ledger or signing path. `docs/api/openapi.json` and the
 `/docs` guides describe the interface. Release status is in [DEPLOYMENTS.md](DEPLOYMENTS.md), and
 the evidence rules are in the `PUBLIC_API_*.md` references.
 
