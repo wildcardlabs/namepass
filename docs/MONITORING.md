@@ -79,9 +79,11 @@ later canonical events. Flow amounts are not another balance aggregate.
 
 ## API and operations
 
-The public API backend is not available. Its previous worker and job tables are not part of the
-application schema. Planned API observability and release checks belong in
-[PUBLIC_API_PLAN.md](PUBLIC_API_PLAN.md). Existing renewal monitoring remains unchanged.
+The public testnet API is live, but this page has no API-specific panels. API 5xx and p95
+latency alerts belong to the provider alerts in
+[Required external monitoring](#required-external-monitoring). Endpoint flags and admission
+limits are in [RUNBOOK.md](RUNBOOK.md#public-api-controls). Existing renewal monitoring remains
+unchanged.
 
 GitHub login requires `MONITORING_GITHUB_CLIENT_ID`, `MONITORING_GITHUB_CLIENT_SECRET`,
 `MONITORING_GITHUB_USERS` (two distinct usernames separated by a comma), and

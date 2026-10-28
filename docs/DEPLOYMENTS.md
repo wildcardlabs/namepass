@@ -1,5 +1,31 @@
 # Testnet deployments
 
+## Security scan fixes and renewal history migration — 2026-10-27
+
+A CodeRabbit security scan reported six low-severity findings. Six pull requests fixed them and
+merged to `main` with CI green; each merge deployed to `beta.namepass.com`.
+
+| Pull request | Fix | Merge |
+| --- | --- | --- |
+| [158](https://github.com/wildcardlabs/namepass/pull/158) | CCIP gateway rejects label bytes that differ from their canonical UTF-8 encoding, such as a leading byte-order mark | `9c38836` |
+| [163](https://github.com/wildcardlabs/namepass/pull/163) | Transaction status resolves only the transaction's recipients, so more than 1,000 activated names no longer disable it | `102daf1` |
+| [161](https://github.com/wildcardlabs/namepass/pull/161) | Monitoring logout requires a same-origin `POST` | `f4fe572` |
+| [162](https://github.com/wildcardlabs/namepass/pull/162) | Local canary journals refuse symlinks and hard links | `d6e5042` |
+| [159](https://github.com/wildcardlabs/namepass/pull/159) | `NAMEPASS_MAINTENANCE` also blocks new CCIP registrations | `dfd0a6a` |
+| [160](https://github.com/wildcardlabs/namepass/pull/160) | Activation no longer replays renewal history; recovery projects it in checkpointed batches | `07755ab` |
+
+Migration `0009_bounded_renewal_history` adds `chain_events.renewal_reconciled_at` and a partial
+index of pending renewals. The user applied it with `server/db/migrate.ts` to the Neon `testnet`
+branch (`br-noisy-bird-avey45an`, project `nameless-paper-91018372`) before PR 160 merged; the
+migration ledger then held ten rows. The Neon branch named `production` has no tables and was not
+migrated. Vercel deployment `dpl_FhWMBpMGfTYCD1FhHwY2NdZRpNka` serves `07755ab`.
+
+Anonymous checks against `beta.namepass.com` after the releases: a CCIP request whose label has a
+leading byte-order mark returned 400 and `vitalik` still resolved; `GET /api/auth/logout` returned
+405 and a cross-origin `POST` returned 403; the status of the October 23 `vitalik.eth` canary
+deposit returned 200 `complete`. After PR 160, activity, statistics, leaderboard, the `vitalik`
+name page and the homepage returned 200. Maintenance mode was not toggled to test PR 159 live.
+
 ## Sepolia wildcard resolver — 2026-10-23
 
 Phase 7 of [GAS_REDESIGN_PLAN.md](GAS_REDESIGN_PLAN.md) on Sepolia. `namepass.eth` was
