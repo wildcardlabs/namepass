@@ -1599,6 +1599,7 @@ export async function reconcileStoredRenewals(): Promise<void> {
 		if (!stored.length) return;
 		const projection = postgresGoldskyTransaction(tx);
 		const affectedNames = new Set<string>();
+		const projected: string[] = [];
 		for (const { event: row } of stored) {
 			const event: GoldskyEvent = {
 				payload: {},
@@ -1613,17 +1614,33 @@ export async function reconcileStoredRenewals(): Promise<void> {
 				logIndex: row.logIndex,
 				gsOp: "c",
 			};
-			await projection.lockSettlementTransaction(event);
-			// Reconciliation reads current canonical bundle members under this lock.
-			const nameId = await projection.reconcileRenewal(event);
-			if (nameId) affectedNames.add(nameId);
+			try {
+				// A savepoint isolates each event. One event that fails its integrity checks
+				// stays pending for the next run and does not hold back other names.
+				const nameId = await tx.transaction(async (savepoint) => {
+					const eventProjection = postgresGoldskyTransaction(savepoint);
+					await eventProjection.lockSettlementTransaction(event);
+					// Reconciliation reads current canonical bundle members under this lock.
+					return eventProjection.reconcileRenewal(event);
+				});
+				if (nameId) affectedNames.add(nameId);
+				projected.push(row.eventId);
+			} catch {
+				logWarning("recovery.renewal_event_failed", {
+					eventId: row.eventId,
+					chainId: row.chainId,
+					step: "renewal_history",
+					errorCode: "renewal_event_failed",
+				});
+			}
 		}
 		for (const nameId of [...affectedNames].sort()) {
 			await projection.refreshRenewalAggregates(nameId);
 		}
+		if (!projected.length) return;
 		// A missing CCTP claim must not stall later history. Its eventual webhook
 		// reconciles the bundle independently of this historical checkpoint.
 		await tx.update(chainEvents).set({ renewalReconciledAt: new Date() })
-			.where(inArray(chainEvents.eventId, stored.map(({ event }) => event.eventId)));
+			.where(inArray(chainEvents.eventId, projected));
 	});
 }
