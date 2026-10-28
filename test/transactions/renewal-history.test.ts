@@ -112,6 +112,34 @@ test("activation never replays history; recovery bounds work, skips settled even
 	} finally { await pg.close(); }
 }, 30_000);
 
+test("an event that fails its integrity check stays pending without holding back the batch", async () => {
+	const { pg, activateName } = await fixture();
+	try {
+		// Alice's wallet with another label: reconciliation rejects it as an integrity failure.
+		const poison = renewal("alice-00-poison");
+		poison.facts = { ...poison.facts, label: "mallory", label_hash: labelHash("mallory") };
+		for (const event of [poison, renewal("alice-01"), renewal("alice-02"), renewal("bob-1", "bob")]) {
+			await ingestGoldskyEvent(postgresGoldskyStore, event);
+		}
+		expect((await activateName("alice")).status).toBe(201);
+		expect((await activateName("bob")).status).toBe(201);
+		const pending = async () => (await pg.query<{ event_id: string }>(
+			"select event_id from chain_events where event_type='Renewed' and renewal_reconciled_at is null order by event_id",
+		)).rows.map(row => row.event_id);
+		for (let run = 0; run < 2; run++) {
+			await reconcileStoredRenewals();
+			expect(await pending()).toEqual(["alice-00-poison"]);
+		}
+		expect((await pg.query("select renewal_event_id from flows where status='settled' order by renewal_event_id")).rows)
+			.toEqual([{ renewal_event_id: "alice-01" }, { renewal_event_id: "alice-02" }, { renewal_event_id: "bob-1" }]);
+		const totals = await pg.query("select normalized_label, renewal_count::int from names order by normalized_label");
+		expect(totals.rows).toEqual([
+			{ normalized_label: "alice", renewal_count: 2 },
+			{ normalized_label: "bob", renewal_count: 1 },
+		]);
+	} finally { await pg.close(); }
+}, 30_000);
+
 test("a failed aggregate refresh rolls back projections and historical checkpoints together", async () => {
 	const { pg, activateName } = await fixture();
 	try {
