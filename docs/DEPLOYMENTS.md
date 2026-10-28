@@ -42,9 +42,8 @@ Verification on 2026-10-27:
   assumed the role and signed a transaction that recovers to the address. The trust was then
   restored to `production`. A development token is now refused with `AccessDenied`.
 
-Status: not active. Production still signs with `RELAYER_PRIVATE_KEY`. Activation follows the
-[relayer signer runbook](RUNBOOK.md#relayer-signer): fund the address on all four testnets,
-drain pending intents, then switch the production variables.
+The address was funded on all four testnets on 2026-10-28. Activation follows the
+[relayer signer runbook](RUNBOOK.md#relayer-signer).
 
 ## Sepolia wildcard resolver — 2026-10-23
 

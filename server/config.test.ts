@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { CHAIN_TRIGGER_CONFIG, configuredRelayerAddress, minimumTriggerAmount } from "./config";
+import { CHAIN_TRIGGER_CONFIG, minimumTriggerAmount } from "./config";
 import { SERVER_CHAINS } from "../src/lib/chains";
 import { publicConfig } from "./reads";
 import { minTrigger, setPublicConfig } from "../src/lib/triggerConfig";
@@ -40,9 +40,7 @@ test("the browser accepts only the complete public trigger configuration", () =>
 
 test("public configuration exposes only the configured relayer address", () => {
 	const previousAddress = process.env.RELAYER_ADDRESS;
-	const previousKey = process.env.RELAYER_PRIVATE_KEY;
 	try {
-		delete process.env.RELAYER_PRIVATE_KEY;
 		process.env.RELAYER_ADDRESS = "0x0000000000000000000000000000000000000001";
 		const config = publicConfig();
 		assert.equal(config.relayerAddress, "0x0000000000000000000000000000000000000001");
@@ -50,30 +48,5 @@ test("public configuration exposes only the configured relayer address", () => {
 	} finally {
 		if (previousAddress === undefined) delete process.env.RELAYER_ADDRESS;
 		else process.env.RELAYER_ADDRESS = previousAddress;
-		if (previousKey === undefined) delete process.env.RELAYER_PRIVATE_KEY;
-		else process.env.RELAYER_PRIVATE_KEY = previousKey;
-	}
-});
-
-test("the configured relayer address derives from and must match the private key", () => {
-	const previousAddress = process.env.RELAYER_ADDRESS;
-	const previousKey = process.env.RELAYER_PRIVATE_KEY;
-	const key = `0x${"0".repeat(63)}1`;
-	const derived = "0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf";
-	try {
-		process.env.RELAYER_PRIVATE_KEY = key;
-		delete process.env.RELAYER_ADDRESS;
-		assert.equal(configuredRelayerAddress(), derived);
-
-		process.env.RELAYER_ADDRESS = derived.toLowerCase();
-		assert.equal(configuredRelayerAddress(), derived);
-
-		process.env.RELAYER_ADDRESS = "0x0000000000000000000000000000000000000001";
-		assert.throws(configuredRelayerAddress, /does not match/);
-	} finally {
-		if (previousAddress === undefined) delete process.env.RELAYER_ADDRESS;
-		else process.env.RELAYER_ADDRESS = previousAddress;
-		if (previousKey === undefined) delete process.env.RELAYER_PRIVATE_KEY;
-		else process.env.RELAYER_PRIVATE_KEY = previousKey;
 	}
 });

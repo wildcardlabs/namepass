@@ -15,7 +15,7 @@ const KMS_ENV = {
 };
 
 function withEnv(values: Record<string, string | undefined>, work: () => Promise<void> | void) {
-	const names = ["RELAYER_PRIVATE_KEY", "RELAYER_ADDRESS", "RELAYER_KMS_KEY_ARN", "RELAYER_KMS_ROLE_ARN"];
+	const names = ["RELAYER_ADDRESS", "RELAYER_KMS_KEY_ARN", "RELAYER_KMS_ROLE_ARN"];
 	const previous = Object.fromEntries(names.map((name) => [name, process.env[name]]));
 	for (const name of names) {
 		if (values[name] === undefined) delete process.env[name];
@@ -41,7 +41,7 @@ function der(r: bigint, s: bigint): Uint8Array {
 	return Uint8Array.from([0x30, body.length, ...body]);
 }
 
-test("the KMS signer produces the same EIP-1559 transaction as the private key", async () => {
+test("the KMS signer produces the same EIP-1559 transaction as a reference secp256k1 signer", async () => {
 	const requests: SignCommand["input"][] = [];
 	const originalSend = KMSClient.prototype.send;
 	let highS = 0;
@@ -106,10 +106,7 @@ test("the KMS signer refuses a key that does not recover to RELAYER_ADDRESS", as
 	}
 });
 
-test("the relayer signer accepts exactly one complete source", async () => {
-	await withEnv({ ...KMS_ENV, RELAYER_PRIVATE_KEY: KEY }, () => {
-		assert.throws(relayerSigner, /not both/);
-	});
+test("the relayer signer requires a complete configuration", async () => {
 	await withEnv({ ...KMS_ENV }, () => {
 		assert.throws(relayerSigner, /RELAYER_ADDRESS is required/);
 	});

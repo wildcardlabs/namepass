@@ -4,12 +4,11 @@ import { SERVER_CHAINS } from "../src/lib/chains";
 import { monitoringGas } from "./monitoring-gas";
 
 test("manual gas checks preserve partial failures, Arc units, and coalesce cached reads", async () => {
- const keys = ["RELAYER_ADDRESS", "RELAYER_PRIVATE_KEY", ...SERVER_CHAINS.map(c => c.rpcEnv)];
+ const keys = ["RELAYER_ADDRESS", ...SERVER_CHAINS.map(c => c.rpcEnv)];
  const previous = new Map(keys.map(key => [key, process.env[key]]));
  const previousFetch = globalThis.fetch;
  let calls = 0;
  try {
-  delete process.env.RELAYER_PRIVATE_KEY;
   process.env.RELAYER_ADDRESS = "0x0000000000000000000000000000000000000001";
   for (const chain of SERVER_CHAINS) process.env[chain.rpcEnv] = `https://rpc.invalid/${chain.key}`;
   globalThis.fetch = async (input, init) => {
