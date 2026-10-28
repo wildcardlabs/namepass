@@ -354,7 +354,7 @@ async function fixture(t: TestContext) {
 				`${label}.eth`,
 				keccak256(stringToHex(label)),
 				keccak256(stringToHex(label + ".eth")),
-				depositAddress(label),
+				depositAddress(label).toLowerCase(),
 			],
 		);
 	for (const [label, id, index, cross] of [
@@ -582,7 +582,7 @@ test(
 			[
 				keccak256(stringToHex("alice")),
 				keccak256(stringToHex("alice.eth")),
-				depositAddress("alice"),
+				depositAddress("alice").toLowerCase(),
 			],
 		);
 		const { spawn } = await import("node:child_process");

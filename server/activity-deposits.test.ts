@@ -24,7 +24,7 @@ test("real activity query preserves pooled deposit identities and withholds inco
     const pools=new Set(),connect=Pool.prototype.connect;Pool.prototype.connect=function(...args){pools.add(this);return connect.apply(this,args);};
     const db=new Pool({connectionString:process.env.DATABASE_URL});pools.add(db);
     const wallet=depositAddress('farcaster'), token='0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238',sender='0x1111111111111111111111111111111111111111';
-    const hash='0x'+'ab'.repeat(32), name=(await db.query("INSERT INTO names(normalized_label,display_name,label_hash,namehash,deposit_address,ens_synced_at) VALUES('farcaster','farcaster.eth',$1,$2,$3,now()) RETURNING id",[labelHash('farcaster'),ensNamehash('farcaster'),wallet])).rows[0].id;
+    const hash='0x'+'ab'.repeat(32), name=(await db.query("INSERT INTO names(normalized_label,display_name,label_hash,namehash,deposit_address,ens_synced_at) VALUES('farcaster','farcaster.eth',$1,$2,$3,now()) RETURNING id",[labelHash('farcaster'),ensNamehash('farcaster'),wallet.toLowerCase()])).rows[0].id;
     async function event(id,type,block,index,facts,chain='11155111') {await db.query('INSERT INTO chain_events(event_id,event_family,event_type,chain_id,tx_hash,log_index,block_number,block_time,gs_op,facts) VALUES($1,$2,$3,$4,$5,$6,$7,now(),\'c\',$8)',[id,type==='Transfer'?'deposit':'namepass',type,chain,hash,index,block,facts]);}
     try {
       await event('previous','DepositProcessed',10,50,{wallet_address:wallet,amount:'500000',remaining_amount:'0'});
