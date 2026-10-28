@@ -21,5 +21,5 @@ export default defineConfig({
     fs: { allow: [fileURLToPath(new URL("../..", import.meta.url))] },
     proxy: { "/api/names": { target: "https://beta.namepass.com", changeOrigin: true, secure: true } },
   },
-  build: { outDir: "/private/tmp/namepass-canary-funding-build", emptyOutDir: true },
+  build: { outDir: "dist", emptyOutDir: true },
 });

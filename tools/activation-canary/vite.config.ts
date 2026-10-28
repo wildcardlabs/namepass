@@ -1,7 +1,6 @@
 import { defineConfig } from "vite";
 import { fileURLToPath } from "node:url";
-import { readFileSync } from "node:fs";
-import { writeJournal } from "../journal";
+import { readJournal, writeJournal } from "../journal";
 
 export default defineConfig({
   root: fileURLToPath(new URL(".", import.meta.url)),
@@ -9,7 +8,7 @@ export default defineConfig({
     server.middlewares.use("/capture-status", (_request, response) => {
       response.setHeader("Content-Type", "application/json"); response.setHeader("Cache-Control", "no-store");
       try {
-        const state = JSON.parse(readFileSync("/private/tmp/namepass-october-payment-capture-progress.json", "utf8"));
+        const state = readJournal("/private/tmp/namepass-october-payment-capture-progress.json") as Record<string, string>;
         response.end(JSON.stringify({ active: state.captureState === "receiving" && Date.parse(state.deadline) > Date.now(), targetAddress: state.targetAddress, startedAt: state.startedAt, deadline: state.deadline }));
       } catch { response.end(JSON.stringify({ active: false })); }
     });
@@ -27,5 +26,5 @@ export default defineConfig({
     fs: { allow: [fileURLToPath(new URL("../..", import.meta.url))] },
     proxy: { "/api/names": { target: "https://beta.namepass.com", changeOrigin: true, secure: true } },
   },
-  build: { outDir: "/private/tmp/namepass-activation-canary-build", emptyOutDir: true },
+  build: { outDir: "dist", emptyOutDir: true },
 });
