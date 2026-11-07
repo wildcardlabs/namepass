@@ -58,6 +58,17 @@ Eligible funds create a flow. Execution checks the name, submits the origin tran
 waits for its receipt. A cross-chain flow then waits for Circle's attestation and submits the
 hub claim. Held, failed and unclaimed states preserve their reason and evidence.
 
+<!-- coderabbit-ai-generated:v1 -->
+
+<!-- coderabbit-ai-generated-section:v1:c55659582579475f358a4f209cddfcd887a911a2904c15d2f0fb97261b556e93 -->
+
+Automatic ENS checks for a name that cannot be renewed stop 24 hours after flow creation.
+The delay grows with elapsed flow age, from five minutes up to one hour. The held flow and
+payment evidence remain. A public name lookup with fresh renewable ENS state or a valid
+manual trigger can still resume the same flow after automatic checks stop.
+
+<!-- /coderabbit-ai-generated:v1 -->
+
 An exact `DepositProcessed` event and Circle source nonce identify execution. Name, amount or
 transaction hash alone cannot safely identify a flow. The final CCTP nonce comes from Circle
 Iris; the origin MessageSent nonce is a placeholder. Unclaimed payments resume the same

@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { PGlite } from "@electric-sql/pglite";
+import { drizzle as pgliteDrizzle } from "drizzle-orm/pglite";
 import test from "node:test";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { PgDialect } from "drizzle-orm/pg-core";
@@ -123,4 +125,32 @@ test("stopped-flow recovery keeps exact deposit evidence and rejects false attri
 		amountDetected: "20000000",
 		depositAmount: "20000000",
 	}), "none");
+});
+
+test("held name recovery stops at the lifetime deadline even with a null schedule or recent update", async () => {
+	const pg = new PGlite();
+	try {
+		await pg.exec(`create table flows (
+			id text primary key, status text, hold_reason text,
+			created_at timestamptz, updated_at timestamptz, next_action_at timestamptz
+		)`);
+		const now = new Date("2026-08-12T12:00:00.000Z");
+		await pg.exec(`insert into flows values
+			('due', 'held', 'name_not_renewable', '2026-08-12T11:00Z', '2026-08-12T11:00Z', '2026-08-12T12:00Z'),
+			('legacy-null', 'held', 'name_not_renewable', '2026-08-12T11:00Z', '2026-08-12T11:00Z', null),
+			('future', 'held', 'name_not_renewable', '2026-08-12T11:00Z', '2026-08-12T11:00Z', '2026-08-12T12:30Z'),
+			('deadline', 'held', 'name_not_renewable', '2026-08-11T12:00Z', '2026-08-12T12:00Z', null),
+			('expired', 'held', 'name_not_renewable', '2026-08-10T12:00Z', '2026-08-12T12:00Z', '2026-08-12T11:59Z'),
+			('other-hold', 'held', 'amount_below_policy', '2026-08-12T11:00Z', '2026-08-12T11:00Z', null)`);
+		const db = pgliteDrizzle(pg);
+		const due = await db.select({ id: schema.flows.id }).from(schema.flows)
+			.where(dueHeldNameRecoveryCandidate(now));
+		assert.deepEqual(due.map((row) => row.id).sort(), ["due", "legacy-null"]);
+		const later = await db.select({ id: schema.flows.id }).from(schema.flows)
+			.where(dueHeldNameRecoveryCandidate(new Date("2026-08-13T12:00Z")));
+		assert.deepEqual(later, []);
+		assert.equal((await pg.query<{ count: number }>("select count(*)::int as count from flows")).rows[0].count, 6);
+	} finally {
+		await pg.close();
+	}
 });
