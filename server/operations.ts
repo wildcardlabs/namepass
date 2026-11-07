@@ -1,4 +1,4 @@
-import { and, eq, inArray, isNull, like, lte, or, sql } from "drizzle-orm";
+import { and, eq, gt, inArray, isNull, like, lte, or, sql } from "drizzle-orm";
 
 import { readEnsState, readNativeUsdcBalanceSnapshots } from "./chain";
 import { balanceScanCanComplete } from "./balance-scan";
@@ -16,6 +16,9 @@ import { SERVER_CHAINS } from "../src/lib/chains";
 const RECOVERY_LEASE = 0x4e414d45;
 const RECOVERY_LIMIT = 10;
 const RETENTION_LIMIT = 500;
+// Use immutable creation time so retries and manual resumes cannot renew the automatic budget.
+const HELD_NAME_RECHECK_WINDOW_MS = 24 * 60 * 60 * 1_000;
+const HELD_NAME_MAX_BACKOFF_MS = 60 * 60 * 1_000;
 export const STARTING_STALE_MS = 5 * 60 * 1_000;
 const STARTING = "starting:";
 const RESUMABLE_FLOW_STATUSES = [
@@ -229,6 +232,7 @@ export function dueHeldNameRecoveryCandidate(now: Date) {
 	return and(
 		eq(flows.status, "held"),
 		eq(flows.holdReason, "name_not_renewable"),
+		gt(flows.createdAt, new Date(now.getTime() - HELD_NAME_RECHECK_WINDOW_MS)),
 		or(isNull(flows.nextActionAt), lte(flows.nextActionAt, now)),
 	);
 }
@@ -247,7 +251,7 @@ export function transactionMonitorCandidatesSql(limit = RECOVERY_LIMIT) {
 
 type EnsState = Awaited<ReturnType<typeof readEnsState>>;
 
-/** Refresh a held name on a bounded backoff. Resume the same flow when ENS accepts it. */
+/** Automatic reads stop after 24 hours. Fresh caller-supplied ENS evidence may still resume the flow. */
 export async function recheckHeldNameFlow(flowId: string, knownEns?: EnsState): Promise<void> {
 	const [row] = await database().select({
 		flow: flows,
@@ -272,8 +276,12 @@ export async function recheckHeldNameFlow(flowId: string, knownEns?: EnsState): 
 			ensSyncedAt: now,
 		}).where(eq(names.id, row.nameId));
 		if (!ens.renewableBy) {
+			const deadline = row.flow.createdAt.getTime() + HELD_NAME_RECHECK_WINDOW_MS;
+			// Doubling elapsed age gives increasing delays without a new mutable retry counter.
+			const delay = Math.min(HELD_NAME_MAX_BACKOFF_MS,
+				Math.max(NAME_RECHECK_MS, now.getTime() - row.flow.createdAt.getTime()));
 			await tx.update(flows).set({
-				nextActionAt: new Date(now.getTime() + NAME_RECHECK_MS),
+				nextActionAt: now.getTime() < deadline ? new Date(Math.min(now.getTime() + delay, deadline)) : null,
 				updatedAt: now,
 			}).where(and(
 				eq(flows.id, flowId),
