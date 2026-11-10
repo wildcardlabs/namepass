@@ -172,6 +172,20 @@ function buildMatrix(version: number, dataBits: number[], mask: number): Grid {
 		if (grid[size - 1 - i][8] === -1) grid[size - 1 - i][8] = 0;
 	}
 
+	/* version information (versions 7 and above): 6 version bits and a 12-bit BCH code */
+	if (version >= 7) {
+		let rem = version;
+		for (let i = 0; i < 12; i++) rem = (rem << 1) ^ ((rem >>> 11) * 0x1f25);
+		const info = (version << 12) | rem;
+		for (let i = 0; i < 18; i++) {
+			const bit = ((info >> i) & 1) as 0 | 1;
+			const a = size - 11 + (i % 3);
+			const b = Math.floor(i / 3);
+			grid[b][a] = bit;
+			grid[a][b] = bit;
+		}
+	}
+
 	/* mark reserved cells so data placement skips them */
 	const reserved = grid.map((row) => Int8Array.from(row, (v) => (v === -1 ? 0 : 1)));
 
@@ -206,21 +220,18 @@ function buildMatrix(version: number, dataBits: number[], mask: number): Grid {
 		upward = !upward;
 	}
 
-	/* format information */
+	/* format information: bit 0 is the least significant bit, grid[row][col] */
 	const fmt = FORMAT_M[mask];
 	for (let i = 0; i < 15; i++) {
 		const bit = ((fmt >> i) & 1) as 0 | 1;
-		if (i < 6) grid[8][i] = bit;
-		else if (i < 8) grid[8][i + 1] = bit;
-		else if (i === 8) grid[7][8] = bit;
-		else grid[14 - i][8] = bit;
+		if (i < 6) grid[i][8] = bit;
+		else if (i < 8) grid[i + 1][8] = bit;
+		else if (i === 8) grid[8][7] = bit;
+		else grid[8][14 - i] = bit;
 
-		if (i < 8) grid[size - 1 - i][8] = bit;
-		else grid[8][size - 15 + i] = bit;
+		if (i < 8) grid[8][size - 1 - i] = bit;
+		else grid[size - 15 + i][8] = bit;
 	}
-
-	/* The dark module is fixed and must survive format-info placement. */
-	grid[size - 8][8] = 1;
 
 	return grid;
 }

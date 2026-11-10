@@ -1671,7 +1671,8 @@ button.site-calculator-option:not([aria-pressed="true"]):hover {
   display: block;
   width: 192px;
   height: 192px;
-  padding: 16px;
+  /* A four-module quiet zone for a 29-module address code. */
+  padding: 28px;
   margin: auto;
   background: white;
 }
